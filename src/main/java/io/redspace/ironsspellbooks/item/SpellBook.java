@@ -10,19 +10,25 @@ import io.redspace.ironsspellbooks.spells.SpellType;
 import io.redspace.ironsspellbooks.util.SpellbookModCreativeTabs;
 import io.redspace.ironsspellbooks.util.TooltipsUtils;
 import io.redspace.ironsspellbooks.util.Utils;
-import net.minecraft.ChatFormatting;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.Style;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.Hand;
+import net.minecraft.util.ActionResult;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.item.*;
-import net.minecraft.world.level.Level;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+
+import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Rarity;
+import net.minecraft.item.UseAction;
 
 public class SpellBook extends Item {
     protected final SpellRarity rarity;
@@ -51,24 +57,24 @@ public class SpellBook extends Item {
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+    public ActionResult<ItemStack> use(World level, PlayerEntity player, Hand hand) {
         //Ironsspellbooks.logger.debug("Spellbook.use: level.isClientSide:{}", level.isClientSide);
         ItemStack itemStack = player.getItemInHand(hand);
         var spellBookData = SpellBookData.getSpellBookData(itemStack);
         AbstractSpell spell = spellBookData.getActiveSpell();
 
         if (spell.getSpellType() == SpellType.NONE_SPELL) {
-            return InteractionResultHolder.pass(itemStack);
+            return ActionResult.pass(itemStack);
         }
 
         if (level.isClientSide()) {
             if (ClientMagicData.isCasting()) {
-                return InteractionResultHolder.fail(itemStack);
+                return ActionResult.fail(itemStack);
             } else if (ClientMagicData.getPlayerMana() < spell.getManaCost()
                     || ClientMagicData.getCooldowns().isOnCooldown(spell.getSpellType())) {
-                return InteractionResultHolder.pass(itemStack);
+                return ActionResult.pass(itemStack);
             } else {
-                return InteractionResultHolder.sidedSuccess(itemStack, level.isClientSide());
+                return ActionResult.sidedSuccess(itemStack, level.isClientSide());
             }
         }
 
@@ -76,9 +82,9 @@ public class SpellBook extends Item {
             if (spell.getCastType().holdToCast()) {
                 player.startUsingItem(hand);
             }
-            return InteractionResultHolder.success(itemStack);
+            return ActionResult.success(itemStack);
         } else {
-            return InteractionResultHolder.fail(itemStack);
+            return ActionResult.fail(itemStack);
         }
     }
 
@@ -88,8 +94,8 @@ public class SpellBook extends Item {
     }
 
     @Override
-    public UseAnim getUseAnimation(ItemStack pStack) {
-        return UseAnim.BOW;
+    public UseAction getUseAnimation(ItemStack pStack) {
+        return UseAction.BOW;
     }
 
     @Override
@@ -98,7 +104,7 @@ public class SpellBook extends Item {
     }
 
     @Override
-    public void releaseUsing(ItemStack itemStack, Level p_41413_, LivingEntity entity, int p_41415_) {
+    public void releaseUsing(ItemStack itemStack, World p_41413_, LivingEntity entity, int p_41415_) {
         IronsSpellbooks.LOGGER.debug("Spellbook Release Using ticks used: {}", p_41415_);
         entity.stopUsingItem();
         Utils.releaseUsingHelper(entity, itemStack, p_41415_);
@@ -110,13 +116,13 @@ public class SpellBook extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack itemStack, @Nullable Level level, List<Component> lines, TooltipFlag flag) {
+    public void appendHoverText(ItemStack itemStack, @Nullable World level, List<ITextComponent> lines, ITooltipFlag flag) {
         if (!this.isUnique()) {
-            lines.add(Component.translatable("tooltip.irons_spellbooks.spellbook_rarity", this.rarity.getDisplayName()).withStyle(ChatFormatting.GRAY));
+            lines.add(ITextComponent.translatable("tooltip.irons_spellbooks.spellbook_rarity", this.rarity.getDisplayName()).withStyle(TextFormatting.GRAY));
         } else {
-            lines.add(Component.translatable("tooltip.irons_spellbooks.spellbook_rarity", Component.translatable("tooltip.irons_spellbooks.spellbook_unique").withStyle(Style.EMPTY.withColor(0xe04324))).withStyle(ChatFormatting.GRAY));
+            lines.add(ITextComponent.translatable("tooltip.irons_spellbooks.spellbook_rarity", ITextComponent.translatable("tooltip.irons_spellbooks.spellbook_unique").withStyle(Style.EMPTY.withColor(0xe04324))).withStyle(TextFormatting.GRAY));
         }
-        lines.add(Component.translatable("tooltip.irons_spellbooks.spellbook_spell_count", this.spellSlots).withStyle(ChatFormatting.GRAY));
+        lines.add(ITextComponent.translatable("tooltip.irons_spellbooks.spellbook_spell_count", this.spellSlots).withStyle(TextFormatting.GRAY));
 
         var player = Minecraft.getInstance().player;
         if (player != null && SpellBookData.getSpellBookData(itemStack).getActiveSpell().getID() > 0) {

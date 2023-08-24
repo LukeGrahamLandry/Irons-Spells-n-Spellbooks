@@ -3,14 +3,14 @@ package io.redspace.ironsspellbooks.spells.ice;
 import io.redspace.ironsspellbooks.capabilities.magic.PlayerMagicData;
 import io.redspace.ironsspellbooks.spells.*;
 import io.redspace.ironsspellbooks.util.Utils;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.HitResult;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.world.World;
+import net.minecraft.util.math.EntityRayTraceResult;
+import net.minecraft.util.math.RayTraceResult;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,9 +20,9 @@ public class FrostbiteSpell extends AbstractSpell {
         this(1);
     }
     @Override
-    public List<MutableComponent> getUniqueInfo(LivingEntity caster) {
+    public List<IFormattableTextComponent> getUniqueInfo(LivingEntity caster) {
         return List.of(
-                Component.translatable("ui.irons_spellbooks.frostbite_success_chance", Utils.stringTruncation(getSpellPower(caster), 1))
+                ITextComponent.translatable("ui.irons_spellbooks.frostbite_success_chance", Utils.stringTruncation(getSpellPower(caster), 1))
 
         );
     }
@@ -55,10 +55,10 @@ public class FrostbiteSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level level, LivingEntity entity, PlayerMagicData playerMagicData) {
-        HitResult raycast = Utils.raycastForEntity(level, entity, 48, true);
-        if (raycast.getType() == HitResult.Type.ENTITY) {
-            Entity target = ((EntityHitResult) raycast).getEntity();
+    public void onCast(World level, LivingEntity entity, PlayerMagicData playerMagicData) {
+        RayTraceResult raycast = Utils.raycastForEntity(level, entity, 48, true);
+        if (raycast.getType() == RayTraceResult.Type.ENTITY) {
+            Entity target = ((EntityRayTraceResult) raycast).getEntity();
             if (target instanceof LivingEntity livingTarget) {
                 float threshold = getSpellPower(entity);
                 float hpPercent = livingTarget.getHealth() / livingTarget.getMaxHealth();

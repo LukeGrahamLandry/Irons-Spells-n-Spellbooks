@@ -2,16 +2,16 @@ package io.redspace.ironsspellbooks.effect;
 
 import io.redspace.ironsspellbooks.damage.DamageSources;
 import io.redspace.ironsspellbooks.spells.SchoolType;
-import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.effect.MobEffectCategory;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.potion.Effect;
+import net.minecraft.potion.EffectType;
+import net.minecraft.entity.LivingEntity;
 
 import static io.redspace.ironsspellbooks.damage.DamageSources.BLEED_DAMAGE;
 
-public class BloodSlashed extends MobEffect {
+public class BloodSlashed extends Effect {
 
 
-    public BloodSlashed(MobEffectCategory mobEffectCategory, int color) {
+    public BloodSlashed(EffectType mobEffectCategory, int color) {
         super(mobEffectCategory, color);
     }
 

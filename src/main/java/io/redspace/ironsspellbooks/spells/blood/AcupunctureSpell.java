@@ -5,14 +5,14 @@ import io.redspace.ironsspellbooks.capabilities.magic.PlayerMagicData;
 import io.redspace.ironsspellbooks.entity.spells.blood_needle.BloodNeedle;
 import io.redspace.ironsspellbooks.spells.*;
 import io.redspace.ironsspellbooks.util.Utils;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.util.Mth;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.world.World;
+import net.minecraft.util.math.vector.Vector3d;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,9 +23,9 @@ public class AcupunctureSpell extends AbstractSpell {
     }
 
     @Override
-    public List<MutableComponent> getUniqueInfo(LivingEntity caster) {
-        return List.of(Component.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(caster), 2)),
-                Component.translatable("ui.irons_spellbooks.projectile_count", getCount(caster)));
+    public List<IFormattableTextComponent> getUniqueInfo(LivingEntity caster) {
+        return List.of(ITextComponent.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(caster), 2)),
+                ITextComponent.translatable("ui.irons_spellbooks.projectile_count", getCount(caster)));
 
     }
 
@@ -59,23 +59,23 @@ public class AcupunctureSpell extends AbstractSpell {
     }
 
     @Override
-    public boolean checkPreCastConditions(Level level, LivingEntity entity, PlayerMagicData playerMagicData) {
+    public boolean checkPreCastConditions(World level, LivingEntity entity, PlayerMagicData playerMagicData) {
         return Utils.preCastTargetHelper(level, entity, playerMagicData, getSpellType(), 32, .15f);
     }
 
     @Override
-    public void onCast(Level world, LivingEntity entity, PlayerMagicData playerMagicData) {
+    public void onCast(World world, LivingEntity entity, PlayerMagicData playerMagicData) {
         if (playerMagicData.getAdditionalCastData() instanceof CastTargetingData targetData) {
-            var targetEntity = targetData.getTarget((ServerLevel) world);
+            var targetEntity = targetData.getTarget((ServerWorld) world);
             if (targetEntity != null) {
                 int count = getCount(entity);
                 float damage = getDamage(entity);
-                Vec3 center = targetEntity.position().add(0, targetEntity.getEyeHeight() / 2, 0);
+                Vector3d center = targetEntity.position().add(0, targetEntity.getEyeHeight() / 2, 0);
                 float degreesPerNeedle = 360f / count;
                 for (int i = 0; i < count; i++) {
-                    Vec3 offset = new Vec3(0, Math.random(), .55).normalize().scale(targetEntity.getBbWidth() + 2.75f).yRot(degreesPerNeedle * i * Mth.DEG_TO_RAD);
-                    Vec3 spawn = center.add(offset);
-                    Vec3 motion = center.subtract(spawn).normalize();
+                    Vector3d offset = new Vector3d(0, Math.random(), .55).normalize().scale(targetEntity.getBbWidth() + 2.75f).yRot(degreesPerNeedle * i * MathHelper.DEG_TO_RAD);
+                    Vector3d spawn = center.add(offset);
+                    Vector3d motion = center.subtract(spawn).normalize();
 
                     BloodNeedle needle = new BloodNeedle(world, entity);
                     needle.moveTo(spawn);

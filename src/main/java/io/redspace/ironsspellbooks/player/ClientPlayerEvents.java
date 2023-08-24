@@ -17,18 +17,18 @@ import io.redspace.ironsspellbooks.spells.blood.RayOfSiphoningSpell;
 import io.redspace.ironsspellbooks.util.ParticleHelper;
 import io.redspace.ironsspellbooks.util.TooltipsUtils;
 import io.redspace.ironsspellbooks.util.Utils;
-import net.minecraft.ChatFormatting;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.EntityModel;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.alchemy.PotionUtils;
+import net.minecraft.client.renderer.entity.model.EntityModel;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.potion.PotionUtils;
 import net.minecraft.world.item.alchemy.Potions;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.event.TickEvent;
@@ -56,7 +56,7 @@ public class ClientPlayerEvents {
             }
 
             if (level != null) {
-                List<Entity> spellcasters = level.getEntities((Entity) null, event.player.getBoundingBox().inflate(64), (mob) -> mob instanceof Player || mob instanceof AbstractSpellCastingMob);
+                List<Entity> spellcasters = level.getEntities((Entity) null, event.player.getBoundingBox().inflate(64), (mob) -> mob instanceof PlayerEntity || mob instanceof AbstractSpellCastingMob);
                 spellcasters.forEach((entity) -> {
                     LivingEntity livingEntity = (LivingEntity) entity;
                     var spellData = ClientMagicData.getSyncedSpellData(livingEntity);
@@ -74,9 +74,9 @@ public class ClientPlayerEvents {
                      */
                     SpellType currentSpell = SpellType.getTypeFromValue(spellData.getCastingSpellId());
                     if (currentSpell == SpellType.RAY_OF_SIPHONING_SPELL) {
-                        Vec3 impact = Utils.raycastForEntity(entity.level, entity, RayOfSiphoningSpell.getRange(0), true).getLocation().subtract(0, .25, 0);
+                        Vector3d impact = Utils.raycastForEntity(entity.level, entity, RayOfSiphoningSpell.getRange(0), true).getLocation().subtract(0, .25, 0);
                         for (int i = 0; i < 8; i++) {
-                            Vec3 motion = new Vec3(
+                            Vector3d motion = new Vector3d(
                                     Utils.getRandomScaled(.2f),
                                     Utils.getRandomScaled(.2f),
                                     Utils.getRandomScaled(.2f)
@@ -97,7 +97,7 @@ public class ClientPlayerEvents {
             return;
 
         var livingEntity = event.getEntity();
-        if (livingEntity instanceof Player || livingEntity instanceof AbstractSpellCastingMob) {
+        if (livingEntity instanceof PlayerEntity || livingEntity instanceof AbstractSpellCastingMob) {
 
             var syncedData = ClientMagicData.getSyncedSpellData(livingEntity);
             if (syncedData.hasEffect(SyncedSpellData.TRUE_INVIS) && livingEntity.isInvisibleTo(player)) {
@@ -109,7 +109,7 @@ public class ClientPlayerEvents {
     @SubscribeEvent
     public static void afterLivingRender(RenderLivingEvent.Post<? extends LivingEntity, ? extends EntityModel<? extends LivingEntity>> event) {
         var livingEntity = event.getEntity();
-        if (livingEntity instanceof Player) {
+        if (livingEntity instanceof PlayerEntity) {
             var syncedData = ClientMagicData.getSyncedSpellData(livingEntity);
             SpellRenderingHelper.renderSpellHelper(syncedData, livingEntity, event.getPoseStack(), event.getMultiBufferSource(), event.getPartialTick());
         }
@@ -139,9 +139,9 @@ public class ClientPlayerEvents {
             if (!(stack.getItem() instanceof Scroll)) {
                 var additionalLines = TooltipsUtils.formatActiveSpellTooltip(stack, CastSource.SWORD, player);
                 //Add header to sword tooltip
-                additionalLines.add(1, Component.translatable("tooltip.irons_spellbooks.imbued_tooltip").withStyle(ChatFormatting.GRAY));
+                additionalLines.add(1, ITextComponent.translatable("tooltip.irons_spellbooks.imbued_tooltip").withStyle(TextFormatting.GRAY));
                 //Indent the title because we have an additional header
-                additionalLines.set(2, Component.literal(" ").append(additionalLines.get(2)));
+                additionalLines.set(2, ITextComponent.literal(" ").append(additionalLines.get(2)));
                 //Make room for the stuff the advanced tooltips add to the tooltip
                 if (event.getFlags().isAdvanced())
                     event.getToolTip().addAll(event.getToolTip().size() - 2, additionalLines);
@@ -158,20 +158,20 @@ public class ClientPlayerEvents {
         ItemStack stack = event.getItemStack();
         var mobEffects = PotionUtils.getMobEffects(stack);
         if (mobEffects.size() > 0) {
-            for (MobEffectInstance mobEffectInstance : mobEffects) {
+            for (EffectInstance mobEffectInstance : mobEffects) {
                 if (mobEffectInstance.getEffect() == MobEffectRegistry.INSTANT_MANA.get()) {
                     int amp = mobEffectInstance.getAmplifier() + 1;
                     int addition = amp * InstantManaEffect.manaPerAmplifier;
                     int percent = (int) (amp * InstantManaEffect.manaPerAmplifierPercent * 100);
-                    var description = Component.translatable("tooltip.irons_spellbooks.instant_mana_description", addition, percent).withStyle(ChatFormatting.BLUE);
+                    var description = ITextComponent.translatable("tooltip.irons_spellbooks.instant_mana_description", addition, percent).withStyle(TextFormatting.BLUE);
 
-                    var header = Component.translatable("potion.whenDrank").withStyle(ChatFormatting.DARK_PURPLE);
+                    var header = ITextComponent.translatable("potion.whenDrank").withStyle(TextFormatting.DARK_PURPLE);
                     var tooltip = event.getToolTip();
-                    var newLines = new ArrayList<Component>();
+                    var newLines = new ArrayList<ITextComponent>();
                     int i = tooltip.indexOf(header);
 
                     if (i < 0) {
-                        newLines.add(Component.empty());
+                        newLines.add(ITextComponent.empty());
                         newLines.add(header);
                         newLines.add(description);
                         i = event.getFlags().isAdvanced() ? tooltip.size() - 2 : tooltip.size();

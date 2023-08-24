@@ -4,26 +4,26 @@ import io.redspace.ironsspellbooks.capabilities.magic.PlayerMagicData;
 import io.redspace.ironsspellbooks.entity.mobs.AntiMagicSusceptible;
 import io.redspace.ironsspellbooks.registries.EntityRegistry;
 import io.redspace.ironsspellbooks.util.Utils;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.util.Mth;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.projectile.Projectile;
-import net.minecraft.world.item.alchemy.Potion;
-import net.minecraft.world.item.alchemy.PotionUtils;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.particles.IParticleData;
+import net.minecraft.particles.ParticleTypes;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.projectile.ProjectileEntity;
+import net.minecraft.potion.Potion;
+import net.minecraft.potion.PotionUtils;
+import net.minecraft.world.World;
+import net.minecraft.util.math.vector.Vector3d;
 
 public class HealingAoe extends AoeEntity implements AntiMagicSusceptible {
 
-    public HealingAoe(EntityType<? extends Projectile> pEntityType, Level pLevel) {
+    public HealingAoe(EntityType<? extends ProjectileEntity> pEntityType, World pLevel) {
         super(pEntityType, pLevel);
 
     }
 
-    public HealingAoe(Level level) {
+    public HealingAoe(World level) {
         this(EntityRegistry.HEALING_AOE.get(), level);
     }
 
@@ -57,17 +57,17 @@ public class HealingAoe extends AoeEntity implements AntiMagicSusceptible {
             return;
 
         float f = getParticleCount();
-        f = Mth.clamp(f * getRadius(), f / 4, f * 10);
+        f = MathHelper.clamp(f * getRadius(), f / 4, f * 10);
         for (int i = 0; i < f; i++) {
             if (f - i < 1 && random.nextFloat() > f - i)
                 return;
             var r = getRadius();
-            Vec3 pos;
+            Vector3d pos;
             if (isCircular()) {
                 float distance = (1 - this.random.nextFloat() * this.random.nextFloat()) * r;
-                pos = new Vec3(0, 0, distance).yRot(this.random.nextFloat() * 360);
+                pos = new Vector3d(0, 0, distance).yRot(this.random.nextFloat() * 360);
             } else {
-                pos = new Vec3(
+                pos = new Vector3d(
                         Utils.getRandomScaled(r * .85f),
                         .2f,
                         Utils.getRandomScaled(r * .85f)
@@ -78,7 +78,7 @@ public class HealingAoe extends AoeEntity implements AntiMagicSusceptible {
     }
 
     @Override
-    public ParticleOptions getParticle() {
+    public IParticleData getParticle() {
         return ParticleTypes.ENTITY_EFFECT;
     }
 

@@ -4,13 +4,13 @@ import io.redspace.ironsspellbooks.capabilities.magic.PlayerMagicData;
 import io.redspace.ironsspellbooks.entity.spells.ExtendedWitherSkull;
 import io.redspace.ironsspellbooks.spells.*;
 import io.redspace.ironsspellbooks.util.Utils;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.SoundEvents;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.world.World;
+import net.minecraft.util.math.vector.Vector3d;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,8 +21,8 @@ public class WitherSkullSpell extends AbstractSpell {
     }
 
     @Override
-    public List<MutableComponent> getUniqueInfo(LivingEntity caster) {
-        return List.of(Component.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(caster), 1)));
+    public List<IFormattableTextComponent> getUniqueInfo(LivingEntity caster) {
+        return List.of(ITextComponent.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(caster), 1)));
     }
 
     public static DefaultConfig defaultConfig = new DefaultConfig()
@@ -53,11 +53,11 @@ public class WitherSkullSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level level, LivingEntity entity, PlayerMagicData playerMagicData) {
+    public void onCast(World level, LivingEntity entity, PlayerMagicData playerMagicData) {
         float speed = (8 + getLevel(entity) ) * .01f;
         float damage = getDamage(entity);
         ExtendedWitherSkull skull = new ExtendedWitherSkull(entity, level, speed, damage);
-        Vec3 spawn = entity.getEyePosition().add(entity.getForward());
+        Vector3d spawn = entity.getEyePosition().add(entity.getForward());
         skull.moveTo(spawn.x, spawn.y - skull.getBoundingBox().getYsize() / 2, spawn.z, entity.getYRot() + 180, entity.getXRot());
         level.addFreshEntity(skull);
         super.onCast(level, entity, playerMagicData);

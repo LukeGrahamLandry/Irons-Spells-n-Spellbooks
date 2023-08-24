@@ -4,15 +4,15 @@ import io.redspace.ironsspellbooks.capabilities.magic.PlayerMagicData;
 import io.redspace.ironsspellbooks.entity.mobs.abstract_spell_casting_mob.AbstractSpellCastingMob;
 import io.redspace.ironsspellbooks.spells.AbstractSpell;
 import io.redspace.ironsspellbooks.spells.SpellType;
-import net.minecraft.core.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.util.Mth;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.Goal;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.entity.ai.goal.Goal;
+import net.minecraft.block.BlockState;
+import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.shapes.VoxelShape;
 
 import java.util.*;
 
@@ -182,7 +182,7 @@ public class WizardAttackGoal extends Goal {
         //this.mob.getLookControl().setLookAt(this.target, 45, 45);
         //irons_spellbooks.LOGGER.debug("{},{}", mob.getLastHurtByMobTimestamp(), mob.tickCount);
         if (mob.getLastHurtByMobTimestamp() == mob.tickCount - 1) {
-            int t = (int) (Mth.lerp(.6f, attackTime, 0) + 1);
+            int t = (int) (MathHelper.lerp(.6f, attackTime, 0) + 1);
             //Ironsspellbooks.logger.debug("Ouch! {}->{}", attackTime, t);
             attackTime = t;
             //attackTime = (int) (Mth.lerp(.25f, attackTime, 0) + 1);
@@ -205,7 +205,7 @@ public class WizardAttackGoal extends Goal {
             resetAttackTimer(distanceSquared);
             //irons_spellbooks.LOGGER.debug("WizardAttackGoal.tick.2: attackTime.1: {}", attackTime);
         } else if (this.attackTime < 0) {
-            this.attackTime = Mth.floor(Mth.lerp(Math.sqrt(distanceSquared) / (double) this.attackRadius, (double) this.attackIntervalMin, (double) this.attackIntervalMax));
+            this.attackTime = MathHelper.floor(MathHelper.lerp(Math.sqrt(distanceSquared) / (double) this.attackRadius, (double) this.attackIntervalMin, (double) this.attackIntervalMax));
             //irons_spellbooks.LOGGER.debug("WizardAttackGoal.tick.3: attackTime.2: {}", attackTime);
         }
         if (mob.isCasting()) {
@@ -218,7 +218,7 @@ public class WizardAttackGoal extends Goal {
 
     protected void resetAttackTimer(double distanceSquared) {
         float f = (float) Math.sqrt(distanceSquared) / this.attackRadius;
-        this.attackTime = Mth.floor(f * (float) (this.attackIntervalMax - this.attackIntervalMin) + (float) this.attackIntervalMin);
+        this.attackTime = MathHelper.floor(f * (float) (this.attackIntervalMax - this.attackIntervalMin) + (float) this.attackIntervalMin);
     }
 
     protected void doMovement(double distanceSquared) {
@@ -257,7 +257,7 @@ public class WizardAttackGoal extends Goal {
 
     protected void tryJump() {
         //mob.getJumpControl().jump();
-        Vec3 nextBlock = new Vec3(mob.xxa, 0, mob.zza).normalize();
+        Vector3d nextBlock = new Vector3d(mob.xxa, 0, mob.zza).normalize();
         //IronsSpellbooks.LOGGER.debug("{}", nextBlock);
 
         BlockPos blockpos = new BlockPos(mob.position().add(nextBlock));
@@ -285,7 +285,7 @@ public class WizardAttackGoal extends Goal {
             mob.initiateCastSpell(singleUseSpell, singleUseLevel);
         } else {
             var spellType = getNextSpellType();
-            int spellLevel = (int) (spellType.getMaxLevel() * Mth.lerp(mob.getRandom().nextFloat(), minSpellQuality, maxSpellQuality));
+            int spellLevel = (int) (spellType.getMaxLevel() * MathHelper.lerp(mob.getRandom().nextFloat(), minSpellQuality, maxSpellQuality));
             spellLevel = Math.max(spellLevel, 1);
 
             //Make sure cast is valid
@@ -395,7 +395,7 @@ public class WizardAttackGoal extends Goal {
         //We want to move if we're in a disadvantageous spot, or we need a better angle on our target
 
         double distanceSquared = this.mob.distanceToSqr(this.target.getX(), this.target.getY(), this.target.getZ());
-        double distancePercent = Mth.clamp(distanceSquared / attackRadiusSqr, 0, 1);
+        double distancePercent = MathHelper.clamp(distanceSquared / attackRadiusSqr, 0, 1);
 
         int distanceWeight = (int) ((distancePercent) * 50);
 

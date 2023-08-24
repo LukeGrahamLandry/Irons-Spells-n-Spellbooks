@@ -8,23 +8,23 @@ import io.redspace.ironsspellbooks.entity.mobs.abstract_spell_casting_mob.Abstra
 import io.redspace.ironsspellbooks.registries.MobEffectRegistry;
 import io.redspace.ironsspellbooks.spells.*;
 import io.redspace.ironsspellbooks.util.Utils;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.particles.ParticleTypes;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.potion.Effect;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.world.World;
+import net.minecraft.util.math.EntityRayTraceResult;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.common.util.LazyOptional;
 
 import java.util.List;
 import java.util.Optional;
 
 public class CounterspellSpell extends AbstractSpell {
-    public static final LazyOptional<List<MobEffect>> LAZY_MAGICAL_EFFECTS = LazyOptional.of(() ->
+    public static final LazyOptional<List<Effect>> LAZY_MAGICAL_EFFECTS = LazyOptional.of(() ->
             List.of(MobEffectRegistry.ABYSSAL_SHROUD.get(),
                     MobEffectRegistry.ASCENSION.get(),
                     MobEffectRegistry.ANGEL_WINGS.get(),
@@ -72,30 +72,30 @@ public class CounterspellSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level world, LivingEntity entity, PlayerMagicData playerMagicData) {
-        Vec3 start = entity.getEyePosition();
-        Vec3 end = start.add(entity.getForward().normalize().scale(80));
-        HitResult hitResult = Utils.raycastForEntity(entity.level, entity, start, end, true, 0.35f, Utils::validAntiMagicTarget);
-        Vec3 forward = entity.getForward().normalize();
-        if (hitResult instanceof EntityHitResult entityHitResult) {
+    public void onCast(World world, LivingEntity entity, PlayerMagicData playerMagicData) {
+        Vector3d start = entity.getEyePosition();
+        Vector3d end = start.add(entity.getForward().normalize().scale(80));
+        RayTraceResult hitResult = Utils.raycastForEntity(entity.level, entity, start, end, true, 0.35f, Utils::validAntiMagicTarget);
+        Vector3d forward = entity.getForward().normalize();
+        if (hitResult instanceof EntityRayTraceResult entityHitResult) {
             double distance = entity.distanceTo(entityHitResult.getEntity());
             for (float i = 1; i < distance; i += .5f) {
-                Vec3 pos = entity.getEyePosition().add(forward.scale(i));
+                Vector3d pos = entity.getEyePosition().add(forward.scale(i));
                 MagicManager.spawnParticles(world, ParticleTypes.ENCHANT, pos.x, pos.y, pos.z, 1, 0, 0, 0, 0, false);
             }
             if (entityHitResult.getEntity() instanceof AntiMagicSusceptible antiMagicSusceptible && !(antiMagicSusceptible instanceof MagicSummon summon && summon.getSummoner() == entity))
                 antiMagicSusceptible.onAntiMagic(playerMagicData);
-            else if (entityHitResult.getEntity() instanceof ServerPlayer serverPlayer)
+            else if (entityHitResult.getEntity() instanceof ServerPlayerEntity serverPlayer)
                 Utils.serverSideCancelCast(serverPlayer, true);
             else if (entityHitResult.getEntity() instanceof AbstractSpellCastingMob abstractSpellCastingMob)
                 abstractSpellCastingMob.cancelCast();
 
             if (entityHitResult.getEntity() instanceof LivingEntity livingEntity)
-                for (MobEffect mobEffect : LAZY_MAGICAL_EFFECTS.resolve().get())
+                for (Effect mobEffect : LAZY_MAGICAL_EFFECTS.resolve().get())
                     livingEntity.removeEffect(mobEffect);
         }else{
             for (float i = 1; i < 40; i += .5f) {
-                Vec3 pos = entity.getEyePosition().add(forward.scale(i));
+                Vector3d pos = entity.getEyePosition().add(forward.scale(i));
                 MagicManager.spawnParticles(world, ParticleTypes.ENCHANT, pos.x, pos.y, pos.z, 1, 0, 0, 0, 0, false);
                 if (!world.getBlockState(new BlockPos(pos)).isAir())
                     break;

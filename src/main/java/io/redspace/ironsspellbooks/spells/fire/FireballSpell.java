@@ -5,12 +5,12 @@ import io.redspace.ironsspellbooks.entity.spells.fireball.MagicFireball;
 import io.redspace.ironsspellbooks.registries.SoundRegistry;
 import io.redspace.ironsspellbooks.spells.*;
 import io.redspace.ironsspellbooks.util.Utils;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.world.World;
+import net.minecraft.util.math.vector.Vector3d;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,10 +21,10 @@ public class FireballSpell extends AbstractSpell {
     }
 
     @Override
-    public List<MutableComponent> getUniqueInfo(LivingEntity caster) {
+    public List<IFormattableTextComponent> getUniqueInfo(LivingEntity caster) {
         return List.of(
-                Component.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(caster), 1)),
-                Component.translatable("ui.irons_spellbooks.radius", getRadius(caster))
+                ITextComponent.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(caster), 1)),
+                ITextComponent.translatable("ui.irons_spellbooks.radius", getRadius(caster))
         );
     }
 
@@ -61,8 +61,8 @@ public class FireballSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level world, LivingEntity entity, PlayerMagicData playerMagicData) {
-        Vec3 origin = entity.getEyePosition();
+    public void onCast(World world, LivingEntity entity, PlayerMagicData playerMagicData) {
+        Vector3d origin = entity.getEyePosition();
 
         MagicFireball fireball = new MagicFireball(world, entity);
 

@@ -5,17 +5,17 @@ import io.redspace.ironsspellbooks.entity.spells.void_tentacle.VoidTentacle;
 import io.redspace.ironsspellbooks.registries.SoundRegistry;
 import io.redspace.ironsspellbooks.spells.*;
 import io.redspace.ironsspellbooks.util.Utils;
-import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.ClipContext;
-import net.minecraft.world.level.Level;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.math.RayTraceContext;
+import net.minecraft.world.World;
 import net.minecraft.world.level.gameevent.GameEvent;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.util.math.vector.Vector3d;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,10 +26,10 @@ public class VoidTentaclesSpell extends AbstractSpell {
     }
 
     @Override
-    public List<MutableComponent> getUniqueInfo(LivingEntity caster) {
+    public List<IFormattableTextComponent> getUniqueInfo(LivingEntity caster) {
         return List.of(
-                Component.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(caster), 1)),
-                Component.translatable("ui.irons_spellbooks.radius", Utils.stringTruncation(getRings(caster) * 1.3f, 1))
+                ITextComponent.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(caster), 1)),
+                ITextComponent.translatable("ui.irons_spellbooks.radius", Utils.stringTruncation(getRings(caster) * 1.3f, 1))
         );
     }
 
@@ -61,19 +61,19 @@ public class VoidTentaclesSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level level, LivingEntity entity, PlayerMagicData playerMagicData) {
+    public void onCast(World level, LivingEntity entity, PlayerMagicData playerMagicData) {
         int rings = getRings(entity);
         int count = 2;
-        Vec3 center = Utils.getTargetBlock(level, entity, ClipContext.Fluid.NONE, 48).getLocation();
-        level.playSound(entity instanceof Player player ? player : null, center.x, center.y, center.z, SoundRegistry.VOID_TENTACLES_FINISH.get(), SoundSource.AMBIENT, 1, 1);
+        Vector3d center = Utils.getTargetBlock(level, entity, RayTraceContext.FluidMode.NONE, 48).getLocation();
+        level.playSound(entity instanceof PlayerEntity player ? player : null, center.x, center.y, center.z, SoundRegistry.VOID_TENTACLES_FINISH.get(), SoundCategory.AMBIENT, 1, 1);
 
         for (int r = 0; r < rings; r++) {
             float tentacles = count + r * 2;
             for (int i = 0; i < tentacles; i++) {
-                Vec3 random = new Vec3(Utils.getRandomScaled(1), Utils.getRandomScaled(1), Utils.getRandomScaled(1));
-                Vec3 spawn = center.add(new Vec3(0, 0, 1.3 * (r + 1)).yRot(((6.281f / tentacles) * i))).add(random);
+                Vector3d random = new Vector3d(Utils.getRandomScaled(1), Utils.getRandomScaled(1), Utils.getRandomScaled(1));
+                Vector3d spawn = center.add(new Vector3d(0, 0, 1.3 * (r + 1)).yRot(((6.281f / tentacles) * i))).add(random);
 
-                spawn = new Vec3(spawn.x, Utils.findRelativeGroundLevel(level, spawn, 8), spawn.z);
+                spawn = new Vector3d(spawn.x, Utils.findRelativeGroundLevel(level, spawn, 8), spawn.z);
                 if (!level.getBlockState(new BlockPos(spawn).below()).isAir()) {
                     VoidTentacle tentacle = new VoidTentacle(level, entity, getDamage(entity));
                     tentacle.moveTo(spawn);

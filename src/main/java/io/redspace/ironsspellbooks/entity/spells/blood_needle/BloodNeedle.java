@@ -8,17 +8,17 @@ import io.redspace.ironsspellbooks.registries.SoundRegistry;
 import io.redspace.ironsspellbooks.spells.SchoolType;
 import io.redspace.ironsspellbooks.spells.SpellType;
 import io.redspace.ironsspellbooks.util.ParticleHelper;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializers;
-import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.Level;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.world.World;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.HitResult;
+import net.minecraft.util.math.EntityRayTraceResult;
+import net.minecraft.util.math.RayTraceResult;
 
 import java.util.Optional;
 
@@ -28,15 +28,15 @@ import java.util.Optional;
 //https://github.com/maximumpower55/Aura
 
 public class BloodNeedle extends AbstractMagicProjectile {
-    private static final EntityDataAccessor<Float> DATA_Z_ROT = SynchedEntityData.defineId(BloodNeedle.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Float> DATA_SCALE = SynchedEntityData.defineId(BloodNeedle.class, EntityDataSerializers.FLOAT);
+    private static final DataParameter<Float> DATA_Z_ROT = EntityDataManager.defineId(BloodNeedle.class, DataSerializers.FLOAT);
+    private static final DataParameter<Float> DATA_SCALE = EntityDataManager.defineId(BloodNeedle.class, DataSerializers.FLOAT);
 
-    public BloodNeedle(EntityType<? extends BloodNeedle> entityType, Level level) {
+    public BloodNeedle(EntityType<? extends BloodNeedle> entityType, World level) {
         super(entityType, level);
         this.setNoGravity(true);
     }
 
-    public BloodNeedle(Level levelIn, LivingEntity shooter) {
+    public BloodNeedle(World levelIn, LivingEntity shooter) {
         super(EntityRegistry.BLOOD_NEEDLE.get(), levelIn);
         setOwner(shooter);
     }
@@ -67,7 +67,7 @@ public class BloodNeedle extends AbstractMagicProjectile {
     }
 
     @Override
-    protected void addAdditionalSaveData(CompoundTag pCompound) {
+    protected void addAdditionalSaveData(CompoundNBT pCompound) {
         super.addAdditionalSaveData(pCompound);
         pCompound.putFloat("zRot", getZRot());
         if (getScale() != 1)
@@ -75,7 +75,7 @@ public class BloodNeedle extends AbstractMagicProjectile {
     }
 
     @Override
-    protected void readAdditionalSaveData(CompoundTag pCompound) {
+    protected void readAdditionalSaveData(CompoundNBT pCompound) {
         super.readAdditionalSaveData(pCompound);
         setZRot(pCompound.getFloat("zRot"));
         if (pCompound.contains("Scale"))
@@ -83,7 +83,7 @@ public class BloodNeedle extends AbstractMagicProjectile {
     }
 
     @Override
-    protected void onHitEntity(EntityHitResult entityHitResult) {
+    protected void onHitEntity(EntityRayTraceResult entityHitResult) {
         super.onHitEntity(entityHitResult);
         boolean hit = DamageSources.applyDamage(entityHitResult.getEntity(), getDamage(), SpellType.BlOOD_NEEDLES_SPELL.getDamageSource(this, getOwner()), SchoolType.BLOOD);
         if (hit && entityHitResult.getEntity() instanceof LivingEntity target && getOwner() instanceof LivingEntity livingOwner) {
@@ -94,7 +94,7 @@ public class BloodNeedle extends AbstractMagicProjectile {
     }
 
     @Override
-    protected void onHit(HitResult hitresult) {
+    protected void onHit(RayTraceResult hitresult) {
         super.onHit(hitresult);
         discard();
     }

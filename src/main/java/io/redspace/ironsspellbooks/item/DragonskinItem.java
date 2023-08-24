@@ -1,7 +1,7 @@
 package io.redspace.ironsspellbooks.item;
 
 import io.redspace.ironsspellbooks.util.SpellbookModCreativeTabs;
-import net.minecraft.world.item.Item;
+import net.minecraft.item.Item;
 
 public class DragonskinItem extends Item {
     public DragonskinItem() {

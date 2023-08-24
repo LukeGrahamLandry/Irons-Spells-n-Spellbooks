@@ -3,7 +3,7 @@ package io.redspace.ironsspellbooks.network;
 import io.redspace.ironsspellbooks.capabilities.magic.CooldownInstance;
 import io.redspace.ironsspellbooks.player.ClientMagicData;
 import io.redspace.ironsspellbooks.spells.SpellType;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.Map;
@@ -12,21 +12,21 @@ import java.util.function.Supplier;
 public class ClientboundSyncCooldowns {
     private final Map<SpellType, CooldownInstance> spellCooldowns;
 
-    public static SpellType readSpellType(FriendlyByteBuf buffer) {
+    public static SpellType readSpellType(PacketBuffer buffer) {
         return SpellType.getTypeFromValue(buffer.readInt());
     }
 
-    public static CooldownInstance readCoolDownInstance(FriendlyByteBuf buffer) {
+    public static CooldownInstance readCoolDownInstance(PacketBuffer buffer) {
         int spellCooldown = buffer.readInt();
         int spellCooldownRemaining = buffer.readInt();
         return new CooldownInstance(spellCooldown, spellCooldownRemaining);
     }
 
-    public static void writeSpellType(FriendlyByteBuf buf, SpellType spellType) {
+    public static void writeSpellType(PacketBuffer buf, SpellType spellType) {
         buf.writeInt(spellType.getValue());
     }
 
-    public static void writeCoolDownInstance(FriendlyByteBuf buf, CooldownInstance cooldownInstance) {
+    public static void writeCoolDownInstance(PacketBuffer buf, CooldownInstance cooldownInstance) {
         buf.writeInt(cooldownInstance.getSpellCooldown());
         buf.writeInt(cooldownInstance.getCooldownRemaining());
     }
@@ -35,11 +35,11 @@ public class ClientboundSyncCooldowns {
         this.spellCooldowns = spellCooldowns;
     }
 
-    public ClientboundSyncCooldowns(FriendlyByteBuf buf) {
+    public ClientboundSyncCooldowns(PacketBuffer buf) {
         this.spellCooldowns = buf.readMap(ClientboundSyncCooldowns::readSpellType, ClientboundSyncCooldowns::readCoolDownInstance);
     }
 
-    public void toBytes(FriendlyByteBuf buf) {
+    public void toBytes(PacketBuffer buf) {
         buf.writeMap(spellCooldowns, ClientboundSyncCooldowns::writeSpellType, ClientboundSyncCooldowns::writeCoolDownInstance);
     }
 

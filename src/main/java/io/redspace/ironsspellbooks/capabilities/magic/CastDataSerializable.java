@@ -1,10 +1,10 @@
 package io.redspace.ironsspellbooks.capabilities.magic;
 
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.PacketBuffer;
 
 public interface CastDataSerializable extends CastData {
 
-    void writeToStream(FriendlyByteBuf buffer);
+    void writeToStream(PacketBuffer buffer);
 
-    void readFromStream(FriendlyByteBuf buffer);
+    void readFromStream(PacketBuffer buffer);
 }

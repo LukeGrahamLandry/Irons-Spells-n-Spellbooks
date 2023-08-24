@@ -7,24 +7,24 @@ import io.redspace.ironsspellbooks.registries.MobEffectRegistry;
 import io.redspace.ironsspellbooks.registries.SoundRegistry;
 import io.redspace.ironsspellbooks.spells.*;
 import io.redspace.ironsspellbooks.util.Utils;
-import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.util.Mth;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.monster.Monster;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.SpawnReason;
+import net.minecraft.entity.monster.MonsterEntity;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.world.World;
+import net.minecraft.util.math.vector.Vector3d;
 
 import java.util.List;
 import java.util.Optional;
@@ -35,8 +35,8 @@ public class RaiseDeadSpell extends AbstractSpell {
     }
 
     @Override
-    public List<MutableComponent> getUniqueInfo(LivingEntity caster) {
-        return List.of(Component.translatable("ui.irons_spellbooks.summon_count", getLevel(caster)));
+    public List<IFormattableTextComponent> getUniqueInfo(LivingEntity caster) {
+        return List.of(ITextComponent.translatable("ui.irons_spellbooks.summon_count", getLevel(caster)));
     }
 
     public static DefaultConfig defaultConfig = new DefaultConfig()
@@ -68,24 +68,24 @@ public class RaiseDeadSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level world, LivingEntity entity, PlayerMagicData playerMagicData) {
+    public void onCast(World world, LivingEntity entity, PlayerMagicData playerMagicData) {
         int summonTime = 20 * 60 * 10;
         int level = getLevel(entity);
         for (int i = 0; i < level; i++) {
             boolean isSkeleton = world.random.nextDouble() < .3;
             var equipment = getEquipment(getSpellPower(entity), world.getRandom());
 
-            Monster undead = isSkeleton ? new SummonedSkeleton(world, entity, true) : new SummonedZombie(world, entity, true);
-            undead.finalizeSpawn((ServerLevel) world, world.getCurrentDifficultyAt(undead.getOnPos()), MobSpawnType.MOB_SUMMONED, null, null);
-            undead.addEffect(new MobEffectInstance(MobEffectRegistry.RAISE_DEAD_TIMER.get(), summonTime, 0, false, false, false));
+            MonsterEntity undead = isSkeleton ? new SummonedSkeleton(world, entity, true) : new SummonedZombie(world, entity, true);
+            undead.finalizeSpawn((ServerWorld) world, world.getCurrentDifficultyAt(undead.getOnPos()), SpawnReason.MOB_SUMMONED, null, null);
+            undead.addEffect(new EffectInstance(MobEffectRegistry.RAISE_DEAD_TIMER.get(), summonTime, 0, false, false, false));
             equip(undead, equipment);
-            Vec3 spawn = entity.position();
+            Vector3d spawn = entity.position();
             for (int j = 0; j < 4; j++) {
                 //Going to try to spawn 3 times
                 float distance = level / 4f + 1;
                 distance *= (3 - j) / 3f;
-                spawn = entity.getEyePosition().add(new Vec3(0, 0, distance).yRot(((6.281f / level) * i)));
-                spawn = new Vec3(spawn.x, Utils.findRelativeGroundLevel(world, spawn, 5), spawn.z);
+                spawn = entity.getEyePosition().add(new Vector3d(0, 0, distance).yRot(((6.281f / level) * i)));
+                spawn = new Vector3d(spawn.x, Utils.findRelativeGroundLevel(world, spawn, 5), spawn.z);
                 if (!world.getBlockState(new BlockPos(spawn).below()).isAir())
                     break;
             }
@@ -96,20 +96,20 @@ public class RaiseDeadSpell extends AbstractSpell {
         int effectAmplifier = level - 1;
         if(entity.hasEffect(MobEffectRegistry.RAISE_DEAD_TIMER.get()))
             effectAmplifier += entity.getEffect(MobEffectRegistry.RAISE_DEAD_TIMER.get()).getAmplifier() + 1;
-        entity.addEffect(new MobEffectInstance(MobEffectRegistry.RAISE_DEAD_TIMER.get(), summonTime, effectAmplifier, false, false, true));
+        entity.addEffect(new EffectInstance(MobEffectRegistry.RAISE_DEAD_TIMER.get(), summonTime, effectAmplifier, false, false, true));
 
         super.onCast(world, entity, playerMagicData);
     }
 
-    private void equip(Mob mob, ItemStack[] equipment) {
-        mob.setItemSlot(EquipmentSlot.FEET, equipment[0]);
-        mob.setItemSlot(EquipmentSlot.LEGS, equipment[1]);
-        mob.setItemSlot(EquipmentSlot.CHEST, equipment[2]);
-        mob.setItemSlot(EquipmentSlot.HEAD, equipment[3]);
-        mob.setDropChance(EquipmentSlot.FEET, 0.0F);
-        mob.setDropChance(EquipmentSlot.LEGS, 0.0F);
-        mob.setDropChance(EquipmentSlot.CHEST, 0.0F);
-        mob.setDropChance(EquipmentSlot.HEAD, 0.0F);
+    private void equip(MobEntity mob, ItemStack[] equipment) {
+        mob.setItemSlot(EquipmentSlotType.FEET, equipment[0]);
+        mob.setItemSlot(EquipmentSlotType.LEGS, equipment[1]);
+        mob.setItemSlot(EquipmentSlotType.CHEST, equipment[2]);
+        mob.setItemSlot(EquipmentSlotType.HEAD, equipment[3]);
+        mob.setDropChance(EquipmentSlotType.FEET, 0.0F);
+        mob.setDropChance(EquipmentSlotType.LEGS, 0.0F);
+        mob.setDropChance(EquipmentSlotType.CHEST, 0.0F);
+        mob.setDropChance(EquipmentSlotType.HEAD, 0.0F);
     }
 
     private ItemStack[] getEquipment(float power, RandomSource random) {
@@ -122,7 +122,7 @@ public class RaiseDeadSpell extends AbstractSpell {
 
         ItemStack[] result = new ItemStack[4];
         for (int i = 0; i < 4; i++) {
-            float quality = Mth.clamp((power + (random.nextIntBetweenInclusive(-3, 8)) - minQuality) / (maxQuality - minQuality), 0, .95f);
+            float quality = MathHelper.clamp((power + (random.nextIntBetweenInclusive(-3, 8)) - minQuality) / (maxQuality - minQuality), 0, .95f);
             if (random.nextDouble() < quality * quality) {
                 if (quality > .85) {
                     result[i] = new ItemStack(iron[i]);

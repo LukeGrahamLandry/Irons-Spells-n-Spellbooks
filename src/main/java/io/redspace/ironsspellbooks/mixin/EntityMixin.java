@@ -2,8 +2,8 @@ package io.redspace.ironsspellbooks.mixin;
 
 import io.redspace.ironsspellbooks.entity.mobs.MagicSummon;
 import io.redspace.ironsspellbooks.registries.ItemRegistry;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -32,7 +32,7 @@ public abstract class EntityMixin {
     Necessary see all invisible mobs
     */
     @Inject(method = "isInvisibleTo", at = @At(value = "HEAD"), cancellable = true)
-    public void isInvisibleTo(Player player, CallbackInfoReturnable<Boolean> cir) {
+    public void isInvisibleTo(PlayerEntity player, CallbackInfoReturnable<Boolean> cir) {
         if (ItemRegistry.INVISIBILITY_RING.get().isEquippedBy(player)) {
             cir.setReturnValue(false);
         }

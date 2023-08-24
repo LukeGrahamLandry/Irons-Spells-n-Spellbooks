@@ -1,9 +1,11 @@
 package io.redspace.ironsspellbooks.item.armor;
 
-import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.inventory.EquipmentSlotType;
+
+import net.minecraft.item.Item.Properties;
 
 public class PriestArmorItem extends ExtendedArmorItem{
-    public PriestArmorItem(EquipmentSlot slot, Properties settings) {
+    public PriestArmorItem(EquipmentSlotType slot, Properties settings) {
         super(ExtendedArmorMaterials.PRIEST, slot, settings);
     }
 }

@@ -4,23 +4,23 @@ import io.redspace.ironsspellbooks.damage.DamageSources;
 import io.redspace.ironsspellbooks.entity.spells.AoeEntity;
 import io.redspace.ironsspellbooks.registries.EntityRegistry;
 import io.redspace.ironsspellbooks.util.ParticleHelper;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.projectile.Projectile;
-import net.minecraft.world.level.Level;
+import net.minecraft.particles.IParticleData;
+import net.minecraft.util.DamageSource;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.projectile.ProjectileEntity;
+import net.minecraft.world.World;
 
 public class FireField extends AoeEntity {
 
     public static final DamageSource DAMAGE_SOURCE = new DamageSource("fire_field");
 
-    public FireField(EntityType<? extends Projectile> pEntityType, Level pLevel) {
+    public FireField(EntityType<? extends ProjectileEntity> pEntityType, World pLevel) {
         super(pEntityType, pLevel);
 
     }
 
-    public FireField(Level level) {
+    public FireField(World level) {
         this(EntityRegistry.FIRE_FIELD.get(), level);
     }
 
@@ -48,7 +48,7 @@ public class FireField extends AoeEntity {
     }
 
     @Override
-    public ParticleOptions getParticle() {
+    public IParticleData getParticle() {
         return ParticleHelper.FIRE;
     }
 }

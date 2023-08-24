@@ -1,18 +1,18 @@
 package io.redspace.ironsspellbooks.effect;
 
 import io.redspace.ironsspellbooks.entity.mobs.MagicSummon;
-import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.effect.MobEffectCategory;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.AttributeMap;
+import net.minecraft.potion.Effect;
+import net.minecraft.potion.EffectType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.attributes.AttributeModifierManager;
 
-public class SummonTimer extends MobEffect {
-    public SummonTimer(MobEffectCategory pCategory, int pColor) {
+public class SummonTimer extends Effect {
+    public SummonTimer(EffectType pCategory, int pColor) {
         super(pCategory, pColor);
     }
 
     @Override
-    public void removeAttributeModifiers(LivingEntity pLivingEntity, AttributeMap pAttributeMap, int pAmplifier) {
+    public void removeAttributeModifiers(LivingEntity pLivingEntity, AttributeModifierManager pAttributeMap, int pAmplifier) {
         //Ironsspellbooks.logger.debug("Summoner Timer Wore out on {}", pLivingEntity.getName().getString());
         if(pLivingEntity instanceof MagicSummon summon)
             summon.onUnSummon();

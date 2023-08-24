@@ -9,41 +9,41 @@ import io.redspace.ironsspellbooks.registries.ItemRegistry;
 import io.redspace.ironsspellbooks.registries.MenuRegistry;
 import io.redspace.ironsspellbooks.util.UpgradeUtils;
 import io.redspace.ironsspellbooks.util.Utils;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.ContainerLevelAccess;
-import net.minecraft.world.inventory.ItemCombinerMenu;
-import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.SoundEvents;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.IWorldPosCallable;
+import net.minecraft.inventory.container.AbstractRepairContainer;
+import net.minecraft.inventory.container.Slot;
+import net.minecraft.item.ItemStack;
+import net.minecraft.block.BlockState;
 
-public class ArcaneAnvilMenu extends ItemCombinerMenu {
-    public ArcaneAnvilMenu(int pContainerId, Inventory inventory, ContainerLevelAccess containerLevelAccess) {
+public class ArcaneAnvilMenu extends AbstractRepairContainer {
+    public ArcaneAnvilMenu(int pContainerId, PlayerInventory inventory, IWorldPosCallable containerLevelAccess) {
         super(MenuRegistry.ARCANE_ANVIL_MENU.get(), pContainerId, inventory, containerLevelAccess);
     }
 
 
-    public ArcaneAnvilMenu(int pContainerId, Inventory inventory, FriendlyByteBuf extraData) {
-        this(pContainerId, inventory, ContainerLevelAccess.NULL);
+    public ArcaneAnvilMenu(int pContainerId, PlayerInventory inventory, PacketBuffer extraData) {
+        this(pContainerId, inventory, IWorldPosCallable.NULL);
     }
 
     @Override
-    protected boolean mayPickup(Player pPlayer, boolean pHasStack) {
+    protected boolean mayPickup(PlayerEntity pPlayer, boolean pHasStack) {
         return true;
     }
 
     @Override
-    protected void onTake(Player p_150601_, ItemStack p_150602_) {
+    protected void onTake(PlayerEntity p_150601_, ItemStack p_150602_) {
         inputSlots.getItem(0).shrink(1);
         inputSlots.getItem(1).shrink(1);
 
         this.access.execute((level, pos) -> {
-            level.playSound(null, pos, SoundEvents.ANVIL_USE, SoundSource.BLOCKS, .8f, 1.1f);
-            level.playSound(null, pos, SoundEvents.AMETHYST_BLOCK_BREAK, SoundSource.BLOCKS, 1f, 1f);
+            level.playSound(null, pos, SoundEvents.ANVIL_USE, SoundCategory.BLOCKS, .8f, 1.1f);
+            level.playSound(null, pos, SoundEvents.AMETHYST_BLOCK_BREAK, SoundCategory.BLOCKS, 1f, 1f);
         });
     }
 
@@ -86,7 +86,7 @@ public class ArcaneAnvilMenu extends ItemCombinerMenu {
             //Upgrade System
             else if (Utils.canBeUpgraded(baseItemStack) && UpgradeUtils.getUpgradeCount(baseItemStack) < ServerConfigs.MAX_UPGRADES.get() && modifierItemStack.getItem() instanceof UpgradeOrbItem upgradeOrb) {
                 result = baseItemStack.copy();
-                EquipmentSlot slot = UpgradeUtils.getAssignedEquipmentSlot(result);
+                EquipmentSlotType slot = UpgradeUtils.getAssignedEquipmentSlot(result);
                 UpgradeUtils.appendUpgrade(result, upgradeOrb.getUpgradeType(), slot);
                 //IronsSpellbooks.LOGGER.debug("ArcaneAnvilMenu: upgrade system test: total upgrades on {}: {}", result.getDisplayName().getString(), UpgradeUtils.getUpgradeCount(result));
             }

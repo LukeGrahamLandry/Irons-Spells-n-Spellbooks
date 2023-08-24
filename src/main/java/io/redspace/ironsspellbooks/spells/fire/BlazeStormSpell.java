@@ -5,15 +5,15 @@ import io.redspace.ironsspellbooks.capabilities.magic.PlayerMagicData;
 import io.redspace.ironsspellbooks.entity.spells.fireball.SmallMagicFireball;
 import io.redspace.ironsspellbooks.spells.*;
 import io.redspace.ironsspellbooks.util.Utils;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.SoundEvents;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.world.World;
+import net.minecraft.util.math.vector.Vector3d;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -24,8 +24,8 @@ public class BlazeStormSpell extends AbstractSpell {
         this(1);
     }
     @Override
-    public List<MutableComponent> getUniqueInfo(LivingEntity caster) {
-        return List.of(Component.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(caster), 1)));
+    public List<IFormattableTextComponent> getUniqueInfo(LivingEntity caster) {
+        return List.of(ITextComponent.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(caster), 1)));
     }
 
     public static DefaultConfig defaultConfig = new DefaultConfig()
@@ -57,12 +57,12 @@ public class BlazeStormSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level world, LivingEntity entity, PlayerMagicData playerMagicData) {
+    public void onCast(World world, LivingEntity entity, PlayerMagicData playerMagicData) {
         super.onCast(world, entity, playerMagicData);
     }
 
     @Override
-    public void onServerCastTick(Level level, LivingEntity entity, @Nullable PlayerMagicData playerMagicData) {
+    public void onServerCastTick(World level, LivingEntity entity, @Nullable PlayerMagicData playerMagicData) {
         if (playerMagicData != null && (playerMagicData.getCastDurationRemaining() + 1) % 5 == 0)
             shootBlazeFireball(level, entity);
     }
@@ -71,13 +71,13 @@ public class BlazeStormSpell extends AbstractSpell {
         return getSpellPower(caster) * .4f;
     }
 
-    public void shootBlazeFireball(Level world, LivingEntity entity) {
-        Vec3 origin = entity.getEyePosition().add(entity.getForward().normalize().scale(.2f));
+    public void shootBlazeFireball(World world, LivingEntity entity) {
+        Vector3d origin = entity.getEyePosition().add(entity.getForward().normalize().scale(.2f));
         SmallMagicFireball fireball = new SmallMagicFireball(world, entity);
         fireball.setPos(origin.subtract(0, fireball.getBbHeight(), 0));
         fireball.shoot(entity.getLookAngle(), .05f);
         fireball.setDamage(getDamage(entity));
-        world.playSound(null, origin.x, origin.y, origin.z, SoundEvents.BLAZE_SHOOT, SoundSource.PLAYERS, 2.0f, 1.0f);
+        world.playSound(null, origin.x, origin.y, origin.z, SoundEvents.BLAZE_SHOOT, SoundCategory.PLAYERS, 2.0f, 1.0f);
         world.addFreshEntity(fireball);
     }
 

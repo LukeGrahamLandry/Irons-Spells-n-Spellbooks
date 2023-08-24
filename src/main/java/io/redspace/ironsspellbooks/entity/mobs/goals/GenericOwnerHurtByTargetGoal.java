@@ -1,22 +1,22 @@
 package io.redspace.ironsspellbooks.entity.mobs.goals;
 
 import io.redspace.ironsspellbooks.entity.mobs.MagicSummon;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.ai.goal.Goal;
-import net.minecraft.world.entity.ai.goal.target.TargetGoal;
-import net.minecraft.world.entity.ai.memory.MemoryModuleType;
-import net.minecraft.world.entity.ai.targeting.TargetingConditions;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.ai.goal.Goal;
+import net.minecraft.entity.ai.goal.TargetGoal;
+import net.minecraft.entity.ai.brain.memory.MemoryModuleType;
+import net.minecraft.entity.EntityPredicate;
 
 import java.util.EnumSet;
 
 public class GenericOwnerHurtByTargetGoal extends TargetGoal {
-    private final Mob entity;
+    private final MobEntity entity;
     private final OwnerGetter owner;
     private LivingEntity ownerLastHurtBy;
     private int timestamp;
 
-    public GenericOwnerHurtByTargetGoal(Mob entity, OwnerGetter getOwner) {
+    public GenericOwnerHurtByTargetGoal(MobEntity entity, OwnerGetter getOwner) {
         super(entity, false);
         this.entity = entity;
         this.owner = getOwner;
@@ -36,7 +36,7 @@ public class GenericOwnerHurtByTargetGoal extends TargetGoal {
             if (ownerLastHurtBy == null || ownerLastHurtBy.isAlliedTo(mob))
                 return false;
             int i = owner.getLastHurtByMobTimestamp();
-            return i != this.timestamp && this.canAttack(this.ownerLastHurtBy, TargetingConditions.DEFAULT) && !(this.ownerLastHurtBy instanceof MagicSummon summon && summon.getSummoner() == owner);
+            return i != this.timestamp && this.canAttack(this.ownerLastHurtBy, EntityPredicate.DEFAULT) && !(this.ownerLastHurtBy instanceof MagicSummon summon && summon.getSummoner() == owner);
         }
     }
 

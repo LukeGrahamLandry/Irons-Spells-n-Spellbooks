@@ -4,13 +4,13 @@ import io.redspace.ironsspellbooks.capabilities.magic.PlayerMagicData;
 import io.redspace.ironsspellbooks.entity.spells.blood_needle.BloodNeedle;
 import io.redspace.ironsspellbooks.spells.*;
 import io.redspace.ironsspellbooks.util.Utils;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.util.Mth;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.world.World;
+import net.minecraft.util.math.vector.Vector3d;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,9 +21,9 @@ public class BloodNeedlesSpell extends AbstractSpell {
     }
 
     @Override
-    public List<MutableComponent> getUniqueInfo(LivingEntity caster) {
-        return List.of(Component.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(caster), 2)),
-                Component.translatable("ui.irons_spellbooks.projectile_count", getCount()));
+    public List<IFormattableTextComponent> getUniqueInfo(LivingEntity caster) {
+        return List.of(ITextComponent.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(caster), 2)),
+                ITextComponent.translatable("ui.irons_spellbooks.projectile_count", getCount()));
 
     }
 
@@ -57,7 +57,7 @@ public class BloodNeedlesSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level world, LivingEntity entity, PlayerMagicData playerMagicData) {
+    public void onCast(World world, LivingEntity entity, PlayerMagicData playerMagicData) {
         int count = getCount();
         float damage = getDamage(entity);
         int degreesPerNeedle = 360 / count;
@@ -67,7 +67,7 @@ public class BloodNeedlesSpell extends AbstractSpell {
             int rotation = degreesPerNeedle * i - (degreesPerNeedle / 2);
             needle.setDamage(damage);
             needle.setZRot(rotation);
-            Vec3 spawn = entity.getEyePosition().add(new Vec3(0, 1.5, 0).zRot(rotation * Mth.DEG_TO_RAD).xRot(-entity.getXRot() * Mth.DEG_TO_RAD).yRot(-entity.getYRot() * Mth.DEG_TO_RAD));
+            Vector3d spawn = entity.getEyePosition().add(new Vector3d(0, 1.5, 0).zRot(rotation * MathHelper.DEG_TO_RAD).xRot(-entity.getXRot() * MathHelper.DEG_TO_RAD).yRot(-entity.getYRot() * MathHelper.DEG_TO_RAD));
             needle.moveTo(spawn);
             needle.shoot(raycast.getLocation().subtract(spawn).normalize());
             world.addFreshEntity(needle);

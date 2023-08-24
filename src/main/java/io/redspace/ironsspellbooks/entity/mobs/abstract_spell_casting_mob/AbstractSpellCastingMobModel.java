@@ -2,8 +2,8 @@ package io.redspace.ironsspellbooks.entity.mobs.abstract_spell_casting_mob;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.PartNames;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.processor.IBone;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
@@ -45,10 +45,10 @@ public abstract class AbstractSpellCastingMobModel extends AnimatedGeoModel<Abst
          */
         //Make the head look forward, whatever forward is (influenced externally, such as a lootAt target)
         if (!entity.isAnimating() || entity.shouldAlwaysAnimateHead()) {
-            head.setRotationY(Mth.lerp(partialTick,
-                    Mth.wrapDegrees(-entity.yHeadRotO + entity.yBodyRotO) * Mth.DEG_TO_RAD,
-                    Mth.wrapDegrees(-entity.yHeadRot + entity.yBodyRot) * Mth.DEG_TO_RAD));
-            head.setRotationX(Mth.lerp(partialTick, -entity.xRotO, -entity.getXRot()) * Mth.DEG_TO_RAD);
+            head.setRotationY(MathHelper.lerp(partialTick,
+                    MathHelper.wrapDegrees(-entity.yHeadRotO + entity.yBodyRotO) * MathHelper.DEG_TO_RAD,
+                    MathHelper.wrapDegrees(-entity.yHeadRot + entity.yBodyRot) * MathHelper.DEG_TO_RAD));
+            head.setRotationX(MathHelper.lerp(partialTick, -entity.xRotO, -entity.getXRot()) * MathHelper.DEG_TO_RAD);
         }
         /*
             Crazy Vanilla Magic Calculations (LivingEntityRenderer:116 & HumanoidModel#setupAnim
@@ -56,7 +56,7 @@ public abstract class AbstractSpellCastingMobModel extends AnimatedGeoModel<Abst
         float pLimbSwingAmount = 0.0F;
         float pLimbSwing = 0.0F;
         if (entity.isAlive()) {
-            pLimbSwingAmount = Mth.lerp(partialTick, entity.animationSpeedOld, entity.animationSpeed);
+            pLimbSwingAmount = MathHelper.lerp(partialTick, entity.animationSpeedOld, entity.animationSpeed);
             pLimbSwing = entity.animationPosition - entity.animationSpeed * (1.0F - partialTick);
             if (entity.isBaby()) {
                 pLimbSwing *= 3.0F;
@@ -90,26 +90,26 @@ public abstract class AbstractSpellCastingMobModel extends AnimatedGeoModel<Abst
         } else if (!entity.isAnimating() || entity.shouldAlwaysAnimateLegs()) {
             //rightLeg.setRotationX(Mth.cos(pLimbSwing * 0.6662F) * 1.4F * pLimbSwingAmount / f);
             //leftLeg.setRotationX(Mth.cos(pLimbSwing * 0.6662F + (float) Math.PI) * 1.4F * pLimbSwingAmount / f);
-            addRotationX(rightLeg, Mth.cos(pLimbSwing * 0.6662F) * 1.4F * pLimbSwingAmount / f);
-            addRotationX(leftLeg, Mth.cos(pLimbSwing * 0.6662F + (float) Math.PI) * 1.4F * pLimbSwingAmount / f);
+            addRotationX(rightLeg, MathHelper.cos(pLimbSwing * 0.6662F) * 1.4F * pLimbSwingAmount / f);
+            addRotationX(leftLeg, MathHelper.cos(pLimbSwing * 0.6662F + (float) Math.PI) * 1.4F * pLimbSwingAmount / f);
 
         }
         /*
             Arm Controls
          */
         if (!entity.isAnimating()) {
-            addRotationX(rightArm, Mth.cos(pLimbSwing * 0.6662F + (float) Math.PI) * 2.0F * pLimbSwingAmount * 0.5F / f);
-            addRotationX(leftArm, Mth.cos(pLimbSwing * 0.6662F) * 2.0F * pLimbSwingAmount * 0.5F / f);
+            addRotationX(rightArm, MathHelper.cos(pLimbSwing * 0.6662F + (float) Math.PI) * 2.0F * pLimbSwingAmount * 0.5F / f);
+            addRotationX(leftArm, MathHelper.cos(pLimbSwing * 0.6662F) * 2.0F * pLimbSwingAmount * 0.5F / f);
             bobBone(rightArm, entity.tickCount, 1);
             bobBone(leftArm, entity.tickCount, -1);
             if (entity.isDrinkingPotion()) {
-                addRotationX(entity.isLeftHanded() ? leftArm : rightArm, 35 * Mth.DEG_TO_RAD);
-                addRotationZ(entity.isLeftHanded() ? leftArm : rightArm, (entity.isLeftHanded() ? 15 : -15) * Mth.DEG_TO_RAD);
-                addRotationY(entity.isLeftHanded() ? leftArm : rightArm, (entity.isLeftHanded() ? -25 : 25) * Mth.DEG_TO_RAD);
+                addRotationX(entity.isLeftHanded() ? leftArm : rightArm, 35 * MathHelper.DEG_TO_RAD);
+                addRotationZ(entity.isLeftHanded() ? leftArm : rightArm, (entity.isLeftHanded() ? 15 : -15) * MathHelper.DEG_TO_RAD);
+                addRotationY(entity.isLeftHanded() ? leftArm : rightArm, (entity.isLeftHanded() ? -25 : 25) * MathHelper.DEG_TO_RAD);
             }
         } else if (entity.shouldPointArmsWhileCasting()) {
-            addRotationX(rightArm, -entity.getXRot() * Mth.DEG_TO_RAD);
-            addRotationX(leftArm, -entity.getXRot() * Mth.DEG_TO_RAD);
+            addRotationX(rightArm, -entity.getXRot() * MathHelper.DEG_TO_RAD);
+            addRotationX(leftArm, -entity.getXRot() * MathHelper.DEG_TO_RAD);
         }
 
 //        rightArm.setRotationX(Mth.cos(pLimbSwing * 0.6662F + (float) Math.PI) * 2.0F * pLimbSwingAmount * 0.5F / f);
@@ -124,8 +124,8 @@ public abstract class AbstractSpellCastingMobModel extends AnimatedGeoModel<Abst
 
     protected void bobBone(IBone bone, int offset, float multiplier) {
         //Copied from AnimationUtils#bobLimb
-        float z = multiplier * (Mth.cos(offset * 0.09F) * 0.05F + 0.05F);
-        float x = multiplier * Mth.sin(offset * 0.067F) * 0.05F;
+        float z = multiplier * (MathHelper.cos(offset * 0.09F) * 0.05F + 0.05F);
+        float x = multiplier * MathHelper.sin(offset * 0.067F) * 0.05F;
         addRotationZ(bone, z);
         addRotationX(bone, x);
         //bone.setRotationX(bone.getRotationX() + x);

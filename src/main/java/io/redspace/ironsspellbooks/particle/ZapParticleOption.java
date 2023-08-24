@@ -5,26 +5,26 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.redspace.ironsspellbooks.registries.ParticleRegistry;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Registry;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleType;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.level.Level;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.particles.IParticleData;
+import net.minecraft.particles.ParticleType;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.world.World;
 import net.minecraft.world.level.gameevent.BlockPositionSource;
 import net.minecraft.world.level.gameevent.PositionSource;
 import net.minecraft.world.level.gameevent.PositionSourceType;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.util.math.vector.Vector3d;
 
 import java.util.Locale;
 
-public class ZapParticleOption implements ParticleOptions {
+public class ZapParticleOption implements IParticleData {
     public static final Codec<ZapParticleOption> CODEC = RecordCodecBuilder.create((p_235978_) -> {
         return p_235978_.group(PositionSource.CODEC.fieldOf("destination").forGetter((p_235982_) -> {
             return p_235982_.destination;
         })).apply(p_235978_, ZapParticleOption::new);
     });
-    public static final ParticleOptions.Deserializer<ZapParticleOption> DESERIALIZER = new ParticleOptions.Deserializer<ZapParticleOption>() {
+    public static final IParticleData.IDeserializer<ZapParticleOption> DESERIALIZER = new IParticleData.IDeserializer<ZapParticleOption>() {
         public ZapParticleOption fromCommand(ParticleType<ZapParticleOption> p_175859_, StringReader p_175860_) throws CommandSyntaxException {
             p_175860_.expect(' ');
             float f = (float)p_175860_.readDouble();
@@ -36,7 +36,7 @@ public class ZapParticleOption implements ParticleOptions {
             return new ZapParticleOption(new BlockPositionSource(blockpos));
         }
 
-        public ZapParticleOption fromNetwork(ParticleType<ZapParticleOption> p_175862_, FriendlyByteBuf p_175863_) {
+        public ZapParticleOption fromNetwork(ParticleType<ZapParticleOption> p_175862_, PacketBuffer p_175863_) {
             PositionSource positionsource = PositionSourceType.fromNetwork(p_175863_);
             return new ZapParticleOption(positionsource);
         }
@@ -47,12 +47,12 @@ public class ZapParticleOption implements ParticleOptions {
         this.destination = p_235975_;
     }
 
-    public void writeToNetwork(FriendlyByteBuf pBuffer) {
+    public void writeToNetwork(PacketBuffer pBuffer) {
         PositionSourceType.toNetwork(this.destination, pBuffer);
     }
 
     public String writeToString() {
-        Vec3 vec3 = this.destination.getPosition((Level)null).get();
+        Vector3d vec3 = this.destination.getPosition((World)null).get();
         double d0 = vec3.x();
         double d1 = vec3.y();
         double d2 = vec3.z();

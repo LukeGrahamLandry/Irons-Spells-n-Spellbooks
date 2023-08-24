@@ -5,32 +5,32 @@ import io.redspace.ironsspellbooks.entity.mobs.abstract_spell_casting_mob.Abstra
 import io.redspace.ironsspellbooks.entity.mobs.goals.DebugTargetClosestEntityGoal;
 import io.redspace.ironsspellbooks.entity.mobs.goals.DebugWizardAttackGoal;
 import io.redspace.ironsspellbooks.spells.SpellType;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializers;
-import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.monster.Enemy;
-import net.minecraft.world.level.Level;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.attributes.AttributeModifierMap;
+import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.entity.monster.IMob;
+import net.minecraft.world.World;
 
-public class DebugWizard extends AbstractSpellCastingMob implements Enemy {
+public class DebugWizard extends AbstractSpellCastingMob implements IMob {
     private SpellType spellType;
     private int spellLevel;
     private boolean targetsPlayer;
     private String spellInfo;
     private int cancelCastAfterTicks;
-    private static final EntityDataAccessor<String> DEBUG_SPELL_INFO = SynchedEntityData.defineId(DebugWizard.class, EntityDataSerializers.STRING);
+    private static final DataParameter<String> DEBUG_SPELL_INFO = EntityDataManager.defineId(DebugWizard.class, DataSerializers.STRING);
 
-    public DebugWizard(EntityType<? extends AbstractSpellCastingMob> pEntityType, Level pLevel) {
+    public DebugWizard(EntityType<? extends AbstractSpellCastingMob> pEntityType, World pLevel) {
         super(pEntityType, pLevel);
         spellInfo = "No Spell Found";
     }
 
-    public DebugWizard(EntityType<? extends AbstractSpellCastingMob> pEntityType, Level pLevel, SpellType spellType, int spellLevel, boolean targetsPlayer, int cancelCastAfterTicks) {
+    public DebugWizard(EntityType<? extends AbstractSpellCastingMob> pEntityType, World pLevel, SpellType spellType, int spellLevel, boolean targetsPlayer, int cancelCastAfterTicks) {
         super(pEntityType, pLevel);
 
         this.targetsPlayer = targetsPlayer;
@@ -51,7 +51,7 @@ public class DebugWizard extends AbstractSpellCastingMob implements Enemy {
     }
 
     @Override
-    public void onSyncedDataUpdated(EntityDataAccessor<?> pKey) {
+    public void onSyncedDataUpdated(DataParameter<?> pKey) {
         super.onSyncedDataUpdated(pKey);
 
         if (!level.isClientSide) {
@@ -74,7 +74,7 @@ public class DebugWizard extends AbstractSpellCastingMob implements Enemy {
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag pCompound) {
+    public void addAdditionalSaveData(CompoundNBT pCompound) {
         super.addAdditionalSaveData(pCompound);
         pCompound.putInt("spellType", spellType.getValue());
         pCompound.putInt("spellLevel", spellLevel);
@@ -83,7 +83,7 @@ public class DebugWizard extends AbstractSpellCastingMob implements Enemy {
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag pCompound) {
+    public void readAdditionalSaveData(CompoundNBT pCompound) {
         super.readAdditionalSaveData(pCompound);
         spellType = SpellType.getTypeFromValue(pCompound.getInt("spellType"));
         spellLevel = pCompound.getInt("spellLevel");
@@ -92,7 +92,7 @@ public class DebugWizard extends AbstractSpellCastingMob implements Enemy {
         initGoals();
     }
 
-    public static AttributeSupplier.Builder prepareAttributes() {
+    public static AttributeModifierMap.MutableAttribute prepareAttributes() {
         return LivingEntity.createLivingAttributes()
                 .add(Attributes.ATTACK_DAMAGE, 3.0)
                 .add(Attributes.MAX_HEALTH, 30.0)

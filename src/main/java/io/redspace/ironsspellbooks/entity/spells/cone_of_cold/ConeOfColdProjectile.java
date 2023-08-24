@@ -6,19 +6,19 @@ import io.redspace.ironsspellbooks.registries.EntityRegistry;
 import io.redspace.ironsspellbooks.spells.SchoolType;
 import io.redspace.ironsspellbooks.spells.SpellType;
 import io.redspace.ironsspellbooks.util.ParticleHelper;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.particles.ParticleTypes;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.world.World;
+import net.minecraft.util.math.EntityRayTraceResult;
+import net.minecraft.util.math.vector.Vector3d;
 
 public class ConeOfColdProjectile extends AbstractConeProjectile {
-    public ConeOfColdProjectile(EntityType<? extends AbstractConeProjectile> entityType, Level level){
+    public ConeOfColdProjectile(EntityType<? extends AbstractConeProjectile> entityType, World level){
         super(entityType,level);
     }
 
-    public ConeOfColdProjectile(Level level, LivingEntity entity) {
+    public ConeOfColdProjectile(World level, LivingEntity entity) {
         super(EntityRegistry.CONE_OF_COLD_PROJECTILE.get(), level, entity);
     }
 
@@ -29,7 +29,7 @@ public class ConeOfColdProjectile extends AbstractConeProjectile {
         if (!level.isClientSide || owner == null) {
             return;
         }
-        Vec3 rotation = owner.getLookAngle().normalize();
+        Vector3d rotation = owner.getLookAngle().normalize();
         var pos = owner.position().add(rotation.scale(1.6));
 
         double x = pos.x;
@@ -44,8 +44,8 @@ public class ConeOfColdProjectile extends AbstractConeProjectile {
             double oz = Math.random() * 2 * offset - offset;
 
             double angularness = .8;
-            Vec3 randomVec = new Vec3(Math.random() * 2 * angularness - angularness, Math.random()  * 2 * angularness - angularness, Math.random()  * 2 * angularness - angularness).normalize();
-            Vec3 result = (rotation.scale(3).add(randomVec)).normalize().scale(speed);
+            Vector3d randomVec = new Vector3d(Math.random() * 2 * angularness - angularness, Math.random()  * 2 * angularness - angularness, Math.random()  * 2 * angularness - angularness).normalize();
+            Vector3d result = (rotation.scale(3).add(randomVec)).normalize().scale(speed);
             level.addParticle(Math.random() > .05 ? ParticleTypes.SNOWFLAKE : ParticleHelper.SNOWFLAKE, x + ox, y + oy, z + oz, result.x, result.y, result.z);
         }
 
@@ -53,7 +53,7 @@ public class ConeOfColdProjectile extends AbstractConeProjectile {
     }
 
     @Override
-    protected void onHitEntity(EntityHitResult entityHitResult) {
+    protected void onHitEntity(EntityRayTraceResult entityHitResult) {
         //irons_spellbooks.LOGGER.debug("ConeOfColdProjectile.onHitEntity: {}", entityHitResult.getEntity().getName().getString());
         var entity = entityHitResult.getEntity();
         if (DamageSources.applyDamage(entity, damage, SpellType.CONE_OF_COLD_SPELL.getDamageSource(this, getOwner()), SchoolType.ICE)  && !level.isClientSide && entity.canFreeze())

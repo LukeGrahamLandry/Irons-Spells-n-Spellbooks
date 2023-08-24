@@ -1,19 +1,19 @@
 package io.redspace.ironsspellbooks.entity.spells.electrocute;
 
 import io.redspace.ironsspellbooks.IronsSpellbooks;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Matrix3f;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Vector3f;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
+import net.minecraft.util.math.vector.Matrix3f;
+import net.minecraft.util.math.vector.Matrix4f;
+import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -34,11 +34,11 @@ public class ElectrocuteRenderer extends EntityRenderer<ElectrocuteProjectile> {
     }
 
     @Override
-    public void render(ElectrocuteProjectile entity, float yaw, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource, int light) {
+    public void render(ElectrocuteProjectile entity, float yaw, float partialTicks, MatrixStack poseStack, IRenderTypeBuffer bufferSource, int light) {
         if (entity.getOwner() == null)
             return;
         poseStack.pushPose();
-        PoseStack.Pose pose = poseStack.last();
+        MatrixStack.Entry pose = poseStack.last();
         Matrix4f poseMatrix = pose.pose();
         Matrix3f normalMatrix = pose.normal();
 
@@ -53,13 +53,13 @@ public class ElectrocuteRenderer extends EntityRenderer<ElectrocuteProjectile> {
 
         if (entity.getAge() % 2 == 0 && !Minecraft.getInstance().isPaused())
             entity.generateLightningBeams();
-        List<Vec3> segments = entity.getBeamCache();
+        List<Vector3d> segments = entity.getBeamCache();
         //irons_spellbooks.LOGGER.debug("ElectrocuteRenderer.segments.length: {}",segments.size());
 
-        VertexConsumer consumer = bufferSource.getBuffer(RenderType.entityTranslucentEmissive(getTextureLocation(entity)));
+        IVertexBuilder consumer = bufferSource.getBuffer(RenderType.entityTranslucentEmissive(getTextureLocation(entity)));
         float width = .25f;
         float height = width;
-        Vec3 start = Vec3.ZERO;//entity.getOwner().getEyePosition().add(entity.getForward().normalize().scale(.15f));
+        Vector3d start = Vector3d.ZERO;//entity.getOwner().getEyePosition().add(entity.getForward().normalize().scale(.15f));
         for (int i = 0; i < segments.size() - 1; i += 2) {
             var from = segments.get(i).add(start);
             var to = segments.get(i + 1).add(start);
@@ -81,7 +81,7 @@ public class ElectrocuteRenderer extends EntityRenderer<ElectrocuteProjectile> {
         super.render(entity, yaw, partialTicks, poseStack, bufferSource, light);
     }
 
-    public void drawHull(Vec3 from, Vec3 to, float width, float height, PoseStack.Pose pose, VertexConsumer consumer, int r, int g, int b, int a) {
+    public void drawHull(Vector3d from, Vector3d to, float width, float height, MatrixStack.Entry pose, IVertexBuilder consumer, int r, int g, int b, int a) {
         //Bottom
         drawQuad(from.subtract(0, height * .5f, 0), to.subtract(0, height * .5f, 0), width, 0, pose, consumer, r, g, b, a);
         //Top
@@ -92,7 +92,7 @@ public class ElectrocuteRenderer extends EntityRenderer<ElectrocuteProjectile> {
         drawQuad(from.add(width * .5f, 0, 0), to.add(width * .5f, 0, 0), 0, height, pose, consumer, r, g, b, a);
     }
 
-    public void drawQuad(Vec3 from, Vec3 to, float width, float height, PoseStack.Pose pose, VertexConsumer consumer, int r, int g, int b, int a) {
+    public void drawQuad(Vector3d from, Vector3d to, float width, float height, MatrixStack.Entry pose, IVertexBuilder consumer, int r, int g, int b, int a) {
         Matrix4f poseMatrix = pose.pose();
         Matrix3f normalMatrix = pose.normal();
 

@@ -1,18 +1,18 @@
 package io.redspace.ironsspellbooks.entity.mobs.goals;
 
-import net.minecraft.world.entity.PathfinderMob;
-import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+import net.minecraft.entity.CreatureEntity;
+import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
 import net.minecraft.world.entity.ai.util.LandRandomPos;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.common.util.LazyOptional;
 import org.jetbrains.annotations.Nullable;
 
-public class PatrolNearLocationGoal extends WaterAvoidingRandomStrollGoal {
+public class PatrolNearLocationGoal extends WaterAvoidingRandomWalkingGoal {
 
-    LazyOptional<Vec3> origin;
+    LazyOptional<Vector3d> origin;
     float radiusSqr;
 
-    public PatrolNearLocationGoal(PathfinderMob pMob, float radius, double pSpeedModifier) {
+    public PatrolNearLocationGoal(CreatureEntity pMob, float radius, double pSpeedModifier) {
         super(pMob, pSpeedModifier);
         origin = LazyOptional.of(pMob::position);
         radiusSqr = radius * radius;
@@ -20,7 +20,7 @@ public class PatrolNearLocationGoal extends WaterAvoidingRandomStrollGoal {
 
     @Nullable
     @Override
-    protected Vec3 getPosition() {
+    protected Vector3d getPosition() {
         var f = super.getPosition();
         //IronsSpellbooks.LOGGER.debug("PatrolNearLocationGoal origin: {}", origin.resolve().get());
         if (mob.position().horizontalDistanceSqr() > radiusSqr)

@@ -1,24 +1,24 @@
 package io.redspace.ironsspellbooks.render;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Matrix3f;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Vector3f;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
+import net.minecraft.util.math.vector.Matrix3f;
+import net.minecraft.util.math.vector.Matrix4f;
+import net.minecraft.util.math.vector.Vector3f;
 import io.redspace.ironsspellbooks.IronsSpellbooks;
 import io.redspace.ironsspellbooks.entity.mobs.abstract_spell_casting_mob.AbstractSpellCastingMob;
 import io.redspace.ironsspellbooks.player.ClientMagicData;
 import io.redspace.ironsspellbooks.spells.SpellType;
-import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.entity.RenderLayerParent;
-import net.minecraft.client.renderer.entity.layers.RenderLayer;
+import net.minecraft.client.renderer.entity.IEntityRenderer;
+import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.phys.AABB;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.util.math.AxisAlignedBB;
 import software.bernie.geckolib3.renderers.geo.GeoLayerRenderer;
 import software.bernie.geckolib3.renderers.geo.IGeoRenderer;
 
@@ -28,14 +28,14 @@ import static io.redspace.ironsspellbooks.spells.SpellType.HEALING_CIRCLE_SPELL;
 public class SpellTargetingLayer {
     public static final ResourceLocation TEXTURE = new ResourceLocation(IronsSpellbooks.MODID, "textures/entity/target/heal.png");
 
-    public static class Vanilla<T extends LivingEntity, M extends EntityModel<T>> extends RenderLayer<T, M> {
-        public Vanilla(RenderLayerParent<T, M> pRenderer) {
+    public static class Vanilla<T extends LivingEntity, M extends EntityModel<T>> extends LayerRenderer<T, M> {
+        public Vanilla(IEntityRenderer<T, M> pRenderer) {
             super(pRenderer);
         }
 
 
         @Override
-        public void render(PoseStack poseStack, MultiBufferSource bufferSource, int pPackedLight, T entity, float pLimbSwing, float pLimbSwingAmount, float pPartialTick, float pAgeInTicks, float pNetHeadYaw, float pHeadPitch) {
+        public void render(MatrixStack poseStack, IRenderTypeBuffer bufferSource, int pPackedLight, T entity, float pLimbSwing, float pLimbSwingAmount, float pPartialTick, float pAgeInTicks, float pNetHeadYaw, float pHeadPitch) {
             if (shouldRender(entity)) {
                 renderTargetLayer(poseStack, bufferSource, entity);
             }
@@ -49,7 +49,7 @@ public class SpellTargetingLayer {
         }
 
         @Override
-        public void render(PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLightIn, AbstractSpellCastingMob abstractSpellCastingMob, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
+        public void render(MatrixStack poseStack, IRenderTypeBuffer multiBufferSource, int packedLightIn, AbstractSpellCastingMob abstractSpellCastingMob, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
             if (shouldRender(abstractSpellCastingMob)) {
 //                //It's upside down???
 //                poseStack.mulPose(Vector3f.XP.rotationDegrees(180));
@@ -76,7 +76,7 @@ public class SpellTargetingLayer {
         };
     }
 
-    public static void renderTargetLayer(PoseStack poseStack, MultiBufferSource bufferSource, LivingEntity entity) {
+    public static void renderTargetLayer(MatrixStack poseStack, IRenderTypeBuffer bufferSource, LivingEntity entity) {
         //EntityRenderDispatcher#169(renderHitbox)
 //        AABB aabb = entity.getBoundingBox().move(-entity.getX(), -entity.getY(), -entity.getZ());
 //        double magicYOffset = 1.5 - aabb.getYsize();
@@ -85,8 +85,8 @@ public class SpellTargetingLayer {
 //        LevelRenderer.renderLineBox(poseStack, bufferSource.getBuffer(RenderType.lines()), aabb, 1.0F, 1.0F, 1.0F, 1.0F);
 //        poseStack.popPose();
 
-        VertexConsumer consumer = bufferSource.getBuffer(RenderType.energySwirl(TEXTURE, 0, 0));
-        AABB aabb = entity.getBoundingBox().move(-entity.getX(), -entity.getY(), -entity.getZ());
+        IVertexBuilder consumer = bufferSource.getBuffer(RenderType.energySwirl(TEXTURE, 0, 0));
+        AxisAlignedBB aabb = entity.getBoundingBox().move(-entity.getX(), -entity.getY(), -entity.getZ());
 
         float width = (float) aabb.getXsize();
         float height = (float) aabb.getYsize();
@@ -96,7 +96,7 @@ public class SpellTargetingLayer {
         color.mul(.4f);
         poseStack.pushPose();
         poseStack.translate(0, magicYOffset, 0);
-        PoseStack.Pose pose = poseStack.last();
+        MatrixStack.Entry pose = poseStack.last();
         Matrix4f poseMatrix = pose.pose();
         Matrix3f normalMatrix = pose.normal();
 

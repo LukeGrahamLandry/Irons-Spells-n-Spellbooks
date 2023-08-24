@@ -3,16 +3,16 @@ package io.redspace.ironsspellbooks.entity.mobs;
 import io.redspace.ironsspellbooks.registries.ItemRegistry;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.monster.Vindicator;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.Enchantments;
-import net.minecraft.world.level.Level;
+import net.minecraft.entity.EntityType;
+import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.entity.monster.VindicatorEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.enchantment.Enchantments;
+import net.minecraft.world.World;
 
-public class MagehunterVindicator extends Vindicator {
+public class MagehunterVindicator extends VindicatorEntity {
     //This is a wrapper class that in reality creates a vanilla Vindicator, but with the Magehunter sword
-    public MagehunterVindicator(EntityType<? extends Vindicator> pEntityType, Level pLevel) {
+    public MagehunterVindicator(EntityType<? extends VindicatorEntity> pEntityType, World pLevel) {
         super(EntityType.VINDICATOR, pLevel);
     }
 
@@ -23,6 +23,6 @@ public class MagehunterVindicator extends Vindicator {
 
         magehunter.enchant(Enchantments.SHARPNESS, 5);
 
-        setItemSlot(EquipmentSlot.MAINHAND, magehunter);
+        setItemSlot(EquipmentSlotType.MAINHAND, magehunter);
     }
 }

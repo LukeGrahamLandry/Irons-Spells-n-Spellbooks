@@ -9,16 +9,16 @@ import io.redspace.ironsspellbooks.spells.SchoolType;
 import io.redspace.ironsspellbooks.spells.SpellType;
 import io.redspace.ironsspellbooks.util.ParticleHelper;
 import io.redspace.ironsspellbooks.util.Utils;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.projectile.Projectile;
-import net.minecraft.world.level.Level;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.projectile.ProjectileEntity;
+import net.minecraft.world.World;
 import net.minecraft.world.level.gameevent.EntityPositionSource;
 import net.minecraft.world.level.gameevent.PositionSource;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.util.math.vector.Vector3d;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,13 +33,13 @@ public class ChainLightning extends AbstractMagicProjectile {
     public int maxConnectionsPerWave = 3;
     public float range = 3f;
 
-    public ChainLightning(EntityType<? extends Projectile> pEntityType, Level pLevel) {
+    public ChainLightning(EntityType<? extends ProjectileEntity> pEntityType, World pLevel) {
         super(pEntityType, pLevel);
         allVictims = new ArrayList<>();
         lastVictims = new ArrayList<>();
     }
 
-    public ChainLightning(Level level, Entity owner, Entity initialVictim) {
+    public ChainLightning(World level, Entity owner, Entity initialVictim) {
         this(EntityRegistry.CHAIN_LIGHTNING.get(), level);
         this.setOwner(owner);
         this.setPos(initialVictim.position());
@@ -57,9 +57,9 @@ public class ChainLightning extends AbstractMagicProjectile {
                 //First time zap
                 doHurt(initialVictim);
                 if (getOwner() != null) {
-                    Vec3 start = getOwner().position().add(0, getOwner().getBbHeight() / 2, 0);
+                    Vector3d start = getOwner().position().add(0, getOwner().getBbHeight() / 2, 0);
                     PositionSource dest = new EntityPositionSource(initialVictim, initialVictim.getBbHeight() / 2);
-                    ((ServerLevel) level).sendParticles(new ZapParticleOption(dest), start.x, start.y, start.z, 1, 0, 0, 0, 0);
+                    ((ServerWorld) level).sendParticles(new ZapParticleOption(dest), start.x, start.y, start.z, 1, 0, 0, 0, 0);
                 }
 
             } else {
@@ -75,9 +75,9 @@ public class ChainLightning extends AbstractMagicProjectile {
                             doHurt(victim);
                             victim.playSound(SoundRegistry.CHAIN_LIGHTNING_CHAIN.get(), 2, 1);
                             zapsThisWave.getAndIncrement();
-                            Vec3 start = new Vec3(entity.xOld, entity.yOld, entity.zOld).add(0, entity.getBbHeight() / 2, 0);
+                            Vector3d start = new Vector3d(entity.xOld, entity.yOld, entity.zOld).add(0, entity.getBbHeight() / 2, 0);
                             PositionSource dest = new EntityPositionSource(victim, victim.getBbHeight() / 2);
-                            ((ServerLevel) level).sendParticles(new ZapParticleOption(dest), start.x, start.y, start.z, 1, 0, 0, 0, 0);
+                            ((ServerWorld) level).sendParticles(new ZapParticleOption(dest), start.x, start.y, start.z, 1, 0, 0, 0, 0);
                         }
                     });
                 }

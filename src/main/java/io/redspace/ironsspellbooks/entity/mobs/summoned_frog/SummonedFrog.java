@@ -11,40 +11,53 @@ import io.redspace.ironsspellbooks.registries.MobEffectRegistry;
 import io.redspace.ironsspellbooks.spells.SpellType;
 import io.redspace.ironsspellbooks.util.OwnerHelper;
 import io.redspace.ironsspellbooks.util.Utils;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.valueproviders.UniformInt;
-import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.util.DamageSource;
 import net.minecraft.world.entity.*;
-import net.minecraft.world.entity.ai.Brain;
+import net.minecraft.entity.ai.brain.Brain;
 import net.minecraft.world.entity.ai.behavior.*;
 import net.minecraft.world.entity.ai.goal.*;
-import net.minecraft.world.entity.ai.memory.MemoryModuleType;
-import net.minecraft.world.entity.ai.memory.MemoryStatus;
-import net.minecraft.world.entity.ai.navigation.PathNavigation;
+import net.minecraft.entity.ai.brain.memory.MemoryModuleType;
+import net.minecraft.entity.ai.brain.memory.MemoryModuleStatus;
+import net.minecraft.pathfinding.PathNavigator;
 import net.minecraft.world.entity.ai.sensing.NearestVisibleLivingEntitySensor;
-import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.world.entity.animal.frog.Frog;
 import net.minecraft.world.entity.animal.frog.ShootTongue;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.schedule.Activity;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.LeavesBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.pathfinder.BlockPathTypes;
-import net.minecraft.world.level.pathfinder.WalkNodeEvaluator;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.ai.brain.schedule.Activity;
+import net.minecraft.world.World;
+import net.minecraft.world.IWorldReader;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.LeavesBlock;
+import net.minecraft.block.BlockState;
+import net.minecraft.pathfinding.PathNodeType;
+import net.minecraft.pathfinding.WalkNodeProcessor;
 
 import javax.annotation.Nullable;
 import java.util.EnumSet;
 import java.util.UUID;
 
+import net.minecraft.entity.CreatureEntity;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.ai.brain.task.FindNewAttackTargetTask;
+import net.minecraft.entity.ai.brain.task.LookTask;
+import net.minecraft.entity.ai.brain.task.WalkToTargetTask;
+import net.minecraft.entity.ai.goal.Goal;
+import net.minecraft.entity.ai.goal.LookAtGoal;
+import net.minecraft.entity.ai.goal.SwimGoal;
+import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
+
 public class SummonedFrog extends Frog implements MagicSummon {
-    public SummonedFrog(EntityType<? extends Animal> pEntityType, Level pLevel) {
+    public SummonedFrog(EntityType<? extends AnimalEntity> pEntityType, World pLevel) {
         super(pEntityType, pLevel);
     }
 
@@ -56,8 +69,8 @@ public class SummonedFrog extends Frog implements MagicSummon {
         var brain = (Brain<Frog>) super.makeBrain(pDynamic);
         brain.removeAllBehaviors();
         brain.addActivity(Activity.CORE, 0, ImmutableList.of(
-                new LookAtTargetSink(45, 90),
-                new MoveToTargetSink(),
+                new LookTask(45, 90),
+                new WalkToTargetTask(),
                 new CountDownCooldownTicks(MemoryModuleType.TEMPTATION_COOLDOWN_TICKS),
                 new CountDownCooldownTicks(MemoryModuleType.LONG_JUMP_COOLDOWN_TICKS)));
         initTongueActivity(brain);
@@ -68,12 +81,12 @@ public class SummonedFrog extends Frog implements MagicSummon {
 
     @Override
     public void registerGoals() {
-        this.goalSelector.addGoal(0, new FloatGoal(this));
+        this.goalSelector.addGoal(0, new SwimGoal(this));
         //this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.2f, true));
         this.goalSelector.addGoal(7, new FrogFollowerOwnerGoal(this, this::getSummoner, 0.9f, 15, 5, 25));
-        this.goalSelector.addGoal(8, new WaterAvoidingRandomStrollGoal(this, 0.8D));
-        this.goalSelector.addGoal(9, new LookAtPlayerGoal(this, Player.class, 3.0F, 1.0F));
-        this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Mob.class, 8.0F));
+        this.goalSelector.addGoal(8, new WaterAvoidingRandomWalkingGoal(this, 0.8D));
+        this.goalSelector.addGoal(9, new LookAtGoal(this, PlayerEntity.class, 3.0F, 1.0F));
+        this.goalSelector.addGoal(10, new LookAtGoal(this, MobEntity.class, 8.0F));
 
         this.targetSelector.addGoal(1, new GenericOwnerHurtByTargetGoal(this, this::getSummoner));
         this.targetSelector.addGoal(2, new GenericOwnerHurtTargetGoal(this, this::getSummoner));
@@ -109,13 +122,13 @@ public class SummonedFrog extends Frog implements MagicSummon {
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag compoundTag) {
+    public void readAdditionalSaveData(CompoundNBT compoundTag) {
         super.readAdditionalSaveData(compoundTag);
         this.summonerUUID = OwnerHelper.deserializeOwner(compoundTag);
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag compoundTag) {
+    public void addAdditionalSaveData(CompoundNBT compoundTag) {
         super.addAdditionalSaveData(compoundTag);
         OwnerHelper.serializeOwner(compoundTag, summonerUUID);
     }
@@ -160,11 +173,11 @@ public class SummonedFrog extends Frog implements MagicSummon {
     }
     class FrogFollowerOwnerGoal extends Goal {
 
-        private final PathfinderMob entity;
+        private final CreatureEntity entity;
         private LivingEntity owner;
-        private final LevelReader level;
+        private final IWorldReader level;
         private final double speedModifier;
-        private final PathNavigation navigation;
+        private final PathNavigator navigation;
         private int timeToRecalcPath;
         private final float stopDistance;
         private final float startDistance;
@@ -172,7 +185,7 @@ public class SummonedFrog extends Frog implements MagicSummon {
         private final OwnerGetter ownerGetter;
         private final float teleportDistance;
 
-        public FrogFollowerOwnerGoal(PathfinderMob entity, OwnerGetter ownerGetter, double pSpeedModifier, float pStartDistance, float pStopDistance, float teleportDistance) {
+        public FrogFollowerOwnerGoal(CreatureEntity entity, OwnerGetter ownerGetter, double pSpeedModifier, float pStartDistance, float pStopDistance, float teleportDistance) {
             this.entity = entity;
             this.ownerGetter = ownerGetter;
             this.level = entity.level;
@@ -217,8 +230,8 @@ public class SummonedFrog extends Frog implements MagicSummon {
          */
         public void start() {
             this.timeToRecalcPath = 0;
-            this.oldWaterCost = this.entity.getPathfindingMalus(BlockPathTypes.WATER);
-            this.entity.setPathfindingMalus(BlockPathTypes.WATER, 0.0F);
+            this.oldWaterCost = this.entity.getPathfindingMalus(PathNodeType.WATER);
+            this.entity.setPathfindingMalus(PathNodeType.WATER, 0.0F);
         }
 
         /**
@@ -227,7 +240,7 @@ public class SummonedFrog extends Frog implements MagicSummon {
         public void stop() {
             this.owner = null;
             this.navigation.stop();
-            this.entity.setPathfindingMalus(BlockPathTypes.WATER, this.oldWaterCost);
+            this.entity.setPathfindingMalus(PathNodeType.WATER, this.oldWaterCost);
         }
 
         /**
@@ -276,8 +289,8 @@ public class SummonedFrog extends Frog implements MagicSummon {
         }
 
         private boolean canTeleportTo(BlockPos pPos) {
-            BlockPathTypes blockpathtypes = WalkNodeEvaluator.getBlockPathTypeStatic(this.level, pPos.mutable());
-            if (blockpathtypes != BlockPathTypes.WALKABLE) {
+            PathNodeType blockpathtypes = WalkNodeProcessor.getBlockPathTypeStatic(this.level, pPos.mutable());
+            if (blockpathtypes != PathNodeType.WALKABLE) {
                 return false;
             } else {
                 BlockState blockstate = this.level.getBlockState(pPos.below());
@@ -321,10 +334,10 @@ public class SummonedFrog extends Frog implements MagicSummon {
             return SoundEvents.FROG_LONG_JUMP;
         }, BlockTags.FROG_PREFER_JUMP_TO, 0.5F, (p_218583_) -> {
             return p_218583_.is(Blocks.LILY_PAD);
-        }))), ImmutableSet.of(Pair.of(MemoryModuleType.TEMPTING_PLAYER, MemoryStatus.VALUE_ABSENT), Pair.of(MemoryModuleType.BREED_TARGET, MemoryStatus.VALUE_ABSENT), Pair.of(MemoryModuleType.LONG_JUMP_COOLDOWN_TICKS, MemoryStatus.VALUE_ABSENT), Pair.of(MemoryModuleType.IS_IN_WATER, MemoryStatus.VALUE_ABSENT)));
+        }))), ImmutableSet.of(Pair.of(MemoryModuleType.TEMPTING_PLAYER, MemoryModuleStatus.VALUE_ABSENT), Pair.of(MemoryModuleType.BREED_TARGET, MemoryModuleStatus.VALUE_ABSENT), Pair.of(MemoryModuleType.LONG_JUMP_COOLDOWN_TICKS, MemoryModuleStatus.VALUE_ABSENT), Pair.of(MemoryModuleType.IS_IN_WATER, MemoryModuleStatus.VALUE_ABSENT)));
     }
 
     private static void initTongueActivity(Brain<Frog> pBrain) {
-        pBrain.addActivityAndRemoveMemoryWhenStopped(Activity.TONGUE, 0, ImmutableList.of(new StopAttackingIfTargetInvalid<>(), new ShootTongue(SoundEvents.FROG_TONGUE, SoundEvents.FROG_EAT)), MemoryModuleType.ATTACK_TARGET);
+        pBrain.addActivityAndRemoveMemoryWhenStopped(Activity.TONGUE, 0, ImmutableList.of(new FindNewAttackTargetTask<>(), new ShootTongue(SoundEvents.FROG_TONGUE, SoundEvents.FROG_EAT)), MemoryModuleType.ATTACK_TARGET);
     }
 }

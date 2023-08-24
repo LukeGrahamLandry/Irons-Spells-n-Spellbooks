@@ -4,39 +4,41 @@ import io.redspace.ironsspellbooks.capabilities.magic.MagicManager;
 import io.redspace.ironsspellbooks.damage.DamageSources;
 import io.redspace.ironsspellbooks.util.ParticleHelper;
 import io.redspace.ironsspellbooks.registries.ItemRegistry;
-import net.minecraft.core.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.core.cauldron.CauldronInteraction;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.SoundEvents;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.stats.Stats;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.ItemUtils;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.biome.Biome;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.DrinkHelper;
+import net.minecraft.item.Items;
+import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
 import net.minecraft.world.level.block.AbstractCauldronBlock;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.CampfireBlock;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.CampfireBlock;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 
 import java.util.Map;
 import java.util.function.Predicate;
 
+import net.minecraft.block.AbstractBlock.Properties;
+
 public class BloodCauldronBlock extends LayeredCauldronBlock {
-    public static final Predicate<Biome.Precipitation> NO_WEATHER = (p_153526_) -> false;
+    public static final Predicate<Biome.RainType> NO_WEATHER = (p_153526_) -> false;
 
     public BloodCauldronBlock() {
         super(Properties.copy(Blocks.CAULDRON), NO_WEATHER, getInteractionMap());
     }
 
     @Override
-    public void entityInside(BlockState blockState, Level level, BlockPos pos, Entity entity) {
+    public void entityInside(BlockState blockState, World level, BlockPos pos, Entity entity) {
         if (entity.tickCount % 20 == 0) {
             attemptCookEntity(blockState, level, pos, entity, () -> {
                 level.setBlockAndUpdate(pos, blockState.cycle(LayeredCauldronBlock.LEVEL));
@@ -47,7 +49,7 @@ public class BloodCauldronBlock extends LayeredCauldronBlock {
         super.entityInside(blockState, level, pos, entity);
     }
 
-    public static void attemptCookEntity(BlockState blockState, Level level, BlockPos pos, Entity entity, CookExecution execution) {
+    public static void attemptCookEntity(BlockState blockState, World level, BlockPos pos, Entity entity, CookExecution execution) {
         if (!level.isClientSide) {
             if (CampfireBlock.isLitCampfire(level.getBlockState(pos.below()))) {
                 if (level.getBlockState(pos).getBlock() instanceof AbstractCauldronBlock cauldron) {
@@ -76,15 +78,15 @@ public class BloodCauldronBlock extends LayeredCauldronBlock {
         BLOOD_CAULDRON_INTERACTIONS.put(Items.GLASS_BOTTLE, (blockState, level, blockPos, player, hand, itemStack) -> {
             if (!level.isClientSide) {
                 Item item = itemStack.getItem();
-                player.setItemInHand(hand, ItemUtils.createFilledResult(itemStack, player, new ItemStack(ItemRegistry.BLOOD_VIAL.get())));
+                player.setItemInHand(hand, DrinkHelper.createFilledResult(itemStack, player, new ItemStack(ItemRegistry.BLOOD_VIAL.get())));
                 player.awardStat(Stats.USE_CAULDRON);
                 player.awardStat(Stats.ITEM_USED.get(item));
                 LayeredCauldronBlock.lowerFillLevel(blockState, level, blockPos);
-                level.playSound(null, blockPos, SoundEvents.BOTTLE_FILL, SoundSource.BLOCKS, 1.0F, 1.0F);
+                level.playSound(null, blockPos, SoundEvents.BOTTLE_FILL, SoundCategory.BLOCKS, 1.0F, 1.0F);
                 level.gameEvent(null, GameEvent.FLUID_PICKUP, blockPos);
             }
 
-            return InteractionResult.sidedSuccess(level.isClientSide);
+            return ActionResultType.sidedSuccess(level.isClientSide);
         });
 //        //Put Blood
 //        BLOOD_CAULDRON_INTERACTIONS.put(superHackyBloodVial, (blockState, level, blockPos, player, hand, itemStack) -> {

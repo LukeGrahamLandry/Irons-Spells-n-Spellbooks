@@ -3,7 +3,7 @@ package io.redspace.ironsspellbooks.network;
 
 import io.redspace.ironsspellbooks.capabilities.magic.SyncedSpellData;
 import io.redspace.ironsspellbooks.player.ClientMagicData;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
@@ -15,11 +15,11 @@ public class ClientboundSyncPlayerData {
         this.syncedSpellData = playerSyncedData;
     }
 
-    public ClientboundSyncPlayerData(FriendlyByteBuf buf) {
+    public ClientboundSyncPlayerData(PacketBuffer buf) {
         syncedSpellData = SyncedSpellData.SYNCED_SPELL_DATA.read(buf);
     }
 
-    public void toBytes(FriendlyByteBuf buf) {
+    public void toBytes(PacketBuffer buf) {
         SyncedSpellData.SYNCED_SPELL_DATA.write(buf, syncedSpellData);
     }
 

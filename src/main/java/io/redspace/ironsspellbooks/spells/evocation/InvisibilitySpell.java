@@ -5,18 +5,18 @@ import io.redspace.ironsspellbooks.capabilities.magic.PlayerMagicData;
 import io.redspace.ironsspellbooks.registries.MobEffectRegistry;
 import io.redspace.ironsspellbooks.spells.*;
 import io.redspace.ironsspellbooks.util.Utils;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.ai.goal.WrappedGoal;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.SoundEvents;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.ai.goal.PrioritizedGoal;
 import net.minecraft.world.entity.ai.goal.target.TargetGoal;
-import net.minecraft.world.entity.ai.targeting.TargetingConditions;
+import net.minecraft.entity.EntityPredicate;
 import net.minecraft.world.entity.animal.Animal;
-import net.minecraft.world.level.Level;
+import net.minecraft.world.World;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,8 +27,8 @@ public class InvisibilitySpell extends AbstractSpell {
     }
 
     @Override
-    public List<MutableComponent> getUniqueInfo(LivingEntity caster) {
-        return List.of(Component.translatable("ui.irons_spellbooks.effect_length", Utils.timeFromTicks(getSpellPower(caster) * 20, 1)));
+    public List<IFormattableTextComponent> getUniqueInfo(LivingEntity caster) {
+        return List.of(ITextComponent.translatable("ui.irons_spellbooks.effect_length", Utils.timeFromTicks(getSpellPower(caster) * 20, 1)));
     }
 
     public static DefaultConfig defaultConfig = new DefaultConfig()
@@ -60,22 +60,22 @@ public class InvisibilitySpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level world, LivingEntity entity, PlayerMagicData playerMagicData) {
+    public void onCast(World world, LivingEntity entity, PlayerMagicData playerMagicData) {
 
-        entity.addEffect(new MobEffectInstance(MobEffectRegistry.TRUE_INVISIBILITY.get(), getDuration(entity), 0, false, false, true));
+        entity.addEffect(new EffectInstance(MobEffectRegistry.TRUE_INVISIBILITY.get(), getDuration(entity), 0, false, false, true));
 
-        var targetingCondition = TargetingConditions.forCombat().selector(e -> {
+        var targetingCondition = EntityPredicate.forCombat().selector(e -> {
             //IronsSpellbooks.LOGGER.debug("InvisibilitySpell TargetingConditions:{}", e);
-            return (((Mob) e).getTarget() == entity);
+            return (((MobEntity) e).getTarget() == entity);
         });
 
-        world.getNearbyEntities(Mob.class, targetingCondition, entity, entity.getBoundingBox().inflate(40D))
+        world.getNearbyEntities(MobEntity.class, targetingCondition, entity, entity.getBoundingBox().inflate(40D))
                 .forEach(entityTargetingCaster -> {
                     //IronsSpellbooks.LOGGER.debug("InvisibilitySpell Clear Target From:{}", entityTargetingCaster);
                     entityTargetingCaster.setTarget(null);
                     entityTargetingCaster.setLastHurtMob(null);
                     entityTargetingCaster.setLastHurtByMob(null);
-                    entityTargetingCaster.targetSelector.getAvailableGoals().forEach(WrappedGoal::stop);
+                    entityTargetingCaster.targetSelector.getAvailableGoals().forEach(PrioritizedGoal::stop);
                 });
 
         super.onCast(world, entity, playerMagicData);

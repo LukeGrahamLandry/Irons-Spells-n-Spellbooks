@@ -5,7 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import io.redspace.ironsspellbooks.spells.SchoolType;
 import io.redspace.ironsspellbooks.spells.SpellType;
-import net.minecraft.util.GsonHelper;
+import net.minecraft.util.JSONUtils;
 import net.minecraft.util.RandomSource;
 
 import java.util.ArrayList;
@@ -50,8 +50,8 @@ public class SpellFilter {
     }
 
     public static SpellFilter deserializeSpellFilter(JsonObject json) {
-        if (GsonHelper.isValidNode(json, "school")) {
-            var schoolType = GsonHelper.getAsString(json, "school");
+        if (JSONUtils.isValidNode(json, "school")) {
+            var schoolType = JSONUtils.getAsString(json, "school");
             return switch (schoolType.toLowerCase()) {
                 case "fire" -> new SpellFilter(SchoolType.FIRE);
                 case "ice" -> new SpellFilter(SchoolType.ICE);
@@ -64,8 +64,8 @@ public class SpellFilter {
                 case "poison" -> new SpellFilter(SchoolType.POISON);
                 default -> new SpellFilter();
             };
-        } else if (GsonHelper.isArrayNode(json, "spells")) {
-            var spellsFromJson = GsonHelper.getAsJsonArray(json, "spells");
+        } else if (JSONUtils.isArrayNode(json, "spells")) {
+            var spellsFromJson = JSONUtils.getAsJsonArray(json, "spells");
             List<SpellType> applicableSpellList = new ArrayList<>();
             for (JsonElement element : spellsFromJson) {
                 String spell = element.getAsString();

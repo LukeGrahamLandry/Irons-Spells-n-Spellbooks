@@ -6,13 +6,13 @@ import io.redspace.ironsspellbooks.network.spell.ClientboundHealParticles;
 import io.redspace.ironsspellbooks.setup.Messages;
 import io.redspace.ironsspellbooks.spells.*;
 import io.redspace.ironsspellbooks.util.Utils;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.world.World;
+import net.minecraft.util.math.EntityRayTraceResult;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -24,9 +24,9 @@ public class BlessingOfLifeSpell extends AbstractSpell {
         this(1);
     }
     @Override
-    public List<MutableComponent> getUniqueInfo(LivingEntity caster) {
+    public List<IFormattableTextComponent> getUniqueInfo(LivingEntity caster) {
         return List.of(
-                Component.translatable("ui.irons_spellbooks.healing", Utils.stringTruncation(getSpellPower(caster), 1))
+                ITextComponent.translatable("ui.irons_spellbooks.healing", Utils.stringTruncation(getSpellPower(caster), 1))
         );
     }
 
@@ -60,14 +60,14 @@ public class BlessingOfLifeSpell extends AbstractSpell {
 
 
     @Override
-    public boolean checkPreCastConditions(Level level, LivingEntity entity, PlayerMagicData playerMagicData) {
+    public boolean checkPreCastConditions(World level, LivingEntity entity, PlayerMagicData playerMagicData) {
         return Utils.preCastTargetHelper(level, entity, playerMagicData, getSpellType(), 64, .35f);
     }
 
     @Override
-    public void onCast(Level world, LivingEntity entity, PlayerMagicData playerMagicData) {
+    public void onCast(World world, LivingEntity entity, PlayerMagicData playerMagicData) {
         if (playerMagicData.getAdditionalCastData() instanceof CastTargetingData healTargetingData) {
-            var targetEntity = healTargetingData.getTarget((ServerLevel) world);
+            var targetEntity = healTargetingData.getTarget((ServerWorld) world);
             if (targetEntity != null) {
                 targetEntity.heal(getSpellPower(entity));
                 Messages.sendToPlayersTrackingEntity(new ClientboundHealParticles(targetEntity.position()), targetEntity, true);
@@ -80,7 +80,7 @@ public class BlessingOfLifeSpell extends AbstractSpell {
     @Nullable
     private LivingEntity findTarget(LivingEntity caster) {
         var target = Utils.raycastForEntity(caster.level, caster, 32, true, 0.35f);
-        if (target instanceof EntityHitResult entityHit && entityHit.getEntity() instanceof LivingEntity livingTarget) {
+        if (target instanceof EntityRayTraceResult entityHit && entityHit.getEntity() instanceof LivingEntity livingTarget) {
             return livingTarget;
         } else {
             return null;

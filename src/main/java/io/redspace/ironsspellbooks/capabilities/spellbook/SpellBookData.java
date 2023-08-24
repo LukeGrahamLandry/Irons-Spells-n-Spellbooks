@@ -4,10 +4,10 @@ import io.redspace.ironsspellbooks.item.SpellBook;
 import io.redspace.ironsspellbooks.item.UniqueSpellBook;
 import io.redspace.ironsspellbooks.spells.AbstractSpell;
 import io.redspace.ironsspellbooks.spells.SpellType;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.item.ItemStack;
 import org.apache.commons.lang3.ArrayUtils;
 
 import javax.annotation.Nullable;
@@ -30,9 +30,9 @@ public class SpellBookData {
     private int spellSlots;
     private int spellCount = 0;
     private boolean dirty = true;
-    private List<Component> hoverText;
+    private List<ITextComponent> hoverText;
 
-    public SpellBookData(CompoundTag tag) {
+    public SpellBookData(CompoundNBT tag) {
         loadFromNBT(tag);
     }
 
@@ -179,16 +179,16 @@ public class SpellBookData {
         return false;
     }
 
-    public CompoundTag getNBT() {
-        CompoundTag compound = new CompoundTag();
+    public CompoundNBT getNBT() {
+        CompoundNBT compound = new CompoundNBT();
         compound.putInt(SPELL_SLOTS, spellSlots);
         compound.putInt(ACTIVE_SPELL_INDEX, activeSpellIndex);
 
-        ListTag listTagSpells = new ListTag();
+        ListNBT listTagSpells = new ListNBT();
         for (int i = 0; i < transcribedSpells.length; i++) {
             var spell = transcribedSpells[i];
             if (spell != null) {
-                CompoundTag ct = new CompoundTag();
+                CompoundNBT ct = new CompoundNBT();
                 ct.putInt(ID, spell.getID());
                 ct.putInt(LEVEL, spell.getLevel(null));
                 ct.putInt(SLOT, i);
@@ -200,16 +200,16 @@ public class SpellBookData {
         return compound;
     }
 
-    public void loadFromNBT(CompoundTag compound) {
+    public void loadFromNBT(CompoundNBT compound) {
         this.spellSlots = compound.getInt(SPELL_SLOTS);
         this.transcribedSpells = new AbstractSpell[spellSlots];
         this.activeSpellIndex = compound.getInt(ACTIVE_SPELL_INDEX);
 
-        ListTag listTagSpells = (ListTag) compound.get(SPELLS);
+        ListNBT listTagSpells = (ListNBT) compound.get(SPELLS);
         spellCount = 0;
         if (listTagSpells != null) {
             listTagSpells.forEach(tag -> {
-                CompoundTag t = (CompoundTag) tag;
+                CompoundNBT t = (CompoundNBT) tag;
                 int id = t.getInt(ID);
                 int level = t.getInt(LEVEL);
                 int index = t.getInt(SLOT);
@@ -225,7 +225,7 @@ public class SpellBookData {
             return new SpellBookData(0);
         }
 
-        CompoundTag tag = stack.getTagElement(ISB_SPELLBOOK);
+        CompoundNBT tag = stack.getTagElement(ISB_SPELLBOOK);
 
         if (tag != null) {
             return new SpellBookData(tag);

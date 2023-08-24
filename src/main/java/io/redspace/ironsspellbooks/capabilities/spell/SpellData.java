@@ -5,10 +5,10 @@ import io.redspace.ironsspellbooks.item.weapons.MagicSwordItem;
 import io.redspace.ironsspellbooks.registries.ItemRegistry;
 import io.redspace.ironsspellbooks.spells.AbstractSpell;
 import io.redspace.ironsspellbooks.spells.SpellType;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.item.ItemStack;
 
 import java.util.List;
 
@@ -19,8 +19,8 @@ public class SpellData {
     public static final String ISB_SPELL = "ISB_spell";
     public static final String SPELL_TYPE = "type";
     public static final String SPELL_LEVEL = "level";
-    private MutableComponent displayName;
-    private List<MutableComponent> hoverText;
+    private IFormattableTextComponent displayName;
+    private List<IFormattableTextComponent> hoverText;
     private AbstractSpell spell;
     private int spellId;
     private int spellLevel;
@@ -32,7 +32,7 @@ public class SpellData {
     }
 
     public static SpellData getSpellData(ItemStack stack) {
-        CompoundTag tag = stack.getTagElement(ISB_SPELL);
+        CompoundNBT tag = stack.getTagElement(ISB_SPELL);
 
         if (tag != null) {
             return new SpellData(SpellType.getTypeFromValue(tag.getInt(SPELL_TYPE)), tag.getInt(SPELL_LEVEL));
@@ -46,12 +46,12 @@ public class SpellData {
     }
 
     public static boolean hasSpellData(ItemStack itemStack) {
-        CompoundTag tag = itemStack.getTagElement(ISB_SPELL);
+        CompoundNBT tag = itemStack.getTagElement(ISB_SPELL);
         return tag != null;
     }
 
     public static void setSpellData(ItemStack stack, int spellTypeId, int spellLevel) {
-        var spellTag = new CompoundTag();
+        var spellTag = new CompoundNBT();
         spellTag.putInt(SPELL_TYPE, spellTypeId);
         spellTag.putInt(SPELL_LEVEL, spellLevel);
         stack.addTagElement(ISB_SPELL, spellTag);
@@ -81,9 +81,9 @@ public class SpellData {
         return spellLevel;
     }
 
-    public Component getDisplayName() {
+    public ITextComponent getDisplayName() {
         if (displayName == null) {
-            displayName = getSpell().getSpellType().getDisplayName().append(" ").append(Component.translatable(ItemRegistry.SCROLL.get().getDescriptionId()));//.append(" ").append(Component.translatable("tooltip.irons_spellbooks.rarity",getSpell().getRarity().getDisplayName().getString()));
+            displayName = getSpell().getSpellType().getDisplayName().append(" ").append(ITextComponent.translatable(ItemRegistry.SCROLL.get().getDescriptionId()));//.append(" ").append(Component.translatable("tooltip.irons_spellbooks.rarity",getSpell().getRarity().getDisplayName().getString()));
         }
         return displayName;
     }

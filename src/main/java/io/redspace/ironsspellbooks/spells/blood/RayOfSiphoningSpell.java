@@ -8,14 +8,14 @@ import io.redspace.ironsspellbooks.registries.SoundRegistry;
 import io.redspace.ironsspellbooks.setup.Messages;
 import io.redspace.ironsspellbooks.spells.*;
 import io.redspace.ironsspellbooks.util.Utils;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.HitResult;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.world.World;
+import net.minecraft.util.math.EntityRayTraceResult;
+import net.minecraft.util.math.RayTraceResult;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,9 +26,9 @@ public class RayOfSiphoningSpell extends AbstractSpell {
     }
 
     @Override
-    public List<MutableComponent> getUniqueInfo(LivingEntity caster) {
-        return List.of(Component.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getTickDamage(caster), 1)),
-                Component.translatable("ui.irons_spellbooks.distance", Utils.stringTruncation(getRange(0), 1)));
+    public List<IFormattableTextComponent> getUniqueInfo(LivingEntity caster) {
+        return List.of(ITextComponent.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getTickDamage(caster), 1)),
+                ITextComponent.translatable("ui.irons_spellbooks.distance", Utils.stringTruncation(getRange(0), 1)));
     }
 
     public static DefaultConfig defaultConfig = new DefaultConfig()
@@ -59,10 +59,10 @@ public class RayOfSiphoningSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level level, LivingEntity entity, PlayerMagicData playerMagicData) {
+    public void onCast(World level, LivingEntity entity, PlayerMagicData playerMagicData) {
         var hitResult = Utils.raycastForEntity(level, entity, getRange(0), true, .15f);
-        if (hitResult.getType() == HitResult.Type.ENTITY) {
-            Entity target = ((EntityHitResult) hitResult).getEntity();
+        if (hitResult.getType() == RayTraceResult.Type.ENTITY) {
+            Entity target = ((EntityRayTraceResult) hitResult).getEntity();
             if (target instanceof LivingEntity) {
                 if (DamageSources.applyDamage(target, getTickDamage(entity), getSpellType().getDamageSource(entity), SchoolType.BLOOD)) {
                     entity.heal(getTickDamage(entity));

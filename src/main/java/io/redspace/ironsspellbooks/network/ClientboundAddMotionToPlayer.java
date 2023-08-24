@@ -1,8 +1,8 @@
 package io.redspace.ironsspellbooks.network;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
@@ -18,21 +18,21 @@ public class ClientboundAddMotionToPlayer {
         this.preserveMomentum = preserveMomentum;
     }
 
-    public ClientboundAddMotionToPlayer(Vec3 motion, boolean preserveMomentum) {
+    public ClientboundAddMotionToPlayer(Vector3d motion, boolean preserveMomentum) {
         this.x = motion.x;
         this.y = motion.y;
         this.z = motion.z;
         this.preserveMomentum = preserveMomentum;
     }
 
-    public ClientboundAddMotionToPlayer(FriendlyByteBuf buf) {
+    public ClientboundAddMotionToPlayer(PacketBuffer buf) {
         x = buf.readDouble();
         y = buf.readDouble();
         z = buf.readDouble();
         preserveMomentum = buf.readBoolean();
     }
 
-    public void toBytes(FriendlyByteBuf buf) {
+    public void toBytes(PacketBuffer buf) {
         buf.writeDouble(x);
         buf.writeDouble(y);
         buf.writeDouble(z);

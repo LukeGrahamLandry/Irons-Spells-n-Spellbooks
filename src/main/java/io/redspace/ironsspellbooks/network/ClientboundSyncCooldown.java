@@ -3,7 +3,7 @@ package io.redspace.ironsspellbooks.network;
 import io.redspace.ironsspellbooks.IronsSpellbooks;
 import io.redspace.ironsspellbooks.player.ClientMagicData;
 import io.redspace.ironsspellbooks.spells.SpellType;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
@@ -18,12 +18,12 @@ public class ClientboundSyncCooldown {
         this.duration = duration;
     }
 
-    public ClientboundSyncCooldown(FriendlyByteBuf buf) {
+    public ClientboundSyncCooldown(PacketBuffer buf) {
         spellId = buf.readInt();
         duration = buf.readInt();
     }
 
-    public void toBytes(FriendlyByteBuf buf) {
+    public void toBytes(PacketBuffer buf) {
         buf.writeInt(spellId);
         buf.writeInt(duration);
     }

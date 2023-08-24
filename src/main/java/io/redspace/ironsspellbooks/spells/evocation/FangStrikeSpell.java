@@ -5,16 +5,16 @@ import io.redspace.ironsspellbooks.entity.mobs.abstract_spell_casting_mob.Abstra
 import io.redspace.ironsspellbooks.entity.spells.ExtendedEvokerFang;
 import io.redspace.ironsspellbooks.spells.*;
 import io.redspace.ironsspellbooks.util.Utils;
-import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.util.Mth;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.ClipContext;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.SoundEvents;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.util.math.RayTraceContext;
+import net.minecraft.world.World;
+import net.minecraft.util.math.vector.Vector3d;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,9 +25,9 @@ public class FangStrikeSpell extends AbstractSpell {
     }
 
     @Override
-    public List<MutableComponent> getUniqueInfo(LivingEntity caster) {
-        return List.of(Component.translatable("ui.irons_spellbooks.fang_count", getCount(caster)),
-                Component.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(caster), 1)));
+    public List<IFormattableTextComponent> getUniqueInfo(LivingEntity caster) {
+        return List.of(ITextComponent.translatable("ui.irons_spellbooks.fang_count", getCount(caster)),
+                ITextComponent.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(caster), 1)));
     }
 
     public static DefaultConfig defaultConfig = new DefaultConfig()
@@ -58,16 +58,16 @@ public class FangStrikeSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level world, LivingEntity entity, PlayerMagicData playerMagicData) {
-        Vec3 forward = entity.getForward().multiply(1, 0, 1).normalize();
-        Vec3 start = entity.getEyePosition().add(forward.scale(1.5));
+    public void onCast(World world, LivingEntity entity, PlayerMagicData playerMagicData) {
+        Vector3d forward = entity.getForward().multiply(1, 0, 1).normalize();
+        Vector3d start = entity.getEyePosition().add(forward.scale(1.5));
 
         for (int i = 0; i < getCount(entity); i++) {
-            Vec3 spawn = start.add(forward.scale(i));
-            spawn = new Vec3(spawn.x, getGroundLevel(world, spawn, 8), spawn.z);
+            Vector3d spawn = start.add(forward.scale(i));
+            spawn = new Vector3d(spawn.x, getGroundLevel(world, spawn, 8), spawn.z);
             if (!world.getBlockState(new BlockPos(spawn).below()).isAir()) {
                 int delay = i / 3;
-                ExtendedEvokerFang fang = new ExtendedEvokerFang(world, spawn.x, spawn.y, spawn.z, (entity.getYRot() - 90) * Mth.DEG_TO_RAD, delay, entity, getDamage(entity));
+                ExtendedEvokerFang fang = new ExtendedEvokerFang(world, spawn.x, spawn.y, spawn.z, (entity.getYRot() - 90) * MathHelper.DEG_TO_RAD, delay, entity, getDamage(entity));
                 world.addFreshEntity(fang);
             }
 
@@ -75,7 +75,7 @@ public class FangStrikeSpell extends AbstractSpell {
         super.onCast(world, entity, playerMagicData);
     }
 
-    private int getGroundLevel(Level level, Vec3 start, int maxSteps) {
+    private int getGroundLevel(World level, Vector3d start, int maxSteps) {
         if (!level.getBlockState(new BlockPos(start)).isAir()) {
             for (int i = 0; i < maxSteps; i++) {
                 start = start.add(0, 1, 0);
@@ -84,7 +84,7 @@ public class FangStrikeSpell extends AbstractSpell {
             }
         }
         //Vec3 upper = level.clip(new ClipContext(start, start.add(0, maxSteps, 0), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, null)).getLocation();
-        Vec3 lower = level.clip(new ClipContext(start, start.add(0, maxSteps * -2, 0), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, null)).getLocation();
+        Vector3d lower = level.clip(new RayTraceContext(start, start.add(0, maxSteps * -2, 0), RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, null)).getLocation();
         return (int) lower.y;
     }
 

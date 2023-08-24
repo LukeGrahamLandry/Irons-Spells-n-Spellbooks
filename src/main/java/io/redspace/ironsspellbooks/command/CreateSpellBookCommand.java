@@ -7,16 +7,16 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
-import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.commands.Commands;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.command.CommandSource;
+import net.minecraft.command.Commands;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.item.ItemStack;
 
 public class CreateSpellBookCommand {
 
-    private static final SimpleCommandExceptionType ERROR_FAILED = new SimpleCommandExceptionType(Component.translatable("commands.irons_spellbooks.create_spell_book.failed"));
+    private static final SimpleCommandExceptionType ERROR_FAILED = new SimpleCommandExceptionType(ITextComponent.translatable("commands.irons_spellbooks.create_spell_book.failed"));
 
-    public static void register(CommandDispatcher<CommandSourceStack> pDispatcher) {
+    public static void register(CommandDispatcher<CommandSource> pDispatcher) {
         pDispatcher.register(Commands.literal("createSpellBook").requires((p_138819_) -> {
             return p_138819_.hasPermission(2);
         }).then(Commands.argument("slots", IntegerArgumentType.integer(1, 15)).executes((commandContext) -> {
@@ -24,7 +24,7 @@ public class CreateSpellBookCommand {
         })));
     }
 
-    private static int crateSpellBook(CommandSourceStack source, int slots) throws CommandSyntaxException {
+    private static int crateSpellBook(CommandSource source, int slots) throws CommandSyntaxException {
         var serverPlayer = source.getPlayer();
         if (serverPlayer != null) {
             ItemStack itemstack = new ItemStack(ItemRegistry.WIMPY_SPELL_BOOK.get());

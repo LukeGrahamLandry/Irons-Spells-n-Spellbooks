@@ -1,17 +1,17 @@
 package io.redspace.ironsspellbooks.gui.overlays;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import io.redspace.ironsspellbooks.IronsSpellbooks;
 import io.redspace.ironsspellbooks.capabilities.spell.SpellData;
 import io.redspace.ironsspellbooks.config.ClientConfigs;
 import io.redspace.ironsspellbooks.item.SpellBook;
 import io.redspace.ironsspellbooks.player.ClientMagicData;
-import net.minecraft.ChatFormatting;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.client.gui.overlay.ForgeGui;
 
 import static io.redspace.ironsspellbooks.registries.AttributeRegistry.MAX_MANA;
@@ -45,9 +45,9 @@ public class ManaBarOverlay {
     static final int CHAR_WIDTH = 6;
     static final int HUNGER_BAR_OFFSET = 50;
     static final int SCREEN_BORDER_MARGIN = 20;
-    static final int TEXT_COLOR = ChatFormatting.AQUA.getColor();
+    static final int TEXT_COLOR = TextFormatting.AQUA.getColor();
 
-    public static void render(ForgeGui gui, PoseStack poseStack, float partialTick, int screenWidth, int screenHeight) {
+    public static void render(ForgeGui gui, MatrixStack poseStack, float partialTick, int screenWidth, int screenHeight) {
         var player = Minecraft.getInstance().player;
 
         if (!shouldShowManaBar(player))
@@ -87,7 +87,7 @@ public class ManaBarOverlay {
         }
     }
 
-    public static boolean shouldShowManaBar(Player player) {
+    public static boolean shouldShowManaBar(PlayerEntity player) {
         //We show mana if they are holding an item that can cast spells or if their mana is not full
         var display = ClientConfigs.MANA_BAR_DISPLAY.get();
         return !player.isSpectator() && display != Display.Never && (display == Display.Always || player.isHolding((itemstack -> itemstack.getItem() instanceof SpellBook || SpellData.hasSpellData(itemstack))) || ClientMagicData.getPlayerMana() < player.getAttributeValue(MAX_MANA.get()));

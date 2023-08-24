@@ -8,15 +8,15 @@ import io.redspace.ironsspellbooks.gui.inscription_table.InscriptionTableScreen;
 import io.redspace.ironsspellbooks.gui.scroll_forge.ScrollForgeScreen;
 import io.redspace.ironsspellbooks.registries.*;
 import io.redspace.ironsspellbooks.setup.ModSetup;
-import net.minecraft.client.gui.screens.MenuScreens;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
+import net.minecraft.client.gui.ScreenManager;
+import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.PackType;
-import net.minecraft.server.packs.metadata.pack.PackMetadataSection;
-import net.minecraft.server.packs.repository.Pack;
-import net.minecraft.server.packs.repository.PackSource;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourcePackType;
+import net.minecraft.resources.data.PackMetadataSection;
+import net.minecraft.resources.ResourcePackInfo;
+import net.minecraft.resources.IPackNameDecorator;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AddPackFindersEvent;
@@ -94,12 +94,12 @@ public class IronsSpellbooks {
     @SuppressWarnings("removal")
     private void clientSetup(final FMLClientSetupEvent e) {
 
-        MenuScreens.register(MenuRegistry.INSCRIPTION_TABLE_MENU.get(), InscriptionTableScreen::new);
-        MenuScreens.register(MenuRegistry.SCROLL_FORGE_MENU.get(), ScrollForgeScreen::new);
-        MenuScreens.register(MenuRegistry.ARCANE_ANVIL_MENU.get(), ArcaneAnvilScreen::new);
+        ScreenManager.register(MenuRegistry.INSCRIPTION_TABLE_MENU.get(), InscriptionTableScreen::new);
+        ScreenManager.register(MenuRegistry.SCROLL_FORGE_MENU.get(), ScrollForgeScreen::new);
+        ScreenManager.register(MenuRegistry.ARCANE_ANVIL_MENU.get(), ArcaneAnvilScreen::new);
 
-        ItemBlockRenderTypes.setRenderLayer(BlockRegistry.INSCRIPTION_TABLE_BLOCK.get(), RenderType.cutout());
-        ItemBlockRenderTypes.setRenderLayer(BlockRegistry.ARMOR_PILE_BLOCK.get(), RenderType.translucent());
+        RenderTypeLookup.setRenderLayer(BlockRegistry.INSCRIPTION_TABLE_BLOCK.get(), RenderType.cutout());
+        RenderTypeLookup.setRenderLayer(BlockRegistry.ARMOR_PILE_BLOCK.get(), RenderType.translucent());
 
 
     }
@@ -107,8 +107,8 @@ public class IronsSpellbooks {
     public void addPackFinders(AddPackFindersEvent event) {
         IronsSpellbooks.LOGGER.debug("addPackFinders");
         try {
-            if (event.getPackType() == PackType.CLIENT_RESOURCES) {
-                addBuiltinPack(event, "legacy_dead_king_resource_pack", Component.literal("Legacy Dead King"));
+            if (event.getPackType() == ResourcePackType.CLIENT_RESOURCES) {
+                addBuiltinPack(event, "legacy_dead_king_resource_pack", ITextComponent.literal("Legacy Dead King"));
             }
         } catch (IOException ex) {
             IronsSpellbooks.LOGGER.error("Failed to load a builtin resource pack! If you are seeing this message, please report an issue to https://github.com/iron431/Irons-Spells-n-Spellbooks/issues");
@@ -116,7 +116,7 @@ public class IronsSpellbooks {
         }
     }
 
-    private static void addBuiltinPack(AddPackFindersEvent event, String filename, Component displayName) throws IOException {
+    private static void addBuiltinPack(AddPackFindersEvent event, String filename, ITextComponent displayName) throws IOException {
         filename = "builtin_resource_packs/" + filename;
         var resourcePath = ModList.get().getModFileById(MODID).getFile().findResource(filename);
         var pack = new PathPackResources(ModList.get().getModFileById(MODID).getFile().getFileName() + ":" + resourcePath, resourcePath);
@@ -126,7 +126,7 @@ public class IronsSpellbooks {
             event.addRepositorySource((packConsumer, packConstructor) ->
                     packConsumer.accept(packConstructor.create(
                             id, displayName, false,
-                            () -> pack, metadataSection, Pack.Position.TOP, PackSource.BUILT_IN, false)));
+                            () -> pack, metadataSection, ResourcePackInfo.Priority.TOP, IPackNameDecorator.BUILT_IN, false)));
         }
     }
 

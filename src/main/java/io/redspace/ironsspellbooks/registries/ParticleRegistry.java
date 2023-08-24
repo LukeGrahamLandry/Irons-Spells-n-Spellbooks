@@ -4,8 +4,8 @@ import com.mojang.serialization.Codec;
 import io.redspace.ironsspellbooks.IronsSpellbooks;
 import io.redspace.ironsspellbooks.particle.FogParticleOptions;
 import io.redspace.ironsspellbooks.particle.ZapParticleOption;
-import net.minecraft.core.particles.ParticleType;
-import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.particles.ParticleType;
+import net.minecraft.particles.BasicParticleType;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -27,18 +27,18 @@ public class ParticleRegistry {
     - register it in client setup
      */
 
-    public static final RegistryObject<SimpleParticleType> BLOOD_PARTICLE = PARTICLE_TYPES.register("blood", () -> new SimpleParticleType(false));
-    public static final RegistryObject<SimpleParticleType> WISP_PARTICLE = PARTICLE_TYPES.register("wisp", () -> new SimpleParticleType(false));
-    public static final RegistryObject<SimpleParticleType> BLOOD_GROUND_PARTICLE = PARTICLE_TYPES.register("blood_ground", () -> new SimpleParticleType(false));
-    public static final RegistryObject<SimpleParticleType> SNOWFLAKE_PARTICLE = PARTICLE_TYPES.register("snowflake", () -> new SimpleParticleType(false));
-    public static final RegistryObject<SimpleParticleType> ELECTRICITY_PARTICLE = PARTICLE_TYPES.register("electricity", () -> new SimpleParticleType(false));
-    public static final RegistryObject<SimpleParticleType> UNSTABLE_ENDER_PARTICLE = PARTICLE_TYPES.register("unstable_ender", () -> new SimpleParticleType(false));
-    public static final RegistryObject<SimpleParticleType> DRAGON_FIRE_PARTICLE = PARTICLE_TYPES.register("dragon_fire", () -> new SimpleParticleType(false));
-    public static final RegistryObject<SimpleParticleType> FIRE_PARTICLE = PARTICLE_TYPES.register("fire", () -> new SimpleParticleType(false));
-    public static final RegistryObject<SimpleParticleType> EMBER_PARTICLE = PARTICLE_TYPES.register("embers", () -> new SimpleParticleType(false));
-    public static final RegistryObject<SimpleParticleType> SIPHON_PARTICLE = PARTICLE_TYPES.register("spell", () -> new SimpleParticleType(false));
-    public static final RegistryObject<SimpleParticleType> ACID_PARTICLE = PARTICLE_TYPES.register("acid", () -> new SimpleParticleType(false));
-    public static final RegistryObject<SimpleParticleType> ACID_BUBBLE_PARTICLE = PARTICLE_TYPES.register("acid_bubble", () -> new SimpleParticleType(false));
+    public static final RegistryObject<BasicParticleType> BLOOD_PARTICLE = PARTICLE_TYPES.register("blood", () -> new BasicParticleType(false));
+    public static final RegistryObject<BasicParticleType> WISP_PARTICLE = PARTICLE_TYPES.register("wisp", () -> new BasicParticleType(false));
+    public static final RegistryObject<BasicParticleType> BLOOD_GROUND_PARTICLE = PARTICLE_TYPES.register("blood_ground", () -> new BasicParticleType(false));
+    public static final RegistryObject<BasicParticleType> SNOWFLAKE_PARTICLE = PARTICLE_TYPES.register("snowflake", () -> new BasicParticleType(false));
+    public static final RegistryObject<BasicParticleType> ELECTRICITY_PARTICLE = PARTICLE_TYPES.register("electricity", () -> new BasicParticleType(false));
+    public static final RegistryObject<BasicParticleType> UNSTABLE_ENDER_PARTICLE = PARTICLE_TYPES.register("unstable_ender", () -> new BasicParticleType(false));
+    public static final RegistryObject<BasicParticleType> DRAGON_FIRE_PARTICLE = PARTICLE_TYPES.register("dragon_fire", () -> new BasicParticleType(false));
+    public static final RegistryObject<BasicParticleType> FIRE_PARTICLE = PARTICLE_TYPES.register("fire", () -> new BasicParticleType(false));
+    public static final RegistryObject<BasicParticleType> EMBER_PARTICLE = PARTICLE_TYPES.register("embers", () -> new BasicParticleType(false));
+    public static final RegistryObject<BasicParticleType> SIPHON_PARTICLE = PARTICLE_TYPES.register("spell", () -> new BasicParticleType(false));
+    public static final RegistryObject<BasicParticleType> ACID_PARTICLE = PARTICLE_TYPES.register("acid", () -> new BasicParticleType(false));
+    public static final RegistryObject<BasicParticleType> ACID_BUBBLE_PARTICLE = PARTICLE_TYPES.register("acid_bubble", () -> new BasicParticleType(false));
     public static final RegistryObject<ParticleType<FogParticleOptions>> FOG_PARTICLE = PARTICLE_TYPES.register("fog", () -> new ParticleType<FogParticleOptions>(false, FogParticleOptions.DESERIALIZER) {
         public Codec<FogParticleOptions> codec() {
             return FogParticleOptions.CODEC;

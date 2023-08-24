@@ -1,14 +1,14 @@
 package io.redspace.ironsspellbooks.entity.spells.void_tentacle;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
 import io.redspace.ironsspellbooks.IronsSpellbooks;
 import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import software.bernie.geckolib3.renderers.geo.GeoLayerRenderer;
@@ -23,12 +23,12 @@ public class VoidTentacleEmissiveLayer extends GeoLayerRenderer<VoidTentacle> {
     }
 
     @Override
-    public void render(PoseStack matrixStackIn, MultiBufferSource bufferIn, int packedLightIn, VoidTentacle entityLivingBaseIn, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
+    public void render(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn, VoidTentacle entityLivingBaseIn, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
         var renderType = RenderType.eyes(TEXTURE);
         //renderType = RenderType.endGateway();
-        VertexConsumer vertexconsumer = bufferIn.getBuffer(renderType);
+        IVertexBuilder vertexconsumer = bufferIn.getBuffer(renderType);
         matrixStackIn.pushPose();
-        float f = Mth.sin((float) ((entityLivingBaseIn.tickCount + partialTicks + ((entityLivingBaseIn.getX() + entityLivingBaseIn.getZ()) * 500)) * .15f)) * .5f + .5f;
+        float f = MathHelper.sin((float) ((entityLivingBaseIn.tickCount + partialTicks + ((entityLivingBaseIn.getX() + entityLivingBaseIn.getZ()) * 500)) * .15f)) * .5f + .5f;
         //IronsSpellbooks.LOGGER.debug("{}", f);
         var model = this.getEntityModel().getModel(VoidTentacleModel.modelResource);
         this.getRenderer().render(

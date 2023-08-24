@@ -4,9 +4,9 @@ import io.redspace.ironsspellbooks.capabilities.magic.PlayerMagicData;
 import io.redspace.ironsspellbooks.capabilities.spellbook.SpellBookData;
 import io.redspace.ironsspellbooks.spells.CastSource;
 import io.redspace.ironsspellbooks.spells.CastType;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.InteractionHand;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.util.Hand;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
@@ -14,19 +14,19 @@ import java.util.function.Supplier;
 public class ServerboundQuickCast {
 
     private int slot;
-    private InteractionHand hand;
+    private Hand hand;
 
-    public ServerboundQuickCast(int slot, InteractionHand hand) {
+    public ServerboundQuickCast(int slot, Hand hand) {
         this.slot = slot;
         this.hand = hand;
     }
 
-    public ServerboundQuickCast(FriendlyByteBuf buf) {
+    public ServerboundQuickCast(PacketBuffer buf) {
         slot = buf.readInt();
-        hand = buf.readEnum(InteractionHand.class);
+        hand = buf.readEnum(Hand.class);
     }
 
-    public void toBytes(FriendlyByteBuf buf) {
+    public void toBytes(PacketBuffer buf) {
         buf.writeInt(slot);
         buf.writeEnum(hand);
     }
@@ -34,7 +34,7 @@ public class ServerboundQuickCast {
     public boolean handle(Supplier<NetworkEvent.Context> supplier) {
         NetworkEvent.Context ctx = supplier.get();
         ctx.enqueueWork(() -> {
-            ServerPlayer serverPlayer = ctx.getSender();
+            ServerPlayerEntity serverPlayer = ctx.getSender();
             var itemStack = serverPlayer.getItemInHand(hand);
             SpellBookData sbd = SpellBookData.getSpellBookData(itemStack);
             if (sbd.getSpellSlots() > 0) {

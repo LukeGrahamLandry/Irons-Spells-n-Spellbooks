@@ -1,22 +1,22 @@
 package io.redspace.ironsspellbooks.entity.spells.black_hole;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Matrix3f;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Vector3f;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
+import net.minecraft.util.math.vector.Matrix3f;
+import net.minecraft.util.math.vector.Matrix4f;
+import net.minecraft.util.math.vector.Vector3f;
 import io.redspace.ironsspellbooks.IronsSpellbooks;
 import io.redspace.ironsspellbooks.entity.spells.icicle.IcicleRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.util.math.vector.Vector3d;
 
 public class BlackHoleRenderer extends EntityRenderer<BlackHole> {
     public BlackHoleRenderer(EntityRendererProvider.Context pContext) {
@@ -27,12 +27,12 @@ public class BlackHoleRenderer extends EntityRenderer<BlackHole> {
     private static final ResourceLocation BEAM_TEXTURE = IronsSpellbooks.id("textures/entity/black_hole/beam.png");
 
     @Override
-    public void render(BlackHole entity, float pEntityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource, int pPackedLight) {
+    public void render(BlackHole entity, float pEntityYaw, float partialTicks, MatrixStack poseStack, IRenderTypeBuffer bufferSource, int pPackedLight) {
         poseStack.pushPose();
         poseStack.translate(0, entity.getBoundingBox().getYsize() / 2, 0);
 
         float entityScale = entity.getBbWidth() * .025f;
-        PoseStack.Pose pose = poseStack.last();
+        MatrixStack.Entry pose = poseStack.last();
         Matrix4f poseMatrix = pose.pose();
         Matrix3f normalMatrix = pose.normal();
         poseStack.scale(.5f * entityScale, .5f * entityScale, .5f * entityScale);
@@ -40,7 +40,7 @@ public class BlackHoleRenderer extends EntityRenderer<BlackHole> {
         poseStack.mulPose(Vector3f.YP.rotationDegrees(90f));
         poseStack.translate(1, 0, 0);
 
-        VertexConsumer consumer = bufferSource.getBuffer(RenderType.entityTranslucent(CENTER_TEXTURE));
+        IVertexBuilder consumer = bufferSource.getBuffer(RenderType.entityTranslucent(CENTER_TEXTURE));
 
         consumer.vertex(poseMatrix, 0, -8, -8).color(255, 255, 255, 255).uv(0f, 1f).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(LightTexture.FULL_BRIGHT).normal(normalMatrix, 0f, 1f, 0f).endVertex();
         consumer.vertex(poseMatrix, 0, 8, -8).color(255, 255, 255, 255).uv(0f, 0f).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(LightTexture.FULL_BRIGHT).normal(normalMatrix, 0f, 1f, 0f).endVertex();
@@ -49,7 +49,7 @@ public class BlackHoleRenderer extends EntityRenderer<BlackHole> {
         poseStack.popPose();
         poseStack.pushPose();
         if (Minecraft.getInstance().player != null) {
-            Vec3 backwards = Minecraft.getInstance().player.position().subtract(entity.getPosition(partialTicks)).normalize().scale(-2);
+            Vector3d backwards = Minecraft.getInstance().player.position().subtract(entity.getPosition(partialTicks)).normalize().scale(-2);
             poseStack.translate(backwards.x, backwards.y, backwards.z);
         }
 
@@ -59,7 +59,7 @@ public class BlackHoleRenderer extends EntityRenderer<BlackHole> {
         float fadeProgress = .5f;
         RandomSource randomSource = RandomSource.create(432L);
 //        VertexConsumer vertexConsumer = bufferSource.getBuffer(RenderType.lightning());
-        VertexConsumer vertexConsumer = bufferSource.getBuffer(RenderType.energySwirl(BEAM_TEXTURE, 0, 0));
+        IVertexBuilder vertexConsumer = bufferSource.getBuffer(RenderType.energySwirl(BEAM_TEXTURE, 0, 0));
         //poseStack.translate(0.0D, -1.0D, -2.0D);
 
         float segments = Math.min(animationProgress, .8f);
@@ -100,23 +100,23 @@ public class BlackHoleRenderer extends EntityRenderer<BlackHole> {
 
     private static final float HALF_SQRT_3 = (float) (Math.sqrt(3.0D) / 2.0D);
 
-    private static void vertex01(VertexConsumer p_114220_, Matrix4f p_114221_, int p_114222_) {
+    private static void vertex01(IVertexBuilder p_114220_, Matrix4f p_114221_, int p_114222_) {
         p_114220_.vertex(p_114221_, 0.0F, 0.0F, 0.0F).color(255, 255, 255, p_114222_).endVertex();
     }
 
-    private static void vertex2(VertexConsumer p_114215_, Matrix4f p_114216_, float p_114217_, float p_114218_) {
+    private static void vertex2(IVertexBuilder p_114215_, Matrix4f p_114216_, float p_114217_, float p_114218_) {
         p_114215_.vertex(p_114216_, -HALF_SQRT_3 * p_114218_, p_114217_, -0.5F * p_114218_).color(255, 0, 255, 0).endVertex();
     }
 
-    private static void vertex3(VertexConsumer p_114224_, Matrix4f p_114225_, float p_114226_, float p_114227_) {
+    private static void vertex3(IVertexBuilder p_114224_, Matrix4f p_114225_, float p_114226_, float p_114227_) {
         p_114224_.vertex(p_114225_, HALF_SQRT_3 * p_114227_, p_114226_, -0.5F * p_114227_).color(255, 0, 255, 0).endVertex();
     }
 
-    private static void vertex4(VertexConsumer p_114229_, Matrix4f p_114230_, float p_114231_, float p_114232_) {
+    private static void vertex4(IVertexBuilder p_114229_, Matrix4f p_114230_, float p_114231_, float p_114232_) {
         p_114229_.vertex(p_114230_, 0.0F, p_114231_, 1.0F * p_114232_).color(255, 0, 255, 0).endVertex();
     }
 
-    private static void drawTriangle(VertexConsumer consumer, Matrix4f poseMatrix, Matrix3f normalMatrix, float size) {
+    private static void drawTriangle(IVertexBuilder consumer, Matrix4f poseMatrix, Matrix3f normalMatrix, float size) {
         consumer.vertex(poseMatrix, 0, 0, 0).color(255, 0, 255, 255).uv(0f, 1f).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(LightTexture.FULL_BRIGHT).normal(normalMatrix, 0f, 1f, 0f).endVertex();
         consumer.vertex(poseMatrix, 0, 3 * size, -1 * size).color(0, 0, 0, 0).uv(0f, 0f).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(LightTexture.FULL_BRIGHT).normal(normalMatrix, 0f, 1f, 0f).endVertex();
         consumer.vertex(poseMatrix, 0, 3 * size, 1 * size).color(0, 0, 0, 0).uv(1f, 0f).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(LightTexture.FULL_BRIGHT).normal(normalMatrix, 0f, 1f, 0f).endVertex();

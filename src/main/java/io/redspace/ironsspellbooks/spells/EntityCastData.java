@@ -1,7 +1,7 @@
 package io.redspace.ironsspellbooks.spells;
 
 import io.redspace.ironsspellbooks.capabilities.magic.CastData;
-import net.minecraft.world.entity.Entity;
+import net.minecraft.entity.Entity;
 
 import javax.annotation.Nonnull;
 

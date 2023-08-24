@@ -5,27 +5,27 @@ import io.redspace.ironsspellbooks.damage.DamageSources;
 import io.redspace.ironsspellbooks.entity.spells.AbstractConeProjectile;
 import io.redspace.ironsspellbooks.registries.EntityRegistry;
 import io.redspace.ironsspellbooks.registries.MobEffectRegistry;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.particles.ParticleTypes;
+import net.minecraft.network.IPacket;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.world.World;
+import net.minecraft.util.math.EntityRayTraceResult;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.Nullable;
 
 public class GustCollider extends AbstractConeProjectile {
 
-    public GustCollider(Level level, LivingEntity owner) {
+    public GustCollider(World level, LivingEntity owner) {
         this(EntityRegistry.GUST_COLLIDER.get(), level);
         this.setOwner(owner);
         this.setRot(owner.getYRot(), owner.getXRot());
     }
 
-    public GustCollider(EntityType<GustCollider> gustColliderEntityType, Level level) {
+    public GustCollider(EntityType<GustCollider> gustColliderEntityType, World level) {
         super(gustColliderEntityType, level);
     }
 
@@ -34,7 +34,7 @@ public class GustCollider extends AbstractConeProjectile {
         if (!level.isClientSide || tickCount > 2) {
             return;
         }
-        Vec3 rotation = this.getLookAngle().normalize();
+        Vector3d rotation = this.getLookAngle().normalize();
         var pos = this.position().add(rotation.scale(1.6));
 
         double x = pos.x;
@@ -48,21 +48,21 @@ public class GustCollider extends AbstractConeProjectile {
             double oy = Math.random() * 2 * offset - offset;
             double oz = Math.random() * 2 * offset - offset;
             double angularness = .8;
-            Vec3 randomVec = new Vec3(Math.random() * 2 * angularness - angularness, Math.random() * 2 * angularness - angularness, Math.random() * 2 * angularness - angularness).normalize();
-            Vec3 result = (rotation.scale(3).add(randomVec)).normalize().scale(speed);
+            Vector3d randomVec = new Vector3d(Math.random() * 2 * angularness - angularness, Math.random() * 2 * angularness - angularness, Math.random() * 2 * angularness - angularness).normalize();
+            Vector3d result = (rotation.scale(3).add(randomVec)).normalize().scale(speed);
             level.addParticle(ParticleTypes.POOF, x + ox, y + oy, z + oz, result.x, result.y, result.z);
         }
     }
 
     @Override
-    protected void onHitEntity(EntityHitResult entityHitResult) {
+    protected void onHitEntity(EntityRayTraceResult entityHitResult) {
         var entity = getOwner();
         var resultEntity = entityHitResult.getEntity();
         if (entity != null && resultEntity instanceof LivingEntity target && target.distanceToSqr(entity) < range * range)
             if (!DamageSources.isFriendlyFireBetween(entity, target)) {
                 target.knockback(strength, entity.getX() - target.getX(), entity.getZ() - target.getZ());
                 target.hurtMarked = true;
-                target.addEffect(new MobEffectInstance(MobEffectRegistry.AIRBORNE.get(), 60, amplifier));
+                target.addEffect(new EffectInstance(MobEffectRegistry.AIRBORNE.get(), 60, amplifier));
             }
 
     }
@@ -87,7 +87,7 @@ public class GustCollider extends AbstractConeProjectile {
     public float range;
     public int amplifier;
     @Override
-    public Packet<?> getAddEntityPacket() {
+    public IPacket<?> getAddEntityPacket() {
         return NetworkHooks.getEntitySpawningPacket(this);
     }
 

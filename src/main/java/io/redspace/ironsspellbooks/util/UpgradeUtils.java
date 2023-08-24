@@ -1,13 +1,13 @@
 package io.redspace.ironsspellbooks.util;
 
 import io.redspace.ironsspellbooks.item.armor.UpgradeType;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.INBT;
+import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.entity.ai.attributes.Attribute;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.event.ItemAttributeModifierEvent;
 
 import java.util.Collection;
@@ -18,20 +18,20 @@ import java.util.UUID;
 public class UpgradeUtils {
 
     //We need consistent UUIDs. Different Attributes on a player piece can have the same uuid, but duplicate UUID and attributes will break (UUID per attribute you can say)
-    public static final Map<EquipmentSlot, UUID> UPGRADE_UUIDS_BY_SLOT = Map.of(
-            EquipmentSlot.HEAD, UUID.fromString("f6c19678-1c70-4d41-ad19-cd84d8610242"),
-            EquipmentSlot.CHEST, UUID.fromString("8d02c916-b0eb-4d17-8414-329b4bd38ae7"),
-            EquipmentSlot.LEGS, UUID.fromString("3739c748-98d4-4a2d-9c25-3b4dec74823d"),
-            EquipmentSlot.FEET, UUID.fromString("41cede88-7881-42dd-aac3-d6ab4b56b1f2"),
-            EquipmentSlot.MAINHAND, UUID.fromString("c3865ad7-1f35-46d4-8b4b-a6b934a1a896"),
-            EquipmentSlot.OFFHAND, UUID.fromString("c508430e-7497-42a9-9a9c-1a324dccca54")
+    public static final Map<EquipmentSlotType, UUID> UPGRADE_UUIDS_BY_SLOT = Map.of(
+            EquipmentSlotType.HEAD, UUID.fromString("f6c19678-1c70-4d41-ad19-cd84d8610242"),
+            EquipmentSlotType.CHEST, UUID.fromString("8d02c916-b0eb-4d17-8414-329b4bd38ae7"),
+            EquipmentSlotType.LEGS, UUID.fromString("3739c748-98d4-4a2d-9c25-3b4dec74823d"),
+            EquipmentSlotType.FEET, UUID.fromString("41cede88-7881-42dd-aac3-d6ab4b56b1f2"),
+            EquipmentSlotType.MAINHAND, UUID.fromString("c3865ad7-1f35-46d4-8b4b-a6b934a1a896"),
+            EquipmentSlotType.OFFHAND, UUID.fromString("c508430e-7497-42a9-9a9c-1a324dccca54")
     );
 
-    public static EquipmentSlot getAssignedEquipmentSlot(ItemStack itemStack) {
-        for (EquipmentSlot slot : EquipmentSlot.values())
+    public static EquipmentSlotType getAssignedEquipmentSlot(ItemStack itemStack) {
+        for (EquipmentSlotType slot : EquipmentSlotType.values())
             if (!itemStack.getAttributeModifiers(slot).isEmpty())
                 return slot;
-        return EquipmentSlot.MAINHAND;
+        return EquipmentSlotType.MAINHAND;
     }
 
     public static double getValueByOperation(Collection<AttributeModifier> modifiers, AttributeModifier.Operation operation) {
@@ -42,7 +42,7 @@ public class UpgradeUtils {
         return total;
     }
 
-    public static UUID UUIDForSlot(EquipmentSlot slot) {
+    public static UUID UUIDForSlot(EquipmentSlotType slot) {
         return UPGRADE_UUIDS_BY_SLOT.get(slot);
     }
 
@@ -57,7 +57,7 @@ public class UpgradeUtils {
         return stack.hasTag() && stack.getTag().contains(Upgrades, 9);
     }
 
-    public static void appendUpgrade(ItemStack stack, UpgradeType upgradeType, EquipmentSlot slot) {
+    public static void appendUpgrade(ItemStack stack, UpgradeType upgradeType, EquipmentSlotType slot) {
         //We are going to use NBT because attaching capabilities to every potentially upgradable item is dumb plus forge bug = destroy upgrades
         //Good reference: ItemStack 934, 1013, 1038
         // 10 is the magic number
@@ -65,11 +65,11 @@ public class UpgradeUtils {
         //storing the slot seems good for performance as we don't want to constantly have to search for it
         //store the attribute... no shit
         //amount per level is fixed, so we can calculate our modifier using only the levels applied
-        ListTag upgrades = stack.getOrCreateTag().getList(Upgrades, 10);
+        ListNBT upgrades = stack.getOrCreateTag().getList(Upgrades, 10);
         //Check if we already have this attribute upgraded
         //String attributeName = Registry.ATTRIBUTE.getKey(attribute).toString();
-        for (Tag tag : upgrades) {
-            CompoundTag compoundTag = (CompoundTag) tag;
+        for (INBT tag : upgrades) {
+            CompoundNBT compoundTag = (CompoundNBT) tag;
             String upgradeName = compoundTag.getString(Upgrade_Key);
             if (upgradeName.equalsIgnoreCase(upgradeType.key)) {
                 compoundTag.putInt(Upgrade_Count, compoundTag.getInt(Upgrade_Count) + 1);
@@ -78,7 +78,7 @@ public class UpgradeUtils {
             }
         }
         //Insert New Upgrade
-        CompoundTag upgrade = new CompoundTag();
+        CompoundNBT upgrade = new CompoundNBT();
         upgrade.putString(Upgrade_Key, upgradeType.key);
         upgrade.putString(Slot_Key, slot.getName());
         upgrade.putInt(Upgrade_Count, 1);
@@ -89,20 +89,20 @@ public class UpgradeUtils {
     public static int getUpgradeCount(ItemStack stack) {
         if (!isUpgraded(stack))
             return 0;
-        ListTag upgrades = stack.getOrCreateTag().getList(Upgrades, 10);
+        ListNBT upgrades = stack.getOrCreateTag().getList(Upgrades, 10);
         int count = 0;
-        for (Tag tag : upgrades) {
-            CompoundTag compoundTag = (CompoundTag) tag;
+        for (INBT tag : upgrades) {
+            CompoundNBT compoundTag = (CompoundNBT) tag;
             count += compoundTag.getInt(Upgrade_Count);
         }
         return count;
 
     }
 
-    public static EquipmentSlot getUpgradedSlot(ItemStack stack) {
+    public static EquipmentSlotType getUpgradedSlot(ItemStack stack) {
         //this assumes the item is already been checked to have been upgraded... idk what will ensue if it is not (prob an index out of bounds error)
-        ListTag upgrades = stack.getOrCreateTag().getList(Upgrades, 10);
-        return EquipmentSlot.byName(((CompoundTag) upgrades.get(0)).getString(Slot_Key));
+        ListNBT upgrades = stack.getOrCreateTag().getList(Upgrades, 10);
+        return EquipmentSlotType.byName(((CompoundNBT) upgrades.get(0)).getString(Slot_Key));
     }
 
     public static double collectAndRemovePreexistingAttribute(ItemAttributeModifierEvent event, Attribute key, AttributeModifier.Operation operationToMatch) {
@@ -118,11 +118,11 @@ public class UpgradeUtils {
     }
 
     public static Map<UpgradeType, Integer> deserializeUpgrade(ItemStack stack) {
-        ListTag upgrades = stack.getOrCreateTag().getList(Upgrades, 10);
+        ListNBT upgrades = stack.getOrCreateTag().getList(Upgrades, 10);
         //String attributeName = Registry.ATTRIBUTE.getKey(attribute).toString();
         Map<UpgradeType, Integer> attributes = new HashMap<>();
-        for (Tag tag : upgrades) {
-            CompoundTag compoundTag = (CompoundTag) tag;
+        for (INBT tag : upgrades) {
+            CompoundNBT compoundTag = (CompoundNBT) tag;
             String upgradeKey = compoundTag.getString(Upgrade_Key);
             UpgradeType.getUpgrade(upgradeKey).ifPresent((upgrade) -> attributes.put(upgrade, compoundTag.getInt(Upgrade_Count)));
             //Optional<Attribute> optional = Registry.ATTRIBUTE.getOptional(ResourceLocation.tryParse(attributeName));

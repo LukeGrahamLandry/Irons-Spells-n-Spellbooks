@@ -2,27 +2,27 @@ package io.redspace.ironsspellbooks.entity.mobs;
 
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.monster.Zombie;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.Level;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.potion.Effects;
+import net.minecraft.entity.EntityType;
+import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.entity.monster.ZombieEntity;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.world.World;
 
-public class CatacombsZombie extends Zombie {
+public class CatacombsZombie extends ZombieEntity {
     //This is a wrapper class that in reality creates a vanilla zombie, but with some cool stuff thrown on top
-    public CatacombsZombie(EntityType<? extends Zombie> pEntityType, Level pLevel) {
+    public CatacombsZombie(EntityType<? extends ZombieEntity> pEntityType, World pLevel) {
         super(EntityType.ZOMBIE, pLevel);
         if (this.random.nextFloat() < .2f) {
             switch (this.random.nextIntBetweenInclusive(1, 4)) {
 
-                case 1 -> addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, Integer.MAX_VALUE));
-                case 2 -> addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, Integer.MAX_VALUE, 1));
-                case 3 -> addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, Integer.MAX_VALUE, 1));
-                case 4 -> addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, Integer.MAX_VALUE));
+                case 1 -> addEffect(new EffectInstance(Effects.INVISIBILITY, Integer.MAX_VALUE));
+                case 2 -> addEffect(new EffectInstance(Effects.MOVEMENT_SPEED, Integer.MAX_VALUE, 1));
+                case 3 -> addEffect(new EffectInstance(Effects.DAMAGE_RESISTANCE, Integer.MAX_VALUE, 1));
+                case 4 -> addEffect(new EffectInstance(Effects.DAMAGE_BOOST, Integer.MAX_VALUE));
             }
 
         }
@@ -51,16 +51,16 @@ public class CatacombsZombie extends Zombie {
             }
 
         }
-        setItemSlot(EquipmentSlot.FEET, equipment[0]);
-        setItemSlot(EquipmentSlot.LEGS, equipment[1]);
-        setItemSlot(EquipmentSlot.CHEST, equipment[2]);
-        setItemSlot(EquipmentSlot.HEAD, equipment[3]);
+        setItemSlot(EquipmentSlotType.FEET, equipment[0]);
+        setItemSlot(EquipmentSlotType.LEGS, equipment[1]);
+        setItemSlot(EquipmentSlotType.CHEST, equipment[2]);
+        setItemSlot(EquipmentSlotType.HEAD, equipment[3]);
         if (random.nextFloat() < .01f)
-            setItemSlot(EquipmentSlot.HEAD, new ItemStack(Items.CYAN_BANNER));
+            setItemSlot(EquipmentSlotType.HEAD, new ItemStack(Items.CYAN_BANNER));
 
-        setDropChance(EquipmentSlot.FEET, 0.0F);
-        setDropChance(EquipmentSlot.LEGS, 0.0F);
-        setDropChance(EquipmentSlot.CHEST, 0.0F);
-        setDropChance(EquipmentSlot.HEAD, 0.0F);
+        setDropChance(EquipmentSlotType.FEET, 0.0F);
+        setDropChance(EquipmentSlotType.LEGS, 0.0F);
+        setDropChance(EquipmentSlotType.CHEST, 0.0F);
+        setDropChance(EquipmentSlotType.HEAD, 0.0F);
     }
 }

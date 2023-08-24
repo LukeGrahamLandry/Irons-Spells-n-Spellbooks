@@ -10,26 +10,26 @@ import io.redspace.ironsspellbooks.player.CommonPlayerEvents;
 import io.redspace.ironsspellbooks.compat.tetra.TetraActualImpl;
 import io.redspace.ironsspellbooks.compat.tetra.TetraProxy;
 import io.redspace.ironsspellbooks.registries.BlockRegistry;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.BlockSource;
-import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
-import net.minecraft.core.dispenser.DispenseItemBehavior;
-import net.minecraft.core.dispenser.OptionalDispenseItemBehavior;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.dispenser.IBlockSource;
+import net.minecraft.dispenser.DefaultDispenseItemBehavior;
+import net.minecraft.dispenser.IDispenseItemBehavior;
+import net.minecraft.dispenser.OptionalDispenseBehavior;
 import net.minecraft.network.syncher.EntityDataSerializers;
-import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.FluidTags;
-import net.minecraft.world.entity.Entity;
+import net.minecraft.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.level.block.BeehiveBlock;
-import net.minecraft.world.level.block.DispenserBlock;
+import net.minecraft.block.DispenserBlock;
 import net.minecraft.world.level.block.entity.BeehiveBlockEntity;
-import net.minecraft.world.level.block.entity.DispenserBlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.tileentity.DispenserTileEntity;
+import net.minecraft.block.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -74,18 +74,18 @@ public class ModSetup {
         CompatHandler.init();
 
         event.enqueueWork(() ->
-                DispenserBlock.registerBehavior(Items.GLASS_BOTTLE.asItem(), new OptionalDispenseItemBehavior() {
+                DispenserBlock.registerBehavior(Items.GLASS_BOTTLE.asItem(), new OptionalDispenseBehavior() {
                     private final DefaultDispenseItemBehavior defaultDispenseItemBehavior = new DefaultDispenseItemBehavior();
-                    final DispenseItemBehavior oldBehavior = DispenserBlock.DISPENSER_REGISTRY.get(Items.GLASS_BOTTLE);
+                    final IDispenseItemBehavior oldBehavior = DispenserBlock.DISPENSER_REGISTRY.get(Items.GLASS_BOTTLE);
 
                     //takeLiquid copied from the other dispenser interactions
-                    private ItemStack takeLiquid(BlockSource p_123447_, ItemStack p_123448_, ItemStack p_123449_) {
+                    private ItemStack takeLiquid(IBlockSource p_123447_, ItemStack p_123448_, ItemStack p_123449_) {
                         p_123448_.shrink(1);
                         if (p_123448_.isEmpty()) {
                             p_123447_.getLevel().gameEvent(null, GameEvent.FLUID_PICKUP, p_123447_.getPos());
                             return p_123449_.copy();
                         } else {
-                            if (p_123447_.<DispenserBlockEntity>getEntity().addItem(p_123449_.copy()) < 0) {
+                            if (p_123447_.<DispenserTileEntity>getEntity().addItem(p_123449_.copy()) < 0) {
                                 this.defaultDispenseItemBehavior.dispense(p_123447_, p_123449_.copy());
                             }
 
@@ -96,9 +96,9 @@ public class ModSetup {
                     /**
                      * Dispense the specified stack, play the dispense sound, and spawn particles.
                      */
-                    public ItemStack execute(BlockSource blockSource, ItemStack itemStack) {
+                    public ItemStack execute(IBlockSource blockSource, ItemStack itemStack) {
                         this.setSuccess(false);
-                        ServerLevel serverlevel = blockSource.getLevel();
+                        ServerWorld serverlevel = blockSource.getLevel();
                         BlockPos blockpos = blockSource.getPos().relative(blockSource.getBlockState().getValue(DispenserBlock.FACING));
                         BlockState blockstate = serverlevel.getBlockState(blockpos);
                         if (AlchemistCauldronBlock.getLevel(blockstate) > 0 && serverlevel.getBlockEntity(blockpos) instanceof AlchemistCauldronTile cauldron) {

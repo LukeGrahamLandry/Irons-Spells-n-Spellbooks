@@ -1,23 +1,23 @@
 package io.redspace.ironsspellbooks.entity.mobs.abstract_spell_casting_mob;
 
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Vector3f;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
+import net.minecraft.util.math.vector.Vector3f;
 import io.redspace.ironsspellbooks.IronsSpellbooks;
 import io.redspace.ironsspellbooks.entity.armor.GenericCustomArmorRenderer;
-import net.minecraft.client.model.HumanoidModel;
-import net.minecraft.client.model.geom.ModelPart;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.entity.model.BipedModel;
+import net.minecraft.client.renderer.model.ModelRenderer;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.ShieldItem;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.entity.MobEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.ShieldItem;
+import net.minecraft.block.BlockState;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.example.client.DefaultBipedBoneIdents;
 import software.bernie.example.client.EntityResources;
@@ -32,7 +32,7 @@ import software.bernie.geckolib3.renderers.geo.GeoArmorRenderer;
 
 import java.util.List;
 
-public class GeoHumanoidRenderer<T extends Mob & IAnimatable> extends ExtendedGeoEntityRenderer<T> {
+public class GeoHumanoidRenderer<T extends MobEntity & IAnimatable> extends ExtendedGeoEntityRenderer<T> {
     private ResourceLocation textureResource;
 
     public GeoHumanoidRenderer(EntityRendererProvider.Context renderManager, AnimatedGeoModel<T> model) {
@@ -58,7 +58,7 @@ public class GeoHumanoidRenderer<T extends Mob & IAnimatable> extends ExtendedGe
     }
 
     @Override
-    protected ModelPart getArmorPartForBone(String name, HumanoidModel<?> armorModel) {
+    protected ModelRenderer getArmorPartForBone(String name, BipedModel<?> armorModel) {
         return switch (name) {
             case DefaultBipedBoneIdents.LEFT_FOOT_ARMOR_BONE_IDENT,
                     DefaultBipedBoneIdents.LEFT_LEG_ARMOR_BONE_IDENT,
@@ -77,7 +77,7 @@ public class GeoHumanoidRenderer<T extends Mob & IAnimatable> extends ExtendedGe
     }
 
     @Override
-    protected void prepareArmorPositionAndScale(GeoBone bone, List<ModelPart.Cube> cubeList, ModelPart sourceLimb, PoseStack poseStack, boolean geoArmor, boolean modMatrixRot) {
+    protected void prepareArmorPositionAndScale(GeoBone bone, List<ModelRenderer.ModelBox> cubeList, ModelRenderer sourceLimb, MatrixStack poseStack, boolean geoArmor, boolean modMatrixRot) {
         if (bone.getName().equals(GenericCustomArmorRenderer.leggingTorsoLayerBone)) {
             IronsSpellbooks.LOGGER.debug("GeoHumanoidRenderer: attempting to prepare leggingTorsoLayer");
             super.prepareArmorPositionAndScale((GeoBone) this.modelProvider.getBone(DefaultBipedBoneIdents.BODY_ARMOR_BONE_IDENT), cubeList, sourceLimb, poseStack, false, modMatrixRot);
@@ -87,20 +87,20 @@ public class GeoHumanoidRenderer<T extends Mob & IAnimatable> extends ExtendedGe
     }
 
     @Override
-    protected EquipmentSlot getEquipmentSlotForArmorBone(String boneName, T currentEntity) {
+    protected EquipmentSlotType getEquipmentSlotForArmorBone(String boneName, T currentEntity) {
         return switch (boneName) {
             case DefaultBipedBoneIdents.LEFT_FOOT_ARMOR_BONE_IDENT,
                     DefaultBipedBoneIdents.RIGHT_FOOT_ARMOR_BONE_IDENT,
                     DefaultBipedBoneIdents.LEFT_FOOT_ARMOR_BONE_2_IDENT,
-                    DefaultBipedBoneIdents.RIGHT_FOOT_ARMOR_BONE_2_IDENT -> EquipmentSlot.FEET;
+                    DefaultBipedBoneIdents.RIGHT_FOOT_ARMOR_BONE_2_IDENT -> EquipmentSlotType.FEET;
             case DefaultBipedBoneIdents.LEFT_LEG_ARMOR_BONE_IDENT,
                     DefaultBipedBoneIdents.RIGHT_LEG_ARMOR_BONE_IDENT,
                     DefaultBipedBoneIdents.LEFT_LEG_ARMOR_BONE_2_IDENT,
-                    DefaultBipedBoneIdents.RIGHT_LEG_ARMOR_BONE_2_IDENT -> EquipmentSlot.LEGS;
-            case DefaultBipedBoneIdents.RIGHT_ARM_ARMOR_BONE_IDENT -> !currentEntity.isLeftHanded() ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND;
-            case DefaultBipedBoneIdents.LEFT_ARM_ARMOR_BONE_IDENT -> currentEntity.isLeftHanded() ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND;
-            case DefaultBipedBoneIdents.BODY_ARMOR_BONE_IDENT -> EquipmentSlot.CHEST;
-            case DefaultBipedBoneIdents.HEAD_ARMOR_BONE_IDENT -> EquipmentSlot.HEAD;
+                    DefaultBipedBoneIdents.RIGHT_LEG_ARMOR_BONE_2_IDENT -> EquipmentSlotType.LEGS;
+            case DefaultBipedBoneIdents.RIGHT_ARM_ARMOR_BONE_IDENT -> !currentEntity.isLeftHanded() ? EquipmentSlotType.MAINHAND : EquipmentSlotType.OFFHAND;
+            case DefaultBipedBoneIdents.LEFT_ARM_ARMOR_BONE_IDENT -> currentEntity.isLeftHanded() ? EquipmentSlotType.MAINHAND : EquipmentSlotType.OFFHAND;
+            case DefaultBipedBoneIdents.BODY_ARMOR_BONE_IDENT -> EquipmentSlotType.CHEST;
+            case DefaultBipedBoneIdents.HEAD_ARMOR_BONE_IDENT -> EquipmentSlotType.HEAD;
             default -> null;
         };
     }
@@ -112,17 +112,17 @@ public class GeoHumanoidRenderer<T extends Mob & IAnimatable> extends ExtendedGe
                     DefaultBipedBoneIdents.RIGHT_FOOT_ARMOR_BONE_IDENT,
                     DefaultBipedBoneIdents.LEFT_FOOT_ARMOR_BONE_2_IDENT,
                     DefaultBipedBoneIdents.RIGHT_FOOT_ARMOR_BONE_2_IDENT ->
-                    currentEntity.getItemBySlot(EquipmentSlot.FEET);
+                    currentEntity.getItemBySlot(EquipmentSlotType.FEET);
             case DefaultBipedBoneIdents.LEFT_LEG_ARMOR_BONE_IDENT,
                     DefaultBipedBoneIdents.RIGHT_LEG_ARMOR_BONE_IDENT,
                     DefaultBipedBoneIdents.LEFT_LEG_ARMOR_BONE_2_IDENT,
                     DefaultBipedBoneIdents.RIGHT_LEG_ARMOR_BONE_2_IDENT ->
-                    currentEntity.getItemBySlot(EquipmentSlot.LEGS);
+                    currentEntity.getItemBySlot(EquipmentSlotType.LEGS);
             case DefaultBipedBoneIdents.BODY_ARMOR_BONE_IDENT,
                     DefaultBipedBoneIdents.RIGHT_ARM_ARMOR_BONE_IDENT,
                     DefaultBipedBoneIdents.LEFT_ARM_ARMOR_BONE_IDENT ->
-                    currentEntity.getItemBySlot(EquipmentSlot.CHEST);
-            case DefaultBipedBoneIdents.HEAD_ARMOR_BONE_IDENT -> currentEntity.getItemBySlot(EquipmentSlot.HEAD);
+                    currentEntity.getItemBySlot(EquipmentSlotType.CHEST);
+            case DefaultBipedBoneIdents.HEAD_ARMOR_BONE_IDENT -> currentEntity.getItemBySlot(EquipmentSlotType.HEAD);
             default -> null;
         };
     }
@@ -141,12 +141,12 @@ public class GeoHumanoidRenderer<T extends Mob & IAnimatable> extends ExtendedGe
 //    }
 
 
-    private static final EquipmentSlot[] SLOTS = {EquipmentSlot.FEET, EquipmentSlot.LEGS, EquipmentSlot.CHEST, EquipmentSlot.HEAD};
+    private static final EquipmentSlotType[] SLOTS = {EquipmentSlotType.FEET, EquipmentSlotType.LEGS, EquipmentSlotType.CHEST, EquipmentSlotType.HEAD};
 
     @Override
-    protected void handleArmorRenderingForBone(GeoBone bone, PoseStack stack, VertexConsumer buffer, int packedLight, int packedOverlay, ResourceLocation currentTexture) {
+    protected void handleArmorRenderingForBone(GeoBone bone, MatrixStack stack, IVertexBuilder buffer, int packedLight, int packedOverlay, ResourceLocation currentTexture) {
         super.handleArmorRenderingForBone(bone, stack, buffer, packedLight, packedOverlay, currentTexture);
-        for (EquipmentSlot slot : SLOTS)
+        for (EquipmentSlotType slot : SLOTS)
             if (currentEntityBeingRendered.getItemBySlot(slot).getItem() instanceof GeoArmorItem geoArmorItem) {
                 if(GeoArmorRenderer.getRenderer(geoArmorItem.getClass(), this.currentEntityBeingRendered) instanceof GenericCustomArmorRenderer<?> armorRenderer){
 
@@ -169,11 +169,11 @@ public class GeoHumanoidRenderer<T extends Mob & IAnimatable> extends ExtendedGe
     }
 
     @Override
-    protected ItemTransforms.TransformType getCameraTransformForItemAtBone(ItemStack stack, String boneName) {
+    protected ItemCameraTransforms.TransformType getCameraTransformForItemAtBone(ItemStack stack, String boneName) {
         return switch (boneName) {
             case DefaultBipedBoneIdents.LEFT_HAND_BONE_IDENT, DefaultBipedBoneIdents.RIGHT_HAND_BONE_IDENT ->
-                    ItemTransforms.TransformType.THIRD_PERSON_RIGHT_HAND; // Do Defaults
-            default -> ItemTransforms.TransformType.NONE;
+                    ItemCameraTransforms.TransformType.THIRD_PERSON_RIGHT_HAND; // Do Defaults
+            default -> ItemCameraTransforms.TransformType.NONE;
         };
     }
 
@@ -184,7 +184,7 @@ public class GeoHumanoidRenderer<T extends Mob & IAnimatable> extends ExtendedGe
     }
 
     @Override
-    protected void preRenderItem(PoseStack poseStack, ItemStack itemStack, String boneName, T animatable, IBone bone) {
+    protected void preRenderItem(MatrixStack poseStack, ItemStack itemStack, String boneName, T animatable, IBone bone) {
         var mainHandItem = animatable.getMainHandItem();
         var offHandItem = animatable.getOffhandItem();
         poseStack.translate(0, 0, -0.0625);
@@ -212,27 +212,27 @@ public class GeoHumanoidRenderer<T extends Mob & IAnimatable> extends ExtendedGe
 //    }
 
     @Override
-    protected void preRenderBlock(PoseStack poseStack, BlockState state, String boneName, T animatable) {
+    protected void preRenderBlock(MatrixStack poseStack, BlockState state, String boneName, T animatable) {
 
     }
 
     @Override
-    protected void postRenderItem(PoseStack poseStack, ItemStack stack, String boneName, T animatable, IBone bone) {
+    protected void postRenderItem(MatrixStack poseStack, ItemStack stack, String boneName, T animatable, IBone bone) {
 
     }
 
     @Override
-    protected void postRenderBlock(PoseStack poseStack, BlockState state, String boneName, T animatable) {
+    protected void postRenderBlock(MatrixStack poseStack, BlockState state, String boneName, T animatable) {
 
     }
 
     @Override
-    public Color getRenderColor(T animatable, float partialTick, PoseStack poseStack, @Nullable MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, int packedLight) {
+    public Color getRenderColor(T animatable, float partialTick, MatrixStack poseStack, @Nullable IRenderTypeBuffer bufferSource, @Nullable IVertexBuilder buffer, int packedLight) {
         return animatable.isInvisible() ? Color.ofRGBA(1f, 1f, 1f, .3f) : super.getRenderColor(animatable, partialTick, poseStack, bufferSource, buffer, packedLight);
     }
 
     @Override
-    public RenderType getRenderType(T animatable, float partialTick, PoseStack poseStack, @Nullable MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, int packedLight, ResourceLocation texture) {
+    public RenderType getRenderType(T animatable, float partialTick, MatrixStack poseStack, @Nullable IRenderTypeBuffer bufferSource, @Nullable IVertexBuilder buffer, int packedLight, ResourceLocation texture) {
         return animatable.isInvisible() ? RenderType.entityTranslucent(texture) : RenderType.entityCutout(texture);
     }
 }

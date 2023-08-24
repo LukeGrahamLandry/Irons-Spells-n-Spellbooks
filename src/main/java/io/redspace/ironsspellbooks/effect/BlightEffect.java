@@ -1,21 +1,21 @@
 package io.redspace.ironsspellbooks.effect;
 
 import io.redspace.ironsspellbooks.registries.MobEffectRegistry;
-import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.effect.MobEffectCategory;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.potion.Effect;
+import net.minecraft.potion.EffectType;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingHealEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber()
-public class BlightEffect extends MobEffect {
+public class BlightEffect extends Effect {
     public static final float DAMAGE_PER_LEVEL = -.05f;
     public static final float HEALING_PER_LEVEL = -.10f;
 
-    public BlightEffect(MobEffectCategory pCategory, int pColor) {
+    public BlightEffect(EffectType pCategory, int pColor) {
         super(pCategory, pColor);
     }
 

@@ -12,8 +12,8 @@ import io.redspace.ironsspellbooks.spells.CastType;
 import io.redspace.ironsspellbooks.spells.SpellType;
 import io.redspace.ironsspellbooks.util.Log;
 import net.minecraft.client.Minecraft;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -126,7 +126,7 @@ public class ClientMagicData {
     }
 
     public static SyncedSpellData getSyncedSpellData(LivingEntity livingEntity) {
-        if (livingEntity instanceof Player) {
+        if (livingEntity instanceof PlayerEntity) {
             return playerSyncedDataLookup.getOrDefault(livingEntity.getId(), emptySyncedData);
         }
         if (livingEntity instanceof AbstractSpellCastingMob abstractSpellCastingMob) {

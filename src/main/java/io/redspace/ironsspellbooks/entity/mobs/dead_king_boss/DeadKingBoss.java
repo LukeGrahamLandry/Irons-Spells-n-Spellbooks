@@ -12,42 +12,42 @@ import io.redspace.ironsspellbooks.registries.SoundRegistry;
 import io.redspace.ironsspellbooks.spells.SpellType;
 import io.redspace.ironsspellbooks.util.ParticleHelper;
 import io.redspace.ironsspellbooks.util.Utils;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializers;
-import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.server.level.ServerBossEvent;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.Mth;
+import net.minecraft.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.network.IPacket;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.world.server.ServerBossInfo;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.SoundEvents;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.BossEvent;
+import net.minecraft.world.BossInfo;
 import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.damagesource.IndirectEntityDamageSource;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.IndirectEntityDamageSource;
 import net.minecraft.world.entity.*;
-import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.FloatGoal;
-import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
-import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
-import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
-import net.minecraft.world.entity.animal.IronGolem;
-import net.minecraft.world.entity.monster.AbstractIllager;
-import net.minecraft.world.entity.monster.Enemy;
-import net.minecraft.world.entity.npc.Villager;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.ClipContext;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.ServerLevelAccessor;
-import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.entity.ai.attributes.AttributeModifierMap;
+import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.entity.ai.goal.SwimGoal;
+import net.minecraft.entity.ai.goal.LookAtGoal;
+import net.minecraft.entity.ai.goal.HurtByTargetGoal;
+import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
+import net.minecraft.entity.passive.IronGolemEntity;
+import net.minecraft.entity.monster.AbstractIllagerEntity;
+import net.minecraft.entity.monster.IMob;
+import net.minecraft.entity.merchant.villager.VillagerEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.RayTraceContext;
+import net.minecraft.world.World;
+import net.minecraft.world.IServerWorld;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.network.NetworkHooks;
 import software.bernie.geckolib3.core.AnimationState;
 import software.bernie.geckolib3.core.PlayState;
@@ -60,7 +60,16 @@ import software.bernie.geckolib3.core.manager.AnimationData;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class DeadKingBoss extends AbstractSpellCastingMob implements Enemy {
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntitySize;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.ILivingEntityData;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.Pose;
+import net.minecraft.entity.SpawnReason;
+import net.minecraft.inventory.EquipmentSlotType;
+
+public class DeadKingBoss extends AbstractSpellCastingMob implements IMob {
     public enum Phases {
         FirstPhase(0),
         Transitioning(1),
@@ -72,18 +81,18 @@ public class DeadKingBoss extends AbstractSpellCastingMob implements Enemy {
         }
     }
 
-    private final ServerBossEvent bossEvent = (ServerBossEvent) (new ServerBossEvent(this.getDisplayName(), BossEvent.BossBarColor.RED, BossEvent.BossBarOverlay.PROGRESS)).setDarkenScreen(true).setCreateWorldFog(true);
-    private final static EntityDataAccessor<Integer> PHASE = SynchedEntityData.defineId(DeadKingBoss.class, EntityDataSerializers.INT);
-    private final static EntityDataAccessor<Boolean> NEXT_SLAM = SynchedEntityData.defineId(DeadKingBoss.class, EntityDataSerializers.BOOLEAN);
+    private final ServerBossInfo bossEvent = (ServerBossInfo) (new ServerBossInfo(this.getDisplayName(), BossInfo.Color.RED, BossInfo.Overlay.PROGRESS)).setDarkenScreen(true).setCreateWorldFog(true);
+    private final static DataParameter<Integer> PHASE = EntityDataManager.defineId(DeadKingBoss.class, DataSerializers.INT);
+    private final static DataParameter<Boolean> NEXT_SLAM = EntityDataManager.defineId(DeadKingBoss.class, DataSerializers.BOOLEAN);
     private int transitionAnimationTime = 140; // Animation Length in ticks
     private boolean isCloseToGround;
 
-    public DeadKingBoss(EntityType<? extends AbstractSpellCastingMob> pEntityType, Level pLevel) {
+    public DeadKingBoss(EntityType<? extends AbstractSpellCastingMob> pEntityType, World pLevel) {
         super(pEntityType, pLevel);
         xpReward = 60;
     }
 
-    public DeadKingBoss(Level pLevel) {
+    public DeadKingBoss(World pLevel) {
         this(EntityRegistry.DEAD_KING.get(), pLevel);
     }
 
@@ -92,10 +101,10 @@ public class DeadKingBoss extends AbstractSpellCastingMob implements Enemy {
         setFirstPhaseGoals();
 
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
-        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, IronGolem.class, true));
-        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Villager.class, true));
-        this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, AbstractIllager.class, true));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, true));
+        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, IronGolemEntity.class, true));
+        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, VillagerEntity.class, true));
+        this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, AbstractIllagerEntity.class, true));
 
         //this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 8.0F));
         //this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
@@ -120,13 +129,13 @@ public class DeadKingBoss extends AbstractSpellCastingMob implements Enemy {
 
     protected void setFirstPhaseGoals() {
         this.goalSelector.removeAllGoals();
-        this.goalSelector.addGoal(0, new FloatGoal(this));
+        this.goalSelector.addGoal(0, new SwimGoal(this));
         this.goalSelector.addGoal(1, new SpellBarrageGoal(this, SpellType.WITHER_SKULL_SPELL, 3, 4, 70, 140, 3));
         this.goalSelector.addGoal(2, new SpellBarrageGoal(this, SpellType.RAISE_DEAD_SPELL, 3, 5, 600, 900, 1));
         this.goalSelector.addGoal(3, new SpellBarrageGoal(this, SpellType.BLOOD_STEP_SPELL, 1, 1, 100, 180, 1));
         this.goalSelector.addGoal(4, getCombatGoal().setSingleUseSpell(SpellType.RAISE_DEAD_SPELL, 10, 50, 8, 8));
         this.goalSelector.addGoal(5, new PatrolNearLocationGoal(this, 32, 0.9f));
-        this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 8.0F));
+        this.goalSelector.addGoal(8, new LookAtGoal(this, PlayerEntity.class, 8.0F));
 
     }
 
@@ -137,7 +146,7 @@ public class DeadKingBoss extends AbstractSpellCastingMob implements Enemy {
         this.goalSelector.addGoal(3, new SpellBarrageGoal(this, SpellType.BLOOD_STEP_SPELL, 1, 1, 100, 180, 1));
         this.goalSelector.addGoal(4, getCombatGoal().setIsFlying().setSingleUseSpell(SpellType.BLAZE_STORM_SPELL, 10, 30, 10, 10));
         this.goalSelector.addGoal(5, new PatrolNearLocationGoal(this, 32, 0.9f));
-        this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 8.0F));
+        this.goalSelector.addGoal(8, new LookAtGoal(this, PlayerEntity.class, 8.0F));
         this.hasUsedSingleAttack = false;
         //this.goalSelector.addGoal(2, new VexRandomMoveGoal());
     }
@@ -167,7 +176,7 @@ public class DeadKingBoss extends AbstractSpellCastingMob implements Enemy {
     }
 
     @Override
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty, MobSpawnType pReason, @Nullable SpawnGroupData pSpawnData, @Nullable CompoundTag pDataTag) {
+    public ILivingEntityData finalizeSpawn(IServerWorld pLevel, DifficultyInstance pDifficulty, SpawnReason pReason, @Nullable ILivingEntityData pSpawnData, @Nullable CompoundNBT pDataTag) {
         RandomSource randomsource = pLevel.getRandom();
         this.populateDefaultEquipmentSlots(randomsource, pDifficulty);
         return pSpawnData;
@@ -180,8 +189,8 @@ public class DeadKingBoss extends AbstractSpellCastingMob implements Enemy {
 
     @Override
     protected void populateDefaultEquipmentSlots(RandomSource pRandom, DifficultyInstance pDifficulty) {
-        this.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(ItemRegistry.BLOOD_STAFF.get()));
-        this.setDropChance(EquipmentSlot.OFFHAND, 0f);
+        this.setItemSlot(EquipmentSlotType.OFFHAND, new ItemStack(ItemRegistry.BLOOD_STAFF.get()));
+        this.setDropChance(EquipmentSlotType.OFFHAND, 0f);
 //        this.setItemSlot(EquipmentSlot.CHEST, new ItemStack(ItemRegistry.WANDERING_MAGICIAN_ROBE.get()));
 //        this.setDropChance(EquipmentSlot.CHEST, 0.0F);
     }
@@ -204,12 +213,12 @@ public class DeadKingBoss extends AbstractSpellCastingMob implements Enemy {
             setNoGravity(true);
             //this.noPhysics = true;
             if (tickCount % 10 == 0) {
-                isCloseToGround = Utils.raycastForBlock(level, position(), position().subtract(0, 2.5, 0), ClipContext.Fluid.ANY).getType() == HitResult.Type.BLOCK;
+                isCloseToGround = Utils.raycastForBlock(level, position(), position().subtract(0, 2.5, 0), RayTraceContext.FluidMode.ANY).getType() == RayTraceResult.Type.BLOCK;
             }
-            Vec3 woosh = new Vec3(
-                    Mth.sin((tickCount * 5) * Mth.DEG_TO_RAD),
-                    (Mth.cos((tickCount * 3 + 986741) * Mth.DEG_TO_RAD) + (isCloseToGround ? .05 : -.185)) * .5f,
-                    Mth.sin((tickCount * 1 + 465) * Mth.DEG_TO_RAD)
+            Vector3d woosh = new Vector3d(
+                    MathHelper.sin((tickCount * 5) * MathHelper.DEG_TO_RAD),
+                    (MathHelper.cos((tickCount * 3 + 986741) * MathHelper.DEG_TO_RAD) + (isCloseToGround ? .05 : -.185)) * .5f,
+                    MathHelper.sin((tickCount * 1 + 465) * MathHelper.DEG_TO_RAD)
             );
             if (this.getTarget() == null)
                 woosh = woosh.scale(.25f);
@@ -222,7 +231,7 @@ public class DeadKingBoss extends AbstractSpellCastingMob implements Enemy {
                 if (!this.isInvisible()) {
                     float radius = .35f;
                     for (int i = 0; i < 5; i++) {
-                        Vec3 random = position().add(new Vec3(
+                        Vector3d random = position().add(new Vector3d(
                                 (this.random.nextFloat() * 2 - 1) * radius,
                                 1 + (this.random.nextFloat() * 2 - 1) * radius,
                                 (this.random.nextFloat() * 2 - 1) * radius
@@ -267,7 +276,7 @@ public class DeadKingBoss extends AbstractSpellCastingMob implements Enemy {
     }
 
     @Override
-    protected float getStandingEyeHeight(Pose pPose, EntityDimensions pDimensions) {
+    protected float getStandingEyeHeight(Pose pPose, EntitySize pDimensions) {
         return pDimensions.height * 0.95F;
 
     }
@@ -300,17 +309,17 @@ public class DeadKingBoss extends AbstractSpellCastingMob implements Enemy {
         return isPhase(Phases.Transitioning);
     }
 
-    public void startSeenByPlayer(ServerPlayer pPlayer) {
+    public void startSeenByPlayer(ServerPlayerEntity pPlayer) {
         super.startSeenByPlayer(pPlayer);
         this.bossEvent.addPlayer(pPlayer);
     }
 
-    public void stopSeenByPlayer(ServerPlayer pPlayer) {
+    public void stopSeenByPlayer(ServerPlayerEntity pPlayer) {
         super.stopSeenByPlayer(pPlayer);
         this.bossEvent.removePlayer(pPlayer);
     }
 
-    public static AttributeSupplier.Builder prepareAttributes() {
+    public static AttributeModifierMap.MutableAttribute prepareAttributes() {
         return LivingEntity.createLivingAttributes()
                 .add(Attributes.ATTACK_DAMAGE, 10.0)
                 .add(AttributeRegistry.SPELL_POWER.get(), 1.15)
@@ -324,7 +333,7 @@ public class DeadKingBoss extends AbstractSpellCastingMob implements Enemy {
     }
 
     @Override
-    public void setCustomName(@Nullable Component pName) {
+    public void setCustomName(@Nullable ITextComponent pName) {
         super.setCustomName(pName);
         this.bossEvent.setName(this.getDisplayName());
     }
@@ -350,13 +359,13 @@ public class DeadKingBoss extends AbstractSpellCastingMob implements Enemy {
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag pCompound) {
+    public void addAdditionalSaveData(CompoundNBT pCompound) {
         super.addAdditionalSaveData(pCompound);
         pCompound.putInt("phase", getPhase());
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag pCompound) {
+    public void readAdditionalSaveData(CompoundNBT pCompound) {
         super.readAdditionalSaveData(pCompound);
         if (this.hasCustomName()) {
             this.bossEvent.setName(this.getDisplayName());
@@ -375,7 +384,7 @@ public class DeadKingBoss extends AbstractSpellCastingMob implements Enemy {
     }
 
     @Override
-    public Packet<?> getAddEntityPacket() {
+    public IPacket<?> getAddEntityPacket() {
         return NetworkHooks.getEntitySpawningPacket(this);
     }
 
@@ -446,7 +455,7 @@ public class DeadKingBoss extends AbstractSpellCastingMob implements Enemy {
 
     @Override
     public boolean doHurtTarget(Entity pEntity) {
-        level.playSound(null, getX(), getY(), getZ(), SoundRegistry.DEAD_KING_HIT.get(), SoundSource.HOSTILE, 1, 1);
+        level.playSound(null, getX(), getY(), getZ(), SoundRegistry.DEAD_KING_HIT.get(), SoundCategory.HOSTILE, 1, 1);
         return super.doHurtTarget(pEntity);
     }
 

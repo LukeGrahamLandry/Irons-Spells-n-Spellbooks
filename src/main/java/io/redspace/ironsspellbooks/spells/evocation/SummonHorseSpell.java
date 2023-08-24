@@ -5,15 +5,15 @@ import io.redspace.ironsspellbooks.config.ServerConfigs;
 import io.redspace.ironsspellbooks.entity.mobs.SummonedHorse;
 import io.redspace.ironsspellbooks.registries.MobEffectRegistry;
 import io.redspace.ironsspellbooks.spells.*;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.util.Mth;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.animal.horse.AbstractHorse;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.SoundEvents;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.entity.passive.horse.AbstractHorseEntity;
+import net.minecraft.world.World;
+import net.minecraft.util.math.vector.Vector3d;
 
 import java.util.Optional;
 
@@ -51,10 +51,10 @@ public class SummonHorseSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level world, LivingEntity entity, PlayerMagicData playerMagicData) {
+    public void onCast(World world, LivingEntity entity, PlayerMagicData playerMagicData) {
         int summonTime = 20 * 60 * 10;
-        Vec3 spawn = entity.position();
-        Vec3 forward = entity.getForward().normalize().scale(1.5f);
+        Vector3d spawn = entity.position();
+        Vector3d forward = entity.getForward().normalize().scale(1.5f);
         spawn.add(forward.x, 0.15f, forward.z);
 
         //Teleport pre-existing or create new horse
@@ -63,16 +63,16 @@ public class SummonHorseSpell extends AbstractSpell {
 
         horse.setPos(spawn);
         horse.removeEffectNoUpdate(MobEffectRegistry.SUMMON_HORSE_TIMER.get());
-        horse.forceAddEffect(new MobEffectInstance(MobEffectRegistry.SUMMON_HORSE_TIMER.get(), summonTime, 0, false, false, false), null);
+        horse.forceAddEffect(new EffectInstance(MobEffectRegistry.SUMMON_HORSE_TIMER.get(), summonTime, 0, false, false, false), null);
         setAttributes(horse, getSpellPower(entity));
 
         world.addFreshEntity(horse);
-        entity.addEffect(new MobEffectInstance(MobEffectRegistry.SUMMON_HORSE_TIMER.get(), summonTime, 0, false, false, true));
+        entity.addEffect(new EffectInstance(MobEffectRegistry.SUMMON_HORSE_TIMER.get(), summonTime, 0, false, false, true));
 
         super.onCast(world, entity, playerMagicData);
     }
 
-    private void setAttributes(AbstractHorse horse, float power) {
+    private void setAttributes(AbstractHorseEntity horse, float power) {
         int maxPower = baseSpellPower + (ServerConfigs.getSpellConfig(SpellType.SUMMON_HORSE_SPELL).maxLevel() - 1) * spellPowerPerLevel;
         float quality = power / (float) maxPower;
 
@@ -85,9 +85,9 @@ public class SummonHorseSpell extends AbstractSpell {
         float minHealth = 10;
         float maxHealth = 40;
 
-        horse.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(Mth.lerp(quality, minSpeed, maxSpeed));
-        horse.getAttribute(Attributes.JUMP_STRENGTH).setBaseValue(Mth.lerp(quality, minJump, maxJump));
-        horse.getAttribute(Attributes.MAX_HEALTH).setBaseValue(Mth.lerp(quality, minHealth, maxHealth));
+        horse.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(MathHelper.lerp(quality, minSpeed, maxSpeed));
+        horse.getAttribute(Attributes.JUMP_STRENGTH).setBaseValue(MathHelper.lerp(quality, minJump, maxJump));
+        horse.getAttribute(Attributes.MAX_HEALTH).setBaseValue(MathHelper.lerp(quality, minHealth, maxHealth));
         if (!horse.isDeadOrDying())
             horse.setHealth(horse.getMaxHealth());
     }

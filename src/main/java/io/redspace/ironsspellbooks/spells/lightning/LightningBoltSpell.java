@@ -4,15 +4,15 @@ import io.redspace.ironsspellbooks.capabilities.magic.PlayerMagicData;
 import io.redspace.ironsspellbooks.entity.spells.ExtendedLightningBolt;
 import io.redspace.ironsspellbooks.spells.*;
 import io.redspace.ironsspellbooks.util.Utils;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.entity.LightningBolt;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.SoundEvents;
+import net.minecraft.entity.effect.LightningBoltEntity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.world.World;
+import net.minecraft.util.math.vector.Vector3d;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,8 +23,8 @@ public class LightningBoltSpell extends AbstractSpell {
     }
 
     @Override
-    public List<MutableComponent> getUniqueInfo(LivingEntity caster) {
-        return List.of(Component.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getSpellPower(caster), 1)));
+    public List<IFormattableTextComponent> getUniqueInfo(LivingEntity caster) {
+        return List.of(ITextComponent.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getSpellPower(caster), 1)));
     }
 
     public static DefaultConfig defaultConfig = new DefaultConfig()
@@ -56,12 +56,12 @@ public class LightningBoltSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level level, LivingEntity entity, PlayerMagicData playerMagicData) {
-        Vec3 pos = Utils.raycastForEntity(level, entity, 100, true).getLocation();
-        LightningBolt lightningBolt = new ExtendedLightningBolt(level, entity, getSpellPower(entity));
+    public void onCast(World level, LivingEntity entity, PlayerMagicData playerMagicData) {
+        Vector3d pos = Utils.raycastForEntity(level, entity, 100, true).getLocation();
+        LightningBoltEntity lightningBolt = new ExtendedLightningBolt(level, entity, getSpellPower(entity));
         //lightningBolt.setDamage(getSpellPower(entity));
         lightningBolt.setPos(pos);
-        if (entity instanceof ServerPlayer serverPlayer)
+        if (entity instanceof ServerPlayerEntity serverPlayer)
             lightningBolt.setCause(serverPlayer);
         level.addFreshEntity(lightningBolt);
         super.onCast(level, entity, playerMagicData);

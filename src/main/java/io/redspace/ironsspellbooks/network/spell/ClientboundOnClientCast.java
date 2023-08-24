@@ -6,7 +6,7 @@ import io.redspace.ironsspellbooks.capabilities.magic.CastDataSerializable;
 import io.redspace.ironsspellbooks.player.ClientSpellCastHelper;
 import io.redspace.ironsspellbooks.spells.AbstractSpell;
 import io.redspace.ironsspellbooks.spells.CastSource;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.network.NetworkEvent;
@@ -26,7 +26,7 @@ public class ClientboundOnClientCast {
         this.castData = castData;
     }
 
-    public ClientboundOnClientCast(FriendlyByteBuf buf) {
+    public ClientboundOnClientCast(PacketBuffer buf) {
         spellId = buf.readInt();
         level = buf.readInt();
         castSource = buf.readEnum(CastSource.class);
@@ -38,7 +38,7 @@ public class ClientboundOnClientCast {
         }
     }
 
-    public void toBytes(FriendlyByteBuf buf) {
+    public void toBytes(PacketBuffer buf) {
         buf.writeInt(spellId);
         buf.writeInt(level);
         buf.writeEnum(castSource);

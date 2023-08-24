@@ -6,16 +6,16 @@ import io.redspace.ironsspellbooks.entity.spells.ice_block.IceBlockProjectile;
 import io.redspace.ironsspellbooks.registries.SoundRegistry;
 import io.redspace.ironsspellbooks.spells.*;
 import io.redspace.ironsspellbooks.util.Utils;
-import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.world.World;
+import net.minecraft.util.math.EntityRayTraceResult;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.vector.Vector3d;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,8 +26,8 @@ public class IceBlockSpell extends AbstractSpell {
     }
 
     @Override
-    public List<MutableComponent> getUniqueInfo(LivingEntity caster) {
-        return List.of(Component.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getSpellPower(caster), 1)));
+    public List<IFormattableTextComponent> getUniqueInfo(LivingEntity caster) {
+        return List.of(ITextComponent.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getSpellPower(caster), 1)));
     }
 
     public static DefaultConfig defaultConfig = new DefaultConfig()
@@ -58,26 +58,26 @@ public class IceBlockSpell extends AbstractSpell {
     }
 
     @Override
-    public boolean checkPreCastConditions(Level level, LivingEntity entity, PlayerMagicData playerMagicData) {
+    public boolean checkPreCastConditions(World level, LivingEntity entity, PlayerMagicData playerMagicData) {
         Utils.preCastTargetHelper(level, entity, playerMagicData, getSpellType(), 48, .35f, false);
         return true;
     }
 
     @Override
-    public void onCast(Level level, LivingEntity entity, PlayerMagicData playerMagicData) {
-        Vec3 spawn = null;
+    public void onCast(World level, LivingEntity entity, PlayerMagicData playerMagicData) {
+        Vector3d spawn = null;
         LivingEntity target = null;
 
         if (playerMagicData.getAdditionalCastData() instanceof CastTargetingData castTargetingData) {
-            target = castTargetingData.getTarget((ServerLevel) level);
+            target = castTargetingData.getTarget((ServerWorld) level);
             if (target != null)
                 spawn = target.position();
         }
         if (spawn == null) {
-            HitResult raycast = Utils.raycastForEntity(level, entity, 32, true, .25f);
-            if (raycast.getType() == HitResult.Type.ENTITY) {
-                spawn = ((EntityHitResult) raycast).getEntity().position();
-                if (((EntityHitResult) raycast).getEntity() instanceof LivingEntity livingEntity)
+            RayTraceResult raycast = Utils.raycastForEntity(level, entity, 32, true, .25f);
+            if (raycast.getType() == RayTraceResult.Type.ENTITY) {
+                spawn = ((EntityRayTraceResult) raycast).getEntity().position();
+                if (((EntityRayTraceResult) raycast).getEntity() instanceof LivingEntity livingEntity)
                     target = livingEntity;
             } else {
                 spawn = raycast.getLocation().subtract(entity.getForward().normalize());
@@ -92,9 +92,9 @@ public class IceBlockSpell extends AbstractSpell {
         super.onCast(level, entity, playerMagicData);
     }
 
-    private Vec3 raiseWithCollision(Vec3 start, int blocks, Level level) {
+    private Vector3d raiseWithCollision(Vector3d start, int blocks, World level) {
         for (int i = 0; i < blocks; i++) {
-            Vec3 raised = start.add(0, 1, 0);
+            Vector3d raised = start.add(0, 1, 0);
             if (level.getBlockState(new BlockPos(raised)).isAir())
                 start = raised;
             else

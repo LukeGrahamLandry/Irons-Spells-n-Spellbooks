@@ -7,12 +7,12 @@ import io.redspace.ironsspellbooks.spells.*;
 import io.redspace.ironsspellbooks.spells.holy.HealSpell;
 import io.redspace.ironsspellbooks.util.AnimationHolder;
 import io.redspace.ironsspellbooks.util.Utils;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.Level;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.world.World;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,12 +24,12 @@ public class ChargeSpell extends AbstractSpell {
     }
 
     @Override
-    public List<MutableComponent> getUniqueInfo(LivingEntity caster) {
+    public List<IFormattableTextComponent> getUniqueInfo(LivingEntity caster) {
         return List.of(
-                Component.translatable("ui.irons_spellbooks.effect_length", Utils.timeFromTicks(getSpellPower(caster) * 20, 1)),
-                Component.translatable("attribute.modifier.plus.1", Utils.stringTruncation(getPercentSpeed(caster), 0), Component.translatable("attribute.name.generic.movement_speed")),
-                Component.translatable("attribute.modifier.plus.1", Utils.stringTruncation(getPercentAttackDamage(caster), 0), Component.translatable("attribute.name.generic.attack_damage")),
-                Component.translatable("attribute.modifier.plus.1", Utils.stringTruncation(getPercentSpellPower(caster), 0), Component.translatable("attribute.irons_spellbooks.spell_power"))
+                ITextComponent.translatable("ui.irons_spellbooks.effect_length", Utils.timeFromTicks(getSpellPower(caster) * 20, 1)),
+                ITextComponent.translatable("attribute.modifier.plus.1", Utils.stringTruncation(getPercentSpeed(caster), 0), ITextComponent.translatable("attribute.name.generic.movement_speed")),
+                ITextComponent.translatable("attribute.modifier.plus.1", Utils.stringTruncation(getPercentAttackDamage(caster), 0), ITextComponent.translatable("attribute.name.generic.attack_damage")),
+                ITextComponent.translatable("attribute.modifier.plus.1", Utils.stringTruncation(getPercentSpellPower(caster), 0), ITextComponent.translatable("attribute.irons_spellbooks.spell_power"))
         );
     }
 
@@ -62,9 +62,9 @@ public class ChargeSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level level, LivingEntity entity, PlayerMagicData playerMagicData) {
+    public void onCast(World level, LivingEntity entity, PlayerMagicData playerMagicData) {
 
-        entity.addEffect(new MobEffectInstance(MobEffectRegistry.CHARGED.get(), (int) (getSpellPower(entity) * 20), this.getLevel(entity) - 1, false, false, true));
+        entity.addEffect(new EffectInstance(MobEffectRegistry.CHARGED.get(), (int) (getSpellPower(entity) * 20), this.getLevel(entity) - 1, false, false, true));
 
         super.onCast(level, entity, playerMagicData);
     }

@@ -8,17 +8,17 @@ import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import io.redspace.ironsspellbooks.entity.mobs.debug_wizard.DebugWizard;
 import io.redspace.ironsspellbooks.registries.EntityRegistry;
 import io.redspace.ironsspellbooks.spells.SpellType;
-import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.commands.Commands;
-import net.minecraft.network.chat.Component;
+import net.minecraft.command.CommandSource;
+import net.minecraft.command.Commands;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.server.command.EnumArgument;
 
 public class CreateDebugWizardCommand {
 
-    private static final SimpleCommandExceptionType ERROR_FAILED = new SimpleCommandExceptionType(Component.translatable("commands.irons_spellbooks.create_debug_wizard.failed"));
-    private static final SimpleCommandExceptionType ERROR_FAILED_MAX_LEVEL = new SimpleCommandExceptionType(Component.translatable("commands.irons_spellbooks.create_debug_wizard.failed_max_level"));
+    private static final SimpleCommandExceptionType ERROR_FAILED = new SimpleCommandExceptionType(ITextComponent.translatable("commands.irons_spellbooks.create_debug_wizard.failed"));
+    private static final SimpleCommandExceptionType ERROR_FAILED_MAX_LEVEL = new SimpleCommandExceptionType(ITextComponent.translatable("commands.irons_spellbooks.create_debug_wizard.failed_max_level"));
 
-    public static void register(CommandDispatcher<CommandSourceStack> pDispatcher) {
+    public static void register(CommandDispatcher<CommandSource> pDispatcher) {
         pDispatcher.register(Commands.literal("createDebugWizard").requires((commandSourceStack) -> {
             return commandSourceStack.hasPermission(2);
         }).then(Commands.argument("spellType", EnumArgument.enumArgument(SpellType.class))
@@ -35,9 +35,9 @@ public class CreateDebugWizardCommand {
                                         }))))));
     }
 
-    private static int createDebugWizard(CommandSourceStack source, SpellType spellType, int spellLevel, boolean targetsPlayer, int cancelAfterTicks) throws CommandSyntaxException {
+    private static int createDebugWizard(CommandSource source, SpellType spellType, int spellLevel, boolean targetsPlayer, int cancelAfterTicks) throws CommandSyntaxException {
         if (spellLevel > spellType.getMaxLevel()) {
-            throw new SimpleCommandExceptionType(Component.translatable("commands.irons_spellbooks.create_spell.failed_max_level", spellType, spellType.getMaxLevel())).create();
+            throw new SimpleCommandExceptionType(ITextComponent.translatable("commands.irons_spellbooks.create_spell.failed_max_level", spellType, spellType.getMaxLevel())).create();
         }
 
         var serverPlayer = source.getPlayer();

@@ -2,17 +2,17 @@ package io.redspace.ironsspellbooks.datagen;
 
 import io.redspace.ironsspellbooks.IronsSpellbooks;
 import io.redspace.ironsspellbooks.registries.ResigterBiomeTags;
-import net.minecraft.data.BuiltinRegistries;
+import net.minecraft.util.registry.WorldGenRegistries;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.tags.TagsProvider;
-import net.minecraft.world.level.biome.Biome;
+import net.minecraft.data.TagsProvider;
+import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public class CustomBiomeTags extends TagsProvider<Biome> {
 
     public CustomBiomeTags(DataGenerator generator, ExistingFileHelper helper) {
-        super(generator, BuiltinRegistries.BIOME, IronsSpellbooks.MODID, helper);
+        super(generator, WorldGenRegistries.BIOME, IronsSpellbooks.MODID, helper);
     }
 
     @Override

@@ -8,18 +8,18 @@ import io.redspace.ironsspellbooks.damage.DamageSources;
 import io.redspace.ironsspellbooks.registries.MobEffectRegistry;
 import io.redspace.ironsspellbooks.spells.*;
 import io.redspace.ironsspellbooks.util.Utils;
-import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LightningBolt;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.monster.Creeper;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.effect.LightningBoltEntity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.monster.CreeperEntity;
+import net.minecraft.world.World;
+import net.minecraft.util.math.vector.Vector3d;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,8 +31,8 @@ public class AscensionSpell extends AbstractSpell {
     }
 
     @Override
-    public List<MutableComponent> getUniqueInfo(LivingEntity caster) {
-        return List.of(Component.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getSpellPower(caster), 1)));
+    public List<IFormattableTextComponent> getUniqueInfo(LivingEntity caster) {
+        return List.of(ITextComponent.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getSpellPower(caster), 1)));
     }
 
     public static DefaultConfig defaultConfig = new DefaultConfig()
@@ -69,7 +69,7 @@ public class AscensionSpell extends AbstractSpell {
     }
 
     @Override
-    public void onClientCast(Level level, LivingEntity entity, CastData castData) {
+    public void onClientCast(World level, LivingEntity entity, CastData castData) {
         if (castData instanceof ImpulseCastData data) {
             entity.hasImpulse = data.hasImpulse;
             double y = Math.max(entity.getDeltaMovement().y, data.y);
@@ -79,19 +79,19 @@ public class AscensionSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level level, LivingEntity entity, PlayerMagicData playerMagicData) {
+    public void onCast(World level, LivingEntity entity, PlayerMagicData playerMagicData) {
 
-        entity.addEffect(new MobEffectInstance(MobEffectRegistry.ASCENSION.get(), 80, 0, false, false, true));
+        entity.addEffect(new EffectInstance(MobEffectRegistry.ASCENSION.get(), 80, 0, false, false, true));
 
-        Vec3 vec = entity.position();
+        Vector3d vec = entity.position();
         for (int i = 0; i < 32; i++) {
             if (!level.getBlockState(new BlockPos(vec).below()).isAir())
                 break;
             vec = vec.subtract(0, 1, 0);
         }
-        Vec3 strikePos = vec;
+        Vector3d strikePos = vec;
 
-        LightningBolt lightningBolt = EntityType.LIGHTNING_BOLT.create(level);
+        LightningBoltEntity lightningBolt = EntityType.LIGHTNING_BOLT.create(level);
         lightningBolt.setVisualOnly(true);
         lightningBolt.setDamage(0);
         lightningBolt.setPos(strikePos);
@@ -104,12 +104,12 @@ public class AscensionSpell extends AbstractSpell {
             if (distance < radius * radius) {
                 float finalDamage = (float) (getDamage(entity) * (1 - distance / (radius * radius)));
                 DamageSources.applyDamage(target, finalDamage, SpellType.ASCENSION_SPELL.getDamageSource(lightningBolt, entity), SchoolType.LIGHTNING);
-                if (target instanceof Creeper creeper)
-                    creeper.thunderHit((ServerLevel) level, lightningBolt);
+                if (target instanceof CreeperEntity creeper)
+                    creeper.thunderHit((ServerWorld) level, lightningBolt);
             }
         });
 
-        Vec3 motion = entity.getLookAngle().multiply(1, 0, 1).normalize().add(0, 5, 0).scale(.125);
+        Vector3d motion = entity.getLookAngle().multiply(1, 0, 1).normalize().add(0, 5, 0).scale(.125);
         playerMagicData.setAdditionalCastData(new ImpulseCastData((float) motion.x, (float) motion.y, (float) motion.z, true));
         entity.setDeltaMovement(entity.getDeltaMovement().add(motion));
         entity.hasImpulse = true;

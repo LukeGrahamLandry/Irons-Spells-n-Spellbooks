@@ -9,23 +9,23 @@ import io.redspace.ironsspellbooks.registries.LootRegistry;
 import io.redspace.ironsspellbooks.spells.SpellRarity;
 import io.redspace.ironsspellbooks.spells.SpellType;
 import io.redspace.ironsspellbooks.util.Utils;
-import net.minecraft.util.GsonHelper;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.storage.loot.LootContext;
-import net.minecraft.world.level.storage.loot.functions.LootItemConditionalFunction;
-import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
-import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
+import net.minecraft.util.JSONUtils;
+import net.minecraft.item.ItemStack;
+import net.minecraft.loot.LootContext;
+import net.minecraft.loot.LootFunction;
+import net.minecraft.loot.LootFunctionType;
+import net.minecraft.loot.conditions.ILootCondition;
 import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
 
 import java.util.List;
 import java.util.NavigableMap;
 import java.util.TreeMap;
 
-public class RandomizeSpellFunction extends LootItemConditionalFunction {
+public class RandomizeSpellFunction extends LootFunction {
     final NumberProvider qualityRange;
     final SpellFilter applicableSpells;
 
-    protected RandomizeSpellFunction(LootItemCondition[] lootConditions, NumberProvider qualityRange, SpellFilter spellFilter) {
+    protected RandomizeSpellFunction(ILootCondition[] lootConditions, NumberProvider qualityRange, SpellFilter spellFilter) {
         super(lootConditions);
         this.qualityRange = qualityRange;
         this.applicableSpells = spellFilter;
@@ -85,12 +85,12 @@ public class RandomizeSpellFunction extends LootItemConditionalFunction {
     }
 
     @Override
-    public LootItemFunctionType getType() {
+    public LootFunctionType getType() {
         return LootRegistry.RANDOMIZE_SPELL_FUNCTION.get();
     }
 
     //might not be necesary?
-    public static class Serializer extends LootItemConditionalFunction.Serializer<RandomizeSpellFunction> {
+    public static class Serializer extends LootFunction.Serializer<RandomizeSpellFunction> {
         public void serialize(JsonObject json, RandomizeSpellFunction scrollFunction, JsonSerializationContext jsonDeserializationContext) {
             super.serialize(json, scrollFunction, jsonDeserializationContext);
             //write spell data here?
@@ -98,12 +98,12 @@ public class RandomizeSpellFunction extends LootItemConditionalFunction {
 
         }
 
-        public RandomizeSpellFunction deserialize(JsonObject json, JsonDeserializationContext jsonDeserializationContext, LootItemCondition[] lootConditions) {
+        public RandomizeSpellFunction deserialize(JsonObject json, JsonDeserializationContext jsonDeserializationContext, ILootCondition[] lootConditions) {
             //https://github.com/mickelus/tetra/blob/aedc884203aed78bd5c71e787781cb5511d78540/src/main/java/se/mickelus/tetra/loot/ScrollDataFunction.
             //https://github.com/mickelus/tetra/blob/1e058d250dfd1c18796f6f44c69ca1e21127d057/src/main/java/se/mickelus/tetra/blocks/scroll/ScrollData.java
 
             //Quality Range
-            NumberProvider numberProvider = GsonHelper.getAsObject(json, "quality", jsonDeserializationContext, NumberProvider.class);
+            NumberProvider numberProvider = JSONUtils.getAsObject(json, "quality", jsonDeserializationContext, NumberProvider.class);
 
             //Spell Selection
             var applicableSpells = SpellFilter.deserializeSpellFilter(json);

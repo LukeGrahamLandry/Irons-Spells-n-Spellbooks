@@ -5,8 +5,8 @@ import io.redspace.ironsspellbooks.entity.mobs.abstract_spell_casting_mob.Abstra
 import io.redspace.ironsspellbooks.entity.mobs.abstract_spell_casting_mob.AbstractSpellCastingMobModel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.PartNames;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.processor.IBone;
 
@@ -44,7 +44,7 @@ public class KeeperModel extends AbstractSpellCastingMobModel {
         float pLimbSwingAmount = 0.0F;
         float pLimbSwing = 0.0F;
         if (entity.isAlive()) {
-            pLimbSwingAmount = Mth.lerp(partialTick, entity.animationSpeedOld, entity.animationSpeed);
+            pLimbSwingAmount = MathHelper.lerp(partialTick, entity.animationSpeedOld, entity.animationSpeed);
             pLimbSwing = entity.animationPosition - entity.animationSpeed * (1.0F - partialTick);
             //pLimbSwingAmount *= .75f;
             //pLimbSwing *= .75f;
@@ -57,18 +57,18 @@ public class KeeperModel extends AbstractSpellCastingMobModel {
         }
         if (!(entity.isPassenger() && entity.getVehicle().shouldRiderSit())) {
             float strength = .75f;
-            updatePosition(rightLeg, 0, Mth.cos(pLimbSwing * 0.6662F) * 4 * strength * pLimbSwingAmount, -Mth.sin(pLimbSwing * 0.6662F) * 4 * pLimbSwingAmount);
-            updatePosition(leftLeg, 0, Mth.cos(pLimbSwing * 0.6662F - Mth.PI) * 4 * strength * pLimbSwingAmount, -Mth.sin(pLimbSwing * 0.6662F - Mth.PI) * 4 * pLimbSwingAmount);
-            updatePosition(body, 0, Mth.cos(pLimbSwing * 1.2662F - Mth.PI * .5f) * 1 * strength * pLimbSwingAmount, 0);
+            updatePosition(rightLeg, 0, MathHelper.cos(pLimbSwing * 0.6662F) * 4 * strength * pLimbSwingAmount, -MathHelper.sin(pLimbSwing * 0.6662F) * 4 * pLimbSwingAmount);
+            updatePosition(leftLeg, 0, MathHelper.cos(pLimbSwing * 0.6662F - MathHelper.PI) * 4 * strength * pLimbSwingAmount, -MathHelper.sin(pLimbSwing * 0.6662F - MathHelper.PI) * 4 * pLimbSwingAmount);
+            updatePosition(body, 0, MathHelper.cos(pLimbSwing * 1.2662F - MathHelper.PI * .5f) * 1 * strength * pLimbSwingAmount, 0);
             if (tick) {
                 if (!entity.isAnimating() || entity.shouldAlwaysAnimateLegs()) {
-                    legTween = Mth.lerp(.9f, 0, 1);
+                    legTween = MathHelper.lerp(.9f, 0, 1);
                 } else {
-                    legTween = Mth.lerp(.9f, 1, 0);
+                    legTween = MathHelper.lerp(.9f, 1, 0);
                 }
             }
-            rightLeg.setRotationX(Mth.cos(pLimbSwing * 0.6662F) * 1.4F * pLimbSwingAmount * legTween * strength);
-            leftLeg.setRotationX(Mth.cos(pLimbSwing * 0.6662F + (float) Math.PI) * 1.4F * pLimbSwingAmount * legTween * strength);
+            rightLeg.setRotationX(MathHelper.cos(pLimbSwing * 0.6662F) * 1.4F * pLimbSwingAmount * legTween * strength);
+            leftLeg.setRotationX(MathHelper.cos(pLimbSwing * 0.6662F + (float) Math.PI) * 1.4F * pLimbSwingAmount * legTween * strength);
         }
         if (entity.isAnimating()){
             bobBone(rightArm, entity.tickCount, 1);

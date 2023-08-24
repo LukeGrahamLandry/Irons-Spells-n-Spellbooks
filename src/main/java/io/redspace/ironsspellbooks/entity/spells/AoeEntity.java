@@ -1,23 +1,29 @@
 package io.redspace.ironsspellbooks.entity.spells;
 
 import io.redspace.ironsspellbooks.util.Utils;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializers;
-import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.util.Mth;
+import net.minecraft.particles.IParticleData;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.entity.*;
-import net.minecraft.world.entity.projectile.Projectile;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.entity.projectile.ProjectileEntity;
+import net.minecraft.world.World;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.fluids.FluidType;
 
 import java.util.List;
 
-public abstract class AoeEntity extends Projectile {
-    private static final EntityDataAccessor<Float> DATA_RADIUS = SynchedEntityData.defineId(AoeEntity.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Boolean> DATA_CIRCULAR = SynchedEntityData.defineId(AoeEntity.class, EntityDataSerializers.BOOLEAN);
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntitySize;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.Pose;
+
+public abstract class AoeEntity extends ProjectileEntity {
+    private static final DataParameter<Float> DATA_RADIUS = EntityDataManager.defineId(AoeEntity.class, DataSerializers.FLOAT);
+    private static final DataParameter<Boolean> DATA_CIRCULAR = EntityDataManager.defineId(AoeEntity.class, DataSerializers.BOOLEAN);
 
     protected float damage;
     protected int duration = 600;
@@ -27,7 +33,7 @@ public abstract class AoeEntity extends Projectile {
     protected float radiusPerTick;
     protected int effectDuration;
 
-    public AoeEntity(EntityType<? extends Projectile> pEntityType, Level pLevel) {
+    public AoeEntity(EntityType<? extends ProjectileEntity> pEntityType, World pLevel) {
         super(pEntityType, pLevel);
         this.noPhysics = true;
     }
@@ -115,23 +121,23 @@ public abstract class AoeEntity extends Projectile {
             return;
 
         float f = getParticleCount();
-        f = Mth.clamp(f * getRadius(), f / 4, f * 10);
+        f = MathHelper.clamp(f * getRadius(), f / 4, f * 10);
         for (int i = 0; i < f; i++) {
             if (f - i < 1 && random.nextFloat() > f - i)
                 return;
             var r = getRadius();
-            Vec3 pos;
+            Vector3d pos;
             if (isCircular()) {
                 float distance = (1 - this.random.nextFloat() * this.random.nextFloat()) * r;
-                pos = new Vec3(0, 0, distance).yRot(this.random.nextFloat() * 360);
+                pos = new Vector3d(0, 0, distance).yRot(this.random.nextFloat() * 360);
             } else {
-                pos = new Vec3(
+                pos = new Vector3d(
                         Utils.getRandomScaled(r * .85f),
                         .2f,
                         Utils.getRandomScaled(r * .85f)
                 );
             }
-            Vec3 motion = new Vec3(
+            Vector3d motion = new Vector3d(
                     Utils.getRandomScaled(.03f),
                     this.random.nextDouble() * .01f,
                     Utils.getRandomScaled(.03f)
@@ -161,7 +167,7 @@ public abstract class AoeEntity extends Projectile {
     }
 
     @Override
-    public void onSyncedDataUpdated(EntityDataAccessor<?> pKey) {
+    public void onSyncedDataUpdated(DataParameter<?> pKey) {
         if (DATA_RADIUS.equals(pKey)) {
             this.refreshDimensions();
             if (getRadius() < .1f)
@@ -173,7 +179,7 @@ public abstract class AoeEntity extends Projectile {
 
     public void setRadius(float pRadius) {
         if (!this.level.isClientSide) {
-            this.getEntityData().set(DATA_RADIUS, Mth.clamp(pRadius, 0.0F, 32.0F));
+            this.getEntityData().set(DATA_RADIUS, MathHelper.clamp(pRadius, 0.0F, 32.0F));
         }
     }
 
@@ -205,14 +211,14 @@ public abstract class AoeEntity extends Projectile {
 
     public abstract float getParticleCount();
 
-    public abstract ParticleOptions getParticle();
+    public abstract IParticleData getParticle();
 
     @Override
-    public EntityDimensions getDimensions(Pose pPose) {
-        return EntityDimensions.scalable(this.getRadius() * 2.0F, 0.8F);
+    public EntitySize getDimensions(Pose pPose) {
+        return EntitySize.scalable(this.getRadius() * 2.0F, 0.8F);
     }
 
-    protected void addAdditionalSaveData(CompoundTag pCompound) {
+    protected void addAdditionalSaveData(CompoundNBT pCompound) {
         pCompound.putInt("Age", this.tickCount);
         pCompound.putInt("Duration", this.duration);
         pCompound.putInt("ReapplicationDelay", this.reapplicationDelay);
@@ -227,7 +233,7 @@ public abstract class AoeEntity extends Projectile {
 
     }
 
-    protected void readAdditionalSaveData(CompoundTag pCompound) {
+    protected void readAdditionalSaveData(CompoundNBT pCompound) {
         this.tickCount = pCompound.getInt("Age");
         if (pCompound.getInt("Duration") > 0)
             this.duration = pCompound.getInt("Duration");

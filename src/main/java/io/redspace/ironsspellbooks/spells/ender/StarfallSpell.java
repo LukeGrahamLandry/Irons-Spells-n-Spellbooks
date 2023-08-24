@@ -10,16 +10,16 @@ import io.redspace.ironsspellbooks.spells.*;
 import io.redspace.ironsspellbooks.util.AnimationHolder;
 import io.redspace.ironsspellbooks.util.ParticleHelper;
 import io.redspace.ironsspellbooks.util.Utils;
-import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.SoundEvents;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.world.World;
+import net.minecraft.util.math.vector.Vector3d;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -31,10 +31,10 @@ public class StarfallSpell extends AbstractSpell {
     }
 
     @Override
-    public List<MutableComponent> getUniqueInfo(LivingEntity caster) {
+    public List<IFormattableTextComponent> getUniqueInfo(LivingEntity caster) {
         return List.of(
-                Component.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(caster), 1)),
-                Component.translatable("ui.irons_spellbooks.radius", Utils.stringTruncation(getRadius(caster), 1))
+                ITextComponent.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(caster), 1)),
+                ITextComponent.translatable("ui.irons_spellbooks.radius", Utils.stringTruncation(getRadius(caster), 1))
         );
     }
 
@@ -67,22 +67,22 @@ public class StarfallSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level world, LivingEntity entity, PlayerMagicData playerMagicData) {
+    public void onCast(World world, LivingEntity entity, PlayerMagicData playerMagicData) {
         if (!(playerMagicData.getAdditionalCastData() instanceof TargetAreaCastData)) {
-            Vec3 targetArea = Utils.moveToRelativeGroundLevel(world, Utils.raycastForEntity(world, entity, 40, true).getLocation(), 12);
+            Vector3d targetArea = Utils.moveToRelativeGroundLevel(world, Utils.raycastForEntity(world, entity, 40, true).getLocation(), 12);
             playerMagicData.setAdditionalCastData(new TargetAreaCastData(targetArea, TargetedAreaEntity.createTargetAreaEntity(world, targetArea, getRadius(entity), 0x60008c)));
         }
         super.onCast(world, entity, playerMagicData);
     }
 
     @Override
-    public void onServerCastTick(Level level, LivingEntity entity, @Nullable PlayerMagicData playerMagicData) {
+    public void onServerCastTick(World level, LivingEntity entity, @Nullable PlayerMagicData playerMagicData) {
         if (playerMagicData != null && (playerMagicData.getCastDurationRemaining() + 1) % 4 == 0)
             if (playerMagicData.getAdditionalCastData() instanceof TargetAreaCastData targetAreaCastData) {
                 for (int i = 0; i < 2; i++) {
-                    Vec3 center = targetAreaCastData.getCenter();
+                    Vector3d center = targetAreaCastData.getCenter();
                     float radius = getRadius(entity);
-                    Vec3 spawn = center.add(new Vec3(0, 0, entity.getRandom().nextFloat() * radius).yRot(entity.getRandom().nextInt(360)));
+                    Vector3d spawn = center.add(new Vector3d(0, 0, entity.getRandom().nextFloat() * radius).yRot(entity.getRandom().nextInt(360)));
                     //TODO: not this
                     spawn = raiseWithCollision(spawn, 12, level);
                     shootComet(level, entity, spawn);
@@ -98,9 +98,9 @@ public class StarfallSpell extends AbstractSpell {
         super.playSound(sound, entity, false);
     }
 
-    private Vec3 raiseWithCollision(Vec3 start, int blocks, Level level) {
+    private Vector3d raiseWithCollision(Vector3d start, int blocks, World level) {
         for (int i = 0; i < blocks; i++) {
-            Vec3 raised = start.add(0, 1, 0);
+            Vector3d raised = start.add(0, 1, 0);
             if (level.getBlockState(new BlockPos(raised)).isAir())
                 start = raised;
             else
@@ -117,14 +117,14 @@ public class StarfallSpell extends AbstractSpell {
         return 6;
     }
 
-    public void shootComet(Level world, LivingEntity entity, Vec3 spawn) {
+    public void shootComet(World world, LivingEntity entity, Vector3d spawn) {
         Comet fireball = new Comet(world, entity);
         fireball.setPos(spawn.add(-1, 0, 0));
-        fireball.shoot(new Vec3(.15f, -.85f, 0), .075f);
+        fireball.shoot(new Vector3d(.15f, -.85f, 0), .075f);
         fireball.setDamage(getDamage(entity));
         fireball.setExplosionRadius(2f);
         world.addFreshEntity(fireball);
-        world.playSound(null, spawn.x, spawn.y, spawn.z, SoundEvents.FIREWORK_ROCKET_LAUNCH, SoundSource.PLAYERS, 3.0f, 0.7f + world.random.nextFloat() * .3f);
+        world.playSound(null, spawn.x, spawn.y, spawn.z, SoundEvents.FIREWORK_ROCKET_LAUNCH, SoundCategory.PLAYERS, 3.0f, 0.7f + world.random.nextFloat() * .3f);
 
     }
 

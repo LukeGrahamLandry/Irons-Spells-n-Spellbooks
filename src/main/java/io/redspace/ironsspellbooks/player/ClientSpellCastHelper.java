@@ -18,15 +18,15 @@ import io.redspace.ironsspellbooks.spells.ice.FrostStepSpell;
 import io.redspace.ironsspellbooks.util.ParticleHelper;
 import io.redspace.ironsspellbooks.util.Utils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.AbstractClientPlayer;
-import net.minecraft.core.particles.DustParticleOptions;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.alchemy.Potion;
-import net.minecraft.world.item.alchemy.PotionUtils;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
+import net.minecraft.particles.RedstoneParticleData;
+import net.minecraft.particles.ParticleTypes;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.potion.Potion;
+import net.minecraft.potion.PotionUtils;
+import net.minecraft.util.math.vector.Vector3d;
 
 import java.util.UUID;
 
@@ -51,19 +51,19 @@ public class ClientSpellCastHelper {
     /**
      * Handle Network Triggered Particles
      */
-    public static void handleClientboundBloodSiphonParticles(Vec3 pos1, Vec3 pos2) {
+    public static void handleClientboundBloodSiphonParticles(Vector3d pos1, Vector3d pos2) {
         if (Minecraft.getInstance().player == null)
             return;
         var level = Minecraft.getInstance().player.level;
-        Vec3 direction = pos2.subtract(pos1).scale(.1f);
+        Vector3d direction = pos2.subtract(pos1).scale(.1f);
         for (int i = 0; i < 40; i++) {
-            Vec3 scaledDirection = direction.scale(1 + Utils.getRandomScaled(.35));
-            Vec3 random = new Vec3(Utils.getRandomScaled(.08f), Utils.getRandomScaled(.08f), Utils.getRandomScaled(.08f));
+            Vector3d scaledDirection = direction.scale(1 + Utils.getRandomScaled(.35));
+            Vector3d random = new Vector3d(Utils.getRandomScaled(.08f), Utils.getRandomScaled(.08f), Utils.getRandomScaled(.08f));
             level.addParticle(ParticleHelper.BLOOD, pos1.x, pos1.y, pos1.z, scaledDirection.x + random.x, scaledDirection.y + random.y, scaledDirection.z + random.z);
         }
     }
 
-    public static void handleClientsideHealParticles(Vec3 pos) {
+    public static void handleClientsideHealParticles(Vector3d pos) {
         //Copied from arrow because these particles use their motion for color??
         var player = Minecraft.getInstance().player;
 
@@ -80,7 +80,7 @@ public class ClientSpellCastHelper {
         }
     }
 
-    public static void handleClientsideAbsorptionParticles(Vec3 pos) {
+    public static void handleClientsideAbsorptionParticles(Vector3d pos) {
         //Copied from arrow because these particles use their motion for color??
         var player = Minecraft.getInstance().player;
 
@@ -97,34 +97,34 @@ public class ClientSpellCastHelper {
         }
     }
 
-    public static void handleClientsideRegenCloudParticles(Vec3 pos) {
+    public static void handleClientsideRegenCloudParticles(Vector3d pos) {
         var player = Minecraft.getInstance().player;
 
         if (player != null) {
             var level = player.level;
             int ySteps = 16;
             int xSteps = 48;
-            float yDeg = 180f / ySteps * Mth.DEG_TO_RAD;
-            float xDeg = 360f / xSteps * Mth.DEG_TO_RAD;
+            float yDeg = 180f / ySteps * MathHelper.DEG_TO_RAD;
+            float xDeg = 360f / xSteps * MathHelper.DEG_TO_RAD;
             for (int x = 0; x < xSteps; x++) {
                 for (int y = 0; y < ySteps; y++) {
-                    Vec3 offset = new Vec3(0, 0, CloudOfRegenerationSpell.radius).yRot(y * yDeg).xRot(x * xDeg).zRot(-Mth.PI / 2).multiply(1, .85f, 1);
-                    level.addParticle(DustParticleOptions.REDSTONE, pos.x + offset.x, pos.y + offset.y, pos.z + offset.z, 0, 0, 0);
+                    Vector3d offset = new Vector3d(0, 0, CloudOfRegenerationSpell.radius).yRot(y * yDeg).xRot(x * xDeg).zRot(-MathHelper.PI / 2).multiply(1, .85f, 1);
+                    level.addParticle(RedstoneParticleData.REDSTONE, pos.x + offset.x, pos.y + offset.y, pos.z + offset.z, 0, 0, 0);
                 }
             }
         }
     }
 
-    public static void handleClientsideFortifyAreaParticles(Vec3 pos) {
+    public static void handleClientsideFortifyAreaParticles(Vector3d pos) {
         var player = Minecraft.getInstance().player;
 
         if (player != null) {
             var level = player.level;
             int ySteps = 128;
-            float yDeg = 180f / ySteps * Mth.DEG_TO_RAD;
+            float yDeg = 180f / ySteps * MathHelper.DEG_TO_RAD;
             for (int y = 0; y < ySteps; y++) {
-                Vec3 offset = new Vec3(0, 0, FortifySpell.radius).yRot(y * yDeg);
-                Vec3 motion = new Vec3(
+                Vector3d offset = new Vector3d(0, 0, FortifySpell.radius).yRot(y * yDeg);
+                Vector3d motion = new Vector3d(
                         Math.random() - .5,
                         Math.random() - .5,
                         Math.random() - .5
@@ -140,12 +140,12 @@ public class ClientSpellCastHelper {
 
     private static boolean didModify = false;
 
-    private static void animatePlayerStart(Player player, ResourceLocation resourceLocation) {
+    private static void animatePlayerStart(PlayerEntity player, ResourceLocation resourceLocation) {
         //IronsSpellbooks.LOGGER.debug("animatePlayerStart {} {}", player, resourceLocation);
         var keyframeAnimation = PlayerAnimationRegistry.getAnimation(resourceLocation);
         if (keyframeAnimation != null) {
             //noinspection unchecked
-            var animation = (ModifierLayer<IAnimation>) PlayerAnimationAccess.getPlayerAssociatedData((AbstractClientPlayer) player).get(AbstractSpell.ANIMATION_RESOURCE);
+            var animation = (ModifierLayer<IAnimation>) PlayerAnimationAccess.getPlayerAssociatedData((AbstractClientPlayerEntity) player).get(AbstractSpell.ANIMATION_RESOURCE);
             if (animation != null) {
                 var castingAnimationPlayer = new KeyframeAnimationPlayer(keyframeAnimation);
                 ClientMagicData.castingAnimationPlayerLookup.put(player.getUUID(), castingAnimationPlayer);
@@ -175,7 +175,7 @@ public class ClientSpellCastHelper {
         spell.onClientCast(Minecraft.getInstance().player.level, Minecraft.getInstance().player, castData);
     }
 
-    public static void handleClientboundTeleport(Vec3 pos1, Vec3 pos2) {
+    public static void handleClientboundTeleport(Vector3d pos1, Vector3d pos2) {
         var player = Minecraft.getInstance().player;
 
         if (player != null) {
@@ -186,7 +186,7 @@ public class ClientSpellCastHelper {
     }
 
 
-    public static void handleClientboundFrostStep(Vec3 pos1, Vec3 pos2) {
+    public static void handleClientboundFrostStep(Vector3d pos1, Vector3d pos2) {
         var player = Minecraft.getInstance().player;
 
         if (player != null) {

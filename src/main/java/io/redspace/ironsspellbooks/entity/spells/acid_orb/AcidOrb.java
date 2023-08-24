@@ -7,25 +7,25 @@ import io.redspace.ironsspellbooks.registries.MobEffectRegistry;
 import io.redspace.ironsspellbooks.registries.SoundRegistry;
 import io.redspace.ironsspellbooks.util.ParticleHelper;
 import io.redspace.ironsspellbooks.util.Utils;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.projectile.Projectile;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.projectile.ProjectileEntity;
+import net.minecraft.world.World;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.vector.Vector3d;
 
 import java.util.Optional;
 
 public class AcidOrb extends AbstractMagicProjectile {
-    public AcidOrb(EntityType<? extends Projectile> pEntityType, Level pLevel) {
+    public AcidOrb(EntityType<? extends ProjectileEntity> pEntityType, World pLevel) {
         super(pEntityType, pLevel);
     }
 
-    public AcidOrb(Level level, LivingEntity shooter) {
+    public AcidOrb(World level, LivingEntity shooter) {
         this(EntityRegistry.ACID_ORB.get(), level);
         setOwner(shooter);
     }
@@ -52,7 +52,7 @@ public class AcidOrb extends AbstractMagicProjectile {
 
     @Override
     public void trailParticles() {
-        Vec3 vec3 = this.position().subtract(getDeltaMovement().scale(2));
+        Vector3d vec3 = this.position().subtract(getDeltaMovement().scale(2));
         level.addParticle(ParticleHelper.ACID, vec3.x, vec3.y, vec3.z, 0, 0, 0);
     }
 
@@ -73,7 +73,7 @@ public class AcidOrb extends AbstractMagicProjectile {
     }
 
     @Override
-    protected void onHit(HitResult hitresult) {
+    protected void onHit(RayTraceResult hitresult) {
         super.onHit(hitresult);
         if (!this.level.isClientSide) {
             float explosionRadius = 3.5f;
@@ -82,7 +82,7 @@ public class AcidOrb extends AbstractMagicProjectile {
                 double distance = entity.position().distanceTo(hitresult.getLocation());
                 if (distance < explosionRadius && Utils.hasLineOfSight(level, hitresult.getLocation(), entity.getEyePosition(), true)) {
                     if (entity instanceof LivingEntity livingEntity && livingEntity != getOwner())
-                        livingEntity.addEffect(new MobEffectInstance(MobEffectRegistry.REND.get(), getRendDuration(), getRendLevel()));
+                        livingEntity.addEffect(new EffectInstance(MobEffectRegistry.REND.get(), getRendDuration(), getRendLevel()));
                 }
             }
             this.discard();
@@ -95,14 +95,14 @@ public class AcidOrb extends AbstractMagicProjectile {
     }
 
     @Override
-    protected void addAdditionalSaveData(CompoundTag pCompound) {
+    protected void addAdditionalSaveData(CompoundNBT pCompound) {
         super.addAdditionalSaveData(pCompound);
         pCompound.putInt("RendLevel", rendLevel);
         pCompound.putInt("RendDuration", rendDuration);
     }
 
     @Override
-    protected void readAdditionalSaveData(CompoundTag pCompound) {
+    protected void readAdditionalSaveData(CompoundNBT pCompound) {
         super.readAdditionalSaveData(pCompound);
         this.rendLevel = pCompound.getInt("RendLevel");
         this.rendDuration = pCompound.getInt("RendDuration");

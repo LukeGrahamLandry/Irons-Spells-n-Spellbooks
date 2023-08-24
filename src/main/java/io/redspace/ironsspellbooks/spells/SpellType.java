@@ -15,12 +15,12 @@ import io.redspace.ironsspellbooks.spells.poison.*;
 import io.redspace.ironsspellbooks.spells.void_school.AbyssalShroudSpell;
 import io.redspace.ironsspellbooks.spells.void_school.BlackHoleSpell;
 import io.redspace.ironsspellbooks.spells.void_school.VoidTentaclesSpell;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.item.UseAnim;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.DamageSource;
+import net.minecraft.entity.Entity;
+import net.minecraft.item.UseAction;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -151,10 +151,10 @@ public enum SpellType {
         };
     }
 
-    public UseAnim getUseAnim() {
+    public UseAction getUseAnim() {
         return switch (this) {
-            case LIGHTNING_LANCE_SPELL -> UseAnim.SPEAR;
-            default -> UseAnim.BOW;
+            case LIGHTNING_LANCE_SPELL -> UseAction.SPEAR;
+            default -> UseAction.BOW;
         };
     }
 
@@ -315,8 +315,8 @@ public enum SpellType {
         return String.format("spell.%s.%s", IronsSpellbooks.MODID, getId());
     }
 
-    public MutableComponent getDisplayName() {
-        return Component.translatable(getComponentId());
+    public IFormattableTextComponent getDisplayName() {
+        return ITextComponent.translatable(getComponentId());
     }
 
     public ResourceLocation getResourceLocation() {

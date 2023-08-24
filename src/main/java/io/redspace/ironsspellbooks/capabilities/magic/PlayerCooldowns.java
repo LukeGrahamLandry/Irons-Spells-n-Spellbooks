@@ -4,9 +4,9 @@ import io.redspace.ironsspellbooks.network.ClientboundSyncCooldowns;
 import io.redspace.ironsspellbooks.setup.Messages;
 import io.redspace.ironsspellbooks.spells.SpellType;
 import com.google.common.collect.Maps;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.entity.player.ServerPlayerEntity;
 
 import java.util.Map;
 
@@ -71,14 +71,14 @@ public class PlayerCooldowns {
         return c.getCooldownRemaining() <= tickBuffer;
     }
 
-    public void syncToPlayer(ServerPlayer serverPlayer) {
+    public void syncToPlayer(ServerPlayerEntity serverPlayer) {
         Messages.sendToPlayer(new ClientboundSyncCooldowns(this.spellCooldowns), serverPlayer);
     }
 
-    public void saveNBTData(ListTag listTag) {
+    public void saveNBTData(ListNBT listTag) {
         spellCooldowns.forEach((spell, cooldown) -> {
             if (cooldown.getCooldownRemaining() > 0) {
-                CompoundTag ct = new CompoundTag();
+                CompoundNBT ct = new CompoundNBT();
                 ct.putInt(SPELL_ID, spell.getValue());
                 ct.putInt(SPELL_COOLDOWN, cooldown.getSpellCooldown());
                 ct.putInt(COOLDOWN_REMAINING, cooldown.getCooldownRemaining());
@@ -87,10 +87,10 @@ public class PlayerCooldowns {
         });
     }
 
-    public void loadNBTData(ListTag listTag) {
+    public void loadNBTData(ListNBT listTag) {
         if (listTag != null) {
             listTag.forEach(tag -> {
-                CompoundTag t = (CompoundTag) tag;
+                CompoundNBT t = (CompoundNBT) tag;
                 SpellType spellType = SpellType.values()[t.getInt(SPELL_ID)];
                 int spellCooldown = t.getInt(SPELL_COOLDOWN);
                 int cooldownRemaining = t.getInt(COOLDOWN_REMAINING);

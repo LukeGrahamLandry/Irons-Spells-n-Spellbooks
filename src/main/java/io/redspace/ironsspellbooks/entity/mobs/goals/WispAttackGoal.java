@@ -1,15 +1,15 @@
 package io.redspace.ironsspellbooks.entity.mobs.goals;
 
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.PathfinderMob;
-import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.CreatureEntity;
+import net.minecraft.entity.ai.goal.Goal;
 
 public class WispAttackGoal extends Goal {
     private LivingEntity target;
-    private PathfinderMob wisp;
+    private CreatureEntity wisp;
     private double speedModifier;
 
-    public WispAttackGoal(PathfinderMob wisp, double speedModifier) {
+    public WispAttackGoal(CreatureEntity wisp, double speedModifier) {
         this.wisp = wisp;
         this.speedModifier = speedModifier;
     }

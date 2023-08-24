@@ -2,10 +2,10 @@ package io.redspace.ironsspellbooks.network;
 
 import io.redspace.ironsspellbooks.player.ClientInputEvents;
 import io.redspace.ironsspellbooks.spells.SpellType;
-import net.minecraft.ChatFormatting;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.Component;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.NetworkEvent;
 
@@ -25,13 +25,13 @@ public class ClientboundCastErrorMessage {
         this.errorType = errorType;
     }
 
-    public ClientboundCastErrorMessage(FriendlyByteBuf buf) {
+    public ClientboundCastErrorMessage(PacketBuffer buf) {
         errorType = buf.readEnum(ErrorType.class);
         spellType = buf.readInt();
 
     }
 
-    public void toBytes(FriendlyByteBuf buf) {
+    public void toBytes(PacketBuffer buf) {
         buf.writeEnum(errorType);
         buf.writeInt(spellType);
     }
@@ -43,9 +43,9 @@ public class ClientboundCastErrorMessage {
             if (errorType == ErrorType.COOLDOWN) {
                 //ignore cooldown message if we are simply holding right click.
                 if (ClientInputEvents.hasReleasedSinceCasting)
-                    Minecraft.getInstance().gui.setOverlayMessage(Component.translatable("ui.irons_spellbooks.cast_error_cooldown", spell.getDisplayName()).withStyle(ChatFormatting.RED), false);
+                    Minecraft.getInstance().gui.setOverlayMessage(ITextComponent.translatable("ui.irons_spellbooks.cast_error_cooldown", spell.getDisplayName()).withStyle(TextFormatting.RED), false);
             } else {
-                Minecraft.getInstance().gui.setOverlayMessage(Component.translatable("ui.irons_spellbooks.cast_error_mana", spell.getDisplayName()).withStyle(ChatFormatting.RED), false);
+                Minecraft.getInstance().gui.setOverlayMessage(ITextComponent.translatable("ui.irons_spellbooks.cast_error_mana", spell.getDisplayName()).withStyle(TextFormatting.RED), false);
             }
         });
 

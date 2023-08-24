@@ -6,15 +6,15 @@ import io.redspace.ironsspellbooks.entity.spells.poison_cloud.PoisonSplash;
 import io.redspace.ironsspellbooks.registries.SoundRegistry;
 import io.redspace.ironsspellbooks.spells.*;
 import io.redspace.ironsspellbooks.util.Utils;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.world.World;
+import net.minecraft.util.math.EntityRayTraceResult;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.vector.Vector3d;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,10 +25,10 @@ public class PoisonSplashSpell extends AbstractSpell {
     }
 
     @Override
-    public List<MutableComponent> getUniqueInfo(LivingEntity caster) {
+    public List<IFormattableTextComponent> getUniqueInfo(LivingEntity caster) {
         return List.of(
-                Component.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(caster), 1)),
-                Component.translatable("ui.irons_spellbooks.effect_length", Utils.timeFromTicks(getDuration(caster), 1))
+                ITextComponent.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(caster), 1)),
+                ITextComponent.translatable("ui.irons_spellbooks.effect_length", Utils.timeFromTicks(getDuration(caster), 1))
         );
     }
 
@@ -60,22 +60,22 @@ public class PoisonSplashSpell extends AbstractSpell {
     }
 
     @Override
-    public boolean checkPreCastConditions(Level level, LivingEntity entity, PlayerMagicData playerMagicData) {
+    public boolean checkPreCastConditions(World level, LivingEntity entity, PlayerMagicData playerMagicData) {
         Utils.preCastTargetHelper(level, entity, playerMagicData, getSpellType(), 32, .35f, false);
         return true;
     }
 
     @Override
-    public void onCast(Level level, LivingEntity entity, PlayerMagicData playerMagicData) {
-        Vec3 spawn = null;
+    public void onCast(World level, LivingEntity entity, PlayerMagicData playerMagicData) {
+        Vector3d spawn = null;
 
         if (playerMagicData.getAdditionalCastData() instanceof CastTargetingData castTargetingData) {
-            spawn = castTargetingData.getTargetPosition((ServerLevel) level);
+            spawn = castTargetingData.getTargetPosition((ServerWorld) level);
         }
         if(spawn == null){
-            HitResult raycast = Utils.raycastForEntity(level, entity, 32, true);
-            if (raycast.getType() == HitResult.Type.ENTITY) {
-                spawn = ((EntityHitResult) raycast).getEntity().position();
+            RayTraceResult raycast = Utils.raycastForEntity(level, entity, 32, true);
+            if (raycast.getType() == RayTraceResult.Type.ENTITY) {
+                spawn = ((EntityRayTraceResult) raycast).getEntity().position();
             } else {
                 spawn = Utils.moveToRelativeGroundLevel(level, raycast.getLocation().subtract(entity.getForward().normalize()).add(0, 2, 0), 5);
             }

@@ -7,8 +7,8 @@ import io.redspace.ironsspellbooks.entity.mobs.abstract_spell_casting_mob.Abstra
 import io.redspace.ironsspellbooks.player.ClientMagicData;
 import io.redspace.ironsspellbooks.util.Log;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.entity.Entity;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.entity.Entity;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
@@ -22,12 +22,12 @@ public class ClientboundSyncAnimation<T extends Entity & AnimatedAttacker> {
         this.animationId = animationId;
     }
 
-    public ClientboundSyncAnimation(FriendlyByteBuf buf) {
+    public ClientboundSyncAnimation(PacketBuffer buf) {
         entityId = buf.readInt();
         animationId = buf.readInt();
     }
 
-    public void toBytes(FriendlyByteBuf buf) {
+    public void toBytes(PacketBuffer buf) {
         buf.writeInt(entityId);
         buf.writeInt(animationId);
     }

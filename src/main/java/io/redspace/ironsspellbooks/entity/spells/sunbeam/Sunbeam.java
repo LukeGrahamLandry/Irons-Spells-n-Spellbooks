@@ -9,22 +9,22 @@ import io.redspace.ironsspellbooks.registries.EntityRegistry;
 import io.redspace.ironsspellbooks.spells.SchoolType;
 import io.redspace.ironsspellbooks.spells.SpellType;
 import io.redspace.ironsspellbooks.util.ParticleHelper;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.projectile.Projectile;
-import net.minecraft.world.level.Level;
+import net.minecraft.particles.IParticleData;
+import net.minecraft.particles.ParticleTypes;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.projectile.ProjectileEntity;
+import net.minecraft.world.World;
 
 public class Sunbeam extends AoeEntity implements AntiMagicSusceptible {
 
-    public Sunbeam(EntityType<? extends Projectile> pEntityType, Level pLevel) {
+    public Sunbeam(EntityType<? extends ProjectileEntity> pEntityType, World pLevel) {
         super(pEntityType, pLevel);
         this.setRadius((float) (this.getBoundingBox().getXsize() * .5f));
         this.setNoGravity(true);
     }
 
-    public Sunbeam(Level level) {
+    public Sunbeam(World level) {
         this(EntityRegistry.SUNBEAM.get(), level);
     }
 
@@ -65,7 +65,7 @@ public class Sunbeam extends AoeEntity implements AntiMagicSusceptible {
     }
 
     @Override
-    public ParticleOptions getParticle() {
+    public IParticleData getParticle() {
         return ParticleHelper.SIPHON;
     }
 

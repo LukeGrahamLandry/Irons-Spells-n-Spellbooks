@@ -1,20 +1,20 @@
 package io.redspace.ironsspellbooks.entity.spells;
 
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityDimensions;
-import net.minecraft.world.entity.Pose;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntitySize;
+import net.minecraft.entity.Pose;
 import net.minecraftforge.entity.PartEntity;
 
 public class ConePart extends PartEntity<AbstractConeProjectile> {
 
     public final AbstractConeProjectile parentEntity;
     public final String name;
-    private final EntityDimensions size;
+    private final EntitySize size;
 
     public ConePart(AbstractConeProjectile coneProjectile, String name, float scaleX, float scaleY) {
         super(coneProjectile);
-        this.size = EntityDimensions.scalable(scaleX, scaleY);
+        this.size = EntitySize.scalable(scaleX, scaleY);
         this.refreshDimensions();
         this.parentEntity = coneProjectile;
         this.name = name;
@@ -25,12 +25,12 @@ public class ConePart extends PartEntity<AbstractConeProjectile> {
     }
 
     @Override
-    protected void readAdditionalSaveData(CompoundTag compoundTag) {
+    protected void readAdditionalSaveData(CompoundNBT compoundTag) {
 
     }
 
     @Override
-    protected void addAdditionalSaveData(CompoundTag compoundTag) {
+    protected void addAdditionalSaveData(CompoundNBT compoundTag) {
 
     }
 
@@ -40,7 +40,7 @@ public class ConePart extends PartEntity<AbstractConeProjectile> {
     }
 
     @Override
-    public EntityDimensions getDimensions(Pose pose) {
+    public EntitySize getDimensions(Pose pose) {
         return this.size;
     }
 

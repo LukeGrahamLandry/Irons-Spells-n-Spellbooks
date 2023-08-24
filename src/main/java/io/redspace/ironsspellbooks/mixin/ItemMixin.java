@@ -2,10 +2,10 @@ package io.redspace.ironsspellbooks.mixin;
 
 import io.redspace.ironsspellbooks.capabilities.spell.SpellData;
 import io.redspace.ironsspellbooks.util.UpgradeUtils;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.UseAnim;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.UseAction;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -19,10 +19,10 @@ public abstract class ItemMixin {
     Necessary to display how many times a piece of gear has been upgraded on its name
      */
     @Inject(method = "getName", at = @At("TAIL"), cancellable = true)
-    public void getHoverName(ItemStack stack, CallbackInfoReturnable<Component> cir) {
+    public void getHoverName(ItemStack stack, CallbackInfoReturnable<ITextComponent> cir) {
         //IronsSpellbooks.LOGGER.info("{}", cir.getReturnValue().getString());
         if (UpgradeUtils.isUpgraded(stack)) {
-            cir.setReturnValue(Component.translatable("tooltip.irons_spellbooks.upgrade_plus_format", cir.getReturnValue(), UpgradeUtils.getUpgradeCount(stack)));
+            cir.setReturnValue(ITextComponent.translatable("tooltip.irons_spellbooks.upgrade_plus_format", cir.getReturnValue(), UpgradeUtils.getUpgradeCount(stack)));
         }
     }
 
@@ -34,9 +34,9 @@ public abstract class ItemMixin {
     }
 
     @Inject(method = "getUseAnimation", at = @At("HEAD"), cancellable = true)
-    public void getUseAnimation(ItemStack stack, CallbackInfoReturnable<UseAnim> cir) {
+    public void getUseAnimation(ItemStack stack, CallbackInfoReturnable<UseAction> cir) {
         if (SpellData.getSpellData(stack).getSpellId() > 0) {
-            cir.setReturnValue(UseAnim.BOW);
+            cir.setReturnValue(UseAction.BOW);
         }
     }
 }

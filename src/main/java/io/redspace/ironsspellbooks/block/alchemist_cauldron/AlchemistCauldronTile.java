@@ -11,31 +11,31 @@ import io.redspace.ironsspellbooks.registries.SoundRegistry;
 import io.redspace.ironsspellbooks.spells.SpellRarity;
 import io.redspace.ironsspellbooks.util.Utils;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import net.minecraft.Util;
-import net.minecraft.client.renderer.BiomeColors;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.core.NonNullList;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.Connection;
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.Mth;
+import net.minecraft.util.Util;
+import net.minecraft.world.biome.BiomeColors;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.Direction;
+import net.minecraft.util.NonNullList;
+import net.minecraft.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.SoundEvents;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.*;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.ItemUtils;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.alchemy.PotionUtils;
-import net.minecraft.world.item.alchemy.Potions;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.DrinkHelper;
+import net.minecraft.item.Items;
+import net.minecraft.potion.PotionUtils;
+import net.minecraft.potion.Potions;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.block.Block;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.block.BlockState;
 import net.minecraftforge.common.brewing.BrewingRecipeRegistry;
 import org.jetbrains.annotations.Nullable;
 
@@ -49,7 +49,13 @@ import java.util.Map;
 import static io.redspace.ironsspellbooks.block.alchemist_cauldron.AlchemistCauldronBlock.LEVEL;
 import static io.redspace.ironsspellbooks.block.alchemist_cauldron.AlchemistCauldronBlock.MAX_LEVELS;
 
-public class AlchemistCauldronTile extends BlockEntity implements WorldlyContainer {
+import net.minecraft.inventory.ISidedInventory;
+import net.minecraft.inventory.Inventory;
+import net.minecraft.inventory.InventoryHelper;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Hand;
+
+public class AlchemistCauldronTile extends TileEntity implements ISidedInventory {
     public Object2ObjectOpenHashMap<Item, AlchemistCauldronInteraction> interactions = AlchemistCauldronTile.newInteractionMap();
     //basically the input container
     public final NonNullList<ItemStack> inputItems = NonNullList.withSize(MAX_LEVELS, ItemStack.EMPTY);
@@ -64,7 +70,7 @@ public class AlchemistCauldronTile extends BlockEntity implements WorldlyContain
     /************************************************************
      Logic
      ***********************************************************/
-    public static void serverTick(Level level, BlockPos pos, BlockState blockState, AlchemistCauldronTile cauldronTile) {
+    public static void serverTick(World level, BlockPos pos, BlockState blockState, AlchemistCauldronTile cauldronTile) {
         for (int i = 0; i < cauldronTile.inputItems.size(); i++) {
             ItemStack itemStack = cauldronTile.inputItems.get(i);
             if (itemStack.isEmpty() || !AlchemistCauldronBlock.isBoiling(blockState))
@@ -79,37 +85,37 @@ public class AlchemistCauldronTile extends BlockEntity implements WorldlyContain
         }
         var random = level.getRandom();
         if (AlchemistCauldronBlock.isBoiling(blockState)) {
-            float waterLevel = Mth.lerp(AlchemistCauldronBlock.getLevel(blockState) / (float) AlchemistCauldronBlock.MAX_LEVELS, .25f, .9f);
-            MagicManager.spawnParticles(level, ParticleTypes.BUBBLE_POP, pos.getX() + Mth.randomBetween(random, .2f, .8f), pos.getY() + waterLevel, pos.getZ() + Mth.randomBetween(random, .2f, .8f), 1, 0, 0, 0, 0, false);
+            float waterLevel = MathHelper.lerp(AlchemistCauldronBlock.getLevel(blockState) / (float) AlchemistCauldronBlock.MAX_LEVELS, .25f, .9f);
+            MagicManager.spawnParticles(level, ParticleTypes.BUBBLE_POP, pos.getX() + MathHelper.randomBetween(random, .2f, .8f), pos.getY() + waterLevel, pos.getZ() + MathHelper.randomBetween(random, .2f, .8f), 1, 0, 0, 0, 0, false);
         }
     }
 
-    public InteractionResult handleUse(BlockState blockState, Level level, BlockPos pos, Player player, InteractionHand hand) {
+    public ActionResultType handleUse(BlockState blockState, World level, BlockPos pos, PlayerEntity player, Hand hand) {
         ItemStack itemStack = player.getItemInHand(hand);
         int currentLevel = blockState.getValue(LEVEL);
         var cauldronInteractionResult = interactions.get(itemStack.getItem()).interact(blockState, level, pos, currentLevel, itemStack);
         if (cauldronInteractionResult != null) {
-            player.setItemInHand(hand, ItemUtils.createFilledResult(itemStack, player, cauldronInteractionResult));
+            player.setItemInHand(hand, DrinkHelper.createFilledResult(itemStack, player, cauldronInteractionResult));
             this.setChanged();
-            return InteractionResult.sidedSuccess(level.isClientSide);
+            return ActionResultType.sidedSuccess(level.isClientSide);
         } else if (isValidInput(itemStack)) {
             if (!level.isClientSide && appendItem(inputItems, itemStack)) {
                 if (!player.getAbilities().instabuild)
                     itemStack.shrink(1);
                 this.setChanged();
             }
-            return InteractionResult.sidedSuccess(level.isClientSide);
-        } else if (itemStack.isEmpty() && hand.equals(InteractionHand.MAIN_HAND)) {
+            return ActionResultType.sidedSuccess(level.isClientSide);
+        } else if (itemStack.isEmpty() && hand.equals(Hand.MAIN_HAND)) {
             var item = grabItem(inputItems);
             if (!item.isEmpty()) {
                 if (!level.isClientSide) {
                     player.setItemInHand(hand, item);
                     this.setChanged();
                 }
-                return InteractionResult.sidedSuccess(level.isClientSide);
+                return ActionResultType.sidedSuccess(level.isClientSide);
             }
         }
-        return InteractionResult.PASS;
+        return ActionResultType.PASS;
     }
 
     public void meltComponent(ItemStack itemStack) {
@@ -185,10 +191,10 @@ public class AlchemistCauldronTile extends BlockEntity implements WorldlyContain
             itemStack.shrink(1);
             setChanged();
             if (success) {
-                level.playSound(null, this.getBlockPos(), SoundEvents.BREWING_STAND_BREW, SoundSource.MASTER, 1, 1);
+                level.playSound(null, this.getBlockPos(), SoundEvents.BREWING_STAND_BREW, SoundCategory.MASTER, 1, 1);
                 level.markAndNotifyBlock(this.getBlockPos(), this.level.getChunkAt(this.getBlockPos()), this.getBlockState(), this.getBlockState(), 1, 1);
             } else {
-                level.playSound(null, this.getBlockPos(), SoundEvents.GENERIC_EXTINGUISH_FIRE, SoundSource.MASTER, 1, 1);
+                level.playSound(null, this.getBlockPos(), SoundEvents.GENERIC_EXTINGUISH_FIRE, SoundCategory.MASTER, 1, 1);
             }
         }
     }
@@ -306,48 +312,48 @@ public class AlchemistCauldronTile extends BlockEntity implements WorldlyContain
     }
 
     @Override
-    public boolean stillValid(Player pPlayer) {
+    public boolean stillValid(PlayerEntity pPlayer) {
         return false;
     }
 
 
     @Override
-    public void load(CompoundTag tag) {
+    public void load(CompoundNBT tag) {
         Utils.loadAllItems(tag, this.inputItems, "Items");
         Utils.loadAllItems(tag, this.resultItems, "Results");
         super.load(tag);
     }
 
     @Override
-    protected void saveAdditional(@Nonnull CompoundTag tag) {
+    protected void saveAdditional(@Nonnull CompoundNBT tag) {
         Utils.saveAllItems(tag, this.inputItems, "Items");
         Utils.saveAllItems(tag, this.resultItems, "Results");
         super.saveAdditional(tag);
     }
 
     @Override
-    public CompoundTag getUpdateTag() {
-        CompoundTag tag = new CompoundTag();
+    public CompoundNBT getUpdateTag() {
+        CompoundNBT tag = new CompoundNBT();
         saveAdditional(tag);
         return tag;
     }
 
     @Override
-    public ClientboundBlockEntityDataPacket getUpdatePacket() {
-        var packet = ClientboundBlockEntityDataPacket.create(this);
+    public SUpdateTileEntityPacket getUpdatePacket() {
+        var packet = SUpdateTileEntityPacket.create(this);
         //irons_spellbooks.LOGGER.debug("getUpdatePacket: packet.getTag:{}", packet.getTag());
         return packet;
     }
 
     @Override
-    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
+    public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
         //irons_spellbooks.LOGGER.debug("onDataPacket: pkt.getTag:{}", pkt.getTag());
         handleUpdateTag(pkt.getTag());
         level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
     }
 
     @Override
-    public void handleUpdateTag(CompoundTag tag) {
+    public void handleUpdateTag(CompoundNBT tag) {
         //this only gets run client side
         this.inputItems.clear();
         this.resultItems.clear();
@@ -361,11 +367,11 @@ public class AlchemistCauldronTile extends BlockEntity implements WorldlyContain
     }
 
     public void drops() {
-        SimpleContainer simpleContainer = new SimpleContainer(inputItems.size());
+        Inventory simpleContainer = new Inventory(inputItems.size());
         for (int i = 0; i < inputItems.size(); i++) {
             simpleContainer.setItem(i, inputItems.get(i));
         }
-        Containers.dropContents(this.level, this.worldPosition, simpleContainer);
+        InventoryHelper.dropContents(this.level, this.worldPosition, simpleContainer);
     }
 
     /************************************************************
@@ -416,9 +422,9 @@ public class AlchemistCauldronTile extends BlockEntity implements WorldlyContain
         return map;
     }
 
-    private static ItemStack createFilledResult(Level level, BlockState blockState, BlockPos blockPos, int newLevel, ItemStack resultItem, SoundEvent soundEvent) {
+    private static ItemStack createFilledResult(World level, BlockState blockState, BlockPos blockPos, int newLevel, ItemStack resultItem, SoundEvent soundEvent) {
         level.setBlock(blockPos, blockState.setValue(LEVEL, newLevel), 3);
-        level.playSound(null, blockPos, soundEvent, SoundSource.BLOCKS, 1.0F, 1.0F);
+        level.playSound(null, blockPos, soundEvent, SoundCategory.BLOCKS, 1.0F, 1.0F);
         return resultItem;
     }
 

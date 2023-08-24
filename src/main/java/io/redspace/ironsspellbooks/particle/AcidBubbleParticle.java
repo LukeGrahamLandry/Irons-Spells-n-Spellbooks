@@ -1,15 +1,15 @@
 package io.redspace.ironsspellbooks.particle;
 
-import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.client.particle.*;
-import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.particles.BasicParticleType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-public class AcidBubbleParticle extends TextureSheetParticle {
-    private final SpriteSet sprites;
+public class AcidBubbleParticle extends SpriteTexturedParticle {
+    private final IAnimatedSprite sprites;
 
-    public AcidBubbleParticle(ClientLevel level, double xCoord, double yCoord, double zCoord, SpriteSet spriteSet, double xd, double yd, double zd) {
+    public AcidBubbleParticle(ClientWorld level, double xCoord, double yCoord, double zCoord, IAnimatedSprite spriteSet, double xd, double yd, double zd) {
 
         super(level, xCoord, yCoord, zCoord, xd, yd, zd);
 
@@ -32,19 +32,19 @@ public class AcidBubbleParticle extends TextureSheetParticle {
     }
 
     @Override
-    public ParticleRenderType getRenderType() {
-        return ParticleRenderType.PARTICLE_SHEET_OPAQUE;
+    public IParticleRenderType getRenderType() {
+        return IParticleRenderType.PARTICLE_SHEET_OPAQUE;
     }
 
     @OnlyIn(Dist.CLIENT)
-    public static class Provider implements ParticleProvider<SimpleParticleType> {
-        private final SpriteSet sprites;
+    public static class Provider implements IParticleFactory<BasicParticleType> {
+        private final IAnimatedSprite sprites;
 
-        public Provider(SpriteSet spriteSet) {
+        public Provider(IAnimatedSprite spriteSet) {
             this.sprites = spriteSet;
         }
 
-        public Particle createParticle(SimpleParticleType particleType, ClientLevel level,
+        public Particle createParticle(BasicParticleType particleType, ClientWorld level,
                                        double x, double y, double z,
                                        double dx, double dy, double dz) {
             return new AcidBubbleParticle(level, x, y, z, this.sprites, dx, dy, dz);

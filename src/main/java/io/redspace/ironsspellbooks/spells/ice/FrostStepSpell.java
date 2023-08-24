@@ -10,14 +10,14 @@ import io.redspace.ironsspellbooks.spells.ender.TeleportSpell;
 import io.redspace.ironsspellbooks.util.AnimationHolder;
 import io.redspace.ironsspellbooks.util.ParticleHelper;
 import io.redspace.ironsspellbooks.util.Utils;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.particles.ParticleTypes;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.world.World;
+import net.minecraft.util.math.vector.Vector3d;
 
 import java.util.List;
 import java.util.Optional;
@@ -29,10 +29,10 @@ public class FrostStepSpell extends AbstractSpell {
     }
 
     @Override
-    public List<MutableComponent> getUniqueInfo(LivingEntity caster) {
+    public List<IFormattableTextComponent> getUniqueInfo(LivingEntity caster) {
         return List.of(
-                Component.translatable("ui.irons_spellbooks.distance", Utils.stringTruncation(getDistance(caster), 1)),
-                Component.translatable("ui.irons_spellbooks.shatter_damage", Utils.stringTruncation(getDamage(caster), 1))
+                ITextComponent.translatable("ui.irons_spellbooks.distance", Utils.stringTruncation(getDistance(caster), 1)),
+                ITextComponent.translatable("ui.irons_spellbooks.shatter_damage", Utils.stringTruncation(getDamage(caster), 1))
         );
     }
 
@@ -66,14 +66,14 @@ public class FrostStepSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level level, LivingEntity entity, PlayerMagicData playerMagicData) {
+    public void onCast(World level, LivingEntity entity, PlayerMagicData playerMagicData) {
         var teleportData = (TeleportSpell.TeleportData) playerMagicData.getAdditionalCastData();
 
         FrozenHumanoid shadow = new FrozenHumanoid(level, entity);
         shadow.setShatterDamage(getDamage(entity));
         shadow.setDeathTimer(60);
         level.addFreshEntity(shadow);
-        Vec3 dest = null;
+        Vector3d dest = null;
         if (teleportData != null) {
             var potentialTarget = teleportData.getTeleportTargetPosition();
             dest = potentialTarget;
@@ -88,18 +88,18 @@ public class FrostStepSpell extends AbstractSpell {
         }
         entity.teleportTo(dest.x, dest.y, dest.z);
         entity.resetFallDistance();
-        level.playSound(null, dest.x, dest.y, dest.z, getCastFinishSound().get(), SoundSource.NEUTRAL, 1f, 1f);
+        level.playSound(null, dest.x, dest.y, dest.z, getCastFinishSound().get(), SoundCategory.NEUTRAL, 1f, 1f);
 
         playerMagicData.resetAdditionalCastData();
 
         super.onCast(level, entity, playerMagicData);
     }
 
-    private Vec3 findTeleportLocation(Level level, LivingEntity entity) {
+    private Vector3d findTeleportLocation(World level, LivingEntity entity) {
         return TeleportSpell.findTeleportLocation(level, entity, getDistance(entity));
     }
 
-    public static void particleCloud(Level level, Vec3 pos) {
+    public static void particleCloud(World level, Vector3d pos) {
         if (level.isClientSide) {
             double width = 0.5;
             float height = 1;

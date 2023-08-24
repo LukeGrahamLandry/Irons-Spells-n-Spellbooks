@@ -11,24 +11,24 @@ import io.redspace.ironsspellbooks.spells.ender.TeleportSpell;
 import io.redspace.ironsspellbooks.spells.fire.BurningDashSpell;
 import io.redspace.ironsspellbooks.util.Log;
 import io.redspace.ironsspellbooks.util.Utils;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializers;
-import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.util.Mth;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.PathfinderMob;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvents;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.Hand;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.CreatureEntity;
+import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.World;
+import net.minecraft.util.math.vector.Vector3d;
 import software.bernie.geckolib3.core.AnimationState;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
@@ -44,13 +44,13 @@ import javax.annotation.Nullable;
 import java.util.EnumMap;
 import java.util.UUID;
 
-public abstract class AbstractSpellCastingMob extends PathfinderMob implements IAnimatable {
+public abstract class AbstractSpellCastingMob extends CreatureEntity implements IAnimatable {
     public static final ResourceLocation modelResource = new ResourceLocation(IronsSpellbooks.MODID, "geo/abstract_casting_mob.geo.json");
     public static final ResourceLocation textureResource = new ResourceLocation(IronsSpellbooks.MODID, "textures/entity/abstract_casting_mob/abstract_casting_mob.png");
     public static final ResourceLocation animationInstantCast = new ResourceLocation(IronsSpellbooks.MODID, "animations/casting_animations.json");
     //private static final EntityDataAccessor<SyncedSpellData> DATA_SPELL = SynchedEntityData.defineId(AbstractSpellCastingMob.class, SyncedSpellData.SYNCED_SPELL_DATA);
-    private static final EntityDataAccessor<Boolean> DATA_CANCEL_CAST = SynchedEntityData.defineId(AbstractSpellCastingMob.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDataAccessor<Boolean> DATA_DRINKING_POTION = SynchedEntityData.defineId(AbstractSpellCastingMob.class, EntityDataSerializers.BOOLEAN);
+    private static final DataParameter<Boolean> DATA_CANCEL_CAST = EntityDataManager.defineId(AbstractSpellCastingMob.class, DataSerializers.BOOLEAN);
+    private static final DataParameter<Boolean> DATA_DRINKING_POTION = EntityDataManager.defineId(AbstractSpellCastingMob.class, DataSerializers.BOOLEAN);
     private final PlayerMagicData playerMagicData = new PlayerMagicData(true);
     private static final AttributeModifier SPEED_MODIFIER_DRINKING = new AttributeModifier(UUID.fromString("5CD17E52-A79A-43D3-A529-90FDE04B181E"), "Drinking speed penalty", -0.5D, AttributeModifier.Operation.MULTIPLY_TOTAL);
 
@@ -59,7 +59,7 @@ public abstract class AbstractSpellCastingMob extends PathfinderMob implements I
     private int drinkTime;
     public boolean hasUsedSingleAttack;
 
-    protected AbstractSpellCastingMob(EntityType<? extends PathfinderMob> pEntityType, Level pLevel) {
+    protected AbstractSpellCastingMob(EntityType<? extends CreatureEntity> pEntityType, World pLevel) {
         super(pEntityType, pLevel);
         playerMagicData.setSyncedData(new SyncedSpellData(this));
     }
@@ -85,7 +85,7 @@ public abstract class AbstractSpellCastingMob extends PathfinderMob implements I
     }
 
     @Override
-    public boolean canBeLeashed(Player pPlayer) {
+    public boolean canBeLeashed(PlayerEntity pPlayer) {
         return false;
     }
 
@@ -93,7 +93,7 @@ public abstract class AbstractSpellCastingMob extends PathfinderMob implements I
         if (!level.isClientSide) {
             setDrinkingPotion(true);
             drinkTime = 35;
-            AttributeInstance attributeinstance = this.getAttribute(Attributes.MOVEMENT_SPEED);
+            ModifiableAttributeInstance attributeinstance = this.getAttribute(Attributes.MOVEMENT_SPEED);
             attributeinstance.removeModifier(SPEED_MODIFIER_DRINKING);
             attributeinstance.addTransientModifier(SPEED_MODIFIER_DRINKING);
         }
@@ -109,7 +109,7 @@ public abstract class AbstractSpellCastingMob extends PathfinderMob implements I
     }
 
     @Override
-    public void onSyncedDataUpdated(EntityDataAccessor<?> pKey) {
+    public void onSyncedDataUpdated(DataParameter<?> pKey) {
         super.onSyncedDataUpdated(pKey);
 
         if (!level.isClientSide) {
@@ -125,14 +125,14 @@ public abstract class AbstractSpellCastingMob extends PathfinderMob implements I
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag pCompound) {
+    public void addAdditionalSaveData(CompoundNBT pCompound) {
         super.addAdditionalSaveData(pCompound);
         playerMagicData.getSyncedData().saveNBTData(pCompound);
         pCompound.putBoolean("usedSpecial", hasUsedSingleAttack);
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag pCompound) {
+    public void readAdditionalSaveData(CompoundNBT pCompound) {
         super.readAdditionalSaveData(pCompound);
         var syncedSpellData = new SyncedSpellData(this);
         syncedSpellData.loadNBTData(pCompound);
@@ -173,7 +173,7 @@ public abstract class AbstractSpellCastingMob extends PathfinderMob implements I
             this.setLivingEntityFlag(4, true);
         }
         //Lil trick
-        this.setYRot((float) (Math.atan2(getDeltaMovement().x, getDeltaMovement().z) * Mth.RAD_TO_DEG));
+        this.setYRot((float) (Math.atan2(getDeltaMovement().x, getDeltaMovement().z) * MathHelper.RAD_TO_DEG));
     }
 
     public void setSyncedSpellData(SyncedSpellData syncedSpellData) {
@@ -202,7 +202,7 @@ public abstract class AbstractSpellCastingMob extends PathfinderMob implements I
 
             if (castingSpell.getCastType() == CastType.INSTANT) {
                 instantCastSpellType = castingSpell.getSpellType();
-                castingSpell.onClientPreCast(level, this, InteractionHand.MAIN_HAND, playerMagicData);
+                castingSpell.onClientPreCast(level, this, Hand.MAIN_HAND, playerMagicData);
                 castComplete();
             }
         }
@@ -312,9 +312,9 @@ public abstract class AbstractSpellCastingMob extends PathfinderMob implements I
 
             boolean valid = false;
             for (int i = 0; i < 24; i++) {
-                teleportPos = target.position().subtract(new Vec3(0, 0, distance / (float) (i / 7 + 1)).yRot(-(target.getYRot() + i * 45) * Mth.DEG_TO_RAD));
+                teleportPos = target.position().subtract(new Vector3d(0, 0, distance / (float) (i / 7 + 1)).yRot(-(target.getYRot() + i * 45) * MathHelper.DEG_TO_RAD));
                 int y = Utils.findRelativeGroundLevel(target.level, teleportPos, 5);
-                teleportPos = new Vec3(teleportPos.x, y, teleportPos.z);
+                teleportPos = new Vector3d(teleportPos.x, y, teleportPos.z);
                 var bb = this.getBoundingBox().inflate(.5f);
                 var reposBB = bb.move(teleportPos.subtract(this.position()));
                 if (!level.collidesWithSuffocatingBlock(this, reposBB)) {
@@ -355,8 +355,8 @@ public abstract class AbstractSpellCastingMob extends PathfinderMob implements I
             double d1 = target.getEyeY() - this.getEyeY();
 
             double d3 = Math.sqrt(d0 * d0 + d2 * d2);
-            float f = (float) (Mth.atan2(d2, d0) * (double) (180F / (float) Math.PI)) - 90.0F;
-            float f1 = (float) (-(Mth.atan2(d1, d3) * (double) (180F / (float) Math.PI)));
+            float f = (float) (MathHelper.atan2(d2, d0) * (double) (180F / (float) Math.PI)) - 90.0F;
+            float f1 = (float) (-(MathHelper.atan2(d1, d3) * (double) (180F / (float) Math.PI)));
             this.setXRot(f1 % 360);
             this.setYRot(f % 360);
         }
@@ -366,9 +366,9 @@ public abstract class AbstractSpellCastingMob extends PathfinderMob implements I
         double d0 = .4d;
         double d1 = .3d;
         double d2 = .35d;
-        float f = this.yBodyRot * ((float) Math.PI / 180F) + Mth.cos((float) this.tickCount * 0.6662F) * 0.25F;
-        float f1 = Mth.cos(f);
-        float f2 = Mth.sin(f);
+        float f = this.yBodyRot * ((float) Math.PI / 180F) + MathHelper.cos((float) this.tickCount * 0.6662F) * 0.25F;
+        float f1 = MathHelper.cos(f);
+        float f2 = MathHelper.sin(f);
         this.level.addParticle(ParticleTypes.ENTITY_EFFECT, this.getX() + (double) f1 * 0.6D, this.getY() + 1.8D, this.getZ() + (double) f2 * 0.6D, d0, d1, d2);
         this.level.addParticle(ParticleTypes.ENTITY_EFFECT, this.getX() - (double) f1 * 0.6D, this.getY() + 1.8D, this.getZ() - (double) f2 * 0.6D, d0, d1, d2);
     }

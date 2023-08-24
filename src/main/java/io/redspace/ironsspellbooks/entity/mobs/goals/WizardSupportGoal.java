@@ -6,10 +6,10 @@ import io.redspace.ironsspellbooks.entity.mobs.abstract_spell_casting_mob.Abstra
 import io.redspace.ironsspellbooks.spells.AbstractSpell;
 import io.redspace.ironsspellbooks.spells.SpellType;
 import io.redspace.ironsspellbooks.util.Utils;
-import net.minecraft.util.Mth;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.ai.goal.Goal;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -140,7 +140,7 @@ public class WizardSupportGoal<T extends AbstractSpellCastingMob & SupportMob> e
             resetAttackTimer(distanceSquared);
             //irons_spellbooks.LOGGER.debug("WizardAttackGoal.tick.2: attackTime.1: {}", attackTime);
         } else if (this.attackTime < 0) {
-            this.attackTime = Mth.floor(Mth.lerp(Math.sqrt(distanceSquared) / (double) this.attackRadius, (double) this.attackIntervalMin, (double) this.attackIntervalMax));
+            this.attackTime = MathHelper.floor(MathHelper.lerp(Math.sqrt(distanceSquared) / (double) this.attackRadius, (double) this.attackIntervalMin, (double) this.attackIntervalMax));
             //irons_spellbooks.LOGGER.debug("WizardAttackGoal.tick.3: attackTime.2: {}", attackTime);
         }
         if (mob.isCasting()) {
@@ -153,7 +153,7 @@ public class WizardSupportGoal<T extends AbstractSpellCastingMob & SupportMob> e
 
     protected void resetAttackTimer(double distanceSquared) {
         float f = (float) Math.sqrt(distanceSquared) / this.attackRadius;
-        this.attackTime = Mth.floor(f * (float) (this.attackIntervalMax - this.attackIntervalMin) + (float) this.attackIntervalMin);
+        this.attackTime = MathHelper.floor(f * (float) (this.attackIntervalMax - this.attackIntervalMin) + (float) this.attackIntervalMin);
     }
 
     protected void doMovement(double distanceSquared) {
@@ -175,7 +175,7 @@ public class WizardSupportGoal<T extends AbstractSpellCastingMob & SupportMob> e
 
     protected void doSpellAction() {
 
-        int spellLevel = (int) (getNextSpellType().getMaxLevel() * Mth.lerp(mob.getRandom().nextFloat(), minSpellQuality, maxSpellQuality));
+        int spellLevel = (int) (getNextSpellType().getMaxLevel() * MathHelper.lerp(mob.getRandom().nextFloat(), minSpellQuality, maxSpellQuality));
         spellLevel = Math.max(spellLevel, 1);
         var spellType = getNextSpellType();
 
@@ -188,7 +188,7 @@ public class WizardSupportGoal<T extends AbstractSpellCastingMob & SupportMob> e
 
     protected SpellType getNextSpellType() {
         float shouldBuff = 0;
-        if (!buffSpells.isEmpty() && target instanceof Mob mob && mob.isAggressive())
+        if (!buffSpells.isEmpty() && target instanceof MobEntity mob && mob.isAggressive())
             shouldBuff = target.getHealth() / target.getMaxHealth();
         return getSpell(mob.getRandom().nextFloat() > shouldBuff ? healingSpells : buffSpells);
     }

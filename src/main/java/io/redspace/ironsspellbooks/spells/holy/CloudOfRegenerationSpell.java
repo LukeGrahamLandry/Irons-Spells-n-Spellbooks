@@ -7,12 +7,12 @@ import io.redspace.ironsspellbooks.registries.SoundRegistry;
 import io.redspace.ironsspellbooks.setup.Messages;
 import io.redspace.ironsspellbooks.spells.*;
 import io.redspace.ironsspellbooks.util.Utils;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.Level;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.Hand;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -24,10 +24,10 @@ public class CloudOfRegenerationSpell extends AbstractSpell {
     }
 
     @Override
-    public List<MutableComponent> getUniqueInfo(LivingEntity caster) {
+    public List<IFormattableTextComponent> getUniqueInfo(LivingEntity caster) {
         return List.of(
-                Component.translatable("ui.irons_spellbooks.healing", Utils.stringTruncation(getHealing(caster), 1)),
-                Component.translatable("ui.irons_spellbooks.radius", Utils.stringTruncation(radius, 1))
+                ITextComponent.translatable("ui.irons_spellbooks.healing", Utils.stringTruncation(getHealing(caster), 1)),
+                ITextComponent.translatable("ui.irons_spellbooks.radius", Utils.stringTruncation(radius, 1))
         );
     }
 
@@ -66,7 +66,7 @@ public class CloudOfRegenerationSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level level, LivingEntity entity, PlayerMagicData playerMagicData) {
+    public void onCast(World level, LivingEntity entity, PlayerMagicData playerMagicData) {
         level.getEntitiesOfClass(LivingEntity.class, entity.getBoundingBox().inflate(radius)).forEach((target) -> {
             if (target.distanceToSqr(entity.position()) < radius * radius && Utils.shouldHealEntity(entity, target)) {
                 target.heal(getHealing(entity));
@@ -79,7 +79,7 @@ public class CloudOfRegenerationSpell extends AbstractSpell {
     }
 
     @Override
-    public void onClientPreCast(Level level, LivingEntity entity, InteractionHand hand, @Nullable PlayerMagicData playerMagicData) {
+    public void onClientPreCast(World level, LivingEntity entity, Hand hand, @Nullable PlayerMagicData playerMagicData) {
         super.onClientPreCast(level, entity, hand, playerMagicData);
     }
 }

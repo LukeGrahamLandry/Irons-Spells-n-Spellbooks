@@ -1,7 +1,7 @@
 package io.redspace.ironsspellbooks.gui.inscription_table;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import io.redspace.ironsspellbooks.IronsSpellbooks;
 import io.redspace.ironsspellbooks.capabilities.spell.SpellData;
 import io.redspace.ironsspellbooks.capabilities.spellbook.SpellBookData;
@@ -12,28 +12,28 @@ import io.redspace.ironsspellbooks.player.ClientRenderCache;
 import io.redspace.ironsspellbooks.spells.AbstractSpell;
 import io.redspace.ironsspellbooks.util.TooltipsUtils;
 import io.redspace.ironsspellbooks.util.Utils;
-import net.minecraft.ChatFormatting;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.widget.button.Button;
+import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.resources.sounds.SimpleSoundInstance;
-import net.minecraft.network.chat.CommonComponents;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.Style;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.util.FormattedCharSequence;
-import net.minecraft.util.Mth;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.phys.Vec2;
+import net.minecraft.client.audio.SimpleSound;
+import net.minecraft.client.gui.DialogTexts;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvents;
+import net.minecraft.util.IReorderingProcessor;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.vector.Vector2f;
 
 import java.util.ArrayList;
 
-public class InscriptionTableScreen extends AbstractContainerScreen<InscriptionTableMenu> {
+public class InscriptionTableScreen extends ContainerScreen<InscriptionTableMenu> {
     private static final ResourceLocation TEXTURE = new ResourceLocation(IronsSpellbooks.MODID, "textures/gui/inscription_table.png");
     //button locations
     private static final int INSCRIBE_BUTTON_X = 43;
@@ -60,7 +60,7 @@ public class InscriptionTableScreen extends AbstractContainerScreen<InscriptionT
     private int selectedSpellIndex = -1;
     private int inscriptionErrorCode = 0;
 
-    public InscriptionTableScreen(InscriptionTableMenu menu, Inventory playerInventory, Component title) {
+    public InscriptionTableScreen(InscriptionTableMenu menu, PlayerInventory playerInventory, ITextComponent title) {
         super(menu, playerInventory, title);
         this.imageWidth = 256;
         this.imageHeight = 166;
@@ -70,7 +70,7 @@ public class InscriptionTableScreen extends AbstractContainerScreen<InscriptionT
     @Override
     protected void init() {
         super.init();
-        inscribeButton = this.addWidget(new Button(0, 0, 14, 14, CommonComponents.GUI_DONE, (p_169820_) -> this.onInscription()));
+        inscribeButton = this.addWidget(new Button(0, 0, 14, 14, DialogTexts.GUI_DONE, (p_169820_) -> this.onInscription()));
         //extractButton = this.addWidget(new Button(0, 0, 14, 14, CommonComponents.GUI_DONE, (p_169820_) -> this.removeSpell()));
         spellSlots = new ArrayList<>();
  //Ironsspellbooks.logger.debug("InscriptionTableScreen: init");
@@ -84,14 +84,14 @@ public class InscriptionTableScreen extends AbstractContainerScreen<InscriptionT
     }
 
     @Override
-    public void render(PoseStack pPoseStack, int mouseX, int mouseY, float delta) {
+    public void render(MatrixStack pPoseStack, int mouseX, int mouseY, float delta) {
         renderBackground(pPoseStack);
         super.render(pPoseStack, mouseX, mouseY, delta);
         renderTooltip(pPoseStack, mouseX, mouseY);
     }
 
     @Override
-    protected void renderBg(PoseStack poseStack, float partialTick, int mouseX, int mouseY) {
+    protected void renderBg(MatrixStack poseStack, float partialTick, int mouseX, int mouseY) {
         setTexture(TEXTURE);
 
         this.blit(poseStack, leftPos, topPos, 0, 0, imageWidth, imageHeight);
@@ -136,18 +136,18 @@ public class InscriptionTableScreen extends AbstractContainerScreen<InscriptionT
         return 0;
     }
 
-    private Component getErrorMessage(int code) {
+    private ITextComponent getErrorMessage(int code) {
         if (code == 1)
-            return Component.translatable("ui.irons_spellbooks.inscription_table_rarity_error");
+            return ITextComponent.translatable("ui.irons_spellbooks.inscription_table_rarity_error");
         else
-            return Component.empty();
+            return ITextComponent.empty();
     }
 
-    private void renderSpells(PoseStack poseStack, int mouseX, int mouseY) {
+    private void renderSpells(MatrixStack poseStack, int mouseX, int mouseY) {
         if (isDirty) {
             generateSpellSlots();
         }
-        Vec2 center = new Vec2(SPELL_BG_X + leftPos + SPELL_BG_WIDTH / 2, SPELL_BG_Y + topPos + SPELL_BG_HEIGHT / 2);
+        Vector2f center = new Vector2f(SPELL_BG_X + leftPos + SPELL_BG_WIDTH / 2, SPELL_BG_Y + topPos + SPELL_BG_HEIGHT / 2);
 
         for (int i = 0; i < spellSlots.size(); i++) {
             var spellSlot = spellSlots.get(i).button;
@@ -160,7 +160,7 @@ public class InscriptionTableScreen extends AbstractContainerScreen<InscriptionT
 
     }
 
-    private void renderButtons(PoseStack poseStack, int mouseX, int mouseY) {
+    private void renderButtons(MatrixStack poseStack, int mouseX, int mouseY) {
         //
         //  Rendering inscription Button
         //
@@ -181,7 +181,7 @@ public class InscriptionTableScreen extends AbstractContainerScreen<InscriptionT
 
     }
 
-    private void renderSpellSlot(PoseStack poseStack, Vec2 pos, int mouseX, int mouseY, int index, SpellSlotInfo slot) {
+    private void renderSpellSlot(MatrixStack poseStack, Vector2f pos, int mouseX, int mouseY, int index, SpellSlotInfo slot) {
         //setTexture(TEXTURE);
         boolean hovering = isHovering((int) pos.x, (int) pos.y, 19, 19, mouseX, mouseY);
         int iconToDraw = hovering ? 38 : slot.hasSpell() ? 19 : 0;
@@ -196,12 +196,12 @@ public class InscriptionTableScreen extends AbstractContainerScreen<InscriptionT
             this.blit(poseStack, (int) pos.x, (int) pos.y, 57, 166, 19, 19);
     }
 
-    private void drawSpellIcon(PoseStack poseStack, Vec2 pos, SpellSlotInfo slot) {
+    private void drawSpellIcon(MatrixStack poseStack, Vector2f pos, SpellSlotInfo slot) {
         setTexture(slot.containedSpell.getSpellType().getResourceLocation());
         this.blit(poseStack, (int) pos.x + 2, (int) pos.y + 2, 0, 0, 15, 15, 16, 16);
     }
 
-    private void renderLorePage(PoseStack poseStack, float partialTick, int mouseX, int mouseY) {
+    private void renderLorePage(MatrixStack poseStack, float partialTick, int mouseX, int mouseY) {
         int x = leftPos + LORE_PAGE_X;
         int y = topPos;
         int margin = 5;
@@ -210,13 +210,13 @@ public class InscriptionTableScreen extends AbstractContainerScreen<InscriptionT
         // Title
         //
         boolean spellSelected = selectedSpellIndex >= 0 && spellSlots.get(selectedSpellIndex).hasSpell();
-        var title = selectedSpellIndex < 0 ? Component.translatable("ui.irons_spellbooks.no_selection") : spellSelected ? spellSlots.get(selectedSpellIndex).containedSpell.getSpellType().getDisplayName() : Component.translatable("ui.irons_spellbooks.empty_slot");
+        var title = selectedSpellIndex < 0 ? ITextComponent.translatable("ui.irons_spellbooks.no_selection") : spellSelected ? spellSlots.get(selectedSpellIndex).containedSpell.getSpellType().getDisplayName() : ITextComponent.translatable("ui.irons_spellbooks.empty_slot");
         //font.drawWordWrap(title.withStyle(ChatFormatting.UNDERLINE).withStyle(textColor), titleX, titleY, LORE_PAGE_WIDTH, 0xFFFFFF);
 
-        var titleLines = font.split(title.withStyle(ChatFormatting.UNDERLINE).withStyle(textColor), LORE_PAGE_WIDTH);
+        var titleLines = font.split(title.withStyle(TextFormatting.UNDERLINE).withStyle(textColor), LORE_PAGE_WIDTH);
         int titleY = topPos + 10;
 
-        for (FormattedCharSequence line : titleLines) {
+        for (IReorderingProcessor line : titleLines) {
             int titleWidth = font.width(line);
             int titleX = x + (LORE_PAGE_WIDTH - titleWidth) / 2;
             font.draw(poseStack, line, titleX, titleY, 0xFFFFFF);
@@ -229,7 +229,7 @@ public class InscriptionTableScreen extends AbstractContainerScreen<InscriptionT
             //increment y for next line
             titleY += font.lineHeight;
         }
-        var titleHeight = font.wordWrapHeight(title.withStyle(ChatFormatting.UNDERLINE).withStyle(textColor), LORE_PAGE_WIDTH);
+        var titleHeight = font.wordWrapHeight(title.withStyle(TextFormatting.UNDERLINE).withStyle(textColor), LORE_PAGE_WIDTH);
         int descLine = /*y + titleHeight + font.lineHeight*/titleY + 4;
 
         if (selectedSpellIndex < 0 || !spellSlots.get(selectedSpellIndex).hasSpell()) {
@@ -246,7 +246,7 @@ public class InscriptionTableScreen extends AbstractContainerScreen<InscriptionT
         float textScale = 1f;
         float reverseScale = 1 / textScale;
 
-        Component school = spell.getSchoolType().getDisplayName();
+        ITextComponent school = spell.getSchoolType().getDisplayName();
         poseStack.scale(textScale, textScale, textScale);
 
 
@@ -259,14 +259,14 @@ public class InscriptionTableScreen extends AbstractContainerScreen<InscriptionT
         //
         // Level
         //
-        var levelText = Component.translatable("ui.irons_spellbooks.level", spell.getLevel(null)).withStyle(textColor);
+        var levelText = ITextComponent.translatable("ui.irons_spellbooks.level", spell.getLevel(null)).withStyle(textColor);
         font.draw(poseStack, levelText, x + (LORE_PAGE_WIDTH - font.width(levelText.getString())) / 2, descLine, 0xFFFFFF);
         descLine += font.lineHeight * textScale * 2;
 
         //
         // Mana
         //
-        descLine += drawStatText(font, poseStack, x + margin, descLine, "ui.irons_spellbooks.mana_cost", textColor, Component.translatable(spell.getManaCost() + ""), colorMana, textScale);
+        descLine += drawStatText(font, poseStack, x + margin, descLine, "ui.irons_spellbooks.mana_cost", textColor, ITextComponent.translatable(spell.getManaCost() + ""), colorMana, textScale);
 
         //
         // Cast Time
@@ -277,13 +277,13 @@ public class InscriptionTableScreen extends AbstractContainerScreen<InscriptionT
         //
         // Cooldown
         //
-        descLine += drawStatText(font, poseStack, x + margin, descLine, "ui.irons_spellbooks.cooldown", textColor, Component.translatable(Utils.timeFromTicks(spell.getSpellCooldown(), 1)), colorCooldown, textScale);
+        descLine += drawStatText(font, poseStack, x + margin, descLine, "ui.irons_spellbooks.cooldown", textColor, ITextComponent.translatable(Utils.timeFromTicks(spell.getSpellCooldown(), 1)), colorCooldown, textScale);
 
 
         //
         //  Unique Info
         //
-        for (MutableComponent component : spell.getUniqueInfo(null)) {
+        for (IFormattableTextComponent component : spell.getUniqueInfo(null)) {
             descLine += drawText(font, poseStack, component, x + margin, descLine, textColor.getColor().getValue(), 1);
         }
 
@@ -291,14 +291,14 @@ public class InscriptionTableScreen extends AbstractContainerScreen<InscriptionT
         poseStack.scale(reverseScale, reverseScale, reverseScale);
     }
 
-    private void drawTextWithShadow(Font font, PoseStack poseStack, Component text, int x, int y, int color, float scale) {
+    private void drawTextWithShadow(FontRenderer font, MatrixStack poseStack, ITextComponent text, int x, int y, int color, float scale) {
         x /= scale;
         y /= scale;
         font.draw(poseStack, text, x, y, color);
         font.drawShadow(poseStack, text, x, y, color);
     }
 
-    private int drawText(Font font, PoseStack poseStack, Component text, int x, int y, int color, float scale) {
+    private int drawText(FontRenderer font, MatrixStack poseStack, ITextComponent text, int x, int y, int color, float scale) {
         x /= scale;
         y /= scale;
         //font.draw(poseStack, text, x, y, color);
@@ -307,11 +307,11 @@ public class InscriptionTableScreen extends AbstractContainerScreen<InscriptionT
 
     }
 
-    private int drawStatText(Font font, PoseStack poseStack, int x, int y, String translationKey, Style textStyle, MutableComponent stat, Style statStyle, float scale) {
+    private int drawStatText(FontRenderer font, MatrixStack poseStack, int x, int y, String translationKey, Style textStyle, IFormattableTextComponent stat, Style statStyle, float scale) {
 //        x /= scale;
 //        y /= scale;
 //        font.drawWordWrap(Component.translatable(translationKey, stat.withStyle(statStyle)).withStyle(textStyle), x, y, LORE_PAGE_WIDTH, 0xFFFFFF);
-        return drawText(font, poseStack, Component.translatable(translationKey, stat.withStyle(statStyle)).withStyle(textStyle), x, y, 0xFFFFFF, scale);
+        return drawText(font, poseStack, ITextComponent.translatable(translationKey, stat.withStyle(statStyle)).withStyle(textStyle), x, y, 0xFFFFFF, scale);
         //font.draw(poseStack, Component.translatable(translationKey, stat.withStyle(statStyle)).withStyle(textStyle), x, y, 0xFFFFFF);
     }
 
@@ -364,12 +364,12 @@ public class InscriptionTableScreen extends AbstractContainerScreen<InscriptionT
         for (int row = 0; row < display.length; row++) {
             for (int column = 0; column < display[row].length; column++) {
                 int offset = -rowWidth[row] / 2;
-                Vec2 location = new Vec2(offset + column * boxSize, (row) * boxSize - (overallHeight / 2));
+                Vector2f location = new Vector2f(offset + column * boxSize, (row) * boxSize - (overallHeight / 2));
                 location.add(-9);
                 int temp_index = index;
                 spellSlots.add(new SpellSlotInfo(storedSpells[index],
                         location,
-                        this.addWidget(new Button((int) location.x, (int) location.y, boxSize, boxSize, Component.translatable(temp_index + ""), (p_169820_) -> this.setSelectedIndex(temp_index)))));
+                        this.addWidget(new Button((int) location.x, (int) location.y, boxSize, boxSize, ITextComponent.translatable(temp_index + ""), (p_169820_) -> this.setSelectedIndex(temp_index)))));
                 index++;
             }
         }
@@ -423,7 +423,7 @@ public class InscriptionTableScreen extends AbstractContainerScreen<InscriptionT
             }
 
             //sanitize
-            setSelectedIndex(Mth.clamp(selectedSpellIndex, 0, spellSlots.size() - 1));
+            setSelectedIndex(MathHelper.clamp(selectedSpellIndex, 0, spellSlots.size() - 1));
 
             //  Is this slot already taken?
             if (spellSlots.get(selectedSpellIndex).hasSpell()) {
@@ -436,7 +436,7 @@ public class InscriptionTableScreen extends AbstractContainerScreen<InscriptionT
 
             isDirty = true;
 //            Messages.sendToServer(new ServerboundInscribeSpell(menu.blockEntity.getBlockPos(), selectedSpellIndex));
-            Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_CARTOGRAPHY_TABLE_TAKE_RESULT, 1.0F));
+            Minecraft.getInstance().getSoundManager().play(SimpleSound.forUI(SoundEvents.UI_CARTOGRAPHY_TABLE_TAKE_RESULT, 1.0F));
             this.minecraft.gameMode.handleInventoryButtonClick(this.menu.containerId, -1);
         }
 
@@ -485,10 +485,10 @@ public class InscriptionTableScreen extends AbstractContainerScreen<InscriptionT
 
     private class SpellSlotInfo {
         public AbstractSpell containedSpell;
-        public Vec2 relativePosition;
+        public Vector2f relativePosition;
         public Button button;
 
-        SpellSlotInfo(AbstractSpell containedSpell, Vec2 relativePosition, Button button) {
+        SpellSlotInfo(AbstractSpell containedSpell, Vector2f relativePosition, Button button) {
             this.containedSpell = containedSpell;
             this.relativePosition = relativePosition;
             this.button = button;

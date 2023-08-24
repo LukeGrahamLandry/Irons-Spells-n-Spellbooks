@@ -2,8 +2,8 @@ package io.redspace.ironsspellbooks.entity.spells.cone_of_cold;
 
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
-import net.minecraft.client.renderer.texture.TextureAtlas;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.renderer.texture.AtlasTexture;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -15,6 +15,6 @@ public class ConeOfColdRenderer extends EntityRenderer<ConeOfColdProjectile> {
 
     @Override
     public ResourceLocation getTextureLocation(ConeOfColdProjectile entity) {
-        return TextureAtlas.LOCATION_BLOCKS;
+        return AtlasTexture.LOCATION_BLOCKS;
     }
 }

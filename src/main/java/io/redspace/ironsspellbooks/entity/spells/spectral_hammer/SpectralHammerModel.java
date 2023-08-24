@@ -2,7 +2,7 @@ package io.redspace.ironsspellbooks.entity.spells.spectral_hammer;
 
 import io.redspace.ironsspellbooks.IronsSpellbooks;
 import io.redspace.ironsspellbooks.entity.spells.shield.ShieldRenderer;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.ResourceLocation;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 
 public class SpectralHammerModel extends AnimatedGeoModel<SpectralHammer> {

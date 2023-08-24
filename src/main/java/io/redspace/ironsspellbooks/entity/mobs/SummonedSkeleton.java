@@ -7,28 +7,28 @@ import io.redspace.ironsspellbooks.registries.MobEffectRegistry;
 import io.redspace.ironsspellbooks.spells.SpellType;
 import io.redspace.ironsspellbooks.util.OwnerHelper;
 import io.redspace.ironsspellbooks.util.Utils;
-import net.minecraft.core.particles.BlockParticleOption;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializers;
-import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.util.Mth;
+import net.minecraft.particles.BlockParticleData;
+import net.minecraft.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.util.DamageSource;
 import net.minecraft.world.entity.*;
-import net.minecraft.world.entity.ai.goal.FloatGoal;
-import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
-import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
-import net.minecraft.world.entity.monster.Skeleton;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.ServerLevelAccessor;
-import net.minecraft.world.level.block.RenderShape;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.entity.ai.goal.SwimGoal;
+import net.minecraft.entity.ai.goal.LookAtGoal;
+import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
+import net.minecraft.entity.monster.SkeletonEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.world.World;
+import net.minecraft.world.IServerWorld;
+import net.minecraft.block.BlockRenderType;
+import net.minecraft.block.BlockState;
 import software.bernie.geckolib3.core.AnimationState;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
@@ -43,16 +43,24 @@ import software.bernie.geckolib3.util.GeckoLibUtil;
 import javax.annotation.Nullable;
 import java.util.UUID;
 
-public class SummonedSkeleton extends Skeleton implements MagicSummon, IAnimatable {
-    private static final EntityDataAccessor<Boolean> DATA_IS_ANIMATING_RISE = SynchedEntityData.defineId(SummonedSkeleton.class, EntityDataSerializers.BOOLEAN);
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.ILivingEntityData;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.SpawnReason;
+import net.minecraft.inventory.EquipmentSlotType;
 
-    public SummonedSkeleton(EntityType<? extends Skeleton> pEntityType, Level pLevel) {
+public class SummonedSkeleton extends SkeletonEntity implements MagicSummon, IAnimatable {
+    private static final DataParameter<Boolean> DATA_IS_ANIMATING_RISE = EntityDataManager.defineId(SummonedSkeleton.class, DataSerializers.BOOLEAN);
+
+    public SummonedSkeleton(EntityType<? extends SkeletonEntity> pEntityType, World pLevel) {
         super(pEntityType, pLevel);
         xpReward = 0;
 
     }
 
-    public SummonedSkeleton(Level level, LivingEntity owner, boolean playRiseAnimation) {
+    public SummonedSkeleton(World level, LivingEntity owner, boolean playRiseAnimation) {
         this(EntityRegistry.SUMMONED_SKELETON.get(), level);
         setSummoner(owner);
         if (playRiseAnimation)
@@ -66,11 +74,11 @@ public class SummonedSkeleton extends Skeleton implements MagicSummon, IAnimatab
     @Override
     public void registerGoals() {
 
-        this.goalSelector.addGoal(0, new FloatGoal(this));
+        this.goalSelector.addGoal(0, new SwimGoal(this));
         this.goalSelector.addGoal(7, new GenericFollowOwnerGoal(this, this::getSummoner, 0.9f, 15, 5, false, 25));
-        this.goalSelector.addGoal(8, new WaterAvoidingRandomStrollGoal(this, 0.8D));
-        this.goalSelector.addGoal(9, new LookAtPlayerGoal(this, Player.class, 3.0F, 1.0F));
-        this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Mob.class, 8.0F));
+        this.goalSelector.addGoal(8, new WaterAvoidingRandomWalkingGoal(this, 0.8D));
+        this.goalSelector.addGoal(9, new LookAtGoal(this, PlayerEntity.class, 3.0F, 1.0F));
+        this.goalSelector.addGoal(10, new LookAtGoal(this, MobEntity.class, 8.0F));
 
         this.targetSelector.addGoal(1, new GenericOwnerHurtByTargetGoal(this, this::getSummoner));
         this.targetSelector.addGoal(2, new GenericOwnerHurtTargetGoal(this, this::getSummoner));
@@ -80,7 +88,7 @@ public class SummonedSkeleton extends Skeleton implements MagicSummon, IAnimatab
     }
 
     @Override
-    public boolean isPreventingPlayerRest(Player pPlayer) {
+    public boolean isPreventingPlayerRest(PlayerEntity pPlayer) {
         return !this.isAlliedTo(pPlayer);
     }
 
@@ -109,13 +117,13 @@ public class SummonedSkeleton extends Skeleton implements MagicSummon, IAnimatab
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag compoundTag) {
+    public void readAdditionalSaveData(CompoundNBT compoundTag) {
         super.readAdditionalSaveData(compoundTag);
         this.summonerUUID = OwnerHelper.deserializeOwner(compoundTag);
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag compoundTag) {
+    public void addAdditionalSaveData(CompoundNBT compoundTag) {
         super.addAdditionalSaveData(compoundTag);
         OwnerHelper.serializeOwner(compoundTag, summonerUUID);
     }
@@ -163,11 +171,11 @@ public class SummonedSkeleton extends Skeleton implements MagicSummon, IAnimatab
     }
 
     @Override
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty, MobSpawnType pReason, @Nullable SpawnGroupData pSpawnData, @Nullable CompoundTag pDataTag) {
+    public ILivingEntityData finalizeSpawn(IServerWorld pLevel, DifficultyInstance pDifficulty, SpawnReason pReason, @Nullable ILivingEntityData pSpawnData, @Nullable CompoundNBT pDataTag) {
         RandomSource randomsource = pLevel.getRandom();
         this.populateDefaultEquipmentSlots(randomsource, pDifficulty);
         if (randomsource.nextDouble() < .3)
-            this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.IRON_SWORD));
+            this.setItemSlot(EquipmentSlotType.MAINHAND, new ItemStack(Items.IRON_SWORD));
 
         this.reassessWeaponGoal();
 
@@ -192,12 +200,12 @@ public class SummonedSkeleton extends Skeleton implements MagicSummon, IAnimatab
     protected void clientDiggingParticles(LivingEntity livingEntity) {
         RandomSource randomsource = livingEntity.getRandom();
         BlockState blockstate = livingEntity.getBlockStateOn();
-        if (blockstate.getRenderShape() != RenderShape.INVISIBLE) {
+        if (blockstate.getRenderShape() != BlockRenderType.INVISIBLE) {
             for (int i = 0; i < 15; ++i) {
-                double d0 = livingEntity.getX() + (double) Mth.randomBetween(randomsource, -0.5F, 0.5F);
+                double d0 = livingEntity.getX() + (double) MathHelper.randomBetween(randomsource, -0.5F, 0.5F);
                 double d1 = livingEntity.getY();
-                double d2 = livingEntity.getZ() + (double) Mth.randomBetween(randomsource, -0.5F, 0.5F);
-                livingEntity.level.addParticle(new BlockParticleOption(ParticleTypes.BLOCK, blockstate), d0, d1, d2, 0.0D, 0.0D, 0.0D);
+                double d2 = livingEntity.getZ() + (double) MathHelper.randomBetween(randomsource, -0.5F, 0.5F);
+                livingEntity.level.addParticle(new BlockParticleData(ParticleTypes.BLOCK, blockstate), d0, d1, d2, 0.0D, 0.0D, 0.0D);
             }
         }
     }

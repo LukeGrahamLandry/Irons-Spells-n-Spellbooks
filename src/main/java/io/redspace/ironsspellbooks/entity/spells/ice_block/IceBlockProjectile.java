@@ -9,19 +9,19 @@ import io.redspace.ironsspellbooks.spells.SchoolType;
 import io.redspace.ironsspellbooks.spells.SpellType;
 import io.redspace.ironsspellbooks.util.ParticleHelper;
 import io.redspace.ironsspellbooks.util.Utils;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.MoverType;
-import net.minecraft.world.entity.projectile.Projectile;
-import net.minecraft.world.level.ClipContext;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.MoverType;
+import net.minecraft.entity.projectile.ProjectileEntity;
+import net.minecraft.util.math.RayTraceContext;
+import net.minecraft.world.World;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.vector.Vector3d;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
@@ -39,13 +39,13 @@ public class IceBlockProjectile extends AbstractMagicProjectile implements IAnim
     private Entity cachedTarget;
     private List<Entity> victims;
 
-    public IceBlockProjectile(EntityType<? extends Projectile> pEntityType, Level pLevel) {
+    public IceBlockProjectile(EntityType<? extends ProjectileEntity> pEntityType, World pLevel) {
         super(pEntityType, pLevel);
         victims = new ArrayList<>();
 
     }
 
-    public IceBlockProjectile(Level pLevel, LivingEntity owner, LivingEntity target) {
+    public IceBlockProjectile(World pLevel, LivingEntity owner, LivingEntity target) {
         this(EntityRegistry.ICE_BLOCK_PROJECTILE.get(), pLevel);
         this.setOwner(owner);
         this.setTarget(target);
@@ -69,8 +69,8 @@ public class IceBlockProjectile extends AbstractMagicProjectile implements IAnim
     public Entity getTarget() {
         if (this.cachedTarget != null && !this.cachedTarget.isRemoved()) {
             return this.cachedTarget;
-        } else if (this.targetUUID != null && this.level instanceof ServerLevel) {
-            this.cachedTarget = ((ServerLevel) this.level).getEntity(this.targetUUID);
+        } else if (this.targetUUID != null && this.level instanceof ServerWorld) {
+            this.cachedTarget = ((ServerWorld) this.level).getEntity(this.targetUUID);
             return this.cachedTarget;
         } else {
             return null;
@@ -78,14 +78,14 @@ public class IceBlockProjectile extends AbstractMagicProjectile implements IAnim
     }
 
     @Override
-    protected void addAdditionalSaveData(CompoundTag pCompound) {
+    protected void addAdditionalSaveData(CompoundNBT pCompound) {
         super.addAdditionalSaveData(pCompound);
         if (this.targetUUID != null) {
             pCompound.putUUID("Target", this.targetUUID);
         }
     }
 
-    protected void readAdditionalSaveData(CompoundTag pCompound) {
+    protected void readAdditionalSaveData(CompoundNBT pCompound) {
         if (pCompound.hasUUID("Target")) {
             this.targetUUID = pCompound.getUUID("Target");
         }
@@ -94,7 +94,7 @@ public class IceBlockProjectile extends AbstractMagicProjectile implements IAnim
     @Override
     public void trailParticles() {
         for (int i = 0; i < 1; i++) {
-            Vec3 random = new Vec3(
+            Vector3d random = new Vector3d(
                     Utils.getRandomScaled(this.getBbWidth() * .5f),
                     0,
                     Utils.getRandomScaled(this.getBbWidth() * .5f)
@@ -168,7 +168,7 @@ public class IceBlockProjectile extends AbstractMagicProjectile implements IAnim
                 if (getTarget() != null) {
                     var target = getTarget();
 
-                    Vec3 diff = target.position().subtract(this.position());
+                    Vector3d diff = target.position().subtract(this.position());
                     if (diff.horizontalDistanceSqr() > 1) {
                         this.setDeltaMovement(getDeltaMovement().add(diff.multiply(1, 0, 1).normalize().scale(.02f)));
                     }
@@ -177,8 +177,8 @@ public class IceBlockProjectile extends AbstractMagicProjectile implements IAnim
 
                 } else {
                     if (airTime % 3 == 0) {
-                        HitResult ground = Utils.raycastForBlock(level, position(), position().subtract(0, 3.5, 0), ClipContext.Fluid.ANY);
-                        if (ground.getType() == HitResult.Type.MISS) {
+                        RayTraceResult ground = Utils.raycastForBlock(level, position(), position().subtract(0, 3.5, 0), RayTraceContext.FluidMode.ANY);
+                        if (ground.getType() == RayTraceResult.Type.MISS) {
                             tooHigh = true;
                         } else if (Math.abs(position().y - ground.getLocation().y) < 4) {
                         }

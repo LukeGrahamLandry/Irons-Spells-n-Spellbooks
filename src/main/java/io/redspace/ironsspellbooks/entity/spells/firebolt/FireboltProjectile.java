@@ -8,17 +8,17 @@ import io.redspace.ironsspellbooks.spells.SchoolType;
 import io.redspace.ironsspellbooks.spells.SpellType;
 import io.redspace.ironsspellbooks.util.ParticleHelper;
 import io.redspace.ironsspellbooks.util.Utils;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.Mth;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.particles.ParticleTypes;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.SoundEvents;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.world.World;
+import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.EntityRayTraceResult;
+import net.minecraft.util.math.vector.Vector3d;
 
 import java.util.Optional;
 
@@ -28,17 +28,17 @@ import java.util.Optional;
 //https://github.com/maximumpower55/Aura
 
 public class FireboltProjectile extends AbstractMagicProjectile {
-    public FireboltProjectile(EntityType<? extends FireboltProjectile> entityType, Level level) {
+    public FireboltProjectile(EntityType<? extends FireboltProjectile> entityType, World level) {
         super(entityType, level);
         this.setNoGravity(true);
     }
 
-    public FireboltProjectile(EntityType<? extends FireboltProjectile> entityType, Level levelIn, LivingEntity shooter) {
+    public FireboltProjectile(EntityType<? extends FireboltProjectile> entityType, World levelIn, LivingEntity shooter) {
         super(entityType, levelIn);
         setOwner(shooter);
     }
 
-    public FireboltProjectile(Level levelIn, LivingEntity shooter) {
+    public FireboltProjectile(World levelIn, LivingEntity shooter) {
         this(EntityRegistry.FIREBOLT_PROJECTILE.get(), levelIn, shooter);
     }
 
@@ -54,18 +54,18 @@ public class FireboltProjectile extends AbstractMagicProjectile {
 
     @Override
     protected void doImpactSound(SoundEvent sound) {
-        level.playSound(null, getX(), getY(), getZ(), sound, SoundSource.NEUTRAL, 2, 1.2f + level.random.nextFloat() * .2f);
+        level.playSound(null, getX(), getY(), getZ(), sound, SoundCategory.NEUTRAL, 2, 1.2f + level.random.nextFloat() * .2f);
 
     }
 
     @Override
-    protected void onHitBlock(BlockHitResult blockHitResult) {
+    protected void onHitBlock(BlockRayTraceResult blockHitResult) {
         super.onHitBlock(blockHitResult);
         discard();
     }
 
     @Override
-    protected void onHitEntity(EntityHitResult entityHitResult) {
+    protected void onHitEntity(EntityRayTraceResult entityHitResult) {
         super.onHitEntity(entityHitResult);
         var target = entityHitResult.getEntity();
         if (DamageSources.applyDamage(target, getDamage(), SpellType.FIREBOLT_SPELL.getDamageSource(this, getOwner()), SchoolType.FIRE)) {
@@ -84,18 +84,18 @@ public class FireboltProjectile extends AbstractMagicProjectile {
     public void trailParticles() {
 
         for (int i = 0; i < 1; i++) {
-            float yHeading = -((float) (Mth.atan2(getDeltaMovement().z, getDeltaMovement().x) * (double) (180F / (float) Math.PI)) + 90.0F);
+            float yHeading = -((float) (MathHelper.atan2(getDeltaMovement().z, getDeltaMovement().x) * (double) (180F / (float) Math.PI)) + 90.0F);
             //float xHeading = -((float) (Mth.atan2(getDeltaMovement().horizontalDistance(), getDeltaMovement().y) * (double) (180F / (float) Math.PI)) - 90.0F);
             float radius = .25f;
             int steps = 6;
             for (int j = 0; j < steps; j++) {
                 float offset = (1f / steps) * i;
-                double radians = ((age + offset) / 7.5f) * 360 * Mth.DEG_TO_RAD;
-                Vec3 swirl = new Vec3(Math.cos(radians) * radius, Math.sin(radians) * radius, 0).yRot(yHeading * Mth.DEG_TO_RAD);
+                double radians = ((age + offset) / 7.5f) * 360 * MathHelper.DEG_TO_RAD;
+                Vector3d swirl = new Vector3d(Math.cos(radians) * radius, Math.sin(radians) * radius, 0).yRot(yHeading * MathHelper.DEG_TO_RAD);
                 double x = getX() + swirl.x;
                 double y = getY() + swirl.y + getBbHeight() / 2;
                 double z = getZ() + swirl.z;
-                Vec3 jitter = Utils.getRandomVec3(.05f);
+                Vector3d jitter = Utils.getRandomVec3(.05f);
                 level.addParticle(ParticleHelper.EMBERS, x, y, z, jitter.x, jitter.y, jitter.z);
             }
             //level.addParticle(ParticleTypes.SMOKE, getX(), getY(), getZ(), 0, 0, 0);

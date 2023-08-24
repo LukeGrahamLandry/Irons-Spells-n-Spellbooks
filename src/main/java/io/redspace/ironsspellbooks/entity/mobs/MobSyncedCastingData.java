@@ -1,7 +1,7 @@
 package io.redspace.ironsspellbooks.entity.mobs;
 
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.syncher.EntityDataSerializer;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.datasync.IDataSerializer;
 
 public class MobSyncedCastingData {
     public int spellId;
@@ -12,8 +12,8 @@ public class MobSyncedCastingData {
     public int y;
     public int z;
 
-    public static final EntityDataSerializer<MobSyncedCastingData> MOB_SYNCED_CASTING_DATA = new EntityDataSerializer.ForValueType<MobSyncedCastingData>() {
-        public void write(FriendlyByteBuf buffer, MobSyncedCastingData data) {
+    public static final IDataSerializer<MobSyncedCastingData> MOB_SYNCED_CASTING_DATA = new IDataSerializer.ForValueType<MobSyncedCastingData>() {
+        public void write(PacketBuffer buffer, MobSyncedCastingData data) {
             buffer.writeInt(data.spellId);
             buffer.writeInt(data.spellLevel);
             buffer.writeBoolean(data.hasEvasion);
@@ -23,7 +23,7 @@ public class MobSyncedCastingData {
             buffer.writeInt(data.z);
         }
 
-        public MobSyncedCastingData read(FriendlyByteBuf buffer) {
+        public MobSyncedCastingData read(PacketBuffer buffer) {
             var data = new MobSyncedCastingData();
             data.spellId = buffer.readInt();
             data.spellLevel = buffer.readInt();

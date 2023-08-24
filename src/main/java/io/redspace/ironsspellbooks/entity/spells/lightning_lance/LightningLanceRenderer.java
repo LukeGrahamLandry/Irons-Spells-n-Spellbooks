@@ -1,21 +1,21 @@
 package io.redspace.ironsspellbooks.entity.spells.lightning_lance;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.PoseStack.Pose;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Matrix3f;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Vector3f;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.matrix.MatrixStack.Entry;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
+import net.minecraft.util.math.vector.Matrix3f;
+import net.minecraft.util.math.vector.Matrix4f;
+import net.minecraft.util.math.vector.Vector3f;
 import io.redspace.ironsspellbooks.IronsSpellbooks;
 import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.vector.Vector3d;
 
 public class LightningLanceRenderer extends EntityRenderer<LightningLanceProjectile> {
     //private static final ResourceLocation TEXTURE = irons_spellbooks.id("textures/entity/icicle_projectile.png");
@@ -35,13 +35,13 @@ public class LightningLanceRenderer extends EntityRenderer<LightningLanceProject
     }
 
     @Override
-    public void render(LightningLanceProjectile entity, float yaw, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource, int light) {
+    public void render(LightningLanceProjectile entity, float yaw, float partialTicks, MatrixStack poseStack, IRenderTypeBuffer bufferSource, int light) {
         poseStack.pushPose();
 
 
-        Vec3 motion = entity.getDeltaMovement();
-        float xRot = -((float) (Mth.atan2(motion.horizontalDistance(), motion.y) * (double) (180F / (float) Math.PI)) - 90.0F);
-        float yRot = -((float) (Mth.atan2(motion.z, motion.x) * (double) (180F / (float) Math.PI)) + 90.0F);
+        Vector3d motion = entity.getDeltaMovement();
+        float xRot = -((float) (MathHelper.atan2(motion.horizontalDistance(), motion.y) * (double) (180F / (float) Math.PI)) - 90.0F);
+        float yRot = -((float) (MathHelper.atan2(motion.z, motion.x) * (double) (180F / (float) Math.PI)) + 90.0F);
         poseStack.mulPose(Vector3f.YP.rotationDegrees(yRot));
         poseStack.mulPose(Vector3f.XP.rotationDegrees(xRot));
         renderModel(poseStack, bufferSource, entity.getAge());
@@ -50,17 +50,17 @@ public class LightningLanceRenderer extends EntityRenderer<LightningLanceProject
         super.render(entity, yaw, partialTicks, poseStack, bufferSource, light);
     }
 
-    public static void renderModel(PoseStack poseStack, MultiBufferSource bufferSource, int animOffset) {
+    public static void renderModel(MatrixStack poseStack, IRenderTypeBuffer bufferSource, int animOffset) {
         //poseStack.scale(0.0625f, 0.0625f, 0.0625f);
 
         //poseStack.mulPose(entityRenderDispatcher.cameraOrientation());
         //poseStack.mulPose(Vector3f.YP.rotationDegrees(180f));
 
-        Pose pose = poseStack.last();
+        Entry pose = poseStack.last();
         Matrix4f poseMatrix = pose.pose();
         Matrix3f normalMatrix = pose.normal();
 
-        VertexConsumer consumer = bufferSource.getBuffer(RenderType.energySwirl(getTextureLocation(animOffset), 0, 0));
+        IVertexBuilder consumer = bufferSource.getBuffer(RenderType.energySwirl(getTextureLocation(animOffset), 0, 0));
 
         float halfWidth = 2;
         float halfHeight = 1;

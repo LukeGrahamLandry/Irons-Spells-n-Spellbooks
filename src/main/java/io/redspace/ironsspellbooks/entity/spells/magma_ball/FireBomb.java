@@ -7,38 +7,38 @@ import io.redspace.ironsspellbooks.registries.EntityRegistry;
 import io.redspace.ironsspellbooks.spells.SchoolType;
 import io.redspace.ironsspellbooks.spells.SpellType;
 import io.redspace.ironsspellbooks.util.Utils;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.projectile.Projectile;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.particles.ParticleTypes;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.SoundEvents;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.projectile.ProjectileEntity;
+import net.minecraft.world.World;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.vector.Vector3d;
 
 import java.util.Optional;
 
 public class FireBomb extends AbstractMagicProjectile {
-    public FireBomb(EntityType<? extends Projectile> pEntityType, Level pLevel) {
+    public FireBomb(EntityType<? extends ProjectileEntity> pEntityType, World pLevel) {
         super(pEntityType, pLevel);
     }
 
-    public FireBomb(Level level, LivingEntity shooter) {
+    public FireBomb(World level, LivingEntity shooter) {
         this(EntityRegistry.FIRE_BOMB.get(), level);
         setOwner(shooter);
     }
 
     @Override
     public void trailParticles() {
-        Vec3 vec3 = getDeltaMovement();
+        Vector3d vec3 = getDeltaMovement();
         double d0 = this.getX() - vec3.x;
         double d1 = this.getY() - vec3.y;
         double d2 = this.getZ() - vec3.z;
         for (int i = 0; i < 4; i++) {
-            Vec3 random = Utils.getRandomVec3(.2);
+            Vector3d random = Utils.getRandomVec3(.2);
             this.level.addParticle(ParticleTypes.SMOKE, d0 - random.x, d1 + 0.5D - random.y, d2 - random.z, random.x * .5f, random.y * .5f, random.z * .5f);
         }
     }
@@ -59,7 +59,7 @@ public class FireBomb extends AbstractMagicProjectile {
     }
 
     @Override
-    protected void onHit(HitResult hitresult) {
+    protected void onHit(RayTraceResult hitresult) {
         super.onHit(hitresult);
         createFireField(hitresult.getLocation());
         float explosionRadius = getExplosionRadius();
@@ -77,7 +77,7 @@ public class FireBomb extends AbstractMagicProjectile {
         discard();
     }
 
-    public void createFireField(Vec3 location) {
+    public void createFireField(Vector3d location) {
         if (!level.isClientSide) {
             FireField fire = new FireField(level);
             fire.setOwner(getOwner());
@@ -92,7 +92,7 @@ public class FireBomb extends AbstractMagicProjectile {
 
     @Override
     protected void doImpactSound(SoundEvent sound) {
-        level.playSound(null, getX(), getY(), getZ(), sound, SoundSource.NEUTRAL, 2, 1.2f + level.random.nextFloat() * .2f);
+        level.playSound(null, getX(), getY(), getZ(), sound, SoundCategory.NEUTRAL, 2, 1.2f + level.random.nextFloat() * .2f);
     }
 
     @Override

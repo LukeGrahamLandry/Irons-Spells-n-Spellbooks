@@ -1,23 +1,23 @@
 package io.redspace.ironsspellbooks.entity.mobs.abstract_spell_casting_mob;
 
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.TimeUtil;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraft.util.TickRangeConverter;
 import net.minecraft.util.valueproviders.UniformInt;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.NeutralMob;
-import net.minecraft.world.entity.PathfinderMob;
-import net.minecraft.world.level.Level;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.IAngerable;
+import net.minecraft.entity.CreatureEntity;
+import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 import java.util.UUID;
 
-public class NeutralWizard extends AbstractSpellCastingMob implements NeutralMob {
-    protected NeutralWizard(EntityType<? extends PathfinderMob> pEntityType, Level pLevel) {
+public class NeutralWizard extends AbstractSpellCastingMob implements IAngerable {
+    protected NeutralWizard(EntityType<? extends CreatureEntity> pEntityType, World pLevel) {
         super(pEntityType, pLevel);
     }
 
-    private static final UniformInt PERSISTENT_ANGER_TIME = TimeUtil.rangeOfSeconds(20, 39);
+    private static final UniformInt PERSISTENT_ANGER_TIME = TickRangeConverter.rangeOfSeconds(20, 39);
     private int remainingPersistentAngerTime;
     @Nullable
     private UUID persistentAngerTarget;
@@ -44,13 +44,13 @@ public class NeutralWizard extends AbstractSpellCastingMob implements NeutralMob
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag pCompound) {
+    public void addAdditionalSaveData(CompoundNBT pCompound) {
         this.addPersistentAngerSaveData(pCompound);
         super.addAdditionalSaveData(pCompound);
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag pCompound) {
+    public void readAdditionalSaveData(CompoundNBT pCompound) {
         this.readPersistentAngerSaveData(this.level, pCompound);
         super.readAdditionalSaveData(pCompound);
     }
@@ -59,7 +59,7 @@ public class NeutralWizard extends AbstractSpellCastingMob implements NeutralMob
     public void aiStep() {
         super.aiStep();
         if (!this.level.isClientSide) {
-            this.updatePersistentAnger((ServerLevel)this.level, true);
+            this.updatePersistentAnger((ServerWorld)this.level, true);
         }
     }
 }

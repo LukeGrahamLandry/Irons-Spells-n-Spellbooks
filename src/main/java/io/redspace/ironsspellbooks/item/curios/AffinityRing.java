@@ -1,14 +1,16 @@
 package io.redspace.ironsspellbooks.item.curios;
 
 import io.redspace.ironsspellbooks.spells.SpellType;
-import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.item.ItemStack;
+import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+
+import net.minecraft.item.Item.Properties;
 
 public class AffinityRing extends SimpleDescriptiveCurio {
     public static final String nbtKey = "ISBEnhance";
@@ -18,17 +20,17 @@ public class AffinityRing extends SimpleDescriptiveCurio {
     }
 
     @Override
-    public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> tooltip, TooltipFlag pIsAdvanced) {
+    public void appendHoverText(ItemStack pStack, @Nullable World pLevel, List<ITextComponent> tooltip, ITooltipFlag pIsAdvanced) {
         var spell = RingData.getRingData(pStack).getSpell();
         if (spell != SpellType.NONE_SPELL) {
-            tooltip.add(Component.empty());
-            tooltip.add(Component.translatable("curios.modifiers.ring").withStyle(ChatFormatting.GOLD));
-            tooltip.add(Component.translatable("tooltip.irons_spellbooks.enhance_spell_level", spell.getDisplayName().withStyle(spell.getSchoolType().getDisplayName().getStyle())).withStyle(ChatFormatting.YELLOW));
+            tooltip.add(ITextComponent.empty());
+            tooltip.add(ITextComponent.translatable("curios.modifiers.ring").withStyle(TextFormatting.GOLD));
+            tooltip.add(ITextComponent.translatable("tooltip.irons_spellbooks.enhance_spell_level", spell.getDisplayName().withStyle(spell.getSchoolType().getDisplayName().getStyle())).withStyle(TextFormatting.YELLOW));
         }
     }
 
     @Override
-    public Component getName(ItemStack pStack) {
-        return Component.translatable(this.getDescriptionId(pStack), RingData.getRingData(pStack).getSpell().getSchoolType().getDisplayName().getString());
+    public ITextComponent getName(ItemStack pStack) {
+        return ITextComponent.translatable(this.getDescriptionId(pStack), RingData.getRingData(pStack).getSpell().getSchoolType().getDisplayName().getString());
     }
 }

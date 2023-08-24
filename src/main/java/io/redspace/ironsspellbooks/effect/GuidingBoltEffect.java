@@ -1,13 +1,13 @@
 package io.redspace.ironsspellbooks.effect;
 
-import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.effect.MobEffectCategory;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.projectile.Projectile;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.potion.Effect;
+import net.minecraft.potion.EffectType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.projectile.ProjectileEntity;
+import net.minecraft.util.math.vector.Vector3d;
 
-public class GuidingBoltEffect extends MobEffect {
-    public GuidingBoltEffect(MobEffectCategory pCategory, int pColor) {
+public class GuidingBoltEffect extends Effect {
+    public GuidingBoltEffect(EffectType pCategory, int pColor) {
         super(pCategory, pColor);
     }
 
@@ -18,8 +18,8 @@ public class GuidingBoltEffect extends MobEffect {
 
     @Override
     public void applyEffectTick(LivingEntity livingEntity, int pAmplifier) {
-        livingEntity.level.getEntitiesOfClass(Projectile.class, livingEntity.getBoundingBox().inflate(Math.min(4 + pAmplifier, 10)), (projectile) -> projectile.getOwner() != livingEntity).forEach((projectile) -> {
-            Vec3 magnetization = livingEntity.getEyePosition().subtract(projectile.position()).normalize().scale(.25f + .075f).scale(2);
+        livingEntity.level.getEntitiesOfClass(ProjectileEntity.class, livingEntity.getBoundingBox().inflate(Math.min(4 + pAmplifier, 10)), (projectile) -> projectile.getOwner() != livingEntity).forEach((projectile) -> {
+            Vector3d magnetization = livingEntity.getEyePosition().subtract(projectile.position()).normalize().scale(.25f + .075f).scale(2);
             projectile.setDeltaMovement(projectile.getDeltaMovement().add(magnetization));
         });
     }

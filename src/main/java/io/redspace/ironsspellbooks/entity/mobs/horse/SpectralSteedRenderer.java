@@ -2,11 +2,11 @@ package io.redspace.ironsspellbooks.entity.mobs.horse;
 
 import io.redspace.ironsspellbooks.IronsSpellbooks;
 import io.redspace.ironsspellbooks.entity.mobs.SummonedHorse;
-import net.minecraft.client.model.HorseModel;
+import net.minecraft.client.renderer.entity.model.HorseModel;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.entity.AbstractHorseRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.ResourceLocation;
 
 public class SpectralSteedRenderer extends AbstractHorseRenderer<SummonedHorse, HorseModel<SummonedHorse>> {
     public SpectralSteedRenderer(EntityRendererProvider.Context p_174167_) {

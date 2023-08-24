@@ -5,18 +5,18 @@ import io.redspace.ironsspellbooks.capabilities.magic.PlayerMagicData;
 import io.redspace.ironsspellbooks.network.ClientboundSyncMana;
 import io.redspace.ironsspellbooks.registries.AttributeRegistry;
 import io.redspace.ironsspellbooks.setup.Messages;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.effect.MobEffectCategory;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.potion.Effect;
+import net.minecraft.potion.EffectType;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import org.jetbrains.annotations.Nullable;
 
-public class InstantManaEffect extends MobEffect {
+public class InstantManaEffect extends Effect {
     public static final int manaPerAmplifier = 25;
     public static final float manaPerAmplifierPercent = .05f;
 
-    public InstantManaEffect(MobEffectCategory pCategory, int pColor) {
+    public InstantManaEffect(EffectType pCategory, int pColor) {
         super(pCategory, pColor);
     }
 
@@ -34,7 +34,7 @@ public class InstantManaEffect extends MobEffect {
         PlayerMagicData pmg = PlayerMagicData.getPlayerMagicData(livingEntity);
         IronsSpellbooks.LOGGER.debug("old mana: {}", pmg.getMana());
         pmg.setMana(pmg.getMana() + manaAdd);
-        if (livingEntity instanceof ServerPlayer serverPlayer) {
+        if (livingEntity instanceof ServerPlayerEntity serverPlayer) {
             Messages.sendToPlayer(new ClientboundSyncMana(pmg), serverPlayer);
         }
         IronsSpellbooks.LOGGER.debug("new mana: {}", pmg.getMana());

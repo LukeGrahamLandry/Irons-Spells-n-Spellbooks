@@ -3,9 +3,9 @@ package io.redspace.ironsspellbooks.capabilities.magic;
 import io.redspace.ironsspellbooks.IronsSpellbooks;
 import io.redspace.ironsspellbooks.config.ServerConfigs;
 import io.redspace.ironsspellbooks.registries.AttributeRegistry;
-import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Direction;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.CapabilityToken;
@@ -16,16 +16,16 @@ import net.minecraftforge.common.util.LazyOptional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class PlayerMagicProvider implements ICapabilityProvider, INBTSerializable<CompoundTag> {
+public class PlayerMagicProvider implements ICapabilityProvider, INBTSerializable<CompoundNBT> {
 
     public static Capability<PlayerMagicData> PLAYER_MAGIC = CapabilityManager.get(new CapabilityToken<>() {
     });
 
     private PlayerMagicData playerMagicData = null;
     private final LazyOptional<PlayerMagicData> opt = LazyOptional.of(this::createPlayerMagicData);
-    private ServerPlayer serverPlayer;
+    private ServerPlayerEntity serverPlayer;
 
-    public PlayerMagicProvider(ServerPlayer serverPlayer) {
+    public PlayerMagicProvider(ServerPlayerEntity serverPlayer) {
         this.serverPlayer = serverPlayer;
     }
 
@@ -53,14 +53,14 @@ public class PlayerMagicProvider implements ICapabilityProvider, INBTSerializabl
     }
 
     @Override
-    public CompoundTag serializeNBT() {
-        CompoundTag nbt = new CompoundTag();
+    public CompoundNBT serializeNBT() {
+        CompoundNBT nbt = new CompoundNBT();
         createPlayerMagicData().saveNBTData(nbt);
         return nbt;
     }
 
     @Override
-    public void deserializeNBT(CompoundTag nbt) {
+    public void deserializeNBT(CompoundNBT nbt) {
         createPlayerMagicData().loadNBTData(nbt);
     }
 }

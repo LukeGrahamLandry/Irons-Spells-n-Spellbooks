@@ -20,8 +20,8 @@ import mezz.jei.api.recipe.vanilla.IJeiAnvilRecipe;
 import mezz.jei.api.recipe.vanilla.IVanillaRecipeFactory;
 import mezz.jei.api.registration.*;
 import mezz.jei.api.runtime.IIngredientManager;
-import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraftforge.registries.RegistryObject;
@@ -31,6 +31,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
+
+import net.minecraft.item.ItemStack;
 
 @mezz.jei.api.JeiPlugin
 public class JeiPlugin implements IModPlugin {
@@ -75,17 +77,17 @@ public class JeiPlugin implements IModPlugin {
                             SpellData.setSpellData(scrollStack, spellType, spellLevel);
                             list.add(scrollStack);
                         });
-                registration.addIngredientInfo(list, VanillaTypes.ITEM_STACK, Component.translatable(String.format("%s.guide", spellType.getComponentId())));
+                registration.addIngredientInfo(list, VanillaTypes.ITEM_STACK, ITextComponent.translatable(String.format("%s.guide", spellType.getComponentId())));
             }
 
         });
-        registration.addItemStackInfo(new ItemStack(ItemRegistry.LIGHTNING_BOTTLE.get()), Component.translatable("item.irons_spellbooks.lightning_bottle.guide"));
-        registration.addItemStackInfo(new ItemStack(ItemRegistry.BLOOD_VIAL.get()), Component.translatable("item.irons_spellbooks.blood_vial.guide"));
-        registration.addItemStackInfo(new ItemStack(ItemRegistry.FROZEN_BONE_SHARD.get()), Component.translatable("item.irons_spellbooks.frozen_bone.guide"));
-        registration.addItemStackInfo(new ItemStack(ItemRegistry.HOGSKIN.get()), Component.translatable("item.irons_spellbooks.hogskin.guide"));
-        registration.addItemStackInfo(new ItemStack(ItemRegistry.DRAGONSKIN.get()), Component.translatable("item.irons_spellbooks.dragonskin.guide"));
-        registration.addItemStackInfo(new ItemStack(ItemRegistry.RUINED_BOOK.get()), Component.translatable("item.irons_spellbooks.ruined_book.guide"));
-        registration.addItemStackInfo(new ItemStack(ItemRegistry.CINDER_ESSENCE.get()), Component.translatable("item.irons_spellbooks.cinder_essence.guide"));
+        registration.addItemStackInfo(new ItemStack(ItemRegistry.LIGHTNING_BOTTLE.get()), ITextComponent.translatable("item.irons_spellbooks.lightning_bottle.guide"));
+        registration.addItemStackInfo(new ItemStack(ItemRegistry.BLOOD_VIAL.get()), ITextComponent.translatable("item.irons_spellbooks.blood_vial.guide"));
+        registration.addItemStackInfo(new ItemStack(ItemRegistry.FROZEN_BONE_SHARD.get()), ITextComponent.translatable("item.irons_spellbooks.frozen_bone.guide"));
+        registration.addItemStackInfo(new ItemStack(ItemRegistry.HOGSKIN.get()), ITextComponent.translatable("item.irons_spellbooks.hogskin.guide"));
+        registration.addItemStackInfo(new ItemStack(ItemRegistry.DRAGONSKIN.get()), ITextComponent.translatable("item.irons_spellbooks.dragonskin.guide"));
+        registration.addItemStackInfo(new ItemStack(ItemRegistry.RUINED_BOOK.get()), ITextComponent.translatable("item.irons_spellbooks.ruined_book.guide"));
+        registration.addItemStackInfo(new ItemStack(ItemRegistry.CINDER_ESSENCE.get()), ITextComponent.translatable("item.irons_spellbooks.cinder_essence.guide"));
     }
 
 

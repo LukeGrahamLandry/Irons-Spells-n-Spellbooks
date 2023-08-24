@@ -1,21 +1,21 @@
 package io.redspace.ironsspellbooks.entity.mobs.goals;
 
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.ai.goal.Goal;
-import net.minecraft.world.entity.ai.goal.target.TargetGoal;
-import net.minecraft.world.entity.ai.targeting.TargetingConditions;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.ai.goal.Goal;
+import net.minecraft.entity.ai.goal.TargetGoal;
+import net.minecraft.entity.EntityPredicate;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.vector.Vector3d;
 
 import javax.annotation.Nullable;
 import java.util.EnumSet;
 import java.util.function.Predicate;
 
 public class AcquireTargetNearLocationGoal<T extends LivingEntity> extends TargetGoal {
-    private Vec3 targetSearchPos;
+    private Vector3d targetSearchPos;
     protected final Class<T> targetType;
     protected final int randomInterval;
     @Nullable
@@ -23,14 +23,14 @@ public class AcquireTargetNearLocationGoal<T extends LivingEntity> extends Targe
     /**
      * This filter is applied to the Entity search. Only matching entities will be targeted.
      */
-    protected TargetingConditions targetConditions;
+    protected EntityPredicate targetConditions;
 
-    public AcquireTargetNearLocationGoal(Mob pMob, Class<T> pTargetType, int pRandomInterval, boolean pMustSee, boolean pMustReach, Vec3 targetSearchPos, @Nullable Predicate<LivingEntity> pTargetPredicate) {
+    public AcquireTargetNearLocationGoal(MobEntity pMob, Class<T> pTargetType, int pRandomInterval, boolean pMustSee, boolean pMustReach, Vector3d targetSearchPos, @Nullable Predicate<LivingEntity> pTargetPredicate) {
         super(pMob, pMustSee, pMustReach);
         this.targetType = pTargetType;
         this.randomInterval = reducedTickDelay(pRandomInterval);
         this.setFlags(EnumSet.of(Goal.Flag.TARGET));
-        this.targetConditions = TargetingConditions.forCombat().range(this.getFollowDistance()).selector(pTargetPredicate);
+        this.targetConditions = EntityPredicate.forCombat().range(this.getFollowDistance()).selector(pTargetPredicate);
         this.targetSearchPos = targetSearchPos;
     }
 
@@ -49,12 +49,12 @@ public class AcquireTargetNearLocationGoal<T extends LivingEntity> extends Targe
         }
     }
 
-    protected AABB getTargetSearchArea(double pTargetDistance) {
+    protected AxisAlignedBB getTargetSearchArea(double pTargetDistance) {
         return this.mob.getBoundingBox().inflate(pTargetDistance, 4.0D, pTargetDistance);
     }
 
     protected void findTarget() {
-        if (this.targetType != Player.class && this.targetType != ServerPlayer.class) {
+        if (this.targetType != PlayerEntity.class && this.targetType != ServerPlayerEntity.class) {
             var targetSearchArea = this.getTargetSearchArea(this.getFollowDistance());
             //irons_spellbooks.LOGGER.debug("AcquireTargetNearLocationGoal.findTarget.1 {}", targetSearchArea);
             var entitiesOfClass = this.mob.level.getEntitiesOfClass(this.targetType, targetSearchArea, (potentialTarget) -> {

@@ -1,19 +1,19 @@
 package io.redspace.ironsspellbooks.entity.spells.wall_of_fire;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.PoseStack.Pose;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Matrix3f;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Vector3f;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.matrix.MatrixStack.Entry;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
+import net.minecraft.util.math.vector.Matrix3f;
+import net.minecraft.util.math.vector.Matrix4f;
+import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.vector.Vector3d;
 
 public class WallOfFireRenderer extends EntityRenderer<WallOfFireEntity> {
 
@@ -25,18 +25,18 @@ public class WallOfFireRenderer extends EntityRenderer<WallOfFireEntity> {
     }
 
     @Override
-    public void render(WallOfFireEntity entity, float yaw, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource, int light) {
-        VertexConsumer consumer = bufferSource.getBuffer(RenderType.entityCutout(TEXTURE));
-        Pose pose = poseStack.last();
+    public void render(WallOfFireEntity entity, float yaw, float partialTicks, MatrixStack poseStack, IRenderTypeBuffer bufferSource, int light) {
+        IVertexBuilder consumer = bufferSource.getBuffer(RenderType.entityCutout(TEXTURE));
+        Entry pose = poseStack.last();
         Matrix4f poseMatrix = pose.pose();
         Matrix3f normalMatrix = pose.normal();
 
         float height = 3;
-        Vec3 origin = entity.position();
+        Vector3d origin = entity.position();
 
         for (int i = 0; i < entity.subEntities.length - 1; i++) {
-            Vec3 start = entity.subEntities[i].position().subtract(origin);
-            Vec3 end = entity.subEntities[i + 1].position().subtract(origin);
+            Vector3d start = entity.subEntities[i].position().subtract(origin);
+            Vector3d end = entity.subEntities[i + 1].position().subtract(origin);
             int frameCount = 32;
             int frame = (entity.tickCount + i * 87) % frameCount;
             float uvPerFrame = (1 / (float) frameCount);

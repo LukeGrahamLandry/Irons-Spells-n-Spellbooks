@@ -7,21 +7,21 @@ import io.redspace.ironsspellbooks.registries.EntityRegistry;
 import io.redspace.ironsspellbooks.registries.SoundRegistry;
 import io.redspace.ironsspellbooks.util.ParticleHelper;
 import io.redspace.ironsspellbooks.util.Utils;
-import net.minecraft.core.particles.BlockParticleOption;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.Mth;
+import net.minecraft.particles.BlockParticleData;
+import net.minecraft.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.IPacket;
+import net.minecraft.network.play.server.SSpawnObjectPacket;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.util.DamageSource;
 import net.minecraft.world.entity.*;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.RenderShape;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
+import net.minecraft.block.BlockRenderType;
+import net.minecraft.block.BlockState;
 import net.minecraftforge.fluids.FluidType;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib3.core.AnimationState;
@@ -38,6 +38,14 @@ import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.UUID;
 
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntitySize;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.Pose;
+import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.util.HandSide;
+
 public class RootEntity extends LivingEntity implements IAnimatable, PreventDismount, AntiMagicSusceptible {
     @Nullable
     private LivingEntity owner;
@@ -53,11 +61,11 @@ public class RootEntity extends LivingEntity implements IAnimatable, PreventDism
     private boolean playSound = true;
     private LivingEntity target;
 
-    public RootEntity(EntityType<? extends RootEntity> pEntityType, Level pLevel) {
+    public RootEntity(EntityType<? extends RootEntity> pEntityType, World pLevel) {
         super(pEntityType, pLevel);
     }
 
-    public RootEntity(Level level, LivingEntity owner) {
+    public RootEntity(World level, LivingEntity owner) {
         this(EntityRegistry.ROOT.get(), level);
         setOwner(owner);
     }
@@ -111,17 +119,17 @@ public class RootEntity extends LivingEntity implements IAnimatable, PreventDism
     }
 
     @Override
-    public boolean shouldRiderFaceForward(@NotNull Player player) {
+    public boolean shouldRiderFaceForward(@NotNull PlayerEntity player) {
         return false;
     }
 
     @Override
-    public EntityDimensions getDimensions(Pose pPose) {
+    public EntitySize getDimensions(Pose pPose) {
         var rooted = getFirstPassenger();
 
         if (rooted != null) {
             IronsSpellbooks.LOGGER.debug("getDimensions {}", rooted.getBbWidth());
-            return EntityDimensions.fixed(rooted.getBbWidth() * 1.25f, .75f);
+            return EntitySize.fixed(rooted.getBbWidth() * 1.25f, .75f);
         }
 
         return super.getDimensions(pPose);
@@ -151,12 +159,12 @@ public class RootEntity extends LivingEntity implements IAnimatable, PreventDism
     protected void clientDiggingParticles(LivingEntity livingEntity) {
         RandomSource randomsource = livingEntity.getRandom();
         BlockState blockstate = livingEntity.getBlockStateOn();
-        if (blockstate.getRenderShape() != RenderShape.INVISIBLE) {
+        if (blockstate.getRenderShape() != BlockRenderType.INVISIBLE) {
             for (int i = 0; i < 15; ++i) {
-                double d0 = livingEntity.getX() + (double) Mth.randomBetween(randomsource, -0.5F, 0.5F);
+                double d0 = livingEntity.getX() + (double) MathHelper.randomBetween(randomsource, -0.5F, 0.5F);
                 double d1 = livingEntity.getY();
-                double d2 = livingEntity.getZ() + (double) Mth.randomBetween(randomsource, -0.5F, 0.5F);
-                livingEntity.level.addParticle(new BlockParticleOption(ParticleTypes.BLOCK, blockstate), d0, d1, d2, 0.0D, 0.0D, 0.0D);
+                double d2 = livingEntity.getZ() + (double) MathHelper.randomBetween(randomsource, -0.5F, 0.5F);
+                livingEntity.level.addParticle(new BlockParticleData(ParticleTypes.BLOCK, blockstate), d0, d1, d2, 0.0D, 0.0D, 0.0D);
             }
         }
     }
@@ -172,8 +180,8 @@ public class RootEntity extends LivingEntity implements IAnimatable, PreventDism
 
     @Nullable
     public LivingEntity getOwner() {
-        if (this.owner == null && this.ownerUUID != null && this.level instanceof ServerLevel) {
-            Entity entity = ((ServerLevel) this.level).getEntity(this.ownerUUID);
+        if (this.owner == null && this.ownerUUID != null && this.level instanceof ServerWorld) {
+            Entity entity = ((ServerWorld) this.level).getEntity(this.ownerUUID);
             if (entity instanceof LivingEntity) {
                 this.owner = (LivingEntity) entity;
             }
@@ -192,7 +200,7 @@ public class RootEntity extends LivingEntity implements IAnimatable, PreventDism
         this.discard();
     }
 
-    public void addAdditionalSaveData(CompoundTag pCompound) {
+    public void addAdditionalSaveData(CompoundNBT pCompound) {
         super.addAdditionalSaveData(pCompound);
         pCompound.putInt("Age", this.tickCount);
         if (this.ownerUUID != null) {
@@ -204,7 +212,7 @@ public class RootEntity extends LivingEntity implements IAnimatable, PreventDism
     /**
      * (abstract) Protected helper method to read subclass entity data from NBT.
      */
-    public void readAdditionalSaveData(CompoundTag pCompound) {
+    public void readAdditionalSaveData(CompoundNBT pCompound) {
         super.readAdditionalSaveData(pCompound);
         this.tickCount = pCompound.getInt("Age");
         if (pCompound.hasUUID("Owner")) {
@@ -224,8 +232,8 @@ public class RootEntity extends LivingEntity implements IAnimatable, PreventDism
     }
 
     @Override
-    public HumanoidArm getMainArm() {
-        return HumanoidArm.RIGHT;
+    public HandSide getMainArm() {
+        return HandSide.RIGHT;
     }
 
     @Override
@@ -301,18 +309,18 @@ public class RootEntity extends LivingEntity implements IAnimatable, PreventDism
     }
 
     @Override
-    public ItemStack getItemBySlot(EquipmentSlot pSlot) {
+    public ItemStack getItemBySlot(EquipmentSlotType pSlot) {
         return ItemStack.EMPTY;
     }
 
     @Override
-    public void setItemSlot(EquipmentSlot pSlot, ItemStack pStack) {
+    public void setItemSlot(EquipmentSlotType pSlot, ItemStack pStack) {
 
     }
 
     @Override
-    public Packet<?> getAddEntityPacket() {
-        return new ClientboundAddEntityPacket(this);
+    public IPacket<?> getAddEntityPacket() {
+        return new SSpawnObjectPacket(this);
     }
 
     private boolean played = false;

@@ -1,7 +1,7 @@
 package io.redspace.ironsspellbooks.gui.inscription_table.network;
 
-import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
@@ -19,7 +19,7 @@ public class ServerboundInscribeSpell {
         this.selectedIndex = selectedIndex;
     }
 
-    public ServerboundInscribeSpell(FriendlyByteBuf buf) {
+    public ServerboundInscribeSpell(PacketBuffer buf) {
         int x = buf.readInt();
         int y = buf.readInt();
         int z = buf.readInt();
@@ -28,7 +28,7 @@ public class ServerboundInscribeSpell {
 
     }
 
-    public void toBytes(FriendlyByteBuf buf) {
+    public void toBytes(PacketBuffer buf) {
         buf.writeInt(pos.getX());
         buf.writeInt(pos.getY());
         buf.writeInt(pos.getZ());

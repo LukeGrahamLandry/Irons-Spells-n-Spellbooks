@@ -1,26 +1,32 @@
 package io.redspace.ironsspellbooks.entity.spells.target_area;
 
-import com.mojang.math.Vector3f;
+import net.minecraft.util.math.vector.Vector3f;
 import io.redspace.ironsspellbooks.registries.EntityRegistry;
 import io.redspace.ironsspellbooks.util.OwnerHelper;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
-import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializers;
-import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.util.Mth;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.IPacket;
+import net.minecraft.network.play.server.SSpawnObjectPacket;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.entity.*;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.World;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.fluids.FluidType;
 
 import javax.annotation.Nullable;
 import java.util.UUID;
 
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntitySize;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.Pose;
+
 public class TargetedAreaEntity extends Entity {
-    private static final EntityDataAccessor<Float> DATA_RADIUS = SynchedEntityData.defineId(TargetedAreaEntity.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Integer> DATA_COLOR = SynchedEntityData.defineId(TargetedAreaEntity.class, EntityDataSerializers.INT);
+    private static final DataParameter<Float> DATA_RADIUS = EntityDataManager.defineId(TargetedAreaEntity.class, DataSerializers.FLOAT);
+    private static final DataParameter<Integer> DATA_COLOR = EntityDataManager.defineId(TargetedAreaEntity.class, DataSerializers.INT);
 
 
     @Nullable
@@ -43,14 +49,14 @@ public class TargetedAreaEntity extends Entity {
         return OwnerHelper.getAndCacheOwner(level, cachedOwner, ownerUUID);
     }
 
-    public TargetedAreaEntity(EntityType<TargetedAreaEntity> pEntityType, Level pLevel) {
+    public TargetedAreaEntity(EntityType<TargetedAreaEntity> pEntityType, World pLevel) {
         super(pEntityType, pLevel);
         setRadius(3f);
         this.noPhysics = true;
         this.setNoGravity(true);
     }
 
-    public static TargetedAreaEntity createTargetAreaEntity(Level level, Vec3 center, float radius, int color) {
+    public static TargetedAreaEntity createTargetAreaEntity(World level, Vector3d center, float radius, int color) {
         TargetedAreaEntity targetedAreaEntity = new TargetedAreaEntity(level, radius, color);
         targetedAreaEntity.setPos(center);
         level.addFreshEntity(targetedAreaEntity);
@@ -74,15 +80,15 @@ public class TargetedAreaEntity extends Entity {
             discard();
     }
 
-    public TargetedAreaEntity(Level level, float radius, int color) {
+    public TargetedAreaEntity(World level, float radius, int color) {
         this(EntityRegistry.TARGET_AREA_ENTITY.get(), level);
         this.setRadius(radius);
         this.setColor(color);
     }
 
     @Override
-    public EntityDimensions getDimensions(Pose pPose) {
-        return EntityDimensions.scalable(this.getRadius() * 2.0F, 0.8F);
+    public EntitySize getDimensions(Pose pPose) {
+        return EntitySize.scalable(this.getRadius() * 2.0F, 0.8F);
     }
 
     @Override
@@ -102,7 +108,7 @@ public class TargetedAreaEntity extends Entity {
 
     public void setRadius(float pRadius) {
         if (!this.level.isClientSide) {
-            this.getEntityData().set(DATA_RADIUS, Mth.clamp(pRadius, 0.0F, 32.0F));
+            this.getEntityData().set(DATA_RADIUS, MathHelper.clamp(pRadius, 0.0F, 32.0F));
         }
     }
 
@@ -136,7 +142,7 @@ public class TargetedAreaEntity extends Entity {
     }
 
     @Override
-    public void onSyncedDataUpdated(EntityDataAccessor<?> pKey) {
+    public void onSyncedDataUpdated(DataParameter<?> pKey) {
         if (DATA_RADIUS.equals(pKey)) {
             this.refreshDimensions();
             if (getRadius() < .1f)
@@ -153,7 +159,7 @@ public class TargetedAreaEntity extends Entity {
         this.setPos(d0, d1, d2);
     }
 
-    protected void addAdditionalSaveData(CompoundTag tag) {
+    protected void addAdditionalSaveData(CompoundNBT tag) {
         tag.putFloat("Radius", this.getRadius());
         tag.putInt("Color", this.getColorRaw());
         tag.putInt("Age", this.tickCount);
@@ -163,7 +169,7 @@ public class TargetedAreaEntity extends Entity {
             tag.putUUID("Owner", ownerUUID);
     }
 
-    protected void readAdditionalSaveData(CompoundTag tag) {
+    protected void readAdditionalSaveData(CompoundNBT tag) {
         this.setRadius(tag.getFloat("Radius"));
         this.setColor(tag.getInt("Color"));
         this.tickCount = (tag.getInt("Age"));
@@ -175,7 +181,7 @@ public class TargetedAreaEntity extends Entity {
     }
 
     @Override
-    public Packet<?> getAddEntityPacket() {
-        return new ClientboundAddEntityPacket(this);
+    public IPacket<?> getAddEntityPacket() {
+        return new SSpawnObjectPacket(this);
     }
 }

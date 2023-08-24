@@ -1,10 +1,10 @@
 package io.redspace.ironsspellbooks.mixin;
 
 import io.redspace.ironsspellbooks.entity.spells.AbstractShieldEntity;
-import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.client.particle.Particle;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.shapes.VoxelShape;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -16,9 +16,9 @@ import java.util.List;
 @Mixin(Particle.class)
 public class ParticleMixin {
     @Shadow
-    protected ClientLevel level;
+    protected ClientWorld level;
     @Shadow
-    private AABB bb;
+    private AxisAlignedBB bb;
 
     @ModifyArg(
             method = "move",

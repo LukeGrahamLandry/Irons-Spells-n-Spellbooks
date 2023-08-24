@@ -4,16 +4,16 @@ import io.redspace.ironsspellbooks.capabilities.magic.PlayerMagicData;
 import io.redspace.ironsspellbooks.entity.spells.ExtendedFireworkRocket;
 import io.redspace.ironsspellbooks.spells.*;
 import io.redspace.ironsspellbooks.util.Utils;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.world.World;
+import net.minecraft.util.math.vector.Vector3d;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,8 +25,8 @@ public class FirecrackerSpell extends AbstractSpell {
     }
 
     @Override
-    public List<MutableComponent> getUniqueInfo(LivingEntity caster) {
-        return List.of(Component.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getSpellPower(caster), 1)));
+    public List<IFormattableTextComponent> getUniqueInfo(LivingEntity caster) {
+        return List.of(ITextComponent.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getSpellPower(caster), 1)));
     }
 
     public static DefaultConfig defaultConfig = new DefaultConfig()
@@ -57,12 +57,12 @@ public class FirecrackerSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level world, LivingEntity entity, PlayerMagicData playerMagicData) {
-        Vec3 shootAngle = entity.getLookAngle().normalize();
+    public void onCast(World world, LivingEntity entity, PlayerMagicData playerMagicData) {
+        Vector3d shootAngle = entity.getLookAngle().normalize();
         float speed = 2.5f;
 
-        Vec3 hitPos = Utils.raycastForEntity(world, entity, getRange(entity), true).getLocation();
-        Vec3 spawn = hitPos.subtract(shootAngle.scale(.5f));
+        Vector3d hitPos = Utils.raycastForEntity(world, entity, getRange(entity), true).getLocation();
+        Vector3d spawn = hitPos.subtract(shootAngle.scale(.5f));
 
         ExtendedFireworkRocket firework = new ExtendedFireworkRocket(world, randomFireworkRocket(), entity, spawn.x, spawn.y, spawn.z, true, getDamage(entity));
         world.addFreshEntity(firework);
@@ -81,10 +81,10 @@ public class FirecrackerSpell extends AbstractSpell {
     private ItemStack randomFireworkRocket() {
         Random random = new Random();
         ItemStack rocket = new ItemStack(Items.FIREWORK_ROCKET);
-        CompoundTag properties = new CompoundTag();
+        CompoundNBT properties = new CompoundNBT();
         //https://minecraft.fandom.com/wiki/Firework_Rocket#Data_values
-        ListTag explosions = new ListTag();
-        CompoundTag explosion = new CompoundTag();
+        ListNBT explosions = new ListNBT();
+        CompoundNBT explosion = new CompoundNBT();
         explosion.putByte("Type", (byte) (random.nextInt(3) * 2));
         if (random.nextInt(3) == 0)
             explosion.putByte("Trail", (byte) 1);

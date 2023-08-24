@@ -10,11 +10,11 @@ import io.redspace.ironsspellbooks.spells.CastSource;
 import io.redspace.ironsspellbooks.spells.CastType;
 import io.redspace.ironsspellbooks.spells.SpellType;
 import io.redspace.ironsspellbooks.util.Utils;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
+import net.minecraft.particles.IParticleData;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 
@@ -28,7 +28,7 @@ public class MagicManager {
     private static MagicManager magicManager = null;
 
     @Nonnull
-    public static MagicManager get(Level level) {
+    public static MagicManager get(World level) {
 
         if (level.isClientSide) {
             throw new RuntimeException("Don't access the ManaManager client-side!");
@@ -40,12 +40,12 @@ public class MagicManager {
         return magicManager;
     }
 
-    public void setPlayerCurrentMana(ServerPlayer serverPlayer, int newManaValue) {
+    public void setPlayerCurrentMana(ServerPlayerEntity serverPlayer, int newManaValue) {
         var playerMagicData = PlayerMagicData.getPlayerMagicData(serverPlayer);
         playerMagicData.setMana(newManaValue);
     }
 
-    public void regenPlayerMana(ServerPlayer serverPlayer, PlayerMagicData playerMagicData) {
+    public void regenPlayerMana(ServerPlayerEntity serverPlayer, PlayerMagicData playerMagicData) {
         int playerMaxMana = (int) serverPlayer.getAttributeValue(MAX_MANA.get());
         int increment = Math.round(Math.max(playerMaxMana * .01f, 1));
 
@@ -58,12 +58,12 @@ public class MagicManager {
         }
     }
 
-    public void tick(Level level) {
+    public void tick(World level) {
         boolean doManaRegen = level.getServer().getTickCount() % MANA_REGEN_TICKS == 0;
         //IronsSpellbooks.LOGGER.debug("MagicManager.tick: {}, {}, {}, {}, {}", this.hashCode(), level.hashCode(), level.getServer().getTickCount(), level.players().size(), doManaRegen);
 
         level.players().forEach(player -> {
-            if (player instanceof ServerPlayer serverPlayer) {
+            if (player instanceof ServerPlayerEntity serverPlayer) {
                 PlayerMagicData playerMagicData = PlayerMagicData.getPlayerMagicData(serverPlayer);
                 playerMagicData.getPlayerCooldowns().tick(1);
 
@@ -112,7 +112,7 @@ public class MagicManager {
         });
     }
 
-    public void addCooldown(ServerPlayer serverPlayer, SpellType spellType, CastSource castSource) {
+    public void addCooldown(ServerPlayerEntity serverPlayer, SpellType spellType, CastSource castSource) {
         if (castSource == CastSource.SCROLL)
             return;
         int effectiveCooldown = getEffectiveSpellCooldown(spellType, serverPlayer, castSource);
@@ -124,7 +124,7 @@ public class MagicManager {
     }
 
 
-    public static int getEffectiveSpellCooldown(SpellType spellType, Player player, CastSource castSource) {
+    public static int getEffectiveSpellCooldown(SpellType spellType, PlayerEntity player, CastSource castSource) {
         double playerCooldownModifier = player.getAttributeValue(COOLDOWN_REDUCTION.get());
 
         float itemCoolDownModifer = 1;
@@ -136,8 +136,8 @@ public class MagicManager {
         return (int) (AbstractSpell.getSpell(spellType, 1).getSpellCooldown() * (2 - Utils.softCapFormula(playerCooldownModifier)) * itemCoolDownModifer);
     }
 
-    public static void spawnParticles(Level level, ParticleOptions particle, double x, double y, double z, int count, double deltaX, double deltaY, double deltaZ, double speed, boolean force) {
-        level.getServer().getPlayerList().getPlayers().forEach(player -> ((ServerLevel) level).sendParticles(player, particle, force, x, y, z, count, deltaX, deltaY, deltaZ, speed));
+    public static void spawnParticles(World level, IParticleData particle, double x, double y, double z, int count, double deltaX, double deltaY, double deltaZ, double speed, boolean force) {
+        level.getServer().getPlayerList().getPlayers().forEach(player -> ((ServerWorld) level).sendParticles(player, particle, force, x, y, z, count, deltaX, deltaY, deltaZ, speed));
     }
 
 //    public static void spawnParticles(Level level, ParticleOptions particle, double x, double y, double z, int count, double radiusX, double radiusY, double radiusZ, double speed, boolean force) {

@@ -1,7 +1,7 @@
 package io.redspace.ironsspellbooks.gui.scroll_forge;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import io.redspace.ironsspellbooks.IronsSpellbooks;
 import io.redspace.ironsspellbooks.config.ServerConfigs;
 import io.redspace.ironsspellbooks.gui.scroll_forge.network.ServerboundScrollForgeSelectSpell;
@@ -12,25 +12,25 @@ import io.redspace.ironsspellbooks.spells.SpellRarity;
 import io.redspace.ironsspellbooks.spells.SpellType;
 import io.redspace.ironsspellbooks.util.ModTags;
 import io.redspace.ironsspellbooks.util.TooltipsUtils;
-import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.widget.button.Button;
+import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.FormattedText;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.Style;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.FormattedCharSequence;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.ITextProperties;
+import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.IReorderingProcessor;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ScrollForgeScreen extends AbstractContainerScreen<ScrollForgeMenu> {
+public class ScrollForgeScreen extends ContainerScreen<ScrollForgeMenu> {
     private static final ResourceLocation TEXTURE = new ResourceLocation(IronsSpellbooks.MODID, "textures/gui/scroll_forge.png");
     private static final int SPELL_LIST_X = 89;
     private static final int SPELL_LIST_Y = 15;
@@ -42,7 +42,7 @@ public class ScrollForgeScreen extends AbstractContainerScreen<ScrollForgeMenu> 
     private SpellType selectedSpell = SpellType.NONE_SPELL;
     private int scrollOffset;
 
-    public ScrollForgeScreen(ScrollForgeMenu menu, Inventory inventory, Component title) {
+    public ScrollForgeScreen(ScrollForgeMenu menu, PlayerInventory inventory, ITextComponent title) {
         super(menu, inventory, title);
         this.imageWidth = 218;
         this.imageHeight = 166;
@@ -77,14 +77,14 @@ public class ScrollForgeScreen extends AbstractContainerScreen<ScrollForgeMenu> 
     }
 
     @Override
-    public void render(PoseStack pPoseStack, int mouseX, int mouseY, float delta) {
+    public void render(MatrixStack pPoseStack, int mouseX, int mouseY, float delta) {
         renderBackground(pPoseStack);
         super.render(pPoseStack, mouseX, mouseY, delta);
         renderTooltip(pPoseStack, mouseX, mouseY);
     }
 
     @Override
-    protected void renderBg(PoseStack poseStack, float partialTick, int mouseX, int mouseY) {
+    protected void renderBg(MatrixStack poseStack, float partialTick, int mouseX, int mouseY) {
         setTexture(TEXTURE);
 
         this.blit(poseStack, leftPos, topPos, 0, 0, imageWidth, imageHeight);
@@ -112,14 +112,14 @@ public class ScrollForgeScreen extends AbstractContainerScreen<ScrollForgeMenu> 
             return false;
     }
 
-    private void renderSpellList(PoseStack poseStack, float partialTick, int mouseX, int mouseY) {
+    private void renderSpellList(MatrixStack poseStack, float partialTick, int mouseX, int mouseY) {
         ItemStack inkStack = menu.getInkSlot().getItem();
 
         SpellRarity inkRarity = getRarityFromInk(inkStack.getItem());
 
         availableSpells.sort((a, b) -> ServerConfigs.getSpellConfig(a.spell).minRarity().compareRarity(ServerConfigs.getSpellConfig(b.spell).minRarity()));
 
-        List<FormattedCharSequence> additionalTooltip = null;
+        List<IReorderingProcessor> additionalTooltip = null;
         for (int i = 0; i < availableSpells.size(); i++) {
             SpellCardInfo spellCard = availableSpells.get(i);
 
@@ -216,7 +216,7 @@ public class ScrollForgeScreen extends AbstractContainerScreen<ScrollForgeMenu> 
             this.rarity = spell.getRarity(spellLevel);
         }
 
-        void draw(ScrollForgeScreen screen, PoseStack poseStack, int x, int y, int mouseX, int mouseY) {
+        void draw(ScrollForgeScreen screen, MatrixStack poseStack, int x, int y, int mouseX, int mouseY) {
             setTexture(TEXTURE);
             if (this.button.active) {
                 if (spell == screen.getSelectedSpell())//mouseX >= x && mouseY >= y && mouseX < x + 108 && mouseY < y + 19)
@@ -241,7 +241,7 @@ public class ScrollForgeScreen extends AbstractContainerScreen<ScrollForgeMenu> 
         }
 
         @Nullable
-        List<FormattedCharSequence> getTooltip(int x, int y, int mouseX, int mouseY) {
+        List<IReorderingProcessor> getTooltip(int x, int y, int mouseX, int mouseY) {
             var text = getDisplayName();
             int textX = x + 2;
             int textY = y + 3;
@@ -253,22 +253,22 @@ public class ScrollForgeScreen extends AbstractContainerScreen<ScrollForgeMenu> 
 
         }
 
-        List<FormattedCharSequence> getHoverText() {
+        List<IReorderingProcessor> getHoverText() {
             if (!this.button.active) {
-                return List.of(FormattedCharSequence.forward(Component.translatable("ui.irons_spellbooks.ink_rarity_error").getString(), Style.EMPTY));
+                return List.of(IReorderingProcessor.forward(ITextComponent.translatable("ui.irons_spellbooks.ink_rarity_error").getString(), Style.EMPTY));
             } else {
                 return TooltipsUtils.createSpellDescriptionTooltip(this.spell, font);
             }
         }
 
-        private FormattedText trimText(Font font, Component component, int maxWidth) {
+        private ITextProperties trimText(FontRenderer font, ITextComponent component, int maxWidth) {
             var text = font.getSplitter().splitLines(component, maxWidth, component.getStyle()).get(0);
             if (text.getString().length() < component.getString().length())
-                text = FormattedText.composite(text, FormattedText.of("..."));
+                text = ITextProperties.composite(text, ITextProperties.of("..."));
             return text;
         }
 
-        MutableComponent getDisplayName() {
+        IFormattableTextComponent getDisplayName() {
             return spell.getDisplayName();
         }
 

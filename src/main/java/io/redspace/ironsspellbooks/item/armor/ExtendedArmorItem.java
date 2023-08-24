@@ -3,16 +3,16 @@ package io.redspace.ironsspellbooks.item.armor;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.ArmorMaterial;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.entity.ai.attributes.Attribute;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ArmorItem;
+import net.minecraft.item.IArmorMaterial;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
@@ -26,16 +26,18 @@ import software.bernie.geckolib3.util.GeckoLibUtil;
 import java.util.Map;
 import java.util.UUID;
 
+import net.minecraft.item.Item.Properties;
+
 public abstract class ExtendedArmorItem extends GeoArmorItem implements IAnimatable {
     private static final UUID[] ARMOR_MODIFIER_UUID_PER_SLOT = new UUID[]{UUID.fromString("845DB27C-C624-495F-8C9F-6020A9A58B6B"), UUID.fromString("D8499B04-0E66-4726-AB29-64469D734E0D"), UUID.fromString("9F3D476D-C118-4544-8365-64846904B48E"), UUID.fromString("2AD3F246-FEE1-4E67-B886-69FD380BB150")};
     private final Multimap<Attribute, AttributeModifier> ARMOR_ATTRIBUTES;
     private AnimationFactory factory = GeckoLibUtil.createFactory(this);
 
-    private static final Map<ArmorMaterial, MobEffectInstance> MATERIAL_TO_EFFECT_MAP =
-            (new ImmutableMap.Builder<ArmorMaterial, MobEffectInstance>()).build();
+    private static final Map<IArmorMaterial, EffectInstance> MATERIAL_TO_EFFECT_MAP =
+            (new ImmutableMap.Builder<IArmorMaterial, EffectInstance>()).build();
     //.put(ModArmorMaterials., new MobEffectInstance(MobEffects.LUCK, 200, 1)).build();
 
-    public ExtendedArmorItem(ExtendedArmorMaterials material, EquipmentSlot slot, Properties settings) {
+    public ExtendedArmorItem(ExtendedArmorMaterials material, EquipmentSlotType slot, Properties settings) {
         super(material, slot, settings);
         ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
         float defense = material.getDefenseForSlot(slot);
@@ -59,7 +61,7 @@ public abstract class ExtendedArmorItem extends GeoArmorItem implements IAnimata
     }
 
     @Override
-    public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot pEquipmentSlot) {
+    public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlotType pEquipmentSlot) {
         if (pEquipmentSlot == this.slot) {
             return ARMOR_ATTRIBUTES;
         } else {
@@ -83,7 +85,7 @@ public abstract class ExtendedArmorItem extends GeoArmorItem implements IAnimata
     }
 
     @Override
-    public void onArmorTick(ItemStack stack, Level world, Player player) {
+    public void onArmorTick(ItemStack stack, World world, PlayerEntity player) {
         if (!world.isClientSide()) {
             if (hasFullSuitOfArmorOn(player)) {
                 evaluateArmorEffects(player);
@@ -91,10 +93,10 @@ public abstract class ExtendedArmorItem extends GeoArmorItem implements IAnimata
         }
     }
 
-    private void evaluateArmorEffects(Player player) {
-        for (Map.Entry<ArmorMaterial, MobEffectInstance> entry : MATERIAL_TO_EFFECT_MAP.entrySet()) {
-            ArmorMaterial mapArmorMaterial = entry.getKey();
-            MobEffectInstance mapStatusEffect = entry.getValue();
+    private void evaluateArmorEffects(PlayerEntity player) {
+        for (Map.Entry<IArmorMaterial, EffectInstance> entry : MATERIAL_TO_EFFECT_MAP.entrySet()) {
+            IArmorMaterial mapArmorMaterial = entry.getKey();
+            EffectInstance mapStatusEffect = entry.getValue();
 
             if (hasCorrectArmorOn(mapArmorMaterial, player)) {
                 addStatusEffectForMaterial(player, mapArmorMaterial, mapStatusEffect);
@@ -102,17 +104,17 @@ public abstract class ExtendedArmorItem extends GeoArmorItem implements IAnimata
         }
     }
 
-    private void addStatusEffectForMaterial(Player player, ArmorMaterial mapArmorMaterial,
-                                            MobEffectInstance mapStatusEffect) {
+    private void addStatusEffectForMaterial(PlayerEntity player, IArmorMaterial mapArmorMaterial,
+                                            EffectInstance mapStatusEffect) {
         boolean hasPlayerEffect = player.hasEffect(mapStatusEffect.getEffect());
 
         if (hasCorrectArmorOn(mapArmorMaterial, player) && !hasPlayerEffect) {
-            player.addEffect(new MobEffectInstance(mapStatusEffect.getEffect(),
+            player.addEffect(new EffectInstance(mapStatusEffect.getEffect(),
                     mapStatusEffect.getDuration(), mapStatusEffect.getAmplifier()));
         }
     }
 
-    private boolean hasFullSuitOfArmorOn(Player player) {
+    private boolean hasFullSuitOfArmorOn(PlayerEntity player) {
         ItemStack boots = player.getInventory().getArmor(0);
         ItemStack leggings = player.getInventory().getArmor(1);
         ItemStack breastplate = player.getInventory().getArmor(2);
@@ -122,7 +124,7 @@ public abstract class ExtendedArmorItem extends GeoArmorItem implements IAnimata
                 && !leggings.isEmpty() && !boots.isEmpty();
     }
 
-    private boolean hasCorrectArmorOn(ArmorMaterial material, Player player) {
+    private boolean hasCorrectArmorOn(IArmorMaterial material, PlayerEntity player) {
         for (ItemStack armorStack : player.getInventory().armor) {
             if (!(armorStack.getItem() instanceof ArmorItem)) {
                 return false;

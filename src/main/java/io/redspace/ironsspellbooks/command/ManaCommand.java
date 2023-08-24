@@ -6,18 +6,18 @@ import com.mojang.brigadier.tree.LiteralCommandNode;
 import io.redspace.ironsspellbooks.capabilities.magic.PlayerMagicData;
 import io.redspace.ironsspellbooks.network.ClientboundSyncMana;
 import io.redspace.ironsspellbooks.setup.Messages;
-import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.commands.Commands;
-import net.minecraft.commands.arguments.EntityArgument;
-import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.command.CommandSource;
+import net.minecraft.command.Commands;
+import net.minecraft.command.arguments.EntityArgument;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.entity.player.ServerPlayerEntity;
 
 import java.util.Collection;
 
 public class ManaCommand {
 
-    public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-        LiteralCommandNode<CommandSourceStack> command = dispatcher.register(Commands.literal("mana")
+    public static void register(CommandDispatcher<CommandSource> dispatcher) {
+        LiteralCommandNode<CommandSource> command = dispatcher.register(Commands.literal("mana")
                 .requires((p) -> p.hasPermission(2))
                 .then(Commands.literal("set")
                         .then(Commands.argument("targets", EntityArgument.players())
@@ -30,7 +30,7 @@ public class ManaCommand {
         );
     }
 
-    private static int changeMana(CommandSourceStack source, Collection<ServerPlayer> targets, int amount, boolean set) {
+    private static int changeMana(CommandSource source, Collection<ServerPlayerEntity> targets, int amount, boolean set) {
         targets.forEach((serverPlayer -> {
             PlayerMagicData pmg = PlayerMagicData.getPlayerMagicData(serverPlayer);
             int base = set ? 0 : pmg.getMana();
@@ -39,9 +39,9 @@ public class ManaCommand {
         }));
         String s = set ? "set" : "add";
         if (targets.size() == 1) {
-            source.sendSuccess(Component.translatable("commands.mana." + s + ".success.single", amount, targets.iterator().next().getDisplayName()), true);
+            source.sendSuccess(ITextComponent.translatable("commands.mana." + s + ".success.single", amount, targets.iterator().next().getDisplayName()), true);
         } else {
-            source.sendSuccess(Component.translatable("commands.mana." + s + ".success.multiple", amount, targets.size()), true);
+            source.sendSuccess(ITextComponent.translatable("commands.mana." + s + ".success.multiple", amount, targets.size()), true);
         }
 
         return targets.size();

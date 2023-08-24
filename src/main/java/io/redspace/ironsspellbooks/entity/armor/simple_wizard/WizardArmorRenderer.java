@@ -1,7 +1,7 @@
 package io.redspace.ironsspellbooks.entity.armor.simple_wizard;
 
 import io.redspace.ironsspellbooks.item.armor.WizardArmorItem;
-import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.inventory.EquipmentSlotType;
 import software.bernie.geckolib3.core.processor.IBone;
 import software.bernie.geckolib3.geo.render.built.GeoBone;
 import software.bernie.geckolib3.renderers.geo.GeoArmorRenderer;
@@ -43,7 +43,7 @@ public class WizardArmorRenderer extends GeoArmorRenderer<WizardArmorItem> {
     }
 
     @Override
-    public GeoArmorRenderer applySlot(EquipmentSlot slot) {
+    public GeoArmorRenderer applySlot(EquipmentSlotType slot) {
         //What is this for?
         this.getGeoModelProvider().getModel(this.getGeoModelProvider().getModelResource(this.currentArmorItem));
         ensureBone();

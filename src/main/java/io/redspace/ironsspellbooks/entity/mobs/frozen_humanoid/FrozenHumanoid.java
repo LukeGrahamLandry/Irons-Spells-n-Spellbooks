@@ -4,41 +4,46 @@ import io.redspace.ironsspellbooks.IronsSpellbooks;
 import io.redspace.ironsspellbooks.entity.spells.icicle.IcicleProjectile;
 import io.redspace.ironsspellbooks.registries.EntityRegistry;
 import io.redspace.ironsspellbooks.util.Utils;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializers;
-import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.util.Mth;
-import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.SoundEvents;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.DamageSource;
 import net.minecraft.world.entity.*;
-import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.entity.ai.attributes.AttributeModifierMap;
+import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
+import net.minecraft.util.math.vector.Vector3d;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.UUID;
 
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.util.HandSide;
+
 public class FrozenHumanoid extends LivingEntity {
-    protected static final EntityDataAccessor<Boolean> DATA_IS_BABY = SynchedEntityData.defineId(FrozenHumanoid.class, EntityDataSerializers.BOOLEAN);
-    protected static final EntityDataAccessor<Boolean> DATA_IS_SITTING = SynchedEntityData.defineId(FrozenHumanoid.class, EntityDataSerializers.BOOLEAN);
-    protected static final EntityDataAccessor<Float> DATA_FROZEN_SPEED = SynchedEntityData.defineId(FrozenHumanoid.class, EntityDataSerializers.FLOAT);
-    protected static final EntityDataAccessor<Float> DATA_LIMB_SWING = SynchedEntityData.defineId(FrozenHumanoid.class, EntityDataSerializers.FLOAT);
-    protected static final EntityDataAccessor<Float> DATA_LIMB_SWING_AMOUNT = SynchedEntityData.defineId(FrozenHumanoid.class, EntityDataSerializers.FLOAT);
-    protected static final EntityDataAccessor<Float> DATA_ATTACK_TIME = SynchedEntityData.defineId(FrozenHumanoid.class, EntityDataSerializers.FLOAT);
+    protected static final DataParameter<Boolean> DATA_IS_BABY = EntityDataManager.defineId(FrozenHumanoid.class, DataSerializers.BOOLEAN);
+    protected static final DataParameter<Boolean> DATA_IS_SITTING = EntityDataManager.defineId(FrozenHumanoid.class, DataSerializers.BOOLEAN);
+    protected static final DataParameter<Float> DATA_FROZEN_SPEED = EntityDataManager.defineId(FrozenHumanoid.class, DataSerializers.FLOAT);
+    protected static final DataParameter<Float> DATA_LIMB_SWING = EntityDataManager.defineId(FrozenHumanoid.class, DataSerializers.FLOAT);
+    protected static final DataParameter<Float> DATA_LIMB_SWING_AMOUNT = EntityDataManager.defineId(FrozenHumanoid.class, DataSerializers.FLOAT);
+    protected static final DataParameter<Float> DATA_ATTACK_TIME = EntityDataManager.defineId(FrozenHumanoid.class, DataSerializers.FLOAT);
 
     private float shatterProjectileDamage;
     private int deathTimer = -1;
     private UUID summonerUUID;
     private LivingEntity cachedSummoner;
 
-    public FrozenHumanoid(EntityType<? extends LivingEntity> pEntityType, Level pLevel) {
+    public FrozenHumanoid(EntityType<? extends LivingEntity> pEntityType, World pLevel) {
         super(pEntityType, pLevel);
     }
 
@@ -59,9 +64,9 @@ public class FrozenHumanoid extends LivingEntity {
 //    }
 
     private boolean isAutoSpinAttack;
-    private HumanoidArm mainArm = HumanoidArm.RIGHT;
+    private HandSide mainArm = HandSide.RIGHT;
 
-    public FrozenHumanoid(Level level, LivingEntity entityToCopy) {
+    public FrozenHumanoid(World level, LivingEntity entityToCopy) {
         this(EntityRegistry.FROZEN_HUMANOID.get(), level);
         //this.swingingArm = entityToCopy.swingingArm;
         //this.swinging = entityToCopy.swinging;
@@ -107,7 +112,7 @@ public class FrozenHumanoid extends LivingEntity {
         this.isAutoSpinAttack = entityToCopy.isAutoSpinAttack();
         this.mainArm = entityToCopy.getMainArm();
 
-        if (entityToCopy instanceof Player player) {
+        if (entityToCopy instanceof PlayerEntity player) {
             this.setCustomName(player.getDisplayName());
             this.setCustomNameVisible(true);
         } else {
@@ -127,8 +132,8 @@ public class FrozenHumanoid extends LivingEntity {
     public LivingEntity getSummoner() {
         if (this.cachedSummoner != null && this.cachedSummoner.isAlive()) {
             return this.cachedSummoner;
-        } else if (this.summonerUUID != null && this.level instanceof ServerLevel) {
-            if (((ServerLevel) this.level).getEntity(this.summonerUUID) instanceof LivingEntity livingEntity)
+        } else if (this.summonerUUID != null && this.level instanceof ServerWorld) {
+            if (((ServerWorld) this.level).getEntity(this.summonerUUID) instanceof LivingEntity livingEntity)
                 this.cachedSummoner = livingEntity;
             return this.cachedSummoner;
         } else {
@@ -214,21 +219,21 @@ public class FrozenHumanoid extends LivingEntity {
         return true;
     }
 
-    private void spawnIcicleShards(Vec3 origin, float damage) {
+    private void spawnIcicleShards(Vector3d origin, float damage) {
         int count = 8;
         int offset = 360 / count;
         for (int i = 0; i < count; i++) {
 
-            Vec3 motion = new Vec3(0, 0, 0.55);
-            motion = motion.xRot(30 * Mth.DEG_TO_RAD);
-            motion = motion.yRot(offset * i * Mth.DEG_TO_RAD);
+            Vector3d motion = new Vector3d(0, 0, 0.55);
+            motion = motion.xRot(30 * MathHelper.DEG_TO_RAD);
+            motion = motion.yRot(offset * i * MathHelper.DEG_TO_RAD);
 
 
             IcicleProjectile shard = new IcicleProjectile(level, getSummoner());
             shard.setDamage(damage);
             shard.setDeltaMovement(motion);
 
-            Vec3 spawn = origin.add(motion.multiply(1, 0, 1).normalize().scale(.5f));
+            Vector3d spawn = origin.add(motion.multiply(1, 0, 1).normalize().scale(.5f));
             var angle = Utils.rotationFromDirection(motion);
 
             shard.moveTo(spawn.x, spawn.y - shard.getBoundingBox().getYsize() / 2, spawn.z, angle.y, angle.x);
@@ -251,17 +256,17 @@ public class FrozenHumanoid extends LivingEntity {
     }
 
     @Override
-    public ItemStack getItemBySlot(EquipmentSlot pSlot) {
+    public ItemStack getItemBySlot(EquipmentSlotType pSlot) {
         return ItemStack.EMPTY;
     }
 
     @Override
-    public void setItemSlot(EquipmentSlot pSlot, ItemStack pStack) {
+    public void setItemSlot(EquipmentSlotType pSlot, ItemStack pStack) {
 
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag compoundTag) {
+    public void readAdditionalSaveData(CompoundNBT compoundTag) {
         super.readAdditionalSaveData(compoundTag);
         //irons_spellbooks.LOGGER.debug("Reading Summoned Vex save data");
 
@@ -272,7 +277,7 @@ public class FrozenHumanoid extends LivingEntity {
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag compoundTag) {
+    public void addAdditionalSaveData(CompoundNBT compoundTag) {
         super.addAdditionalSaveData(compoundTag);
         //irons_spellbooks.LOGGER.debug("Writing Summoned Vex save data");
 
@@ -282,11 +287,11 @@ public class FrozenHumanoid extends LivingEntity {
     }
 
     @Override
-    public HumanoidArm getMainArm() {
+    public HandSide getMainArm() {
         return mainArm;
     }
 
-    public static AttributeSupplier.Builder prepareAttributes() {
+    public static AttributeModifierMap.MutableAttribute prepareAttributes() {
         return LivingEntity.createLivingAttributes()
                 .add(Attributes.ATTACK_DAMAGE, 0.0)
                 .add(Attributes.MAX_HEALTH, 1.0)

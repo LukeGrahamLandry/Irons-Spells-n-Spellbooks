@@ -9,26 +9,32 @@ import io.redspace.ironsspellbooks.registries.SoundRegistry;
 import io.redspace.ironsspellbooks.spells.SchoolType;
 import io.redspace.ironsspellbooks.spells.SpellType;
 import io.redspace.ironsspellbooks.util.ParticleHelper;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializers;
-import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.world.entity.*;
-import net.minecraft.world.entity.projectile.Projectile;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.entity.projectile.ProjectileEntity;
+import net.minecraft.world.World;
+import net.minecraft.util.math.vector.Vector3d;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class BlackHole extends Projectile implements AntiMagicSusceptible {
-    private static final EntityDataAccessor<Float> DATA_RADIUS = SynchedEntityData.defineId(BlackHole.class, EntityDataSerializers.FLOAT);
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntitySize;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.Pose;
 
-    public BlackHole(EntityType<? extends Projectile> pEntityType, Level pLevel) {
+public class BlackHole extends ProjectileEntity implements AntiMagicSusceptible {
+    private static final DataParameter<Float> DATA_RADIUS = EntityDataManager.defineId(BlackHole.class, DataSerializers.FLOAT);
+
+    public BlackHole(EntityType<? extends ProjectileEntity> pEntityType, World pLevel) {
         super(pEntityType, pLevel);
     }
 
-    public BlackHole(Level pLevel, LivingEntity owner) {
+    public BlackHole(World pLevel, LivingEntity owner) {
         this(EntityRegistry.BLACK_HOLE.get(), pLevel);
         setOwner(owner);
     }
@@ -58,8 +64,8 @@ public class BlackHole extends Projectile implements AntiMagicSusceptible {
     }
 
     @Override
-    public EntityDimensions getDimensions(Pose pPose) {
-        return EntityDimensions.scalable(this.getRadius() * 2.0F, this.getRadius() * 2.0F);
+    public EntitySize getDimensions(Pose pPose) {
+        return EntitySize.scalable(this.getRadius() * 2.0F, this.getRadius() * 2.0F);
     }
 
     protected void defineSynchedData() {
@@ -67,7 +73,7 @@ public class BlackHole extends Projectile implements AntiMagicSusceptible {
     }
 
     @Override
-    public void onSyncedDataUpdated(EntityDataAccessor<?> pKey) {
+    public void onSyncedDataUpdated(DataParameter<?> pKey) {
         if (DATA_RADIUS.equals(pKey)) {
             this.refreshDimensions();
             if (getRadius() < .1f)
@@ -87,14 +93,14 @@ public class BlackHole extends Projectile implements AntiMagicSusceptible {
         return this.getEntityData().get(DATA_RADIUS);
     }
 
-    protected void addAdditionalSaveData(CompoundTag pCompound) {
+    protected void addAdditionalSaveData(CompoundNBT pCompound) {
         pCompound.putFloat("Radius", this.getRadius());
         pCompound.putInt("Age", this.tickCount);
         pCompound.putFloat("Damage", this.getDamage());
 
         super.addAdditionalSaveData(pCompound);
     }
-    protected void readAdditionalSaveData(CompoundTag pCompound) {
+    protected void readAdditionalSaveData(CompoundNBT pCompound) {
         this.tickCount = pCompound.getInt("Age");
         this.damage = pCompound.getFloat("Damage");
         if (damage == 0)
@@ -114,12 +120,12 @@ public class BlackHole extends Projectile implements AntiMagicSusceptible {
             updateTrackingEntities();
         for (Entity entity : trackingEntities) {
             if (entity != getOwner() && !DamageSources.isFriendlyFireBetween(getOwner(), entity)) {
-                Vec3 center = this.position().add(0, this.getBoundingBox().getYsize() / 2, 0);
+                Vector3d center = this.position().add(0, this.getBoundingBox().getYsize() / 2, 0);
                 float distance = (float) center.distanceTo(entity.position());
                 float radius = (float) (this.getBoundingBox().getXsize());
                 float f = 1 - distance / radius;
                 float scale = f * f * f * f * .25f;
-                Vec3 diff = center.subtract(entity.position()).scale(scale);
+                Vector3d diff = center.subtract(entity.position()).scale(scale);
                 entity.push(diff.x, diff.y, diff.z);
                 if (this.tickCount % 10 == 0) {
                     if (distance < 3f && canHitEntity(entity))

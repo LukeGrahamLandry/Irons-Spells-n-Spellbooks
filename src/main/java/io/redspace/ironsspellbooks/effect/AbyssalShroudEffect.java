@@ -4,33 +4,33 @@ import io.redspace.ironsspellbooks.capabilities.magic.MagicManager;
 import io.redspace.ironsspellbooks.capabilities.magic.PlayerMagicData;
 import io.redspace.ironsspellbooks.capabilities.magic.SyncedSpellData;
 import io.redspace.ironsspellbooks.registries.SoundRegistry;
-import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.commands.arguments.EntityAnchorArgument;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.effect.MobEffectCategory;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.AttributeMap;
-import net.minecraft.world.level.ClipContext;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.client.world.ClientWorld;
+import net.minecraft.command.arguments.EntityAnchorArgument;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.particles.ParticleTypes;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.DamageSource;
+import net.minecraft.potion.Effect;
+import net.minecraft.potion.EffectType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.attributes.AttributeModifierManager;
+import net.minecraft.util.math.RayTraceContext;
+import net.minecraft.util.math.vector.Vector3d;
 
-public class AbyssalShroudEffect extends MobEffect {
+public class AbyssalShroudEffect extends Effect {
 
-    public AbyssalShroudEffect(MobEffectCategory mobEffectCategory, int color) {
+    public AbyssalShroudEffect(EffectType mobEffectCategory, int color) {
         super(mobEffectCategory, color);
     }
 
     @Override
-    public void removeAttributeModifiers(LivingEntity pLivingEntity, AttributeMap pAttributeMap, int pAmplifier) {
+    public void removeAttributeModifiers(LivingEntity pLivingEntity, AttributeModifierManager pAttributeMap, int pAmplifier) {
         super.removeAttributeModifiers(pLivingEntity, pAttributeMap, pAmplifier);
         PlayerMagicData.getPlayerMagicData(pLivingEntity).getSyncedData().removeEffects(SyncedSpellData.ABYSSAL_SHROUD);
     }
 
     @Override
-    public void addAttributeModifiers(LivingEntity pLivingEntity, AttributeMap pAttributeMap, int pAmplifier) {
+    public void addAttributeModifiers(LivingEntity pLivingEntity, AttributeModifierManager pAttributeMap, int pAmplifier) {
         super.addAttributeModifiers(pLivingEntity, pAttributeMap, pAmplifier);
         PlayerMagicData.getPlayerMagicData(pLivingEntity).getSyncedData().addEffects(SyncedSpellData.ABYSSAL_SHROUD);
     }
@@ -44,13 +44,13 @@ public class AbyssalShroudEffect extends MobEffect {
         var level = livingEntity.level;
 
 
-        Vec3 sideStep = new Vec3(random.nextBoolean() ? 1 : -1, 0, -.25);
+        Vector3d sideStep = new Vector3d(random.nextBoolean() ? 1 : -1, 0, -.25);
         sideStep.yRot(livingEntity.getYRot());
 
         particleCloud(livingEntity);
 
-        Vec3 ground = livingEntity.position().add(sideStep);
-        ground = level.clip(new ClipContext(ground.add(0, 3.5, 0), ground.add(0, -3.5, 0), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, null)).getLocation();
+        Vector3d ground = livingEntity.position().add(sideStep);
+        ground = level.clip(new RayTraceContext(ground.add(0, 3.5, 0), ground.add(0, -3.5, 0), RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, null)).getLocation();
 
         if (livingEntity.isPassenger()) {
             livingEntity.stopRiding();
@@ -60,22 +60,22 @@ public class AbyssalShroudEffect extends MobEffect {
             particleCloud(livingEntity);
         }
         if (damageSource.getEntity() != null) {
-            livingEntity.lookAt(EntityAnchorArgument.Anchor.EYES, damageSource.getEntity().getEyePosition().subtract(0, .15, 0));
+            livingEntity.lookAt(EntityAnchorArgument.Type.EYES, damageSource.getEntity().getEyePosition().subtract(0, .15, 0));
         }
-        level.playSound(null, livingEntity.getX(), livingEntity.getY(), livingEntity.getZ(), SoundRegistry.ABYSSAL_TELEPORT.get(), SoundSource.AMBIENT, 1.0F, .9F + random.nextFloat() * .2f);
+        level.playSound(null, livingEntity.getX(), livingEntity.getY(), livingEntity.getZ(), SoundRegistry.ABYSSAL_TELEPORT.get(), SoundCategory.AMBIENT, 1.0F, .9F + random.nextFloat() * .2f);
         return true;
     }
 
     private static void particleCloud(LivingEntity entity) {
-        Vec3 pos = entity.position().add(0, entity.getBbHeight() / 2, 0);
+        Vector3d pos = entity.position().add(0, entity.getBbHeight() / 2, 0);
         MagicManager.spawnParticles(entity.level, ParticleTypes.SMOKE, pos.x, pos.y, pos.z, 70, entity.getBbWidth() / 4, entity.getBbHeight() / 5, entity.getBbWidth() / 4, .035, false);
     }
 
-    public static void ambientParticles(ClientLevel level, LivingEntity entity) {
-        Vec3 backwards = entity.getForward().scale(.003).reverse().add(0, 0.02, 0);
+    public static void ambientParticles(ClientWorld level, LivingEntity entity) {
+        Vector3d backwards = entity.getForward().scale(.003).reverse().add(0, 0.02, 0);
         var random = entity.getRandom();
         for (int i = 0; i < 2; i++) {
-            Vec3 motion = new Vec3(
+            Vector3d motion = new Vector3d(
                     random.nextFloat() * 2 - 1,
                     random.nextFloat() * 2 - 1,
                     random.nextFloat() * 2 - 1

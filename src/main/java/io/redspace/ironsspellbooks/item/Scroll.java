@@ -11,20 +11,27 @@ import io.redspace.ironsspellbooks.util.SpellbookModCreativeTabs;
 import io.redspace.ironsspellbooks.util.TooltipsUtils;
 import io.redspace.ironsspellbooks.util.Utils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.core.NonNullList;
-import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.util.NonNullList;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.util.Hand;
+import net.minecraft.util.ActionResult;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.item.*;
-import net.minecraft.world.level.Level;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
+
+import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Rarity;
+import net.minecraft.item.UseAction;
 
 public class Scroll extends Item {
 
@@ -33,8 +40,8 @@ public class Scroll extends Item {
     }
 
     @Override
-    public void fillItemCategory(CreativeModeTab category, NonNullList<ItemStack> items) {
-        if (/*category == SpellbookModCreativeTabs.SPELL_EQUIPMENT_TAB ||*/ category == CreativeModeTab.TAB_SEARCH) {
+    public void fillItemCategory(ItemGroup category, NonNullList<ItemStack> items) {
+        if (/*category == SpellbookModCreativeTabs.SPELL_EQUIPMENT_TAB ||*/ category == ItemGroup.TAB_SEARCH) {
             Arrays.stream(SpellType.values())
                     .filter(spellType -> spellType != SpellType.NONE_SPELL && spellType.isEnabled())
                     .forEach(spellType -> {
@@ -49,14 +56,14 @@ public class Scroll extends Item {
         }
     }
 
-    protected void removeScrollAfterCast(ServerPlayer serverPlayer, ItemStack stack) {
+    protected void removeScrollAfterCast(ServerPlayerEntity serverPlayer, ItemStack stack) {
         //irons_spellbooks.LOGGER.debug("removeScrollAfterCast {}", serverPlayer.getName().getString());
         if (!serverPlayer.isCreative()) {
             stack.shrink(1);
         }
     }
 
-    public static boolean attemptRemoveScrollAfterCast(ServerPlayer serverPlayer) {
+    public static boolean attemptRemoveScrollAfterCast(ServerPlayerEntity serverPlayer) {
         ItemStack potentialScroll = PlayerMagicData.getPlayerMagicData(serverPlayer).getPlayerCastingItem();
         if (potentialScroll.getItem() instanceof Scroll scroll) {
             scroll.removeScrollAfterCast(serverPlayer, potentialScroll);
@@ -66,28 +73,28 @@ public class Scroll extends Item {
     }
 
     @Override
-    public @NotNull InteractionResultHolder<ItemStack> use(Level level, Player player, @NotNull InteractionHand hand) {
+    public @NotNull ActionResult<ItemStack> use(World level, PlayerEntity player, @NotNull Hand hand) {
         ItemStack stack = player.getItemInHand(hand);
         var spell = SpellData.getSpellData(stack).getSpell();
 
         if (level.isClientSide) {
             if (ClientMagicData.isCasting()) {
-                return InteractionResultHolder.fail(stack);
+                return ActionResult.fail(stack);
             } else {
-                return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
+                return ActionResult.sidedSuccess(stack, level.isClientSide());
             }
         }
 
         if (spell.attemptInitiateCast(stack, level, player, CastSource.SCROLL, false)) {
             if (spell.getCastType() == CastType.INSTANT) {
-                removeScrollAfterCast((ServerPlayer) player, stack);
+                removeScrollAfterCast((ServerPlayerEntity) player, stack);
             }
             if (spell.getCastType().holdToCast()) {
                 player.startUsingItem(hand);
             }
-            return InteractionResultHolder.success(stack);
+            return ActionResult.success(stack);
         } else {
-            return InteractionResultHolder.fail(stack);
+            return ActionResult.fail(stack);
         }
     }
 
@@ -97,12 +104,12 @@ public class Scroll extends Item {
     }
 
     @Override
-    public UseAnim getUseAnimation(ItemStack pStack) {
-        return UseAnim.BOW;
+    public UseAction getUseAnimation(ItemStack pStack) {
+        return UseAction.BOW;
     }
 
     @Override
-    public void releaseUsing(@NotNull ItemStack itemStack, @NotNull Level level, LivingEntity entity, int ticksUsed) {
+    public void releaseUsing(@NotNull ItemStack itemStack, @NotNull World level, LivingEntity entity, int ticksUsed) {
         //entity.stopUsingItem();
         if (SpellData.getSpellData(itemStack).getSpell().getCastType() != CastType.CONTINUOUS || getUseDuration(itemStack) - ticksUsed >= 4) {
             Utils.releaseUsingHelper(entity, itemStack, ticksUsed);
@@ -111,14 +118,14 @@ public class Scroll extends Item {
     }
 
     @Override
-    public @NotNull Component getName(@NotNull ItemStack itemStack) {
+    public @NotNull ITextComponent getName(@NotNull ItemStack itemStack) {
         var scrollData = SpellData.getSpellData(itemStack);
         return scrollData.getDisplayName();
 
     }
 
     @Override
-    public void appendHoverText(@NotNull ItemStack itemStack, @Nullable Level level, List<Component> lines, @NotNull TooltipFlag flag) {
+    public void appendHoverText(@NotNull ItemStack itemStack, @Nullable World level, List<ITextComponent> lines, @NotNull ITooltipFlag flag) {
         var player = Minecraft.getInstance().player;
         if (player != null)
             lines.addAll(TooltipsUtils.formatScrollTooltip(itemStack, player));

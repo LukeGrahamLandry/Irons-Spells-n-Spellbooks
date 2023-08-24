@@ -1,9 +1,9 @@
 package io.redspace.ironsspellbooks.spells;
 
 import io.redspace.ironsspellbooks.capabilities.magic.PlayerMagicData;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.Level;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.world.World;
 
 import java.util.Optional;
 
@@ -32,7 +32,7 @@ public class NoneSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level world, LivingEntity entity, PlayerMagicData playerMagicData) {
+    public void onCast(World world, LivingEntity entity, PlayerMagicData playerMagicData) {
 
     }
 }

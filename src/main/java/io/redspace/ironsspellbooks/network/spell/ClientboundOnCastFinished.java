@@ -2,7 +2,7 @@ package io.redspace.ironsspellbooks.network.spell;
 
 import io.redspace.ironsspellbooks.player.ClientSpellCastHelper;
 import io.redspace.ironsspellbooks.spells.SpellType;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.UUID;
@@ -20,13 +20,13 @@ public class ClientboundOnCastFinished {
         this.cancelled = cancelled;
     }
 
-    public ClientboundOnCastFinished(FriendlyByteBuf buf) {
+    public ClientboundOnCastFinished(PacketBuffer buf) {
         spellType = buf.readEnum(SpellType.class);
         castingEntityId = buf.readUUID();
         cancelled = buf.readBoolean();
     }
 
-    public void toBytes(FriendlyByteBuf buf) {
+    public void toBytes(PacketBuffer buf) {
         buf.writeEnum(spellType);
         buf.writeUUID(castingEntityId);
         buf.writeBoolean(cancelled);

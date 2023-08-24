@@ -2,7 +2,7 @@ package io.redspace.ironsspellbooks.entity.armor.pumpkin;
 
 import io.redspace.ironsspellbooks.entity.armor.GenericCustomArmorRenderer;
 import io.redspace.ironsspellbooks.item.armor.PumpkinArmorItem;
-import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.inventory.EquipmentSlotType;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.processor.IBone;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
@@ -35,12 +35,12 @@ public class PumpkinArmorRenderer extends GenericCustomArmorRenderer<PumpkinArmo
 
 
     @Override
-    public GeoArmorRenderer applySlot(EquipmentSlot slot) {
+    public GeoArmorRenderer applySlot(EquipmentSlotType slot) {
         super.applySlot(slot);
 
         setBoneVisibility(bodyHeadLayerBone, false);
 
-        if (Objects.requireNonNull(slot) == EquipmentSlot.CHEST) {
+        if (Objects.requireNonNull(slot) == EquipmentSlotType.CHEST) {
             setBoneVisibility(bodyHeadLayerBone, true);
         }
 

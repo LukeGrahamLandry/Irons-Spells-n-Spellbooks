@@ -10,11 +10,11 @@ import io.redspace.ironsspellbooks.item.weapons.ExtendedSwordItem;
 import io.redspace.ironsspellbooks.registries.ItemRegistry;
 import io.redspace.ironsspellbooks.spells.AbstractSpell;
 import io.redspace.ironsspellbooks.spells.SpellType;
-import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.commands.Commands;
-import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.command.CommandSource;
+import net.minecraft.command.Commands;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.*;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -24,9 +24,20 @@ import java.io.FileWriter;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.item.BlockItem;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.item.crafting.ShapedRecipe;
+import net.minecraft.item.crafting.ShapelessRecipe;
+import net.minecraft.item.crafting.SmithingRecipe;
+
 public class GenerateSiteData {
 
-    private static final SimpleCommandExceptionType ERROR_FAILED = new SimpleCommandExceptionType(Component.translatable("commands.irons_spellbooks.generate_recipe_data.failed"));
+    private static final SimpleCommandExceptionType ERROR_FAILED = new SimpleCommandExceptionType(ITextComponent.translatable("commands.irons_spellbooks.generate_recipe_data.failed"));
 
     private static final String RECIPE_DATA_TEMPLATE = """
             - id: "%s"
@@ -83,7 +94,7 @@ public class GenerateSiteData {
               
                     """;
 
-    public static void register(CommandDispatcher<CommandSourceStack> pDispatcher) {
+    public static void register(CommandDispatcher<CommandSource> pDispatcher) {
         pDispatcher.register(Commands.literal("generateSiteData").requires((p_138819_) -> {
             return p_138819_.hasPermission(2);
         }).executes((commandContext) -> {
@@ -91,14 +102,14 @@ public class GenerateSiteData {
         }));
     }
 
-    private static int generateSiteData(CommandSourceStack source) {
+    private static int generateSiteData(CommandSource source) {
         generateRecipeData(source);
         generateSpellData();
 
         return 1;
     }
 
-    private static void generateRecipeData(CommandSourceStack source) {
+    private static void generateRecipeData(CommandSource source) {
         try {
             var itemBuilder = new StringBuilder();
             var armorBuilder = new StringBuilder();
@@ -135,7 +146,7 @@ public class GenerateSiteData {
                             recipe.getIngredients().forEach(ingredient -> {
                                 handleIngeredient(ingredient, recipeData, recipe);
                             });
-                        } else if (recipe instanceof UpgradeRecipe upgradeRecipe) {
+                        } else if (recipe instanceof SmithingRecipe upgradeRecipe) {
                             handleIngeredient(upgradeRecipe.base, recipeData, recipe);
                             handleIngeredient(upgradeRecipe.addition, recipeData, recipe);
                         }
@@ -226,11 +237,11 @@ public class GenerateSiteData {
         return "";
     }
 
-    private static String getTooltip(ServerPlayer player, ItemStack itemStack) {
-        return Arrays.stream(itemStack.getTooltipLines(player, TooltipFlag.Default.NORMAL)
+    private static String getTooltip(ServerPlayerEntity player, ItemStack itemStack) {
+        return Arrays.stream(itemStack.getTooltipLines(player, ITooltipFlag.TooltipFlags.NORMAL)
                         .stream()
                         .skip(1) //First component is always the name. Ignore it
-                        .map(Component::getString)
+                        .map(ITextComponent::getString)
                         .filter(x -> x.trim().length() > 0)
                         .collect(Collectors.joining(", "))
                         .replace(":,", ": ")
@@ -242,7 +253,7 @@ public class GenerateSiteData {
                 .replace(":", ":<br>");
     }
 
-    private static void appendToBuilder(StringBuilder sb, Recipe recipe, List<RecipeData> recipeData, String group, String tooltip) {
+    private static void appendToBuilder(StringBuilder sb, IRecipe recipe, List<RecipeData> recipeData, String group, String tooltip) {
         sb.append(String.format(RECIPE_DATA_TEMPLATE,
                 getRecipeDataAtIndex(recipeData, 0).id,
                 getRecipeDataAtIndex(recipeData, 0).name,
@@ -291,7 +302,7 @@ public class GenerateSiteData {
         ));
     }
 
-    private static void handleIngeredient(Ingredient ingredient, ArrayList<RecipeData> recipeData, Recipe recipe) {
+    private static void handleIngeredient(Ingredient ingredient, ArrayList<RecipeData> recipeData, IRecipe recipe) {
         Arrays.stream(ingredient.getItems())
                 .findFirst()
                 .ifPresentOrElse(itemStack -> {
@@ -355,7 +366,7 @@ public class GenerateSiteData {
                                 handleCapitalization(spellType.getCastType().name()),
                                 handleCapitalization(spellMin.getRarity().name()),
                                 handleCapitalization(spellMax.getRarity().name()),
-                                Component.translatable(String.format("%s.guide", spellType.getComponentId())).getString(),
+                                ITextComponent.translatable(String.format("%s.guide", spellType.getComponentId())).getString(),
                                 u1,
                                 u2,
                                 u3,

@@ -9,14 +9,14 @@ import dev.kosmx.playerAnim.minecraftApi.PlayerAnimationAccess;
 import io.redspace.ironsspellbooks.IronsSpellbooks;
 import io.redspace.ironsspellbooks.spells.AbstractSpell;
 import net.minecraft.client.player.AbstractClientPlayer;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.util.Hand;
+import net.minecraft.entity.player.PlayerEntity;
 
 import java.util.Optional;
 
 public class AbstractClientPlayerMixinHelper {
 
-    public static ModifierLayer<IAnimation> playerMixinInit(Player player) {
+    public static ModifierLayer<IAnimation> playerMixinInit(PlayerEntity player) {
         var animation = new ModifierLayer<>();
 
         if (animation != null) {
@@ -45,7 +45,7 @@ public class AbstractClientPlayerMixinHelper {
             animation.addModifierLast(new MirrorModifier() {
                 @Override
                 public boolean isEnabled() {
-                    return player.getUsedItemHand() == InteractionHand.OFF_HAND;
+                    return player.getUsedItemHand() == Hand.OFF_HAND;
                 }
             });
         }

@@ -4,9 +4,9 @@ import io.redspace.ironsspellbooks.entity.mobs.goals.WarlockAttackGoal;
 import io.redspace.ironsspellbooks.network.ClientboundSyncAnimation;
 import io.redspace.ironsspellbooks.registries.SoundRegistry;
 import io.redspace.ironsspellbooks.setup.Messages;
-import net.minecraft.util.Mth;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.Hand;
+import net.minecraft.util.math.vector.Vector3d;
 
 public class KeeperAnimatedWarlockAttackGoal extends WarlockAttackGoal {
     final KeeperEntity keeper;
@@ -25,12 +25,12 @@ public class KeeperAnimatedWarlockAttackGoal extends WarlockAttackGoal {
     public KeeperEntity.AttackType queueCombo;
     private boolean hasLunged;
     private boolean hasHitLunge;
-    private Vec3 oldLungePos;
+    private Vector3d oldLungePos;
 
     @Override
     protected void handleAttackLogic(double distanceSquared) {
         //Handling Animation hit frames
-        float distance = Mth.sqrt((float) distanceSquared);
+        float distance = MathHelper.sqrt((float) distanceSquared);
         mob.getLookControl().setLookAt(target);
         if (meleeAnimTimer > 0) {
             //We are currently attacking and are in a melee animation
@@ -43,7 +43,7 @@ public class KeeperAnimatedWarlockAttackGoal extends WarlockAttackGoal {
             } else if (currentAttack.data.isHitFrame(meleeAnimTimer)) {
                 if(currentAttack != KeeperEntity.AttackType.Lunge){
                     //mob.lookAt(target, 300, 300);
-                    Vec3 lunge = target.position().subtract(mob.position()).normalize().scale(.55f)/*.add(0, 0.2, 0)*/;
+                    Vector3d lunge = target.position().subtract(mob.position()).normalize().scale(.55f)/*.add(0, 0.2, 0)*/;
                     mob.push(lunge.x, lunge.y, lunge.z);
                     if (distance <= meleeRange) {
                         boolean flag = this.mob.doHurtTarget(target);
@@ -58,7 +58,7 @@ public class KeeperAnimatedWarlockAttackGoal extends WarlockAttackGoal {
                     }
                 }else{
                     if (!hasLunged) {
-                        Vec3 lunge = target.position().subtract(mob.position()).normalize().multiply(2.4, .5, 2.4).add(0, 0.15, 0);
+                        Vector3d lunge = target.position().subtract(mob.position()).normalize().multiply(2.4, .5, 2.4).add(0, 0.15, 0);
                         mob.push(lunge.x, lunge.y, lunge.z);
                         oldLungePos = mob.position();
                         mob.getNavigation().stop();
@@ -69,7 +69,7 @@ public class KeeperAnimatedWarlockAttackGoal extends WarlockAttackGoal {
                         if (this.mob.doHurtTarget(target)) {
                             playImpactSound();
                         }
-                        Vec3 knockback = oldLungePos.subtract(target.position());
+                        Vector3d knockback = oldLungePos.subtract(target.position());
                         target.knockback(1, knockback.x, knockback.z);
                         hasHitLunge = true;
                     }
@@ -119,7 +119,7 @@ public class KeeperAnimatedWarlockAttackGoal extends WarlockAttackGoal {
             return;
         double d0 = target.getX() - mob.getX();
         double d1 = target.getZ() - mob.getZ();
-        float yRot = (float) (Mth.atan2(d1, d0) * (double) (180F / (float) Math.PI)) - 90.0F;
+        float yRot = (float) (MathHelper.atan2(d1, d0) * (double) (180F / (float) Math.PI)) - 90.0F;
         mob.setYBodyRot(yRot);
         mob.setYHeadRot(yRot);
         mob.setYRot(yRot);
@@ -130,7 +130,7 @@ public class KeeperAnimatedWarlockAttackGoal extends WarlockAttackGoal {
         //anim duration
         currentAttack = nextAttack;
         if (currentAttack != null) {
-            this.mob.swing(InteractionHand.MAIN_HAND);
+            this.mob.swing(Hand.MAIN_HAND);
             meleeAnimTimer = currentAttack.data.lengthInTicks;
             hasLunged = false;
             hasHitLunge = false;
@@ -160,10 +160,10 @@ public class KeeperAnimatedWarlockAttackGoal extends WarlockAttackGoal {
     }
 
     public void playSwingSound() {
-        mob.playSound(SoundRegistry.KEEPER_SWING.get(), 1, Mth.randomBetweenInclusive(mob.getRandom(), 9, 13) * .1f);
+        mob.playSound(SoundRegistry.KEEPER_SWING.get(), 1, MathHelper.randomBetweenInclusive(mob.getRandom(), 9, 13) * .1f);
     }
 
     public void playImpactSound() {
-        mob.playSound(SoundRegistry.KEEPER_SWORD_IMPACT.get(), 1, Mth.randomBetweenInclusive(mob.getRandom(), 9, 13) * .1f);
+        mob.playSound(SoundRegistry.KEEPER_SWORD_IMPACT.get(), 1, MathHelper.randomBetweenInclusive(mob.getRandom(), 9, 13) * .1f);
     }
 }

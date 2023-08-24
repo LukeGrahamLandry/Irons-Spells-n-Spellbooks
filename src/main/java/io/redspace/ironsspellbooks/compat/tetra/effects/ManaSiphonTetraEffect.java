@@ -4,10 +4,10 @@ import io.redspace.ironsspellbooks.IronsSpellbooks;
 import io.redspace.ironsspellbooks.capabilities.magic.PlayerMagicData;
 import io.redspace.ironsspellbooks.network.ClientboundSyncMana;
 import io.redspace.ironsspellbooks.setup.Messages;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.util.DamageSource;
+import net.minecraft.entity.Entity;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
@@ -41,7 +41,7 @@ public class ManaSiphonTetraEffect {
     public static void handleLivingAttackEvent(LivingAttackEvent event) {
         DamageSource source = event.getSource();
         Entity attacker = source.getEntity();
-        if (attacker instanceof ServerPlayer player) {
+        if (attacker instanceof ServerPlayerEntity player) {
             ItemStack heldStack = player.getMainHandItem();
             if (heldStack.getItem() instanceof ModularItem item) {
                 int level = item.getEffectLevel(heldStack, manaSiphon);

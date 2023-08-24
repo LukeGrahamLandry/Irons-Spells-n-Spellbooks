@@ -8,23 +8,23 @@ import io.redspace.ironsspellbooks.spells.SchoolType;
 import io.redspace.ironsspellbooks.spells.SpellType;
 import io.redspace.ironsspellbooks.util.ParticleHelper;
 import io.redspace.ironsspellbooks.util.Utils;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.projectile.Projectile;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.particles.IParticleData;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.potion.Effects;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.projectile.ProjectileEntity;
+import net.minecraft.world.World;
+import net.minecraft.util.math.vector.Vector3d;
 
 public class PoisonSplash extends AoeEntity {
 
-    public PoisonSplash(EntityType<? extends Projectile> pEntityType, Level pLevel) {
+    public PoisonSplash(EntityType<? extends ProjectileEntity> pEntityType, World pLevel) {
         super(pEntityType, pLevel);
         this.setRadius((float) (this.getBoundingBox().getXsize() * .5f));
     }
 
-    public PoisonSplash(Level level) {
+    public PoisonSplash(World level) {
         this(EntityRegistry.POISON_SPLASH.get(), level);
     }
 
@@ -36,8 +36,8 @@ public class PoisonSplash extends AoeEntity {
             playedParticles = true;
             if (level.isClientSide) {
                 for (int i = 0; i < 150; i++) {
-                    Vec3 pos = new Vec3(Utils.getRandomScaled(.5f), Utils.getRandomScaled(.2f), this.random.nextFloat() * getRadius()).yRot(this.random.nextFloat() * 360);
-                    Vec3 motion = new Vec3(
+                    Vector3d pos = new Vector3d(Utils.getRandomScaled(.5f), Utils.getRandomScaled(.2f), this.random.nextFloat() * getRadius()).yRot(this.random.nextFloat() * 360);
+                    Vector3d motion = new Vector3d(
                             Utils.getRandomScaled(.06f),
                             this.random.nextDouble() * -.8 - .5,
                             Utils.getRandomScaled(.06f)
@@ -77,7 +77,7 @@ public class PoisonSplash extends AoeEntity {
     @Override
     public void applyEffect(LivingEntity target) {
         if (DamageSources.applyDamage(target, getDamage(), SpellType.POISON_SPLASH_SPELL.getDamageSource(this, getOwner()), SchoolType.POISON))
-            target.addEffect(new MobEffectInstance(MobEffects.POISON, getEffectDuration(), 0));
+            target.addEffect(new EffectInstance(Effects.POISON, getEffectDuration(), 0));
     }
 
 
@@ -97,7 +97,7 @@ public class PoisonSplash extends AoeEntity {
     }
 
     @Override
-    public ParticleOptions getParticle() {
+    public IParticleData getParticle() {
         return ParticleHelper.ACID_BUBBLE;
     }
 }
