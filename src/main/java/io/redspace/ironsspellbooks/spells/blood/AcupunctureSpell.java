@@ -7,6 +7,7 @@ import io.redspace.ironsspellbooks.spells.*;
 import io.redspace.ironsspellbooks.util.Utils;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.MathHelper;
@@ -24,8 +25,8 @@ public class AcupunctureSpell extends AbstractSpell {
 
     @Override
     public List<IFormattableTextComponent> getUniqueInfo(LivingEntity caster) {
-        return List.of(ITextComponent.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(caster), 2)),
-                ITextComponent.translatable("ui.irons_spellbooks.projectile_count", getCount(caster)));
+        return List.of(new TranslationTextComponent("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(caster), 2)),
+                new TranslationTextComponent("ui.irons_spellbooks.projectile_count", getCount(caster)));
 
     }
 

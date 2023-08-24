@@ -21,9 +21,9 @@ public class AcidOrbSpell extends AbstractSpell {
     @Override
     public List<IFormattableTextComponent> getUniqueInfo(LivingEntity caster) {
         return List.of(
-                ITextComponent.translatable("ui.irons_spellbooks.radius", Utils.stringTruncation(getRadius(caster), 1)),
-                ITextComponent.translatable("ui.irons_spellbooks.rend", Utils.stringTruncation((getRendAmplifier(caster) + 1) * 5, 1)),
-                ITextComponent.translatable("ui.irons_spellbooks.effect_length", Utils.timeFromTicks(getRendDuration(caster), 1)));
+                new TranslationTextComponent("ui.irons_spellbooks.radius", Utils.stringTruncation(getRadius(caster), 1)),
+                new TranslationTextComponent("ui.irons_spellbooks.rend", Utils.stringTruncation((getRendAmplifier(caster) + 1) * 5, 1)),
+                new TranslationTextComponent("ui.irons_spellbooks.effect_length", Utils.timeFromTicks(getRendDuration(caster), 1)));
     }
 
     public static DefaultConfig defaultConfig = new DefaultConfig()

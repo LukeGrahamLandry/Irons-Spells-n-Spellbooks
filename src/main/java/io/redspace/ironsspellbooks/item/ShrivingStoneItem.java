@@ -6,6 +6,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
@@ -14,7 +15,7 @@ import java.util.List;
 import net.minecraft.item.Item.Properties;
 
 public class ShrivingStoneItem extends Item {
-    private static final ITextComponent description = ITextComponent.translatable("item.irons_spellbooks.shriving_stone_desc").withStyle(TextFormatting.GRAY);
+    private static final ITextComponent description = new TranslationTextComponent("item.irons_spellbooks.shriving_stone_desc").withStyle(TextFormatting.GRAY);
     public ShrivingStoneItem() {
         super(new Properties().tab(SpellbookModCreativeTabs.SPELL_MATERIALS_TAB));
     }

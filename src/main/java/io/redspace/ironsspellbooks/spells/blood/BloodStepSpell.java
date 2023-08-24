@@ -18,6 +18,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.Hand;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
@@ -34,7 +35,7 @@ public class BloodStepSpell extends AbstractSpell {
 
     @Override
     public List<IFormattableTextComponent> getUniqueInfo(LivingEntity caster) {
-        return List.of(ITextComponent.translatable("ui.irons_spellbooks.distance", Utils.stringTruncation(getDistance(caster), 1)));
+        return List.of(new TranslationTextComponent("ui.irons_spellbooks.distance", Utils.stringTruncation(getDistance(caster), 1)));
     }
 
     public static DefaultConfig defaultConfig = new DefaultConfig()

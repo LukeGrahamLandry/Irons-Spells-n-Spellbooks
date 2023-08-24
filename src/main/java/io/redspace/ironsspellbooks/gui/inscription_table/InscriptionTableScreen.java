@@ -138,9 +138,9 @@ public class InscriptionTableScreen extends ContainerScreen<InscriptionTableMenu
 
     private ITextComponent getErrorMessage(int code) {
         if (code == 1)
-            return ITextComponent.translatable("ui.irons_spellbooks.inscription_table_rarity_error");
+            return new TranslationTextComponent("ui.irons_spellbooks.inscription_table_rarity_error");
         else
-            return ITextComponent.empty();
+            return StringTextComponent.EMPTY;
     }
 
     private void renderSpells(MatrixStack poseStack, int mouseX, int mouseY) {
@@ -210,7 +210,7 @@ public class InscriptionTableScreen extends ContainerScreen<InscriptionTableMenu
         // Title
         //
         boolean spellSelected = selectedSpellIndex >= 0 && spellSlots.get(selectedSpellIndex).hasSpell();
-        var title = selectedSpellIndex < 0 ? ITextComponent.translatable("ui.irons_spellbooks.no_selection") : spellSelected ? spellSlots.get(selectedSpellIndex).containedSpell.getSpellType().getDisplayName() : ITextComponent.translatable("ui.irons_spellbooks.empty_slot");
+        var title = selectedSpellIndex < 0 ? new TranslationTextComponent("ui.irons_spellbooks.no_selection") : spellSelected ? spellSlots.get(selectedSpellIndex).containedSpell.getSpellType().getDisplayName() : new TranslationTextComponent("ui.irons_spellbooks.empty_slot");
         //font.drawWordWrap(title.withStyle(ChatFormatting.UNDERLINE).withStyle(textColor), titleX, titleY, LORE_PAGE_WIDTH, 0xFFFFFF);
 
         var titleLines = font.split(title.withStyle(TextFormatting.UNDERLINE).withStyle(textColor), LORE_PAGE_WIDTH);
@@ -259,14 +259,14 @@ public class InscriptionTableScreen extends ContainerScreen<InscriptionTableMenu
         //
         // Level
         //
-        var levelText = ITextComponent.translatable("ui.irons_spellbooks.level", spell.getLevel(null)).withStyle(textColor);
+        var levelText = new TranslationTextComponent("ui.irons_spellbooks.level", spell.getLevel(null)).withStyle(textColor);
         font.draw(poseStack, levelText, x + (LORE_PAGE_WIDTH - font.width(levelText.getString())) / 2, descLine, 0xFFFFFF);
         descLine += font.lineHeight * textScale * 2;
 
         //
         // Mana
         //
-        descLine += drawStatText(font, poseStack, x + margin, descLine, "ui.irons_spellbooks.mana_cost", textColor, ITextComponent.translatable(spell.getManaCost() + ""), colorMana, textScale);
+        descLine += drawStatText(font, poseStack, x + margin, descLine, "ui.irons_spellbooks.mana_cost", textColor, new TranslationTextComponent(spell.getManaCost() + ""), colorMana, textScale);
 
         //
         // Cast Time
@@ -277,7 +277,7 @@ public class InscriptionTableScreen extends ContainerScreen<InscriptionTableMenu
         //
         // Cooldown
         //
-        descLine += drawStatText(font, poseStack, x + margin, descLine, "ui.irons_spellbooks.cooldown", textColor, ITextComponent.translatable(Utils.timeFromTicks(spell.getSpellCooldown(), 1)), colorCooldown, textScale);
+        descLine += drawStatText(font, poseStack, x + margin, descLine, "ui.irons_spellbooks.cooldown", textColor, new TranslationTextComponent(Utils.timeFromTicks(spell.getSpellCooldown(), 1)), colorCooldown, textScale);
 
 
         //
@@ -311,7 +311,7 @@ public class InscriptionTableScreen extends ContainerScreen<InscriptionTableMenu
 //        x /= scale;
 //        y /= scale;
 //        font.drawWordWrap(Component.translatable(translationKey, stat.withStyle(statStyle)).withStyle(textStyle), x, y, LORE_PAGE_WIDTH, 0xFFFFFF);
-        return drawText(font, poseStack, ITextComponent.translatable(translationKey, stat.withStyle(statStyle)).withStyle(textStyle), x, y, 0xFFFFFF, scale);
+        return drawText(font, poseStack, new TranslationTextComponent(translationKey, stat.withStyle(statStyle)).withStyle(textStyle), x, y, 0xFFFFFF, scale);
         //font.draw(poseStack, Component.translatable(translationKey, stat.withStyle(statStyle)).withStyle(textStyle), x, y, 0xFFFFFF);
     }
 
@@ -369,7 +369,7 @@ public class InscriptionTableScreen extends ContainerScreen<InscriptionTableMenu
                 int temp_index = index;
                 spellSlots.add(new SpellSlotInfo(storedSpells[index],
                         location,
-                        this.addWidget(new Button((int) location.x, (int) location.y, boxSize, boxSize, ITextComponent.translatable(temp_index + ""), (p_169820_) -> this.setSelectedIndex(temp_index)))));
+                        this.addWidget(new Button((int) location.x, (int) location.y, boxSize, boxSize, new TranslationTextComponent(temp_index + ""), (p_169820_) -> this.setSelectedIndex(temp_index)))));
                 index++;
             }
         }

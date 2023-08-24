@@ -1,8 +1,6 @@
 package io.redspace.ironsspellbooks.item.curios;
 
 import io.redspace.ironsspellbooks.util.SpellbookModCreativeTabs;
-import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.Component;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.item.Item;
@@ -18,13 +16,13 @@ public class FirewardRing extends SimpleDescriptiveCurio {
     @Override
     public void onEquip(SlotContext slotContext, ItemStack prevStack, ItemStack stack) {
         super.onEquip(slotContext, prevStack, stack);
-        slotContext.entity().addEffect(new EffectInstance(Effects.FIRE_RESISTANCE, 100000, 0, false, false, false));
+        slotContext.getWearer().addEffect(new EffectInstance(Effects.FIRE_RESISTANCE, 100000, 0, false, false, false));
     }
 
     @Override
     public void onUnequip(SlotContext slotContext, ItemStack newStack, ItemStack stack) {
         super.onUnequip(slotContext, newStack, stack);
-        slotContext.entity().removeEffect(Effects.FIRE_RESISTANCE);
+        slotContext.getWearer().removeEffect(Effects.FIRE_RESISTANCE);
     }
 
     //    @Override

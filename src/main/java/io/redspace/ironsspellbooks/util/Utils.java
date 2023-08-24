@@ -506,7 +506,7 @@ public class Utils {
     }
 
     public static void sendTargetedNotification(ServerPlayerEntity target, LivingEntity caster, SpellType spell) {
-        target.connection.send(new ClientboundSetActionBarTextPacket(ITextComponent.translatable("ui.irons_spellbooks.spell_target_warning", caster.getDisplayName().getString(), spell.getDisplayName()).withStyle(TextFormatting.LIGHT_PURPLE)));
+        target.connection.send(new ClientboundSetActionBarTextPacket(new TranslationTextComponent("ui.irons_spellbooks.spell_target_warning", caster.getDisplayName().getString(), spell.getDisplayName()).withStyle(TextFormatting.LIGHT_PURPLE)));
     }
 
     public static boolean preCastTargetHelper(World level, LivingEntity caster, PlayerMagicData playerMagicData, SpellType spellType, int range, float aimAssist) {
@@ -523,7 +523,7 @@ public class Utils {
                 Utils.sendTargetedNotification(serverPlayer, caster, spellType);
             return true;
         } else if (sendFailureMessage && caster instanceof ServerPlayerEntity serverPlayer) {
-            serverPlayer.connection.send(new ClientboundSetActionBarTextPacket(ITextComponent.translatable("ui.irons_spellbooks.cast_error_target").withStyle(TextFormatting.RED)));
+            serverPlayer.connection.send(new ClientboundSetActionBarTextPacket(new TranslationTextComponent("ui.irons_spellbooks.cast_error_target").withStyle(TextFormatting.RED)));
         }
         return false;
 

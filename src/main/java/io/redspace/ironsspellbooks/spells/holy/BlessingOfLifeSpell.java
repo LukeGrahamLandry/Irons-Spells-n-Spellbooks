@@ -26,7 +26,7 @@ public class BlessingOfLifeSpell extends AbstractSpell {
     @Override
     public List<IFormattableTextComponent> getUniqueInfo(LivingEntity caster) {
         return List.of(
-                ITextComponent.translatable("ui.irons_spellbooks.healing", Utils.stringTruncation(getSpellPower(caster), 1))
+                new TranslationTextComponent("ui.irons_spellbooks.healing", Utils.stringTruncation(getSpellPower(caster), 1))
         );
     }
 

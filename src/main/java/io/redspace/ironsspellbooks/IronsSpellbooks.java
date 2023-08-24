@@ -108,7 +108,7 @@ public class IronsSpellbooks {
         IronsSpellbooks.LOGGER.debug("addPackFinders");
         try {
             if (event.getPackType() == ResourcePackType.CLIENT_RESOURCES) {
-                addBuiltinPack(event, "legacy_dead_king_resource_pack", ITextComponent.literal("Legacy Dead King"));
+                addBuiltinPack(event, "legacy_dead_king_resource_pack", new StringTextComponent("Legacy Dead King"));
             }
         } catch (IOException ex) {
             IronsSpellbooks.LOGGER.error("Failed to load a builtin resource pack! If you are seeing this message, please report an issue to https://github.com/iron431/Irons-Spells-n-Spellbooks/issues");

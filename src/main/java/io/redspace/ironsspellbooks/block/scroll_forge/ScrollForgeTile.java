@@ -63,7 +63,7 @@ public class ScrollForgeTile extends TileEntity implements INamedContainerProvid
 
     @Override
     public IFormattableTextComponent getDisplayName() {
-        return ITextComponent.translatable("ui.irons_spellbooks.scroll_forge_title");
+        return new TranslationTextComponent("ui.irons_spellbooks.scroll_forge_title");
     }
 
     @Nullable

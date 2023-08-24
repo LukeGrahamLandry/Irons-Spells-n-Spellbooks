@@ -34,7 +34,7 @@ public class WallOfFireSpell extends AbstractSpell {
     @Override
     public List<IFormattableTextComponent> getUniqueInfo(LivingEntity caster) {
         return List.of(
-                ITextComponent.translatable("ui.irons_spellbooks.distance", Utils.stringTruncation(getWallLength(caster), 1))
+                new TranslationTextComponent("ui.irons_spellbooks.distance", Utils.stringTruncation(getWallLength(caster), 1))
         );
     }
 

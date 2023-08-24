@@ -39,9 +39,9 @@ public class ManaCommand {
         }));
         String s = set ? "set" : "add";
         if (targets.size() == 1) {
-            source.sendSuccess(ITextComponent.translatable("commands.mana." + s + ".success.single", amount, targets.iterator().next().getDisplayName()), true);
+            source.sendSuccess(new TranslationTextComponent("commands.mana." + s + ".success.single", amount, targets.iterator().next().getDisplayName()), true);
         } else {
-            source.sendSuccess(ITextComponent.translatable("commands.mana." + s + ".success.multiple", amount, targets.size()), true);
+            source.sendSuccess(new TranslationTextComponent("commands.mana." + s + ".success.multiple", amount, targets.size()), true);
         }
 
         return targets.size();

@@ -20,8 +20,7 @@ public class SpecialItemRenderer extends ItemStackTileEntityRenderer {
     private final ItemRenderer renderer;
     public final String name;
 
-    public SpecialItemRenderer(ItemRenderer renderDispatcher, EntityModelSet modelSet, String name) {
-        super(Minecraft.getInstance().getBlockEntityRenderDispatcher(), modelSet);
+    public SpecialItemRenderer(ItemRenderer renderDispatcher, String name) {
         this.renderer = renderDispatcher;
         this.name = name;
     }

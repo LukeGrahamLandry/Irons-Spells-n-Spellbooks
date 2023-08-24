@@ -24,7 +24,7 @@ public class FireBreathSpell extends AbstractSpell {
 
     @Override
     public List<IFormattableTextComponent> getUniqueInfo(LivingEntity caster) {
-        return List.of(ITextComponent.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(caster), 1)));
+        return List.of(new TranslationTextComponent("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(caster), 1)));
     }
 
     public static DefaultConfig defaultConfig = new DefaultConfig()

@@ -10,6 +10,7 @@ import io.redspace.ironsspellbooks.util.Utils;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.MathHelper;
@@ -36,7 +37,7 @@ public class RaiseDeadSpell extends AbstractSpell {
 
     @Override
     public List<IFormattableTextComponent> getUniqueInfo(LivingEntity caster) {
-        return List.of(ITextComponent.translatable("ui.irons_spellbooks.summon_count", getLevel(caster)));
+        return List.of(new TranslationTextComponent("ui.irons_spellbooks.summon_count", getLevel(caster)));
     }
 
     public static DefaultConfig defaultConfig = new DefaultConfig()

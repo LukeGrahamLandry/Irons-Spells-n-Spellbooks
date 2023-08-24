@@ -9,6 +9,7 @@ import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.util.math.vector.Vector3d;
 
@@ -22,8 +23,8 @@ public class BloodNeedlesSpell extends AbstractSpell {
 
     @Override
     public List<IFormattableTextComponent> getUniqueInfo(LivingEntity caster) {
-        return List.of(ITextComponent.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(caster), 2)),
-                ITextComponent.translatable("ui.irons_spellbooks.projectile_count", getCount()));
+        return List.of(new TranslationTextComponent("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(caster), 2)),
+                new TranslationTextComponent("ui.irons_spellbooks.projectile_count", getCount()));
 
     }
 

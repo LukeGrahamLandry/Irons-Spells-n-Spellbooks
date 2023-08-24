@@ -116,12 +116,12 @@ public enum SpellRarity {
     }
 
     private final IFormattableTextComponent[] DISPLAYS = {
-            ITextComponent.translatable("rarity.irons_spellbooks.common").withStyle(TextFormatting.GRAY),
-            ITextComponent.translatable("rarity.irons_spellbooks.uncommon").withStyle(TextFormatting.GREEN),
-            ITextComponent.translatable("rarity.irons_spellbooks.rare").withStyle(TextFormatting.AQUA),
-            ITextComponent.translatable("rarity.irons_spellbooks.epic").withStyle(TextFormatting.LIGHT_PURPLE),
-            ITextComponent.translatable("rarity.irons_spellbooks.legendary").withStyle(TextFormatting.GOLD),
-            ITextComponent.translatable("rarity.irons_spellbooks.mythic").withStyle(TextFormatting.GOLD),
-            ITextComponent.translatable("rarity.irons_spellbooks.ancient").withStyle(TextFormatting.GOLD),
+            new TranslationTextComponent("rarity.irons_spellbooks.common").withStyle(TextFormatting.GRAY),
+            new TranslationTextComponent("rarity.irons_spellbooks.uncommon").withStyle(TextFormatting.GREEN),
+            new TranslationTextComponent("rarity.irons_spellbooks.rare").withStyle(TextFormatting.AQUA),
+            new TranslationTextComponent("rarity.irons_spellbooks.epic").withStyle(TextFormatting.LIGHT_PURPLE),
+            new TranslationTextComponent("rarity.irons_spellbooks.legendary").withStyle(TextFormatting.GOLD),
+            new TranslationTextComponent("rarity.irons_spellbooks.mythic").withStyle(TextFormatting.GOLD),
+            new TranslationTextComponent("rarity.irons_spellbooks.ancient").withStyle(TextFormatting.GOLD),
     };
 }

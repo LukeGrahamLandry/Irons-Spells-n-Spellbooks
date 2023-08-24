@@ -71,7 +71,7 @@ public interface MagicSummon extends AntiMagicSusceptible {
                 }
             }
             if (reason.equals(Entity.RemovalReason.DISCARDED))
-                player.sendSystemMessage(ITextComponent.translatable("ui.irons_spellbooks.summon_despawn_message", ((Entity) this).getDisplayName()));
+                player.sendSystemMessage(new TranslationTextComponent("ui.irons_spellbooks.summon_despawn_message", ((Entity) this).getDisplayName()));
 
         }
     }

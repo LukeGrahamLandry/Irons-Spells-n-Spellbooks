@@ -170,7 +170,7 @@ public class InscriptionTableBlock extends HorizontalBlock /*implements EntityBl
     @javax.annotation.Nullable
     public INamedContainerProvider getMenuProvider(BlockState pState, World pLevel, BlockPos pPos) {
         return new SimpleNamedContainerProvider((i, inventory, player) ->
-                new InscriptionTableMenu(i, inventory, IWorldPosCallable.create(pLevel, pPos)), ITextComponent.translatable("block.irons_spellbooks.inscription_table"));
+                new InscriptionTableMenu(i, inventory, IWorldPosCallable.create(pLevel, pPos)), new TranslationTextComponent("block.irons_spellbooks.inscription_table"));
     }
 
 }

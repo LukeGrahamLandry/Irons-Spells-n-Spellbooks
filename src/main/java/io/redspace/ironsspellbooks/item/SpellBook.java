@@ -10,25 +10,21 @@ import io.redspace.ironsspellbooks.spells.SpellType;
 import io.redspace.ironsspellbooks.util.SpellbookModCreativeTabs;
 import io.redspace.ironsspellbooks.util.TooltipsUtils;
 import io.redspace.ironsspellbooks.util.Utils;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.Hand;
-import net.minecraft.util.ActionResult;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.world.item.*;
-import net.minecraft.world.World;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
-
-import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Rarity;
 import net.minecraft.item.UseAction;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
+import net.minecraft.util.text.*;
+import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class SpellBook extends Item {
     protected final SpellRarity rarity;
@@ -118,11 +114,11 @@ public class SpellBook extends Item {
     @Override
     public void appendHoverText(ItemStack itemStack, @Nullable World level, List<ITextComponent> lines, ITooltipFlag flag) {
         if (!this.isUnique()) {
-            lines.add(ITextComponent.translatable("tooltip.irons_spellbooks.spellbook_rarity", this.rarity.getDisplayName()).withStyle(TextFormatting.GRAY));
+            lines.add(new TranslationTextComponent("tooltip.irons_spellbooks.spellbook_rarity", this.rarity.getDisplayName()).withStyle(TextFormatting.GRAY));
         } else {
-            lines.add(ITextComponent.translatable("tooltip.irons_spellbooks.spellbook_rarity", ITextComponent.translatable("tooltip.irons_spellbooks.spellbook_unique").withStyle(Style.EMPTY.withColor(0xe04324))).withStyle(TextFormatting.GRAY));
+            lines.add(new TranslationTextComponent("tooltip.irons_spellbooks.spellbook_rarity", new TranslationTextComponent("tooltip.irons_spellbooks.spellbook_unique").withStyle(Style.EMPTY.withColor(Color.fromRgb(0xe04324)))).withStyle(TextFormatting.GRAY));
         }
-        lines.add(ITextComponent.translatable("tooltip.irons_spellbooks.spellbook_spell_count", this.spellSlots).withStyle(TextFormatting.GRAY));
+        lines.add(new TranslationTextComponent("tooltip.irons_spellbooks.spellbook_spell_count", this.spellSlots).withStyle(TextFormatting.GRAY));
 
         var player = Minecraft.getInstance().player;
         if (player != null && SpellBookData.getSpellBookData(itemStack).getActiveSpell().getID() > 0) {

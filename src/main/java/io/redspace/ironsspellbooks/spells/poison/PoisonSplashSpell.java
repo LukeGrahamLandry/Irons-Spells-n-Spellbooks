@@ -27,8 +27,8 @@ public class PoisonSplashSpell extends AbstractSpell {
     @Override
     public List<IFormattableTextComponent> getUniqueInfo(LivingEntity caster) {
         return List.of(
-                ITextComponent.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(caster), 1)),
-                ITextComponent.translatable("ui.irons_spellbooks.effect_length", Utils.timeFromTicks(getDuration(caster), 1))
+                new TranslationTextComponent("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(caster), 1)),
+                new TranslationTextComponent("ui.irons_spellbooks.effect_length", Utils.timeFromTicks(getDuration(caster), 1))
         );
     }
 

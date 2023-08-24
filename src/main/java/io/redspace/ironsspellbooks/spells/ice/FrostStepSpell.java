@@ -31,8 +31,8 @@ public class FrostStepSpell extends AbstractSpell {
     @Override
     public List<IFormattableTextComponent> getUniqueInfo(LivingEntity caster) {
         return List.of(
-                ITextComponent.translatable("ui.irons_spellbooks.distance", Utils.stringTruncation(getDistance(caster), 1)),
-                ITextComponent.translatable("ui.irons_spellbooks.shatter_damage", Utils.stringTruncation(getDamage(caster), 1))
+                new TranslationTextComponent("ui.irons_spellbooks.distance", Utils.stringTruncation(getDistance(caster), 1)),
+                new TranslationTextComponent("ui.irons_spellbooks.shatter_damage", Utils.stringTruncation(getDamage(caster), 1))
         );
     }
 

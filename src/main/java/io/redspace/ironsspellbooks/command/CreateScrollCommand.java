@@ -15,7 +15,7 @@ import net.minecraftforge.server.command.EnumArgument;
 
 public class CreateScrollCommand {
 
-    private static final SimpleCommandExceptionType ERROR_FAILED = new SimpleCommandExceptionType(ITextComponent.translatable("commands.irons_spellbooks.create_scroll.failed"));
+    private static final SimpleCommandExceptionType ERROR_FAILED = new SimpleCommandExceptionType(new TranslationTextComponent("commands.irons_spellbooks.create_scroll.failed"));
 
 //    public static final SuggestionProvider<CommandSourceStack> SPELL_SUGGESTIONS = SuggestionProviders.register(new ResourceLocation(irons_spellbooks.MODID, "spell_suggestions"), (p_212438_, p_212439_) -> {
 //        return SharedSuggestionProvider.suggestResource(Registry.ENTITY_TYPE.stream().filter(EntityType::canSummon), p_212439_, EntityType::getKey, (p_212436_) -> {
@@ -33,7 +33,7 @@ public class CreateScrollCommand {
 
     private static int createScroll(CommandSource source, SpellType spellType, int spellLevel) throws CommandSyntaxException {
         if (spellLevel > spellType.getMaxLevel()) {
-            throw new SimpleCommandExceptionType(ITextComponent.translatable("commands.irons_spellbooks.create_spell.failed_max_level", spellType, spellType.getMaxLevel())).create();
+            throw new SimpleCommandExceptionType(new TranslationTextComponent("commands.irons_spellbooks.create_spell.failed_max_level", spellType, spellType.getMaxLevel())).create();
         }
 
         var serverPlayer = source.getPlayer();

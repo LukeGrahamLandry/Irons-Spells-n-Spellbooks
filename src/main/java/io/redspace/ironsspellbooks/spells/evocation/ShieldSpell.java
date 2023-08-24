@@ -23,7 +23,7 @@ public class ShieldSpell extends AbstractSpell {
     @Override
     public List<IFormattableTextComponent> getUniqueInfo(LivingEntity caster) {
         return List.of(
-                ITextComponent.translatable("ui.irons_spellbooks.hp", Utils.stringTruncation(getShieldHP(caster), 1))
+                new TranslationTextComponent("ui.irons_spellbooks.hp", Utils.stringTruncation(getShieldHP(caster), 1))
         );
     }
 

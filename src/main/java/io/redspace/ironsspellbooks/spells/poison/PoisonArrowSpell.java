@@ -21,8 +21,8 @@ public class PoisonArrowSpell extends AbstractSpell {
     @Override
     public List<IFormattableTextComponent> getUniqueInfo(LivingEntity caster) {
         return List.of(
-                ITextComponent.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getArrowDamage(caster), 1)),
-                ITextComponent.translatable("ui.irons_spellbooks.aoe_damage", Utils.stringTruncation(getAOEDamage(caster), 1)));
+                new TranslationTextComponent("ui.irons_spellbooks.damage", Utils.stringTruncation(getArrowDamage(caster), 1)),
+                new TranslationTextComponent("ui.irons_spellbooks.aoe_damage", Utils.stringTruncation(getAOEDamage(caster), 1)));
     }
 
     public static DefaultConfig defaultConfig = new DefaultConfig()

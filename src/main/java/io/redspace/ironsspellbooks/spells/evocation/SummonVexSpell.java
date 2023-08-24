@@ -26,7 +26,7 @@ public class SummonVexSpell extends AbstractSpell {
     @Override
     public List<IFormattableTextComponent> getUniqueInfo(LivingEntity caster) {
         return List.of(
-                ITextComponent.translatable("ui.irons_spellbooks.summon_count", getLevel(caster))
+                new TranslationTextComponent("ui.irons_spellbooks.summon_count", getLevel(caster))
         );
     }
 

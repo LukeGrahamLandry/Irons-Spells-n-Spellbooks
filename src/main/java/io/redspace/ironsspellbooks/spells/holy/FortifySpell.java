@@ -29,8 +29,8 @@ public class FortifySpell extends AbstractSpell {
     @Override
     public List<IFormattableTextComponent> getUniqueInfo(LivingEntity caster) {
         return List.of(
-                ITextComponent.translatable("ui.irons_spellbooks.absorption", Utils.stringTruncation(getSpellPower(caster), 0)),
-                ITextComponent.translatable("ui.irons_spellbooks.radius", Utils.stringTruncation(radius, 1))
+                new TranslationTextComponent("ui.irons_spellbooks.absorption", Utils.stringTruncation(getSpellPower(caster), 0)),
+                new TranslationTextComponent("ui.irons_spellbooks.radius", Utils.stringTruncation(radius, 1))
         );
     }
 

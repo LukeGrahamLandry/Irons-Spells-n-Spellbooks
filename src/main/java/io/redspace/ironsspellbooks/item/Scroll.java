@@ -18,7 +18,6 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.ActionResult;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.world.item.*;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

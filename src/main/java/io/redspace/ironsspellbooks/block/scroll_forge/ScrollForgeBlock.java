@@ -35,7 +35,7 @@ import net.minecraft.util.Rotation;
 
 public class ScrollForgeBlock extends ContainerBlock {
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
-    private static final ITextComponent CONTAINER_TITLE = ITextComponent.translatable("container.crafting");
+    private static final ITextComponent CONTAINER_TITLE = new TranslationTextComponent("container.crafting");
     public static final VoxelShape SHAPE_TABLETOP = Block.box(0, 10, 0, 16, 14, 16);
     public static final VoxelShape SHAPE_LEG_1 = Block.box(2, 0, 2, 14, 4, 14);
     public static final VoxelShape SHAPE_LEG_2 = Block.box(4, 4, 4, 12, 10, 12);

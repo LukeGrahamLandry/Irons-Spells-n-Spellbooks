@@ -1,33 +1,31 @@
 package io.redspace.ironsspellbooks.item;
 
 import io.redspace.ironsspellbooks.registries.ItemRegistry;
-import io.redspace.ironsspellbooks.util.SpellbookModCreativeTabs;
 import io.redspace.ironsspellbooks.util.ModTags;
-import net.minecraft.util.text.TextFormatting;
+import io.redspace.ironsspellbooks.util.SpellbookModCreativeTabs;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.GlobalPos;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.NBTUtil;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.world.server.ServerWorld;
-import net.minecraft.util.Hand;
-import net.minecraft.util.ActionResult;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.NBTUtil;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.GlobalPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
-import org.checkerframework.checker.units.qual.C;
+import net.minecraft.world.server.ServerWorld;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-import net.minecraft.item.Item.Properties;
-
 public class WaywardCompass extends Item {
-    private static final ITextComponent description = ITextComponent.translatable("item.irons_spellbooks.wayward_compass_desc").withStyle(TextFormatting.DARK_AQUA);
+    private static final ITextComponent description = new TranslationTextComponent("item.irons_spellbooks.wayward_compass_desc").withStyle(TextFormatting.DARK_AQUA);
     public WaywardCompass() {
         super(new Properties().tab(SpellbookModCreativeTabs.SPELL_EQUIPMENT_TAB));
     }
@@ -84,7 +82,7 @@ public class WaywardCompass extends Item {
         super.appendHoverText(pStack, pLevel, pTooltipComponents, pIsAdvanced);
         pTooltipComponents.add(description);
         if (missingWarning(pStack)) {
-            pTooltipComponents.add(ITextComponent.translatable("item.irons_spellbooks.wayward_compass.error", Minecraft.getInstance().options.keyUse.getTranslatedKeyMessage()).withStyle(TextFormatting.RED));
+            pTooltipComponents.add(new TranslationTextComponent("item.irons_spellbooks.wayward_compass.error", Minecraft.getInstance().options.keyUse.getTranslatedKeyMessage()).withStyle(TextFormatting.RED));
         }
     }
 }

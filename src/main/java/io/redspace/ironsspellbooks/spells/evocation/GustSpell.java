@@ -23,8 +23,8 @@ public class GustSpell extends AbstractSpell {
     @Override
     public List<IFormattableTextComponent> getUniqueInfo(LivingEntity caster) {
         return List.of(
-                ITextComponent.translatable("ui.irons_spellbooks.strength", Utils.stringTruncation(getStrength(caster), 1)),
-                ITextComponent.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(AirborneEffect.getDamageFromLevel(getLevel(caster)), 1))
+                new TranslationTextComponent("ui.irons_spellbooks.strength", Utils.stringTruncation(getStrength(caster), 1)),
+                new TranslationTextComponent("ui.irons_spellbooks.damage", Utils.stringTruncation(AirborneEffect.getDamageFromLevel(getLevel(caster)), 1))
         );
     }
 

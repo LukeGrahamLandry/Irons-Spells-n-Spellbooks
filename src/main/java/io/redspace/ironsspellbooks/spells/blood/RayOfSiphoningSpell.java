@@ -13,6 +13,7 @@ import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
@@ -27,8 +28,8 @@ public class RayOfSiphoningSpell extends AbstractSpell {
 
     @Override
     public List<IFormattableTextComponent> getUniqueInfo(LivingEntity caster) {
-        return List.of(ITextComponent.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getTickDamage(caster), 1)),
-                ITextComponent.translatable("ui.irons_spellbooks.distance", Utils.stringTruncation(getRange(0), 1)));
+        return List.of(new TranslationTextComponent("ui.irons_spellbooks.damage", Utils.stringTruncation(getTickDamage(caster), 1)),
+                new TranslationTextComponent("ui.irons_spellbooks.distance", Utils.stringTruncation(getRange(0), 1)));
     }
 
     public static DefaultConfig defaultConfig = new DefaultConfig()

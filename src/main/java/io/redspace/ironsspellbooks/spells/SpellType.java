@@ -316,7 +316,7 @@ public enum SpellType {
     }
 
     public IFormattableTextComponent getDisplayName() {
-        return ITextComponent.translatable(getComponentId());
+        return new TranslationTextComponent(getComponentId());
     }
 
     public ResourceLocation getResourceLocation() {

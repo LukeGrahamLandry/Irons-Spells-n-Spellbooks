@@ -24,8 +24,8 @@ public class DevourSpell extends AbstractSpell {
     @Override
     public List<IFormattableTextComponent> getUniqueInfo(LivingEntity caster) {
         return List.of(
-                ITextComponent.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(caster), 1)),
-                ITextComponent.translatable("ui.irons_spellbooks.max_hp_on_kill", getHpBonus(caster))
+                new TranslationTextComponent("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(caster), 1)),
+                new TranslationTextComponent("ui.irons_spellbooks.max_hp_on_kill", getHpBonus(caster))
         );
     }
 

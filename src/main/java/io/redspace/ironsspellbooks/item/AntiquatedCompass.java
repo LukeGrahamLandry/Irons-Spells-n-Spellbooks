@@ -8,6 +8,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -22,7 +23,7 @@ import java.util.List;
 import net.minecraft.item.Item.Properties;
 
 public class AntiquatedCompass extends Item {
-    private static final ITextComponent description = ITextComponent.translatable("item.irons_spellbooks.antiquated_compass_desc").withStyle(Style.EMPTY.withColor(0x873200));
+    private static final ITextComponent description = new TranslationTextComponent("item.irons_spellbooks.antiquated_compass_desc").withStyle(Style.EMPTY.withColor(0x873200));
     public AntiquatedCompass() {
         super(new Properties().tab(SpellbookModCreativeTabs.SPELL_EQUIPMENT_TAB));
     }

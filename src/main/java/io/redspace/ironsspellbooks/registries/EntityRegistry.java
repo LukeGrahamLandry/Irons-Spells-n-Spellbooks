@@ -59,10 +59,10 @@ import net.minecraft.block.Blocks;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
+import net.minecraftforge.fml.RegistryObject;
 
 public class EntityRegistry {
-    private static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, IronsSpellbooks.MODID);
+    private static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITIES, IronsSpellbooks.MODID);
 
     public static void register(IEventBus eventBus) {
         ENTITIES.register(eventBus);
@@ -232,7 +232,6 @@ public class EntityRegistry {
 
     public static final RegistryObject<EntityType<SummonedPolarBear>> SUMMONED_POLAR_BEAR =
             ENTITIES.register("summoned_polar_bear", () -> EntityType.Builder.<SummonedPolarBear>of(SummonedPolarBear::new, EntityClassification.CREATURE)
-                    .immuneTo(Blocks.POWDER_SNOW)
                     .sized(1.4F, 1.4F)
                     .clientTrackingRange(64)
                     .build(new ResourceLocation(IronsSpellbooks.MODID, "summoned_polar_bear").toString()));

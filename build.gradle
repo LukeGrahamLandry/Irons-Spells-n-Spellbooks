@@ -17,9 +17,7 @@ apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'org.parchmentmc.librarian.forgegradle'
 apply plugin: 'maven-publish'
 
-apply from: 'https://raw.githubusercontent.com/SizableShrimp/Forge-Class-Remapper/main/classremapper.gradle'
-
-version = '1.19.2-1.2.1'
+version = '1.16.5-1.2.1'
 group = 'io.redspace.ironsspellbooks'
 archivesBaseName = 'irons_spellbooks'
 
@@ -45,7 +43,7 @@ minecraft {
 
     //mappings channel: 'official', version: '1.18.2'
 
-    mappings channel: 'parchment', version: "2022.11.27-1.19.2"
+    mappings channel: 'parchment', version: "2022.03.06-1.16.5"
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
     // accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg') // Currently, this location cannot be changed from the default.
@@ -174,6 +172,8 @@ repositories {
 }
 
 dependencies {
+    implementation 'org.jetbrains:annotations:23.0.0'
+
     //compileOnly will not load mod when running from IntelliJ
     //runtimeOnly will load the mod but can't link to it in code
     //implementation both
@@ -184,37 +184,38 @@ dependencies {
     // MIXINS *****************************************************************************************************
     annotationProcessor "org.spongepowered:mixin:${mixin_version}:processor"
 
-    // GECKOLIB ***************************************************************************************************
-    implementation fg.deobf("software.bernie.geckolib:geckolib-forge-${geckolib_version}")
-
-    // CAELUS *****************************************************************************************************
-    compileOnly fg.deobf("top.theillusivec4.caelus:caelus-forge:${minecraft_version}-${caelus_version}:api")
-    runtimeOnly fg.deobf("top.theillusivec4.caelus:caelus-forge:${minecraft_version}-${caelus_version}")
-
-    // PLAYER ANIMATOR ********************************************************************************************
-    implementation fg.deobf("dev.kosmx.player-anim:player-animation-lib-forge:${player_animator_version}")
-
+// TODO(luke)
+//    // GECKOLIB ***************************************************************************************************
+//    implementation fg.deobf("software.bernie.geckolib:geckolib-forge-${geckolib_version}")
+//
+//    // CAELUS *****************************************************************************************************
+//    compileOnly fg.deobf("top.theillusivec4.caelus:caelus-forge:${minecraft_version}-${caelus_version}:api")
+//    runtimeOnly fg.deobf("top.theillusivec4.caelus:caelus-forge:${minecraft_version}-${caelus_version}")
+//
+//    // PLAYER ANIMATOR ********************************************************************************************
+//    implementation fg.deobf("dev.kosmx.player-anim:player-animation-lib-forge:${player_animator_version}")
+//
     // TETRA ******************************************************************************************************
-    implementation fg.deobf("se.mickelus.mutil:mutil:${minecraft_version}-${mutil_version}")
+    implementation fg.deobf("curse.maven:mutil-${mutil_version}")
     implementation fg.deobf("curse.maven:tetra-${tetra_version}")
     // If you want to run without tetra in dev comment the above 2 lines and uncomment the following line
     // compileOnly fg.deobf("curse.maven:tetra-${tetra_version}")
 
-    // JEI ********************************************************************************************************
-    compileOnly(fg.deobf("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"))
-    compileOnly(fg.deobf("mezz.jei:jei-${minecraft_version}-forge-api:${jei_version}"))
-    runtimeOnly(fg.deobf("mezz.jei:jei-${minecraft_version}-forge:${jei_version}"))
+// TODO(luke)
+//    // JEI ********************************************************************************************************
+//    compileOnly(fg.deobf("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"))
+//    compileOnly(fg.deobf("mezz.jei:jei-${minecraft_version}-forge-api:${jei_version}"))
+//    runtimeOnly(fg.deobf("mezz.jei:jei-${minecraft_version}-forge:${jei_version}"))
 
     // CURIOS *****************************************************************************************************
     compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}:api")
     runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
-
-    // BETTER COMBAT **********************************************************************************************
-    runtimeOnly fg.deobf("curse.maven:better-combat-by-daedelus-${better_combat_version}")
-    runtimeOnly fg.deobf("curse.maven:cloth-config-348521:4633416")
+//
+//    // BETTER COMBAT **********************************************************************************************
+//    // runtimeOnly fg.deobf("curse.maven:better-combat-by-daedelus-${better_combat_version}")
+//    // runtimeOnly fg.deobf("curse.maven:cloth-config-348521:4633416")
 
     // PATCHOULI **************************************************************************************************
-
     compileOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}:api")
     runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
 
@@ -321,3 +322,6 @@ mixin {
     add sourceSets.main, 'irons_spellbooks.refmap.json'
     config 'mixins.irons_spellbooks.json'
 }
+
+// TODO(luke): remove
+apply from: "https://moddingtutorials.org/applesilicon.gradle"

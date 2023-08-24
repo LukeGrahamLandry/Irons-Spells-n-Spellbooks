@@ -139,9 +139,9 @@ public class ClientPlayerEvents {
             if (!(stack.getItem() instanceof Scroll)) {
                 var additionalLines = TooltipsUtils.formatActiveSpellTooltip(stack, CastSource.SWORD, player);
                 //Add header to sword tooltip
-                additionalLines.add(1, ITextComponent.translatable("tooltip.irons_spellbooks.imbued_tooltip").withStyle(TextFormatting.GRAY));
+                additionalLines.add(1, new TranslationTextComponent("tooltip.irons_spellbooks.imbued_tooltip").withStyle(TextFormatting.GRAY));
                 //Indent the title because we have an additional header
-                additionalLines.set(2, ITextComponent.literal(" ").append(additionalLines.get(2)));
+                additionalLines.set(2, new StringTextComponent(" ").append(additionalLines.get(2)));
                 //Make room for the stuff the advanced tooltips add to the tooltip
                 if (event.getFlags().isAdvanced())
                     event.getToolTip().addAll(event.getToolTip().size() - 2, additionalLines);
@@ -163,15 +163,15 @@ public class ClientPlayerEvents {
                     int amp = mobEffectInstance.getAmplifier() + 1;
                     int addition = amp * InstantManaEffect.manaPerAmplifier;
                     int percent = (int) (amp * InstantManaEffect.manaPerAmplifierPercent * 100);
-                    var description = ITextComponent.translatable("tooltip.irons_spellbooks.instant_mana_description", addition, percent).withStyle(TextFormatting.BLUE);
+                    var description = new TranslationTextComponent("tooltip.irons_spellbooks.instant_mana_description", addition, percent).withStyle(TextFormatting.BLUE);
 
-                    var header = ITextComponent.translatable("potion.whenDrank").withStyle(TextFormatting.DARK_PURPLE);
+                    var header = new TranslationTextComponent("potion.whenDrank").withStyle(TextFormatting.DARK_PURPLE);
                     var tooltip = event.getToolTip();
                     var newLines = new ArrayList<ITextComponent>();
                     int i = tooltip.indexOf(header);
 
                     if (i < 0) {
-                        newLines.add(ITextComponent.empty());
+                        newLines.add(StringTextComponent.EMPTY);
                         newLines.add(header);
                         newLines.add(description);
                         i = event.getFlags().isAdvanced() ? tooltip.size() - 2 : tooltip.size();

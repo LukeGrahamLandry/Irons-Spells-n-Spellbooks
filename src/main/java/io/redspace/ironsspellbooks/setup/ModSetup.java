@@ -4,36 +4,21 @@ import io.redspace.ironsspellbooks.block.alchemist_cauldron.AlchemistCauldronBlo
 import io.redspace.ironsspellbooks.block.alchemist_cauldron.AlchemistCauldronTile;
 import io.redspace.ironsspellbooks.capabilities.magic.MagicEvents;
 import io.redspace.ironsspellbooks.compat.CompatHandler;
-import io.redspace.ironsspellbooks.entity.mobs.MobSyncedCastingData;
-import io.redspace.ironsspellbooks.capabilities.magic.SyncedSpellData;
 import io.redspace.ironsspellbooks.player.CommonPlayerEvents;
-import io.redspace.ironsspellbooks.compat.tetra.TetraActualImpl;
-import io.redspace.ironsspellbooks.compat.tetra.TetraProxy;
-import io.redspace.ironsspellbooks.registries.BlockRegistry;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.dispenser.IBlockSource;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.DispenserBlock;
 import net.minecraft.dispenser.DefaultDispenseItemBehavior;
+import net.minecraft.dispenser.IBlockSource;
 import net.minecraft.dispenser.IDispenseItemBehavior;
 import net.minecraft.dispenser.OptionalDispenseBehavior;
-import net.minecraft.network.syncher.EntityDataSerializers;
-import net.minecraft.world.server.ServerWorld;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.FluidTags;
 import net.minecraft.entity.Entity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.world.item.alchemy.PotionUtils;
-import net.minecraft.world.item.alchemy.Potions;
-import net.minecraft.world.level.block.BeehiveBlock;
-import net.minecraft.block.DispenserBlock;
-import net.minecraft.world.level.block.entity.BeehiveBlockEntity;
 import net.minecraft.tileentity.DispenserTileEntity;
-import net.minecraft.block.BlockState;
-import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 
 public class ModSetup {
@@ -82,7 +67,6 @@ public class ModSetup {
                     private ItemStack takeLiquid(IBlockSource p_123447_, ItemStack p_123448_, ItemStack p_123449_) {
                         p_123448_.shrink(1);
                         if (p_123448_.isEmpty()) {
-                            p_123447_.getLevel().gameEvent(null, GameEvent.FLUID_PICKUP, p_123447_.getPos());
                             return p_123449_.copy();
                         } else {
                             if (p_123447_.<DispenserTileEntity>getEntity().addItem(p_123449_.copy()) < 0) {

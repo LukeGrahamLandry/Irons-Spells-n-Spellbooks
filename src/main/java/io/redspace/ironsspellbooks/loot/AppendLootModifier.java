@@ -15,6 +15,7 @@ import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootModifier;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.function.Supplier;
 
 public class AppendLootModifier<V> extends LootModifier {
@@ -29,7 +30,7 @@ public class AppendLootModifier<V> extends LootModifier {
     }
 
     @Override
-    protected @NotNull ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> generatedLoot, LootContext context) {
+    protected @NotNull List<ItemStack> doApply(List<ItemStack> generatedLoot, LootContext context) {
         ResourceLocation path = new ResourceLocation(resourceLocationKey);
         var lootTable = context.getLevel().getServer().getLootTables().get(path);
         ObjectArrayList<ItemStack> objectarraylist = new ObjectArrayList<>();

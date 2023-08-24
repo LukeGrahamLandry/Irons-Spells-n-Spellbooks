@@ -1,16 +1,12 @@
 package io.redspace.ironsspellbooks.item.curios;
 
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.Style;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
+import net.minecraft.util.text.*;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-
-import net.minecraft.item.Item.Properties;
 
 public class SimpleDescriptiveCurio extends CurioBaseItem {
     final @Nullable String slotIdentifier;
@@ -28,18 +24,16 @@ public class SimpleDescriptiveCurio extends CurioBaseItem {
     }
 
     @Override
-    public List<ITextComponent> getSlotsTooltip(List<ITextComponent> tooltips, ItemStack stack) {
+    public void appendHoverText(ItemStack pStack, @javax.annotation.Nullable World pLevel, List<ITextComponent> tooltips, ITooltipFlag pFlag) {
         if (slotIdentifier != null) {
-            var title = ITextComponent.translatable("curios.modifiers." + this.slotIdentifier).withStyle(TextFormatting.GOLD);
-            var description = ITextComponent.literal(" ").append(ITextComponent.translatable(this.getDescriptionId() + ".desc")).withStyle(descriptionStyle);
+            var title = new TranslationTextComponent("curios.modifiers." + this.slotIdentifier).withStyle(TextFormatting.GOLD);
+            var description = new StringTextComponent(" ").append(new TranslationTextComponent(this.getDescriptionId() + ".desc")).withStyle(descriptionStyle);
             if(showHeader){
-                tooltips.add(ITextComponent.empty());
+                tooltips.add(StringTextComponent.EMPTY);
                 tooltips.add(title);
             }
             tooltips.add(description);
         }
-
-        return super.getSlotsTooltip(tooltips, stack);
+        super.appendHoverText(pStack, pLevel, tooltips, pFlag);
     }
-
 }

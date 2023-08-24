@@ -20,7 +20,7 @@ public class EvasionSpell extends AbstractSpell {
 
     @Override
     public List<IFormattableTextComponent> getUniqueInfo(LivingEntity caster) {
-        return List.of(ITextComponent.translatable("ui.irons_spellbooks.hits_dodged", (int) getSpellPower(caster)));
+        return List.of(new TranslationTextComponent("ui.irons_spellbooks.hits_dodged", (int) getSpellPower(caster)));
     }
 
     public static DefaultConfig defaultConfig = new DefaultConfig()

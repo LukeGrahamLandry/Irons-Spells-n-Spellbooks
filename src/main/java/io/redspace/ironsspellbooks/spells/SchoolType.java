@@ -53,15 +53,15 @@ public enum SchoolType {
         } else return null;
     }
 
-    public static final ITextComponent DISPLAY_FIRE = ITextComponent.translatable("school.irons_spellbooks.fire").withStyle(TextFormatting.GOLD);
-    public static final ITextComponent DISPLAY_ICE = ITextComponent.translatable("school.irons_spellbooks.ice").withStyle(Style.EMPTY.withColor(0xd0f9ff));
-    public static final ITextComponent DISPLAY_LIGHTNING = ITextComponent.translatable("school.irons_spellbooks.lightning").withStyle(TextFormatting.AQUA);
-    public static final ITextComponent DISPLAY_HOLY = ITextComponent.translatable("school.irons_spellbooks.holy").withStyle(Style.EMPTY.withColor(0xfff8d4));
-    public static final ITextComponent DISPLAY_ENDER = ITextComponent.translatable("school.irons_spellbooks.ender").withStyle(TextFormatting.LIGHT_PURPLE);
-    public static final ITextComponent DISPLAY_BLOOD = ITextComponent.translatable("school.irons_spellbooks.blood").withStyle(TextFormatting.DARK_RED);
-    public static final ITextComponent DISPLAY_EVOCATION = ITextComponent.translatable("school.irons_spellbooks.evocation").withStyle(TextFormatting.WHITE);
-    public static final ITextComponent DISPLAY_VOID = ITextComponent.translatable("school.irons_spellbooks.void").withStyle(Style.EMPTY.withColor(0x490059));
-    public static final ITextComponent DISPLAY_POISON = ITextComponent.translatable("school.irons_spellbooks.poison").withStyle(TextFormatting.GREEN);
+    public static final ITextComponent DISPLAY_FIRE = new TranslationTextComponent("school.irons_spellbooks.fire").withStyle(TextFormatting.GOLD);
+    public static final ITextComponent DISPLAY_ICE = new TranslationTextComponent("school.irons_spellbooks.ice").withStyle(Style.EMPTY.withColor(0xd0f9ff));
+    public static final ITextComponent DISPLAY_LIGHTNING = new TranslationTextComponent("school.irons_spellbooks.lightning").withStyle(TextFormatting.AQUA);
+    public static final ITextComponent DISPLAY_HOLY = new TranslationTextComponent("school.irons_spellbooks.holy").withStyle(Style.EMPTY.withColor(0xfff8d4));
+    public static final ITextComponent DISPLAY_ENDER = new TranslationTextComponent("school.irons_spellbooks.ender").withStyle(TextFormatting.LIGHT_PURPLE);
+    public static final ITextComponent DISPLAY_BLOOD = new TranslationTextComponent("school.irons_spellbooks.blood").withStyle(TextFormatting.DARK_RED);
+    public static final ITextComponent DISPLAY_EVOCATION = new TranslationTextComponent("school.irons_spellbooks.evocation").withStyle(TextFormatting.WHITE);
+    public static final ITextComponent DISPLAY_VOID = new TranslationTextComponent("school.irons_spellbooks.void").withStyle(Style.EMPTY.withColor(0x490059));
+    public static final ITextComponent DISPLAY_POISON = new TranslationTextComponent("school.irons_spellbooks.poison").withStyle(TextFormatting.GREEN);
     public static final ITextComponent[] DISPLAYS = {DISPLAY_FIRE, DISPLAY_ICE, DISPLAY_LIGHTNING, DISPLAY_HOLY, DISPLAY_ENDER, DISPLAY_BLOOD, DISPLAY_EVOCATION, DISPLAY_VOID, DISPLAY_POISON};
 
 

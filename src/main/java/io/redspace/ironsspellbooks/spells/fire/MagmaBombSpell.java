@@ -20,9 +20,9 @@ public class MagmaBombSpell extends AbstractSpell {
     @Override
     public List<IFormattableTextComponent> getUniqueInfo(LivingEntity caster) {
         return List.of(
-                ITextComponent.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(caster), 1)),
-                ITextComponent.translatable("ui.irons_spellbooks.aoe_damage", Utils.stringTruncation(getDamage(caster) / 5f, 1)),
-                ITextComponent.translatable("ui.irons_spellbooks.radius", Utils.stringTruncation(getRadius(caster), 1))
+                new TranslationTextComponent("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(caster), 1)),
+                new TranslationTextComponent("ui.irons_spellbooks.aoe_damage", Utils.stringTruncation(getDamage(caster) / 5f, 1)),
+                new TranslationTextComponent("ui.irons_spellbooks.radius", Utils.stringTruncation(getRadius(caster), 1))
         );
     }
 

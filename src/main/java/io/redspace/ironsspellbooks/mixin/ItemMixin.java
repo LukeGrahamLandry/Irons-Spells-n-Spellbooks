@@ -22,7 +22,7 @@ public abstract class ItemMixin {
     public void getHoverName(ItemStack stack, CallbackInfoReturnable<ITextComponent> cir) {
         //IronsSpellbooks.LOGGER.info("{}", cir.getReturnValue().getString());
         if (UpgradeUtils.isUpgraded(stack)) {
-            cir.setReturnValue(ITextComponent.translatable("tooltip.irons_spellbooks.upgrade_plus_format", cir.getReturnValue(), UpgradeUtils.getUpgradeCount(stack)));
+            cir.setReturnValue(new TranslationTextComponent("tooltip.irons_spellbooks.upgrade_plus_format", cir.getReturnValue(), UpgradeUtils.getUpgradeCount(stack)));
         }
     }
 

@@ -27,8 +27,8 @@ public class SpiderAspectSpell extends AbstractSpell {
     @Override
     public List<IFormattableTextComponent> getUniqueInfo(LivingEntity caster) {
         return List.of(
-                ITextComponent.translatable("ui.irons_spellbooks.additional_poisoned_damage", Utils.stringTruncation(getPercentDamage(caster), 0)),
-                ITextComponent.translatable("ui.irons_spellbooks.effect_length", Utils.timeFromTicks(getSpellPower(caster) * 20, 1))
+                new TranslationTextComponent("ui.irons_spellbooks.additional_poisoned_damage", Utils.stringTruncation(getPercentDamage(caster), 0)),
+                new TranslationTextComponent("ui.irons_spellbooks.effect_length", Utils.timeFromTicks(getSpellPower(caster) * 20, 1))
         );
     }
 

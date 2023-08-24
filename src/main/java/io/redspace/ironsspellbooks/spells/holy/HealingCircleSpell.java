@@ -28,9 +28,9 @@ public class HealingCircleSpell extends AbstractSpell {
     @Override
     public List<IFormattableTextComponent> getUniqueInfo(LivingEntity caster) {
         return List.of(
-                ITextComponent.translatable("ui.irons_spellbooks.aoe_healing", Utils.stringTruncation(getHealing(caster), 2)),
-                ITextComponent.translatable("ui.irons_spellbooks.radius", Utils.stringTruncation(getRadius(caster), 1)),
-                ITextComponent.translatable("ui.irons_spellbooks.duration", Utils.timeFromTicks(getDuration(caster), 1))
+                new TranslationTextComponent("ui.irons_spellbooks.aoe_healing", Utils.stringTruncation(getHealing(caster), 2)),
+                new TranslationTextComponent("ui.irons_spellbooks.radius", Utils.stringTruncation(getRadius(caster), 1)),
+                new TranslationTextComponent("ui.irons_spellbooks.duration", Utils.timeFromTicks(getDuration(caster), 1))
         );
     }
 

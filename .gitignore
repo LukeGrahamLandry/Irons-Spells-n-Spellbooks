@@ -26,3 +26,6 @@ runServer
 libs
 # Files from Forge MDK
 forge*changelog.txt
+
+# macos
+.DS_Store

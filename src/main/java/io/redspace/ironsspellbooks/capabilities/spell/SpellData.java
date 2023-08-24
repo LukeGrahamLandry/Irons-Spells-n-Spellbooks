@@ -83,7 +83,7 @@ public class SpellData {
 
     public ITextComponent getDisplayName() {
         if (displayName == null) {
-            displayName = getSpell().getSpellType().getDisplayName().append(" ").append(ITextComponent.translatable(ItemRegistry.SCROLL.get().getDescriptionId()));//.append(" ").append(Component.translatable("tooltip.irons_spellbooks.rarity",getSpell().getRarity().getDisplayName().getString()));
+            displayName = getSpell().getSpellType().getDisplayName().append(" ").append(new TranslationTextComponent(ItemRegistry.SCROLL.get().getDescriptionId()));//.append(" ").append(Component.translatable("tooltip.irons_spellbooks.rarity",getSpell().getRarity().getDisplayName().getString()));
         }
         return displayName;
     }

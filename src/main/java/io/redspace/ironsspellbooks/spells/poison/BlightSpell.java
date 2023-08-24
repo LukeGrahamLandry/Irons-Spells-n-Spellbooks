@@ -27,9 +27,9 @@ public class BlightSpell extends AbstractSpell {
     @Override
     public List<IFormattableTextComponent> getUniqueInfo(LivingEntity caster) {
         return List.of(
-                ITextComponent.translatable("ui.irons_spellbooks.reduced_healing",Utils.stringTruncation((1 + getAmplifier(caster)) * BlightEffect.HEALING_PER_LEVEL * -100, 1)),
-                ITextComponent.translatable("ui.irons_spellbooks.reduced_damage", Utils.stringTruncation((1 + getAmplifier(caster)) * BlightEffect.DAMAGE_PER_LEVEL * -100, 1)),
-                ITextComponent.translatable("ui.irons_spellbooks.effect_length", Utils.timeFromTicks(getDuration(caster), 1))
+                new TranslationTextComponent("ui.irons_spellbooks.reduced_healing",Utils.stringTruncation((1 + getAmplifier(caster)) * BlightEffect.HEALING_PER_LEVEL * -100, 1)),
+                new TranslationTextComponent("ui.irons_spellbooks.reduced_damage", Utils.stringTruncation((1 + getAmplifier(caster)) * BlightEffect.DAMAGE_PER_LEVEL * -100, 1)),
+                new TranslationTextComponent("ui.irons_spellbooks.effect_length", Utils.timeFromTicks(getDuration(caster), 1))
         );
     }
 

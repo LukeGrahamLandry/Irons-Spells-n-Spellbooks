@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 
 public class GenerateModList {
 
-    private static final SimpleCommandExceptionType ERROR_FAILED = new SimpleCommandExceptionType(ITextComponent.translatable("commands.irons_spellbooks.generate_mod_list.failed"));
+    private static final SimpleCommandExceptionType ERROR_FAILED = new SimpleCommandExceptionType(new TranslationTextComponent("commands.irons_spellbooks.generate_mod_list.failed"));
 
     public static void register(CommandDispatcher<CommandSource> pDispatcher) {
         if (pDispatcher.getRoot().getChild("modlist") == null) {
@@ -87,11 +87,11 @@ public class GenerateModList {
             writer.write(sb.toString());
             writer.close();
 
-            ITextComponent component = ITextComponent.literal(file.getName()).withStyle(TextFormatting.UNDERLINE).withStyle((style) -> {
+            ITextComponent component = new StringTextComponent(file.getName()).withStyle(TextFormatting.UNDERLINE).withStyle((style) -> {
                 return style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_FILE, file.getAbsolutePath()));
             });
 
-            source.sendSuccess(ITextComponent.translatable("commands.irons_spellbooks.generate_mod_list.success", component), true);
+            source.sendSuccess(new TranslationTextComponent("commands.irons_spellbooks.generate_mod_list.success", component), true);
 
         } catch (Exception e) {
             IronsSpellbooks.LOGGER.info(e.getMessage());
