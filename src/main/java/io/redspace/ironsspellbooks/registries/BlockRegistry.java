@@ -3,7 +3,6 @@ package io.redspace.ironsspellbooks.registries;
 
 import io.redspace.ironsspellbooks.IronsSpellbooks;
 import io.redspace.ironsspellbooks.block.ArmorPileBlock;
-import io.redspace.ironsspellbooks.block.BloodCauldronBlock;
 import io.redspace.ironsspellbooks.block.FireflyJar;
 import io.redspace.ironsspellbooks.block.alchemist_cauldron.AlchemistCauldronBlock;
 import io.redspace.ironsspellbooks.block.alchemist_cauldron.AlchemistCauldronTile;
@@ -14,7 +13,6 @@ import io.redspace.ironsspellbooks.block.pedestal.PedestalTile;
 import io.redspace.ironsspellbooks.block.scroll_forge.ScrollForgeBlock;
 import io.redspace.ironsspellbooks.block.scroll_forge.ScrollForgeTile;
 import net.minecraft.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.block.SoundType;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.block.AbstractBlock;
@@ -38,7 +36,7 @@ public class BlockRegistry {
     public static final RegistryObject<Block> SCROLL_FORGE_BLOCK = BLOCKS.register("scroll_forge", ScrollForgeBlock::new);
     //public static final RegistryObject<Block> BLOOD_SLASH_BLOCK = BLOCKS.register("blood_slash", BloodSlashBlock::new);
     public static final RegistryObject<Block> PEDESTAL_BLOCK = BLOCKS.register("pedestal", PedestalBlock::new);
-    public static final RegistryObject<Block> BLOOD_CAULDRON_BLOCK = BLOCKS.register("blood_cauldron", BloodCauldronBlock::new);
+//    public static final RegistryObject<Block> BLOOD_CAULDRON_BLOCK = BLOCKS.register("blood_cauldron", BloodCauldronBlock::new);
     public static final RegistryObject<Block> ARCANE_ANVIL_BLOCK = BLOCKS.register("arcane_anvil", ArcaneAnvilBlock::new);
     public static final RegistryObject<Block> ARCANE_DEBRIS = BLOCKS.register("arcane_debris", () -> new Block(AbstractBlock.Properties.of(Material.METAL, MaterialColor.COLOR_BLACK).requiresCorrectToolForDrops().strength(20.0F, 1200.0F).sound(SoundType.ANCIENT_DEBRIS)));
     public static final RegistryObject<Block> ARMOR_PILE_BLOCK = BLOCKS.register("armor_pile", ArmorPileBlock::new);

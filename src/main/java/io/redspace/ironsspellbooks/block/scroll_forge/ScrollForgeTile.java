@@ -42,8 +42,8 @@ public class ScrollForgeTile extends TileEntity implements INamedContainerProvid
 
     private final LazyOptional<IItemHandler> lazyItemHandler = LazyOptional.of(() -> itemHandler);
 
-    public ScrollForgeTile(BlockPos pWorldPosition, BlockState pBlockState) {
-        super(BlockRegistry.SCROLL_FORGE_TILE.get(), pWorldPosition, pBlockState);
+    public ScrollForgeTile() {
+        super(BlockRegistry.SCROLL_FORGE_TILE.get());
     }
 
     private void updateMenuSlots(int slot) {

@@ -29,8 +29,8 @@ public class PedestalTile extends TileEntity {
 //    private final LazyOptional<IItemHandler> lazyItemHandler = LazyOptional.of(() -> itemHandler);
     private ItemStack heldItem = ItemStack.EMPTY;
 
-    public PedestalTile(BlockPos pWorldPosition, BlockState pBlockState) {
-        super(BlockRegistry.PEDESTAL_TILE.get(), pWorldPosition, pBlockState);
+    public PedestalTile() {
+        super(BlockRegistry.PEDESTAL_TILE.get());
     }
 
     public ItemStack getHeldItem() {

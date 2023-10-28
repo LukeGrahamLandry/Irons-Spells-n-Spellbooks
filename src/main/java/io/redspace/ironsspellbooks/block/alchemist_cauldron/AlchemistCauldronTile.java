@@ -33,7 +33,6 @@ import net.minecraft.util.DrinkHelper;
 import net.minecraft.item.Items;
 import net.minecraft.potion.PotionUtils;
 import net.minecraft.potion.Potions;
-import net.minecraft.world.level.Level;
 import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.block.BlockState;
@@ -65,8 +64,8 @@ public class AlchemistCauldronTile extends TileEntity implements ISidedInventory
     public final NonNullList<ItemStack> resultItems = NonNullList.withSize(MAX_LEVELS, ItemStack.EMPTY);
     private final int[] cooktimes = new int[MAX_LEVELS];
 
-    public AlchemistCauldronTile(BlockPos pWorldPosition, BlockState pBlockState) {
-        super(BlockRegistry.ALCHEMIST_CAULDRON_TILE.get(), pWorldPosition, pBlockState);
+    public AlchemistCauldronTile() {
+        super(BlockRegistry.ALCHEMIST_CAULDRON_TILE.get());
     }
 
     /************************************************************

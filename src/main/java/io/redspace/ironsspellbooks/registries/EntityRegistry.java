@@ -9,7 +9,6 @@ import io.redspace.ironsspellbooks.entity.mobs.debug_wizard.DebugWizard;
 import io.redspace.ironsspellbooks.entity.mobs.frozen_humanoid.FrozenHumanoid;
 import io.redspace.ironsspellbooks.entity.mobs.keeper.KeeperEntity;
 import io.redspace.ironsspellbooks.entity.mobs.necromancer.NecromancerEntity;
-import io.redspace.ironsspellbooks.entity.mobs.summoned_frog.SummonedFrog;
 import io.redspace.ironsspellbooks.entity.mobs.wizards.archevoker.ArchevokerEntity;
 import io.redspace.ironsspellbooks.entity.mobs.wizards.cryomancer.CryomancerEntity;
 import io.redspace.ironsspellbooks.entity.mobs.wizards.priest.PriestEntity;
@@ -66,7 +65,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.fml.RegistryObject;
 
 public class EntityRegistry {
-    private static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, IronsSpellbooks.MODID);
+    private static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITIES, IronsSpellbooks.MODID);
 
     public static void register(IEventBus eventBus) {
         ENTITIES.register(eventBus);
@@ -236,7 +235,7 @@ public class EntityRegistry {
 
     public static final RegistryObject<EntityType<SummonedPolarBear>> SUMMONED_POLAR_BEAR =
             ENTITIES.register("summoned_polar_bear", () -> EntityType.Builder.<SummonedPolarBear>of(SummonedPolarBear::new, EntityClassification.CREATURE)
-                    .immuneTo(Blocks.POWDER_SNOW)
+//                    .immuneTo(Blocks.POWDER_SNOW)
                     .sized(1.4F, 1.4F)
                     .clientTrackingRange(64)
                     .build(new ResourceLocation(IronsSpellbooks.MODID, "summoned_polar_bear").toString()));
@@ -325,11 +324,12 @@ public class EntityRegistry {
                     .clientTrackingRange(64)
                     .build(new ResourceLocation(IronsSpellbooks.MODID, "poison_splash").toString()));
 
-    public static final RegistryObject<EntityType<SummonedFrog>> SUMMONED_FROG =
-            ENTITIES.register("summoned_frog", () -> EntityType.Builder.<SummonedFrog>of(SummonedFrog::new, EntityClassification.MISC)
-                    .sized(0.5F, 0.5F)
-                    .clientTrackingRange(64)
-                    .build(new ResourceLocation(IronsSpellbooks.MODID, "summoned_frog").toString()));
+    // TODO
+//    public static final RegistryObject<EntityType<SummonedFrog>> SUMMONED_FROG =
+//            ENTITIES.register("summoned_frog", () -> EntityType.Builder.<SummonedFrog>of(SummonedFrog::new, EntityClassification.MISC)
+//                    .sized(0.5F, 0.5F)
+//                    .clientTrackingRange(64)
+//                    .build(new ResourceLocation(IronsSpellbooks.MODID, "summoned_frog").toString()));
 
     public static final RegistryObject<EntityType<AcidOrb>> ACID_ORB =
             ENTITIES.register("acid_orb", () -> EntityType.Builder.<AcidOrb>of(AcidOrb::new, EntityClassification.MISC)

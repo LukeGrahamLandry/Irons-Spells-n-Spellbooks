@@ -17,7 +17,7 @@ import net.minecraftforge.fml.RegistryObject;
 import java.util.List;
 
 public class PotionRegistry {
-    public static final DeferredRegister<Potion> POTIONS = DeferredRegister.create(ForgeRegistries.POTIONS, IronsSpellbooks.MODID);
+    public static final DeferredRegister<Potion> POTIONS = DeferredRegister.create(ForgeRegistries.POTION_TYPES, IronsSpellbooks.MODID);
 
     public static void register(IEventBus eventBus) {
         POTIONS.register(eventBus);
@@ -36,13 +36,14 @@ public class PotionRegistry {
         event.enqueueWork(() -> {
             PotionBrewing.addMix(Potions.AWKWARD, ItemRegistry.ARCANE_ESSENCE.get(), PotionRegistry.INSTANT_MANA_ONE.get());
             PotionBrewing.addMix(PotionRegistry.INSTANT_MANA_ONE.get(), Items.GLOWSTONE_DUST, PotionRegistry.INSTANT_MANA_TWO.get());
-            PotionBrewing.addMix(PotionRegistry.INSTANT_MANA_TWO.get(), Items.AMETHYST_SHARD, PotionRegistry.INSTANT_MANA_THREE.get());
-            PotionBrewing.addMix(PotionRegistry.INSTANT_MANA_THREE.get(), Items.AMETHYST_CLUSTER, PotionRegistry.INSTANT_MANA_FOUR.get());
+            // TODO: different recipe cause amethyst doesnt exist yet
+//            PotionBrewing.addMix(PotionRegistry.INSTANT_MANA_TWO.get(), Items.AMETHYST_SHARD, PotionRegistry.INSTANT_MANA_THREE.get());
+//            PotionBrewing.addMix(PotionRegistry.INSTANT_MANA_THREE.get(), Items.AMETHYST_CLUSTER, PotionRegistry.INSTANT_MANA_FOUR.get());
 //            addContainerMix(ItemRegistry.BLOOD_VIAL.get(), ItemRegistry.HOGSKIN.get(), ItemRegistry.ARCANE_ESSENCE.get());
         });
     }
 
     public static void addContainerMix(Item pFrom, Item pIngredient, Item pTo){
-        PotionBrewing.CONTAINER_MIXES.add(new PotionBrewing.MixPredicate<>(net.minecraftforge.registries.ForgeRegistries.ITEMS, pFrom, Ingredient.of(pIngredient), pTo));
+        PotionBrewing.CONTAINER_MIXES.add(new PotionBrewing.MixPredicate<>(pFrom, Ingredient.of(pIngredient), pTo));
     }
 }

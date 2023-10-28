@@ -34,11 +34,11 @@ public class CreateImbuedSwordCommand {
         return ISuggestionProvider.suggestResource(resources, p_180254_);
     };
 
-    public static void register(CommandDispatcher<CommandSource> pDispatcher, CommandBuildContext context) {
+    public static void register(CommandDispatcher<CommandSource> pDispatcher) {
 
         pDispatcher.register(Commands.literal("createImbuedSword").requires((commandSourceStack) -> {
             return commandSourceStack.hasPermission(2);
-        }).then(Commands.argument("item", ItemArgument.item(context)).suggests(SWORD_SUGGESTIONS)
+        }).then(Commands.argument("item", ItemArgument.item()).suggests(SWORD_SUGGESTIONS)
                 .then(Commands.argument("spell", SpellArgument.spellArgument())
                         .then(Commands.argument("level", IntegerArgumentType.integer(1)).executes((ctx) -> {
                             return createImbuedSword(ctx.getSource(), ctx.getArgument("item", ItemInput.class), ctx.getArgument("spell", String.class), IntegerArgumentType.getInteger(ctx, "level"));
