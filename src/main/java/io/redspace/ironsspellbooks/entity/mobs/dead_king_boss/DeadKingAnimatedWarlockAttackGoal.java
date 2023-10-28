@@ -3,11 +3,11 @@ package io.redspace.ironsspellbooks.entity.mobs.dead_king_boss;
 import io.redspace.ironsspellbooks.entity.mobs.goals.WarlockAttackGoal;
 import io.redspace.ironsspellbooks.registries.SoundRegistry;
 import io.redspace.ironsspellbooks.api.util.Utils;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.util.DamageSource;
+import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.vector.Vector3d;
 
 public class DeadKingAnimatedWarlockAttackGoal extends WarlockAttackGoal {
     final DeadKingBoss boss;
@@ -36,15 +36,15 @@ public class DeadKingAnimatedWarlockAttackGoal extends WarlockAttackGoal {
                 if (meleeAnimTimer == slamSoundTimestamp)
                     mob.playSound(SoundRegistry.DEAD_KING_SLAM.get());
                 if (meleeAnimTimer == slamTimestamp) {
-                    Vec3 slamPos = mob.position().add(mob.getForward().multiply(1, 0, 1).normalize());
-                    Vec3 bbHalf = new Vec3(meleeRange, meleeRange, meleeRange).scale(.4);
-                    mob.level.getEntitiesOfClass(target.getClass(), new AABB(slamPos.subtract(bbHalf), slamPos.add(bbHalf))).forEach((entity) -> {
+                    Vector3d slamPos = mob.position().add(mob.getForward().multiply(1, 0, 1).normalize());
+                    Vector3d bbHalf = new Vector3d(meleeRange, meleeRange, meleeRange).scale(.4);
+                    mob.level.getEntitiesOfClass(target.getClass(), new AxisAlignedBB(slamPos.subtract(bbHalf), slamPos.add(bbHalf))).forEach((entity) -> {
                         float damage = (float) mob.getAttributeValue(Attributes.ATTACK_DAMAGE) * 1.5f;
                         entity.hurt(DamageSource.mobAttack(mob), damage);
                         Utils.throwTarget(mob, entity, 7f, true);
                         //mob.doHurtTarget(entity);
                         //entity.push(0, 1, 0);
-                        if (entity instanceof Player player && player.isBlocking())
+                        if (entity instanceof PlayerEntity player && player.isBlocking())
                             player.disableShield(true);
                     });
                 }

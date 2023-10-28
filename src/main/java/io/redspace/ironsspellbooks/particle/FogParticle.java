@@ -1,17 +1,17 @@
 package io.redspace.ironsspellbooks.particle;
 
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Quaternion;
-import com.mojang.math.Vector3f;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
+import net.minecraft.util.math.vector.Quaternion;
+import net.minecraft.util.math.vector.Vector3f;
 import io.redspace.ironsspellbooks.api.util.Utils;
-import net.minecraft.Util;
-import net.minecraft.client.Camera;
-import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.util.Util;
+import net.minecraft.client.renderer.ActiveRenderInfo;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.client.particle.*;
-import net.minecraft.client.renderer.LevelRenderer;
-import net.minecraft.core.BlockPos;
-import net.minecraft.util.Mth;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
@@ -20,12 +20,12 @@ import java.util.function.Consumer;
 
 import static io.redspace.ironsspellbooks.api.util.Utils.*;
 
-public class FogParticle extends TextureSheetParticle {
+public class FogParticle extends SpriteTexturedParticle {
     private static final Vector3f ROTATION_VECTOR = Util.make(new Vector3f(0.5F, 0.5F, 0.5F), Vector3f::normalize);
     private static final Vector3f TRANSFORM_VECTOR = new Vector3f(-1.0F, -1.0F, 0.0F);
-    private static final float DEGREES_90 = Mth.PI / 2f;
+    private static final float DEGREES_90 = MathHelper.PI / 2f;
 
-    FogParticle(ClientLevel pLevel, double pX, double pY, double pZ, double xd, double yd, double zd, FogParticleOptions options) {
+    FogParticle(ClientWorld pLevel, double pX, double pY, double pZ, double xd, double yd, double zd, FogParticleOptions options) {
         super(pLevel, pX, pY, pZ, 0, 0, 0);
 
         float mag = .3f;
@@ -51,7 +51,7 @@ public class FogParticle extends TextureSheetParticle {
 
     @Override
     public float getQuadSize(float pScaleFactor) {
-        return this.quadSize * (1 + Mth.clamp((this.age + pScaleFactor) / (float) this.lifetime * 0.75F, 0.0F, 1.0F)) * Mth.clamp(age / 5f, 0, 1);
+        return this.quadSize * (1 + MathHelper.clamp((this.age + pScaleFactor) / (float) this.lifetime * 0.75F, 0.0F, 1.0F)) * MathHelper.clamp(age / 5f, 0, 1);
     }
 
     @Override
@@ -73,7 +73,7 @@ public class FogParticle extends TextureSheetParticle {
 
     private float noise(float offset) {
 
-        float f = 10 * Mth.sin(offset * .01f);
+        float f = 10 * MathHelper.sin(offset * .01f);
 //        if (f > max) {
 //            max = f;
 //            IronsSpellbooks.LOGGER.debug("Min: {} | Max: {}", min, max);
@@ -86,11 +86,11 @@ public class FogParticle extends TextureSheetParticle {
     }
 
     @Override
-    public void render(VertexConsumer buffer, Camera camera, float partialticks) {
+    public void render(IVertexBuilder buffer, ActiveRenderInfo camera, float partialticks) {
         /*
         Copied from Shriek Particle
          */
-        this.alpha = 1.0F - Mth.clamp(((float) this.age + partialticks - 20) / (float) this.lifetime, 0.2F, .7F);
+        this.alpha = 1.0F - MathHelper.clamp(((float) this.age + partialticks - 20) / (float) this.lifetime, 0.2F, .7F);
 
 //        this.renderBillboard(buffer, camera, partialticks);
         this.renderRotatedParticle(buffer, camera, partialticks, (p_234005_) -> {
@@ -142,17 +142,17 @@ public class FogParticle extends TextureSheetParticle {
 //        pBuffer.vertex((double) avector3f[3].x(), (double) avector3f[3].y() + scuff, (double) avector3f[3].z()).uv(f7, f6).color(this.rCol, this.gCol, this.bCol, this.alpha).uv2(j).endVertex();
 //    }
 
-    private void renderRotatedParticle(VertexConsumer pConsumer, Camera camera, float partialTick, Consumer<Quaternion> pQuaternion) {
+    private void renderRotatedParticle(IVertexBuilder pConsumer, ActiveRenderInfo camera, float partialTick, Consumer<Quaternion> pQuaternion) {
         /*
         Copied from Shriek Particle
          */
-        Vec3 vec3 = camera.getPosition();
+        Vector3d vec3 = camera.getPosition();
 //        Vec3 zFightHack = camera.getPosition().subtract(this.x, this.y, this.z);
 //        zFightHack = zFightHack.multiply(1f, 0.75f, 1f);
 //        vec3 = zFightHack.add(this.x, this.y, this.z);
-        float f = (float) (Mth.lerp(partialTick, this.xo, this.x) - vec3.x());
-        float f1 = (float) (Mth.lerp(partialTick, this.yo, this.y) - vec3.y());
-        float f2 = (float) (Mth.lerp(partialTick, this.zo, this.z) - vec3.z());
+        float f = (float) (MathHelper.lerp(partialTick, this.xo, this.x) - vec3.x());
+        float f1 = (float) (MathHelper.lerp(partialTick, this.yo, this.y) - vec3.y());
+        float f2 = (float) (MathHelper.lerp(partialTick, this.zo, this.z) - vec3.z());
         Quaternion quaternion = new Quaternion(ROTATION_VECTOR, 0.0F, true);
 
         pQuaternion.accept(quaternion);
@@ -174,32 +174,32 @@ public class FogParticle extends TextureSheetParticle {
         this.makeCornerVertex(pConsumer, avector3f[3], this.getU0(), this.getV1(), j);
     }
 
-    private void makeCornerVertex(VertexConsumer pConsumer, Vector3f pVec3f, float p_233996_, float p_233997_, int p_233998_) {
-        Vec3 wiggle = new Vec3(noise((float) (age + this.x)), noise((float) (age - this.x)), noise((float) (age + this.z))).scale(.02f);
+    private void makeCornerVertex(IVertexBuilder pConsumer, Vector3f pVec3f, float p_233996_, float p_233997_, int p_233998_) {
+        Vector3d wiggle = new Vector3d(noise((float) (age + this.x)), noise((float) (age - this.x)), noise((float) (age + this.z))).scale(.02f);
         pConsumer.vertex(pVec3f.x() + wiggle.x, pVec3f.y() + .08f + alpha * .125f, pVec3f.z() + wiggle.z).uv(p_233996_, p_233997_).color(this.rCol, this.gCol, this.bCol, this.alpha).uv2(p_233998_).endVertex();
     }
 
     @NotNull
     @Override
-    public ParticleRenderType getRenderType() {
-        return ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT;
+    public IParticleRenderType getRenderType() {
+        return IParticleRenderType.PARTICLE_SHEET_TRANSLUCENT;
     }
 
     @Override
     protected int getLightColor(float pPartialTick) {
         BlockPos blockpos = new BlockPos(this.x, this.y, this.z).above();
-        return this.level.hasChunkAt(blockpos) ? LevelRenderer.getLightColor(this.level, blockpos) : 0;
+        return this.level.hasChunkAt(blockpos) ? WorldRenderer.getLightColor(this.level, blockpos) : 0;
     }
 
     @OnlyIn(Dist.CLIENT)
-    public static class Provider implements ParticleProvider<FogParticleOptions> {
-        private final SpriteSet sprite;
+    public static class Provider implements IParticleFactory<FogParticleOptions> {
+        private final IAnimatedSprite sprite;
 
-        public Provider(SpriteSet pSprite) {
+        public Provider(IAnimatedSprite pSprite) {
             this.sprite = pSprite;
         }
 
-        public Particle createParticle(@NotNull FogParticleOptions options, @NotNull ClientLevel pLevel, double pX, double pY, double pZ, double pXSpeed, double pYSpeed, double pZSpeed) {
+        public Particle createParticle(@NotNull FogParticleOptions options, @NotNull ClientWorld pLevel, double pX, double pY, double pZ, double pXSpeed, double pYSpeed, double pZSpeed) {
             FogParticle shriekparticle = new FogParticle(pLevel, pX, pY, pZ, pXSpeed, pYSpeed, pZSpeed, options);
             shriekparticle.pickSprite(this.sprite);
             shriekparticle.setAlpha(1.0F);

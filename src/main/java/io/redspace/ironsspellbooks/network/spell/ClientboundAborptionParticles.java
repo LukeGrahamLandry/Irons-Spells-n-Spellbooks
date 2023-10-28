@@ -1,36 +1,36 @@
 package io.redspace.ironsspellbooks.network.spell;
 
 import io.redspace.ironsspellbooks.player.ClientSpellCastHelper;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
 public class ClientboundAborptionParticles {
 
-    private Vec3 pos;
+    private Vector3d pos;
 
-    public ClientboundAborptionParticles(Vec3 pos) {
+    public ClientboundAborptionParticles(Vector3d pos) {
         this.pos = pos;
     }
 
-    public ClientboundAborptionParticles(FriendlyByteBuf buf) {
+    public ClientboundAborptionParticles(PacketBuffer buf) {
         pos = readVec3(buf);
     }
 
-    public void toBytes(FriendlyByteBuf buf) {
+    public void toBytes(PacketBuffer buf) {
         writeVec3(pos, buf);
     }
 
-    public Vec3 readVec3(FriendlyByteBuf buf) {
+    public Vector3d readVec3(PacketBuffer buf) {
         double x = buf.readDouble();
         double y = buf.readDouble();
         double z = buf.readDouble();
-        return new Vec3(x, y, z);
+        return new Vector3d(x, y, z);
     }
 
-    public void writeVec3(Vec3 vec3, FriendlyByteBuf buf) {
+    public void writeVec3(Vector3d vec3, PacketBuffer buf) {
         buf.writeDouble(vec3.x);
         buf.writeDouble(vec3.y);
         buf.writeDouble(vec3.z);

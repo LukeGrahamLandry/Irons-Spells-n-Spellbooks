@@ -1,6 +1,6 @@
 package io.redspace.ironsspellbooks.item.armor;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.ResourceLocation;
 
 public interface ArmorCapeProvider {
     ResourceLocation getCapeResourceLocation();

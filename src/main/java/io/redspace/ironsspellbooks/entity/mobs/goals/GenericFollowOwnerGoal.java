@@ -1,28 +1,28 @@
 package io.redspace.ironsspellbooks.entity.mobs.goals;
 
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.PathfinderMob;
-import net.minecraft.world.entity.ai.goal.Goal;
-import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
-import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
-import net.minecraft.world.entity.ai.navigation.PathNavigation;
-import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.block.LeavesBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.pathfinder.BlockPathTypes;
-import net.minecraft.world.level.pathfinder.WalkNodeEvaluator;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.CreatureEntity;
+import net.minecraft.entity.ai.goal.Goal;
+import net.minecraft.pathfinding.FlyingPathNavigator;
+import net.minecraft.pathfinding.GroundPathNavigator;
+import net.minecraft.pathfinding.PathNavigator;
+import net.minecraft.world.IWorldReader;
+import net.minecraft.block.LeavesBlock;
+import net.minecraft.block.BlockState;
+import net.minecraft.pathfinding.PathNodeType;
+import net.minecraft.pathfinding.WalkNodeProcessor;
+import net.minecraft.util.math.vector.Vector3d;
 
 import java.util.EnumSet;
 
 public class GenericFollowOwnerGoal extends Goal {
 
-    private final PathfinderMob entity;
+    private final CreatureEntity entity;
     private LivingEntity owner;
-    private final LevelReader level;
+    private final IWorldReader level;
     private final double speedModifier;
-    private final PathNavigation navigation;
+    private final PathNavigator navigation;
     private int timeToRecalcPath;
     private final float stopDistance;
     private final float startDistance;
@@ -31,7 +31,7 @@ public class GenericFollowOwnerGoal extends Goal {
     private final OwnerGetter ownerGetter;
     private final float teleportDistance;
 
-    public GenericFollowOwnerGoal(PathfinderMob entity, OwnerGetter ownerGetter, double pSpeedModifier, float pStartDistance, float pStopDistance, boolean pCanFly, float teleportDistance) {
+    public GenericFollowOwnerGoal(CreatureEntity entity, OwnerGetter ownerGetter, double pSpeedModifier, float pStartDistance, float pStopDistance, boolean pCanFly, float teleportDistance) {
         this.entity = entity;
         this.ownerGetter = ownerGetter;
         this.level = entity.level;
@@ -42,7 +42,7 @@ public class GenericFollowOwnerGoal extends Goal {
         this.canFly = pCanFly;
         this.teleportDistance = teleportDistance * teleportDistance;
         this.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
-        if (!(entity.getNavigation() instanceof GroundPathNavigation) && !(entity.getNavigation() instanceof FlyingPathNavigation)) {
+        if (!(entity.getNavigation() instanceof GroundPathNavigator) && !(entity.getNavigation() instanceof FlyingPathNavigator)) {
             throw new IllegalArgumentException("Unsupported mob type for FollowOwnerGoal");
         }
     }
@@ -81,8 +81,8 @@ public class GenericFollowOwnerGoal extends Goal {
      */
     public void start() {
         this.timeToRecalcPath = 0;
-        this.oldWaterCost = this.entity.getPathfindingMalus(BlockPathTypes.WATER);
-        this.entity.setPathfindingMalus(BlockPathTypes.WATER, 0.0F);
+        this.oldWaterCost = this.entity.getPathfindingMalus(PathNodeType.WATER);
+        this.entity.setPathfindingMalus(PathNodeType.WATER, 0.0F);
     }
 
     /**
@@ -91,7 +91,7 @@ public class GenericFollowOwnerGoal extends Goal {
     public void stop() {
         this.owner = null;
         this.navigation.stop();
-        this.entity.setPathfindingMalus(BlockPathTypes.WATER, this.oldWaterCost);
+        this.entity.setPathfindingMalus(PathNodeType.WATER, this.oldWaterCost);
     }
 
     /**
@@ -106,7 +106,7 @@ public class GenericFollowOwnerGoal extends Goal {
                     this.teleportToOwner();
                 } else {
                     if(canFly && !entity.isOnGround()){
-                        Vec3 vec3 = owner.position();
+                        Vector3d vec3 = owner.position();
                         this.entity.getMoveControl().setWantedPosition(vec3.x, vec3.y + 2, vec3.z, this.speedModifier);
 
                     }else{
@@ -147,8 +147,8 @@ public class GenericFollowOwnerGoal extends Goal {
     }
 
     private boolean canTeleportTo(BlockPos pPos) {
-        BlockPathTypes blockpathtypes = WalkNodeEvaluator.getBlockPathTypeStatic(this.level, pPos.mutable());
-        if (blockpathtypes != BlockPathTypes.WALKABLE) {
+        PathNodeType blockpathtypes = WalkNodeProcessor.getBlockPathTypeStatic(this.level, pPos.mutable());
+        if (blockpathtypes != PathNodeType.WALKABLE) {
             return false;
         } else {
             BlockState blockstate = this.level.getBlockState(pPos.below());

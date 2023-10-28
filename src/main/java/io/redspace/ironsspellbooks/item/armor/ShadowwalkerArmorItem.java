@@ -1,9 +1,11 @@
 package io.redspace.ironsspellbooks.item.armor;
 
-import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.inventory.EquipmentSlotType;
+
+import net.minecraft.item.Item.Properties;
 
 public class ShadowwalkerArmorItem extends ExtendedArmorItem {
-    public ShadowwalkerArmorItem(EquipmentSlot slot, Properties settings) {
+    public ShadowwalkerArmorItem(EquipmentSlotType slot, Properties settings) {
         super(ExtendedArmorMaterials.SHADOWWALKER, slot, settings);
     }
 

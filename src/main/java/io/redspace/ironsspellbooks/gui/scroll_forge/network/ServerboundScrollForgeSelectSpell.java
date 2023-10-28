@@ -1,8 +1,8 @@
 package io.redspace.ironsspellbooks.gui.scroll_forge.network;
 
 import io.redspace.ironsspellbooks.block.scroll_forge.ScrollForgeTile;
-import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
@@ -18,7 +18,7 @@ public class ServerboundScrollForgeSelectSpell {
         this.spellId = spellId;
     }
 
-    public ServerboundScrollForgeSelectSpell(FriendlyByteBuf buf) {
+    public ServerboundScrollForgeSelectSpell(PacketBuffer buf) {
         int x = buf.readInt();
         int y = buf.readInt();
         int z = buf.readInt();
@@ -27,7 +27,7 @@ public class ServerboundScrollForgeSelectSpell {
 
     }
 
-    public void toBytes(FriendlyByteBuf buf) {
+    public void toBytes(PacketBuffer buf) {
         buf.writeInt(pos.getX());
         buf.writeInt(pos.getY());
         buf.writeInt(pos.getZ());

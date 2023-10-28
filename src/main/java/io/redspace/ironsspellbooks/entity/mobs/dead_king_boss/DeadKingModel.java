@@ -4,8 +4,8 @@ package io.redspace.ironsspellbooks.entity.mobs.dead_king_boss;
 import io.redspace.ironsspellbooks.IronsSpellbooks;
 import io.redspace.ironsspellbooks.entity.mobs.abstract_spell_casting_mob.AbstractSpellCastingMob;
 import io.redspace.ironsspellbooks.entity.mobs.abstract_spell_casting_mob.AbstractSpellCastingMobModel;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.processor.IBone;
 
@@ -46,9 +46,9 @@ public class DeadKingModel extends AbstractSpellCastingMobModel {
         if (jaw == null || hair1 == null || hair2 == null)
             return;
 
-        jaw.setRotationX(Mth.sin(f * .05f) * 5 * Mth.DEG_TO_RAD);
-        hair1.setRotationX((Mth.sin(f * .1f) * 10 - 30) * Mth.DEG_TO_RAD);
-        hair2.setRotationX(Mth.sin(f * .15f) * 15 * Mth.DEG_TO_RAD);
+        jaw.setRotationX(MathHelper.sin(f * .05f) * 5 * MathHelper.DEG_TO_RAD);
+        hair1.setRotationX((MathHelper.sin(f * .1f) * 10 - 30) * MathHelper.DEG_TO_RAD);
+        hair2.setRotationX(MathHelper.sin(f * .15f) * 15 * MathHelper.DEG_TO_RAD);
 
     }
 

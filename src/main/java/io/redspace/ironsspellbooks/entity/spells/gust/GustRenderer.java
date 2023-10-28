@@ -1,34 +1,34 @@
 package io.redspace.ironsspellbooks.entity.spells.gust;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Vector3f;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
+import net.minecraft.util.math.vector.Vector3f;
 import io.redspace.ironsspellbooks.IronsSpellbooks;
 import net.minecraft.client.model.geom.ModelLayerLocation;
-import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
 
 public class GustRenderer extends EntityRenderer<GustCollider> {
 
     public static final ModelLayerLocation MODEL_LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(IronsSpellbooks.MODID, "gust_model"), "main");
     private static ResourceLocation TEXTURE = IronsSpellbooks.id("textures/entity/trident_riptide.png");
 
-    private final ModelPart body;
+    private final ModelRenderer body;
 
     public GustRenderer(Context context) {
         super(context);
-        ModelPart modelpart = context.bakeLayer(MODEL_LAYER_LOCATION);
+        ModelRenderer modelpart = context.bakeLayer(MODEL_LAYER_LOCATION);
         this.body = modelpart.getChild("body");
     }
 
@@ -40,7 +40,7 @@ public class GustRenderer extends EntityRenderer<GustCollider> {
     }
 
     @Override
-    public void render(GustCollider entity, float yaw, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource, int light) {
+    public void render(GustCollider entity, float yaw, float partialTicks, MatrixStack poseStack, IRenderTypeBuffer bufferSource, int light) {
         poseStack.pushPose();
         poseStack.translate(0, entity.getBoundingBox().getYsize() * .5f, 0);
         poseStack.mulPose(Vector3f.YP.rotationDegrees(-entity.getYRot() - 180.0F));
@@ -48,8 +48,8 @@ public class GustRenderer extends EntityRenderer<GustCollider> {
         poseStack.scale(.25f, .25f, .25f);
 
         float f = entity.tickCount + partialTicks;
-        float scale = Mth.lerp(Mth.clamp(f / 6f, 0, 1), 1, 2.3f);
-        VertexConsumer consumer = bufferSource.getBuffer(RenderType.entityTranslucent(getTextureLocation(entity)));
+        float scale = MathHelper.lerp(MathHelper.clamp(f / 6f, 0, 1), 1, 2.3f);
+        IVertexBuilder consumer = bufferSource.getBuffer(RenderType.entityTranslucent(getTextureLocation(entity)));
         float alpha = 1f - f / 10f;
 
         for (int i = 0; i < 3; i++) {

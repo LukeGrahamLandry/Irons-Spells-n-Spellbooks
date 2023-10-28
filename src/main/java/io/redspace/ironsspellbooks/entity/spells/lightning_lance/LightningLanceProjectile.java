@@ -7,16 +7,16 @@ import io.redspace.ironsspellbooks.entity.spells.AbstractMagicProjectile;
 import io.redspace.ironsspellbooks.registries.EntityRegistry;
 import io.redspace.ironsspellbooks.api.spells.SchoolType;
 import io.redspace.ironsspellbooks.util.ParticleHelper;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.projectile.Projectile;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.SoundEvents;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.projectile.ProjectileEntity;
+import net.minecraft.world.World;
+import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.EntityRayTraceResult;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.vector.Vector3d;
 
 import java.util.Optional;
 
@@ -24,7 +24,7 @@ public class LightningLanceProjectile extends AbstractMagicProjectile {
 
     @Override
     public void trailParticles() {
-        Vec3 vec3 = this.position().subtract(getDeltaMovement());
+        Vector3d vec3 = this.position().subtract(getDeltaMovement());
         level.addParticle(ParticleHelper.ELECTRICITY, vec3.x, vec3.y, vec3.z, 0, 0, 0);
     }
 
@@ -44,29 +44,29 @@ public class LightningLanceProjectile extends AbstractMagicProjectile {
         return Optional.empty();
     }
 
-    public LightningLanceProjectile(EntityType<? extends Projectile> pEntityType, Level pLevel) {
+    public LightningLanceProjectile(EntityType<? extends ProjectileEntity> pEntityType, World pLevel) {
         super(pEntityType, pLevel);
         this.setNoGravity(false);
     }
 
-    public LightningLanceProjectile(Level levelIn, LivingEntity shooter) {
+    public LightningLanceProjectile(World levelIn, LivingEntity shooter) {
         this(EntityRegistry.LIGHTNING_LANCE_PROJECTILE.get(), levelIn);
         setOwner(shooter);
     }
 
     @Override
-    protected void onHitBlock(BlockHitResult pResult) {
+    protected void onHitBlock(BlockRayTraceResult pResult) {
 
     }
 
     @Override
-    protected void onHitEntity(EntityHitResult entityHitResult) {
+    protected void onHitEntity(EntityRayTraceResult entityHitResult) {
         DamageSources.applyDamage(entityHitResult.getEntity(), damage, SpellRegistry.LIGHTNING_LANCE_SPELL.get().getDamageSource(this, getOwner()), SpellRegistry.LIGHTNING_LANCE_SPELL.get().getSchoolType());
 
     }
 
     @Override
-    protected void onHit(HitResult pResult) {
+    protected void onHit(RayTraceResult pResult) {
         //irons_spellbooks.LOGGER.debug("Boom");
 
         if (!level.isClientSide) {

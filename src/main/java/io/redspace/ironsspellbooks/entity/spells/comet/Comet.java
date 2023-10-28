@@ -8,42 +8,42 @@ import io.redspace.ironsspellbooks.registries.EntityRegistry;
 import io.redspace.ironsspellbooks.api.spells.SchoolType;
 import io.redspace.ironsspellbooks.util.ParticleHelper;
 import io.redspace.ironsspellbooks.api.util.Utils;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.projectile.Projectile;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.SoundEvents;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.projectile.ProjectileEntity;
+import net.minecraft.world.World;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.vector.Vector3d;
 
 import java.util.Optional;
 
 public class Comet extends AbstractMagicProjectile {
-    public Comet(EntityType<? extends Projectile> pEntityType, Level pLevel) {
+    public Comet(EntityType<? extends ProjectileEntity> pEntityType, World pLevel) {
         super(pEntityType, pLevel);
     }
 
-    public Comet(Level pLevel, LivingEntity pShooter) {
+    public Comet(World pLevel, LivingEntity pShooter) {
         this(EntityRegistry.COMET.get(), pLevel);
         this.setOwner(pShooter);
     }
 
-    public void shoot(Vec3 rotation, float innaccuracy) {
-        Vec3 offset = Utils.getRandomVec3(1).normalize().scale(innaccuracy);
+    public void shoot(Vector3d rotation, float innaccuracy) {
+        Vector3d offset = Utils.getRandomVec3(1).normalize().scale(innaccuracy);
         super.shoot(rotation.add(offset));
     }
 
     @Override
     public void trailParticles() {
-        Vec3 vec3 = getDeltaMovement();
+        Vector3d vec3 = getDeltaMovement();
         double d0 = this.getX() - vec3.x;
         double d1 = this.getY() - vec3.y;
         double d2 = this.getZ() - vec3.z;
         for (int i = 0; i < 2; i++) {
-            Vec3 random = Utils.getRandomVec3(.1);
+            Vector3d random = Utils.getRandomVec3(.1);
             this.level.addParticle(ParticleHelper.UNSTABLE_ENDER, d0 - random.x, d1 + 0.5D - random.y, d2 - random.z, random.x * .5f, random.y * .5f, random.z * .5f);
         }
     }
@@ -61,7 +61,7 @@ public class Comet extends AbstractMagicProjectile {
 
     @Override
     protected void doImpactSound(SoundEvent sound) {
-        level.playSound(null, getX(), getY(), getZ(), sound, SoundSource.NEUTRAL, .8f, 1.2f + Utils.random.nextFloat() * .3f);
+        level.playSound(null, getX(), getY(), getZ(), sound, SoundCategory.NEUTRAL, .8f, 1.2f + Utils.random.nextFloat() * .3f);
     }
 
     @Override
@@ -70,7 +70,7 @@ public class Comet extends AbstractMagicProjectile {
     }
 
     @Override
-    protected void onHit(HitResult hitResult) {
+    protected void onHit(RayTraceResult hitResult) {
         if (!this.level.isClientSide) {
             impactParticles(xOld, yOld, zOld);
             getImpactSound().ifPresent(this::doImpactSound);

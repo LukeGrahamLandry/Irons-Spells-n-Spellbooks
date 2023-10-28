@@ -5,36 +5,42 @@ import io.redspace.ironsspellbooks.damage.DamageSources;
 import io.redspace.ironsspellbooks.registries.BlockRegistry;
 import io.redspace.ironsspellbooks.registries.ItemRegistry;
 import io.redspace.ironsspellbooks.util.ParticleHelper;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.BlockItemUseContext;
+import net.minecraft.world.IBlockReader;
+import net.minecraft.world.World;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.level.block.*;
-import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
-import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.shapes.BooleanOp;
-import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.Shapes;
-import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.block.BlockState;
+import net.minecraft.state.StateContainer;
+import net.minecraft.state.properties.BlockStateProperties;
+import net.minecraft.state.BooleanProperty;
+import net.minecraft.state.IntegerProperty;
+import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.shapes.IBooleanFunction;
+import net.minecraft.util.math.shapes.ISelectionContext;
+import net.minecraft.util.math.shapes.VoxelShapes;
+import net.minecraft.util.math.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class AlchemistCauldronBlock extends BaseEntityBlock {
+import net.minecraft.block.AbstractBlock.Properties;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockRenderType;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.ContainerBlock;
+
+public class AlchemistCauldronBlock extends ContainerBlock {
     public AlchemistCauldronBlock() {
         super(Properties.copy(Blocks.CAULDRON).lightLevel((blockState) -> 3));
         this.registerDefaultState(this.stateDefinition.any().setValue(LIT, false).setValue(LEVEL, 0));
@@ -49,33 +55,33 @@ public class AlchemistCauldronBlock extends BaseEntityBlock {
 //    private static final VoxelShape DETAILED_BODY = Shapes.join(Shapes.or(Shapes.join(BODY, RIM_NEGATIVE, BooleanOp.ONLY_FIRST), RIM_INNER), INSIDE, BooleanOp.ONLY_FIRST);
 //    private static final VoxelShape SHAPE = Shapes.or(LOGS, DETAILED_BODY);
     //magic shape. see comment above for legible shape
-    private static final VoxelShape SHAPE = Shapes.or(Shapes.or(box(0, 0, 4, 16, 2, 6), box(0, 0, 10, 16, 2, 12), box(4, 0, 0, 6, 2, 16), box(10, 0, 0, 12, 2, 16)), Shapes.join(Shapes.or(Shapes.join(box(0, 2, 0, 16, 16, 16), box(0, 12, 0, 16, 14, 16), BooleanOp.ONLY_FIRST), box(1, 12, 1, 15, 14, 15)), box(2, 4, 2, 14, 16, 14), BooleanOp.ONLY_FIRST));
+    private static final VoxelShape SHAPE = VoxelShapes.or(VoxelShapes.or(box(0, 0, 4, 16, 2, 6), box(0, 0, 10, 16, 2, 12), box(4, 0, 0, 6, 2, 16), box(10, 0, 0, 12, 2, 16)), VoxelShapes.join(VoxelShapes.or(VoxelShapes.join(box(0, 2, 0, 16, 16, 16), box(0, 12, 0, 16, 14, 16), IBooleanFunction.ONLY_FIRST), box(1, 12, 1, 15, 14, 15)), box(2, 4, 2, 14, 16, 14), IBooleanFunction.ONLY_FIRST));
 
     public static final BooleanProperty LIT = BlockStateProperties.LIT;
     public static final int MAX_LEVELS = 4;
     public static final IntegerProperty LEVEL = IntegerProperty.create("level", 0, MAX_LEVELS);
 
     @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level pLevel, BlockState pState, BlockEntityType<T> pBlockEntityType) {
+    public <T extends TileEntity> BlockEntityTicker<T> getTicker(World pLevel, BlockState pState, TileEntityType<T> pBlockEntityType) {
         return createTicker(pLevel, pBlockEntityType, BlockRegistry.ALCHEMIST_CAULDRON_TILE.get());
     }
 
     @javax.annotation.Nullable
-    protected static <T extends BlockEntity> BlockEntityTicker<T> createTicker(Level pLevel, BlockEntityType<T> pServerType, BlockEntityType<? extends AlchemistCauldronTile> pClientType) {
+    protected static <T extends TileEntity> BlockEntityTicker<T> createTicker(World pLevel, TileEntityType<T> pServerType, TileEntityType<? extends AlchemistCauldronTile> pClientType) {
         return pLevel.isClientSide ? null : createTickerHelper(pServerType, pClientType, AlchemistCauldronTile::serverTick);
     }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+    protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder) {
         builder.add(LIT, LEVEL);
     }
 
-    public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
+    public VoxelShape getShape(BlockState pState, IBlockReader pLevel, BlockPos pPos, ISelectionContext pContext) {
         return SHAPE;
     }
 
     @Override
-    public InteractionResult use(BlockState blockState, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult blockHit) {
+    public ActionResultType use(BlockState blockState, World level, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult blockHit) {
         if (level.getBlockEntity(pos) instanceof AlchemistCauldronTile tile) {
             return tile.handleUse(blockState, level, pos, player, hand);
         }
@@ -83,7 +89,7 @@ public class AlchemistCauldronBlock extends BaseEntityBlock {
     }
 
     @Override
-    public void entityInside(BlockState blockState, Level level, BlockPos pos, Entity entity) {
+    public void entityInside(BlockState blockState, World level, BlockPos pos, Entity entity) {
         if (entity.tickCount % 20 == 0) {
             if (isBoiling(blockState)) {
                 if (entity instanceof LivingEntity livingEntity && livingEntity.hurt(DamageSources.CAULDRON, 2)) {
@@ -101,13 +107,13 @@ public class AlchemistCauldronBlock extends BaseEntityBlock {
 
     @Nullable
     @Override
-    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+    public TileEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new AlchemistCauldronTile(pos, state);
     }
 
     @Override
     @SuppressWarnings({"all"})
-    public BlockState updateShape(BlockState state, Direction direction, BlockState neighborstate, LevelAccessor level, BlockPos pos, BlockPos pNeighborPos) {
+    public BlockState updateShape(BlockState state, Direction direction, BlockState neighborstate, IWorld level, BlockPos pos, BlockPos pNeighborPos) {
         if (direction.equals(Direction.DOWN)) {
             level.setBlock(pos, state.setValue(LIT, isFireSource(neighborstate)), 11);
         }
@@ -116,17 +122,17 @@ public class AlchemistCauldronBlock extends BaseEntityBlock {
 
     @Nullable
     @Override
-    public BlockState getStateForPlacement(BlockPlaceContext pContext) {
-        LevelAccessor levelaccessor = pContext.getLevel();
+    public BlockState getStateForPlacement(BlockItemUseContext pContext) {
+        IWorld levelaccessor = pContext.getLevel();
         BlockPos blockpos = pContext.getClickedPos().below();
         boolean flag = isFireSource(levelaccessor.getBlockState(blockpos));
         return this.defaultBlockState().setValue(LIT, flag);
     }
 
     @Override
-    public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pIsMoving) {
+    public void onRemove(BlockState pState, World pLevel, BlockPos pPos, BlockState pNewState, boolean pIsMoving) {
         if (pState.getBlock() != pNewState.getBlock()) {
-            BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
+            TileEntity blockEntity = pLevel.getBlockEntity(pPos);
             if (blockEntity instanceof AlchemistCauldronTile cauldronTile) {
                 cauldronTile.drops();
             }
@@ -136,8 +142,8 @@ public class AlchemistCauldronBlock extends BaseEntityBlock {
 
     @Override
     @SuppressWarnings("deprecation")
-    public @NotNull RenderShape getRenderShape(@NotNull BlockState blockState) {
-        return RenderShape.MODEL;
+    public @NotNull BlockRenderType getRenderShape(@NotNull BlockState blockState) {
+        return BlockRenderType.MODEL;
     }
 
     public boolean isFireSource(BlockState blockState) {

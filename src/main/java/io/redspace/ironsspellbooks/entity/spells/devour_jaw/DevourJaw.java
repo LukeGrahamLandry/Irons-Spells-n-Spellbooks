@@ -7,24 +7,24 @@ import io.redspace.ironsspellbooks.registries.EntityRegistry;
 import io.redspace.ironsspellbooks.registries.MobEffectRegistry;
 import io.redspace.ironsspellbooks.registries.SoundRegistry;
 import io.redspace.ironsspellbooks.util.ParticleHelper;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.projectile.Projectile;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.particles.IParticleData;
+import net.minecraft.network.IPacket;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.projectile.ProjectileEntity;
+import net.minecraft.world.World;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.network.NetworkHooks;
 
 public class DevourJaw extends AoeEntity {
-    public DevourJaw(EntityType<? extends Projectile> pEntityType, Level pLevel) {
+    public DevourJaw(EntityType<? extends ProjectileEntity> pEntityType, World pLevel) {
         super(pEntityType, pLevel);
     }
 
     LivingEntity target;
 
-    public DevourJaw(Level level, LivingEntity owner, LivingEntity target) {
+    public DevourJaw(World level, LivingEntity owner, LivingEntity target) {
         this(EntityRegistry.DEVOUR_JAW.get(), level);
         setOwner(owner);
         this.target = target;
@@ -44,7 +44,7 @@ public class DevourJaw extends AoeEntity {
                     var addition = 0;
                     if (oldVigor != null)
                         addition = oldVigor.getAmplifier() + 1;
-                    livingOwner.addEffect(new MobEffectInstance(MobEffectRegistry.VIGOR.get(), 20 * 60, Math.min(vigorLevel + addition, 9), false, false, true));
+                    livingOwner.addEffect(new EffectInstance(MobEffectRegistry.VIGOR.get(), 20 * 60, Math.min(vigorLevel + addition, 9), false, false, true));
                     livingOwner.heal((vigorLevel + 1) * 2);
                 }
             }
@@ -68,7 +68,7 @@ public class DevourJaw extends AoeEntity {
                 int countPerSide = 25;
                 //These particles were not at all what I intended. But they're cooler. no clue how it works
                 for (int i = -countPerSide; i < countPerSide; i++) {
-                    Vec3 motion = new Vec3(0, Math.abs(countPerSide) - i, countPerSide * .5f).yRot(y).normalize().multiply(.4f, .8f, .4f);
+                    Vector3d motion = new Vector3d(0, Math.abs(countPerSide) - i, countPerSide * .5f).yRot(y).normalize().multiply(.4f, .8f, .4f);
                     level.addParticle(ParticleHelper.BLOOD, getX(), getY() + .5f, getZ(), motion.x, motion.y, motion.z);
                 }
             } else {
@@ -79,8 +79,8 @@ public class DevourJaw extends AoeEntity {
     }
 
     @Override
-    protected Vec3 getInflation() {
-        return new Vec3(2, 2, 2);
+    protected Vector3d getInflation() {
+        return new Vector3d(2, 2, 2);
     }
 
     @Override
@@ -104,12 +104,12 @@ public class DevourJaw extends AoeEntity {
     }
 
     @Override
-    public ParticleOptions getParticle() {
+    public IParticleData getParticle() {
         return ParticleHelper.BLOOD;
     }
 
     @Override
-    public Packet<?> getAddEntityPacket() {
+    public IPacket<?> getAddEntityPacket() {
         return NetworkHooks.getEntitySpawningPacket(this);
     }
 }

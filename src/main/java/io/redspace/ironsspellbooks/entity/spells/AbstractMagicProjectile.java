@@ -3,22 +3,22 @@ package io.redspace.ironsspellbooks.entity.spells;
 import io.redspace.ironsspellbooks.api.magic.MagicData;
 import io.redspace.ironsspellbooks.api.util.Utils;
 import io.redspace.ironsspellbooks.entity.mobs.AntiMagicSusceptible;
-import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.projectile.Projectile;
-import net.minecraft.world.entity.projectile.ProjectileUtil;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.util.Direction;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.projectile.ProjectileEntity;
+import net.minecraft.entity.projectile.ProjectileHelper;
+import net.minecraft.world.World;
+import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.EntityRayTraceResult;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.vector.Vector3d;
 
 import java.util.Optional;
 
-public abstract class AbstractMagicProjectile extends Projectile implements AntiMagicSusceptible {
+public abstract class AbstractMagicProjectile extends ProjectileEntity implements AntiMagicSusceptible {
     protected static final int EXPIRE_TIME = 15 * 20;
 
     protected int age;
@@ -36,11 +36,11 @@ public abstract class AbstractMagicProjectile extends Projectile implements Anti
     public abstract float getSpeed();
     public abstract Optional<SoundEvent> getImpactSound();
 
-    public AbstractMagicProjectile(EntityType<? extends Projectile> pEntityType, Level pLevel) {
+    public AbstractMagicProjectile(EntityType<? extends ProjectileEntity> pEntityType, World pLevel) {
         super(pEntityType, pLevel);
     }
 
-    public void shoot(Vec3 rotation) {
+    public void shoot(Vector3d rotation) {
         setDeltaMovement(rotation.scale(getSpeed()));
     }
 
@@ -76,14 +76,14 @@ public abstract class AbstractMagicProjectile extends Projectile implements Anti
 
 
         }
-        HitResult hitresult = ProjectileUtil.getHitResult(this, this::canHitEntity);
-        if (hitresult.getType() != HitResult.Type.MISS && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, hitresult)) {
+        RayTraceResult hitresult = ProjectileHelper.getHitResult(this, this::canHitEntity);
+        if (hitresult.getType() != RayTraceResult.Type.MISS && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, hitresult)) {
             onHit(hitresult);
         }
         setPos(position().add(getDeltaMovement()));
-        ProjectileUtil.rotateTowardsMovement(this, 1);
+        ProjectileHelper.rotateTowardsMovement(this, 1);
         if (!this.isNoGravity() && respectsGravity()) {
-            Vec3 vec34 = this.getDeltaMovement();
+            Vector3d vec34 = this.getDeltaMovement();
             this.setDeltaMovement(vec34.x, vec34.y - (double) 0.05F, vec34.z);
         }
 
@@ -91,7 +91,7 @@ public abstract class AbstractMagicProjectile extends Projectile implements Anti
     }
 
     @Override
-    protected void onHit(HitResult hitresult) {
+    protected void onHit(RayTraceResult hitresult) {
         super.onHit(hitresult);
         double x = xOld;
         double y = yOld;
@@ -104,7 +104,7 @@ public abstract class AbstractMagicProjectile extends Projectile implements Anti
     }
 
     protected void doImpactSound(SoundEvent sound) {
-        level.playSound(null, getX(), getY(), getZ(), sound, SoundSource.NEUTRAL, 2, .9f + Utils.random.nextFloat() * .2f);
+        level.playSound(null, getX(), getY(), getZ(), sound, SoundCategory.NEUTRAL, 2, .9f + Utils.random.nextFloat() * .2f);
     }
 
     @Override
@@ -119,7 +119,7 @@ public abstract class AbstractMagicProjectile extends Projectile implements Anti
     }
 
     @Override
-    protected void addAdditionalSaveData(CompoundTag pCompound) {
+    protected void addAdditionalSaveData(CompoundNBT pCompound) {
         super.addAdditionalSaveData(pCompound);
         pCompound.putFloat("Damage", this.getDamage());
         pCompound.putFloat("ExplosionRadius", explosionRadius);
@@ -128,7 +128,7 @@ public abstract class AbstractMagicProjectile extends Projectile implements Anti
     }
 
     @Override
-    protected void readAdditionalSaveData(CompoundTag pCompound) {
+    protected void readAdditionalSaveData(CompoundNBT pCompound) {
         super.readAdditionalSaveData(pCompound);
         this.damage = pCompound.getFloat("Damage");
         this.explosionRadius = pCompound.getFloat("ExplosionRadius");
@@ -136,10 +136,10 @@ public abstract class AbstractMagicProjectile extends Projectile implements Anti
     }
 
     @Override
-    protected void onHitEntity(EntityHitResult pResult) {
+    protected void onHitEntity(EntityRayTraceResult pResult) {
         super.onHitEntity(pResult);
         if (!shouldPierceShields() && (pResult.getEntity() instanceof ShieldPart || pResult.getEntity() instanceof AbstractShieldEntity))
-            this.onHitBlock(new BlockHitResult(pResult.getEntity().position(), Direction.fromYRot(this.getYRot()), pResult.getEntity().blockPosition(), false));
+            this.onHitBlock(new BlockRayTraceResult(pResult.getEntity().position(), Direction.fromYRot(this.getYRot()), pResult.getEntity().blockPosition(), false));
     }
 
     @Override

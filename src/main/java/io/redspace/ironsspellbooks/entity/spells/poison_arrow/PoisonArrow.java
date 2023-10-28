@@ -8,32 +8,32 @@ import io.redspace.ironsspellbooks.entity.spells.poison_cloud.PoisonCloud;
 import io.redspace.ironsspellbooks.registries.EntityRegistry;
 import io.redspace.ironsspellbooks.api.spells.SchoolType;
 import io.redspace.ironsspellbooks.util.ParticleHelper;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializers;
-import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.projectile.Projectile;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.SoundEvents;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.projectile.ProjectileEntity;
+import net.minecraft.world.World;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.EntityRayTraceResult;
+import net.minecraft.util.math.vector.Vector3d;
 
 import java.util.Optional;
 
 public class PoisonArrow extends AbstractMagicProjectile {
-    private static final EntityDataAccessor<Boolean> IN_GROUND = SynchedEntityData.defineId(PoisonArrow.class, EntityDataSerializers.BOOLEAN);
+    private static final DataParameter<Boolean> IN_GROUND = EntityDataManager.defineId(PoisonArrow.class, DataSerializers.BOOLEAN);
 
-    public PoisonArrow(EntityType<? extends Projectile> pEntityType, Level pLevel) {
+    public PoisonArrow(EntityType<? extends ProjectileEntity> pEntityType, World pLevel) {
         super(pEntityType, pLevel);
     }
 
-    public PoisonArrow(Level levelIn, LivingEntity shooter) {
+    public PoisonArrow(World levelIn, LivingEntity shooter) {
         this(EntityRegistry.POISON_ARROW.get(), levelIn);
         setOwner(shooter);
     }
@@ -83,15 +83,15 @@ public class PoisonArrow extends AbstractMagicProjectile {
     }
 
     private boolean shouldFall() {
-        return this.inGround && this.level.noCollision((new AABB(this.position(), this.position())).inflate(0.06D));
+        return this.inGround && this.level.noCollision((new AxisAlignedBB(this.position(), this.position())).inflate(0.06D));
     }
 
     @Override
-    protected void onHitBlock(BlockHitResult pResult) {
+    protected void onHitBlock(BlockRayTraceResult pResult) {
         super.onHitBlock(pResult);
-        Vec3 vec3 = pResult.getLocation().subtract(this.getX(), this.getY(), this.getZ());
+        Vector3d vec3 = pResult.getLocation().subtract(this.getX(), this.getY(), this.getZ());
         this.setDeltaMovement(vec3);
-        Vec3 vec31 = vec3.normalize().scale(0.05F);
+        Vector3d vec31 = vec3.normalize().scale(0.05F);
         this.setPosRaw(this.getX() - vec31.x, this.getY() - vec31.y, this.getZ() - vec31.z);
         this.playSound(SoundEvents.ARROW_HIT, 1.0F, 1.2F / (this.random.nextFloat() * 0.2F + 0.9F));
         this.inGround = true;
@@ -105,7 +105,7 @@ public class PoisonArrow extends AbstractMagicProjectile {
     }
 
     @Override
-    protected void onHitEntity(EntityHitResult entityHitResult) {
+    protected void onHitEntity(EntityRayTraceResult entityHitResult) {
         if (level.isClientSide)
             return;
         Entity entity = entityHitResult.getEntity();
@@ -131,14 +131,14 @@ public class PoisonArrow extends AbstractMagicProjectile {
     }
 
     @Override
-    protected void addAdditionalSaveData(CompoundTag pCompound) {
+    protected void addAdditionalSaveData(CompoundNBT pCompound) {
         super.addAdditionalSaveData(pCompound);
         pCompound.putBoolean("inGround", this.inGround);
         pCompound.putBoolean("hasEmittedPoison", hasEmittedPoison);
         pCompound.putFloat("aoeDamage", aoeDamage);
     }
 
-    public void createPoisonCloud(Vec3 location) {
+    public void createPoisonCloud(Vector3d location) {
         if (!level.isClientSide) {
             PoisonCloud cloud = new PoisonCloud(level);
             cloud.setOwner(getOwner());
@@ -151,7 +151,7 @@ public class PoisonArrow extends AbstractMagicProjectile {
     }
 
     @Override
-    protected void readAdditionalSaveData(CompoundTag pCompound) {
+    protected void readAdditionalSaveData(CompoundNBT pCompound) {
         super.readAdditionalSaveData(pCompound);
         this.inGround = pCompound.getBoolean("inGround");
         this.hasEmittedPoison = pCompound.getBoolean("hasEmittedPoison");
@@ -160,7 +160,7 @@ public class PoisonArrow extends AbstractMagicProjectile {
 
     @Override
     public void trailParticles() {
-        Vec3 vec3 = this.position().subtract(getDeltaMovement().scale(2));
+        Vector3d vec3 = this.position().subtract(getDeltaMovement().scale(2));
         level.addParticle(ParticleHelper.ACID, vec3.x, vec3.y, vec3.z, 0, 0, 0);
     }
 

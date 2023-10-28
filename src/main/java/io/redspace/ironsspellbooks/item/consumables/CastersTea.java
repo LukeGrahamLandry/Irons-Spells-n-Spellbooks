@@ -1,9 +1,11 @@
 package io.redspace.ironsspellbooks.item.consumables;
 
 import io.redspace.ironsspellbooks.api.magic.MagicData;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.item.ItemStack;
+
+import net.minecraft.item.Item.Properties;
 
 public class CastersTea extends DrinkableItem {
     public CastersTea(Properties pProperties) {
@@ -11,7 +13,7 @@ public class CastersTea extends DrinkableItem {
     }
 
     private static void onConsume(ItemStack itemStack, LivingEntity livingEntity) {
-        if (livingEntity instanceof ServerPlayer serverPlayer) {
+        if (livingEntity instanceof ServerPlayerEntity serverPlayer) {
             var cooldowns = MagicData.getPlayerMagicData(livingEntity).getPlayerCooldowns();
             cooldowns.getSpellCooldowns().forEach((key, value) -> cooldowns.decrementCooldown(value, (int) (value.getSpellCooldown() * .15f)));
             cooldowns.syncToPlayer(serverPlayer);

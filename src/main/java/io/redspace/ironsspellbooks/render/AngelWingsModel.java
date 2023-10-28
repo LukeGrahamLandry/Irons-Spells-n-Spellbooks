@@ -2,28 +2,28 @@ package io.redspace.ironsspellbooks.render;
 
 import io.redspace.ironsspellbooks.IronsSpellbooks;
 import com.google.common.collect.ImmutableList;
-import net.minecraft.client.model.AgeableListModel;
+import net.minecraft.client.renderer.entity.model.AgeableModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
-import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.client.player.AbstractClientPlayer;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class AngelWingsModel<T extends LivingEntity> extends AgeableListModel<T> {
-    private final ModelPart rightWing;
-    private final ModelPart leftWing;
+public class AngelWingsModel<T extends LivingEntity> extends AgeableModel<T> {
+    private final ModelRenderer rightWing;
+    private final ModelRenderer leftWing;
 
     public static final String MAIN = "main";
     public static final String ANGEL_WINGS = "angel_wings";
     public static ModelLayerLocation ANGEL_WINGS_LAYER = new ModelLayerLocation(new ResourceLocation(IronsSpellbooks.MODID, ANGEL_WINGS), MAIN);
 
-    public AngelWingsModel(ModelPart pRoot) {
+    public AngelWingsModel(ModelRenderer pRoot) {
         this.leftWing = pRoot.getChild("left_wing");
         this.rightWing = pRoot.getChild("right_wing");
     }
@@ -37,11 +37,11 @@ public class AngelWingsModel<T extends LivingEntity> extends AgeableListModel<T>
         return LayerDefinition.create(meshdefinition, 64, 32);
     }
 
-    protected Iterable<ModelPart> headParts() {
+    protected Iterable<ModelRenderer> headParts() {
         return ImmutableList.of();
     }
 
-    protected Iterable<ModelPart> bodyParts() {
+    protected Iterable<ModelRenderer> bodyParts() {
         return ImmutableList.of(this.leftWing, this.rightWing);
     }
 
@@ -55,9 +55,9 @@ public class AngelWingsModel<T extends LivingEntity> extends AgeableListModel<T>
         float f3 = 0.0F;
         if (pEntity.isFallFlying()) {
             float f4 = 1.0F;
-            Vec3 vec3 = pEntity.getDeltaMovement();
+            Vector3d vec3 = pEntity.getDeltaMovement();
             if (vec3.y < 0.0D) {
-                Vec3 vec31 = vec3.normalize();
+                Vector3d vec31 = vec3.normalize();
                 f4 = 1.0F - (float)Math.pow(-vec31.y, 1.5D);
             }
 
@@ -71,7 +71,7 @@ public class AngelWingsModel<T extends LivingEntity> extends AgeableListModel<T>
         }
 
         this.leftWing.y = f2;
-        if (pEntity instanceof AbstractClientPlayer abstractclientplayer) {
+        if (pEntity instanceof AbstractClientPlayerEntity abstractclientplayer) {
             abstractclientplayer.elytraRotX += (f - abstractclientplayer.elytraRotX) * 0.1F;
             abstractclientplayer.elytraRotY += (f3 - abstractclientplayer.elytraRotY) * 0.1F;
             abstractclientplayer.elytraRotZ += (f1 - abstractclientplayer.elytraRotZ) * 0.1F;

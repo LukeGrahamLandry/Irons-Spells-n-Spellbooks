@@ -4,28 +4,28 @@ import io.redspace.ironsspellbooks.api.util.Utils;
 import io.redspace.ironsspellbooks.registries.EntityRegistry;
 import io.redspace.ironsspellbooks.registries.SoundRegistry;
 import io.redspace.ironsspellbooks.util.ModTags;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.Containers;
-import net.minecraft.world.SimpleContainer;
-import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.Direction;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraft.util.SoundEvents;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.inventory.InventoryHelper;
+import net.minecraft.inventory.Inventory;
+import net.minecraft.util.DamageSource;
 import net.minecraft.world.entity.*;
-import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
-import net.minecraft.world.entity.item.FallingBlockEntity;
+import net.minecraft.entity.ai.attributes.AttributeModifierMap;
+import net.minecraft.entity.item.FallingBlockEntity;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.item.ItemStack;
 import net.minecraft.world.level.GameRules;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
+import net.minecraft.world.World;
+import net.minecraft.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult;
+import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.phys.Vec3;
 import software.bernie.geckolib3.core.AnimationState;
 import software.bernie.geckolib3.core.IAnimatable;
@@ -40,6 +40,13 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
+import net.minecraft.entity.EntitySize;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.Pose;
+import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.util.HandSide;
+
 public class SpectralHammer extends LivingEntity implements IAnimatable {
 
     private final int ticksToLive = 30;
@@ -53,17 +60,17 @@ public class SpectralHammer extends LivingEntity implements IAnimatable {
     private boolean didAnimate = false;
     private int ticksAlive = 0;
     private boolean playSwingAnimation = true;
-    private BlockHitResult blockHitResult;
+    private BlockRayTraceResult blockHitResult;
     private float damageAmount;
     Set<BlockPos> missedBlocks = new HashSet<>();
 
-    public SpectralHammer(EntityType<? extends SpectralHammer> entityType, Level level) {
+    public SpectralHammer(EntityType<? extends SpectralHammer> entityType, World level) {
         super(entityType, level);
         this.setNoGravity(true);
         this.setInvulnerable(true);
     }
 
-    public SpectralHammer(Level levelIn, LivingEntity owner, BlockHitResult blockHitResult, int depth, int radius) {
+    public SpectralHammer(World levelIn, LivingEntity owner, BlockRayTraceResult blockHitResult, int depth, int radius) {
         this(EntityRegistry.SPECTRAL_HAMMER.get(), levelIn);
 
         this.blockHitResult = blockHitResult;
@@ -104,13 +111,13 @@ public class SpectralHammer extends LivingEntity implements IAnimatable {
 
         if (ticksAlive == doDamageTick - 2 && !didDamage) {
             var location = this.position();
-            level.playSound(null, location.x, location.y, location.z, SoundRegistry.FORCE_IMPACT.get(), SoundSource.NEUTRAL, 2f, random.nextIntBetweenInclusive(6, 8) * .1f);
-            level.playSound(null, location.x, location.y, location.z, SoundEvents.ZOMBIE_ATTACK_IRON_DOOR, SoundSource.NEUTRAL, 1f, random.nextIntBetweenInclusive(6, 8) * .1f);
+            level.playSound(null, location.x, location.y, location.z, SoundRegistry.FORCE_IMPACT.get(), SoundCategory.NEUTRAL, 2f, random.nextIntBetweenInclusive(6, 8) * .1f);
+            level.playSound(null, location.x, location.y, location.z, SoundEvents.ZOMBIE_ATTACK_IRON_DOOR, SoundCategory.NEUTRAL, 1f, random.nextIntBetweenInclusive(6, 8) * .1f);
 
         }
 
         if (ticksAlive >= doDamageTick && !didDamage) {
-            if (blockHitResult != null && blockHitResult.getType() != HitResult.Type.MISS) {
+            if (blockHitResult != null && blockHitResult.getType() != RayTraceResult.Type.MISS) {
                 var blockPos = blockHitResult.getBlockPos();
                 var blockState = level.getBlockState(blockPos);
 
@@ -123,7 +130,7 @@ public class SpectralHammer extends LivingEntity implements IAnimatable {
                         var random = Utils.random;
                         AtomicInteger count = new AtomicInteger();
                         int maxPossibleStacks = (this.radius * 2) * (1 + this.radius * 2) * (this.depth + 1);
-                        SimpleContainer drops = new SimpleContainer(maxPossibleStacks);
+                        Inventory drops = new Inventory(maxPossibleStacks);
                         blockCollector.blocksToRemove.forEach(pos -> {
                             var distance = blockCollector.origin.distManhattan(pos);
                             var missChance = random.nextFloat() * 40;
@@ -144,7 +151,7 @@ public class SpectralHammer extends LivingEntity implements IAnimatable {
                                 dropResources(blockstate, level, pos).forEach(drops::addItem);
                             }
                         });
-                        Containers.dropContents(level, this.blockPosition(), drops);
+                        InventoryHelper.dropContents(level, this.blockPosition(), drops);
                     }
                 }
             }
@@ -155,11 +162,11 @@ public class SpectralHammer extends LivingEntity implements IAnimatable {
         super.tick();
     }
 
-    public static List<ItemStack> dropResources(BlockState pState, Level pLevel, BlockPos pos) {
+    public static List<ItemStack> dropResources(BlockState pState, World pLevel, BlockPos pos) {
         List<ItemStack> drops = new ArrayList<>();
-        if (pLevel instanceof ServerLevel) {
-            drops = Block.getDrops(pState, (ServerLevel) pLevel, pos, null);
-            pState.spawnAfterBreak((ServerLevel) pLevel, pos, ItemStack.EMPTY, true);
+        if (pLevel instanceof ServerWorld) {
+            drops = Block.getDrops(pState, (ServerWorld) pLevel, pos, null);
+            pState.spawnAfterBreak((ServerWorld) pLevel, pos, ItemStack.EMPTY, true);
         }
         return drops;
     }
@@ -238,7 +245,7 @@ public class SpectralHammer extends LivingEntity implements IAnimatable {
             Set<BlockPos> blocksToRemove,
             Set<BlockPos> blocksChecked) {
 
-        public boolean isValidBlockToCollect(Level level, BlockPos bp) {
+        public boolean isValidBlockToCollect(World level, BlockPos bp) {
             return level.getBlockState(bp).is(ModTags.SPECTRAL_HAMMER_MINEABLE)
                     && bp.getX() >= minX
                     && bp.getX() <= maxX
@@ -259,7 +266,7 @@ public class SpectralHammer extends LivingEntity implements IAnimatable {
         return true;
     }
 
-    protected float getStandingEyeHeight(Pose pPose, EntityDimensions pDimensions) {
+    protected float getStandingEyeHeight(Pose pPose, EntitySize pDimensions) {
         return pDimensions.height * 0.6F;
     }
 
@@ -268,7 +275,7 @@ public class SpectralHammer extends LivingEntity implements IAnimatable {
         return true;
     }
 
-    public static AttributeSupplier.Builder prepareAttributes() {
+    public static AttributeModifierMap.MutableAttribute prepareAttributes() {
         return LivingEntity.createLivingAttributes();
     }
 
@@ -278,18 +285,18 @@ public class SpectralHammer extends LivingEntity implements IAnimatable {
     }
 
     @Override
-    public ItemStack getItemBySlot(EquipmentSlot pSlot) {
+    public ItemStack getItemBySlot(EquipmentSlotType pSlot) {
         return ItemStack.EMPTY;
     }
 
     @Override
-    public void setItemSlot(EquipmentSlot pSlot, ItemStack pStack) {
+    public void setItemSlot(EquipmentSlotType pSlot, ItemStack pStack) {
 
     }
 
     @Override
-    public HumanoidArm getMainArm() {
-        return HumanoidArm.LEFT;
+    public HandSide getMainArm() {
+        return HandSide.LEFT;
     }
 
     @SuppressWarnings("removal")

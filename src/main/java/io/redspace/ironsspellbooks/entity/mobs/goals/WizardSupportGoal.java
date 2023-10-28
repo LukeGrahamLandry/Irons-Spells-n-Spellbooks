@@ -6,10 +6,10 @@ import io.redspace.ironsspellbooks.entity.mobs.SupportMob;
 import io.redspace.ironsspellbooks.entity.mobs.abstract_spell_casting_mob.AbstractSpellCastingMob;
 import io.redspace.ironsspellbooks.api.spells.AbstractSpell;
 import io.redspace.ironsspellbooks.api.util.Utils;
-import net.minecraft.util.Mth;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.ai.goal.Goal;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -171,7 +171,7 @@ public class WizardSupportGoal<T extends AbstractSpellCastingMob & SupportMob> e
     }
 
     protected void doSpellAction() {
-        int spellLevel = (int) (getNextSpellType().getMaxLevel() * Mth.lerp(mob.getRandom().nextFloat(), minSpellQuality, maxSpellQuality));
+        int spellLevel = (int) (getNextSpellType().getMaxLevel() * MathHelper.lerp(mob.getRandom().nextFloat(), minSpellQuality, maxSpellQuality));
         spellLevel = Math.max(spellLevel, 1);
         var abstractSpell = getNextSpellType();
 
@@ -183,7 +183,7 @@ public class WizardSupportGoal<T extends AbstractSpellCastingMob & SupportMob> e
 
     protected AbstractSpell getNextSpellType() {
         float shouldBuff = 0;
-        if (!buffSpells.isEmpty() && target instanceof Mob mob && mob.isAggressive()) {
+        if (!buffSpells.isEmpty() && target instanceof MobEntity mob && mob.isAggressive()) {
             shouldBuff = target.getHealth() / target.getMaxHealth();
         }
         return getSpell(mob.getRandom().nextFloat() > shouldBuff ? healingSpells : buffSpells);

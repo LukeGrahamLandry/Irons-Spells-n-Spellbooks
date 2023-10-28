@@ -3,42 +3,44 @@ package io.redspace.ironsspellbooks.item;
 import io.redspace.ironsspellbooks.registries.ItemRegistry;
 import io.redspace.ironsspellbooks.util.SpellbookModCreativeTabs;
 import io.redspace.ironsspellbooks.util.ModTags;
-import net.minecraft.ChatFormatting;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.GlobalPos;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtUtils;
-import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.GlobalPos;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.NBTUtil;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraft.util.Hand;
+import net.minecraft.util.ActionResult;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.world.World;
 import org.checkerframework.checker.units.qual.C;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
+import net.minecraft.item.Item.Properties;
+
 public class WaywardCompass extends Item {
-    private static final Component description = Component.translatable("item.irons_spellbooks.wayward_compass_desc").withStyle(ChatFormatting.DARK_AQUA);
+    private static final ITextComponent description = ITextComponent.translatable("item.irons_spellbooks.wayward_compass_desc").withStyle(TextFormatting.DARK_AQUA);
     public WaywardCompass() {
         super(new Properties().tab(SpellbookModCreativeTabs.SPELL_EQUIPMENT_TAB));
     }
 
-    public static GlobalPos getCatacombsLocation(Entity entity, CompoundTag compoundTag) {
-        if (!(entity.level.dimension() == Level.OVERWORLD && compoundTag.contains("CatacombsPos")))
+    public static GlobalPos getCatacombsLocation(Entity entity, CompoundNBT compoundTag) {
+        if (!(entity.level.dimension() == World.OVERWORLD && compoundTag.contains("CatacombsPos")))
             return null;
 
-        return GlobalPos.of(entity.level.dimension(), NbtUtils.readBlockPos(compoundTag.getCompound("CatacombsPos")));
+        return GlobalPos.of(entity.level.dimension(), NBTUtil.readBlockPos(compoundTag.getCompound("CatacombsPos")));
     }
 
     @Override
-    public void inventoryTick(ItemStack itemStack, Level level, Entity pEntity, int pSlotId, boolean pIsSelected) {
+    public void inventoryTick(ItemStack itemStack, World level, Entity pEntity, int pSlotId, boolean pIsSelected) {
         if (!level.isClientSide) {
             var tag = itemStack.getOrCreateTag();
             if (!tag.contains("isInInventory")) {
@@ -48,27 +50,27 @@ public class WaywardCompass extends Item {
     }
 
     @Override
-    public void onCraftedBy(ItemStack pStack, Level pLevel, Player pPlayer) {
+    public void onCraftedBy(ItemStack pStack, World pLevel, PlayerEntity pPlayer) {
         findCatacombs(pStack, pLevel, pPlayer);
     }
 
-    private static void findCatacombs(ItemStack pStack, Level pLevel, Player pPlayer) {
-        if (pLevel instanceof ServerLevel serverlevel) {
+    private static void findCatacombs(ItemStack pStack, World pLevel, PlayerEntity pPlayer) {
+        if (pLevel instanceof ServerWorld serverlevel) {
             BlockPos blockpos = serverlevel.findNearestMapStructure(ModTags.WAYWARD_COMPASS_LOCATOR, pPlayer.blockPosition(), 100, false);
             if (blockpos != null) {
                 var tag = pStack.getOrCreateTag();
-                tag.put("CatacombsPos", NbtUtils.writeBlockPos(blockpos));
+                tag.put("CatacombsPos", NBTUtil.writeBlockPos(blockpos));
             }
         }
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level pLevel, Player pPlayer, InteractionHand pUsedHand) {
+    public ActionResult<ItemStack> use(World pLevel, PlayerEntity pPlayer, Hand pUsedHand) {
         ItemStack itemStack = pPlayer.getItemInHand(pUsedHand);
         if (missingWarning(itemStack)) {
             findCatacombs(itemStack, pLevel, pPlayer);
             pPlayer.getCooldowns().addCooldown(ItemRegistry.WAYWARD_COMPASS.get(), 200);
-            return InteractionResultHolder.sidedSuccess(itemStack, pLevel.isClientSide);
+            return ActionResult.sidedSuccess(itemStack, pLevel.isClientSide);
         }
         return super.use(pLevel, pPlayer, pUsedHand);
     }
@@ -78,11 +80,11 @@ public class WaywardCompass extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltipComponents, TooltipFlag pIsAdvanced) {
+    public void appendHoverText(ItemStack pStack, @Nullable World pLevel, List<ITextComponent> pTooltipComponents, ITooltipFlag pIsAdvanced) {
         super.appendHoverText(pStack, pLevel, pTooltipComponents, pIsAdvanced);
         pTooltipComponents.add(description);
         if (missingWarning(pStack)) {
-            pTooltipComponents.add(Component.translatable("item.irons_spellbooks.wayward_compass.error", Minecraft.getInstance().options.keyUse.getTranslatedKeyMessage()).withStyle(ChatFormatting.RED));
+            pTooltipComponents.add(ITextComponent.translatable("item.irons_spellbooks.wayward_compass.error", Minecraft.getInstance().options.keyUse.getTranslatedKeyMessage()).withStyle(TextFormatting.RED));
         }
     }
 }

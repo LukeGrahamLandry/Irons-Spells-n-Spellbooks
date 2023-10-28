@@ -8,8 +8,8 @@ import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import io.redspace.ironsspellbooks.IronsSpellbooks;
 import io.redspace.ironsspellbooks.api.registry.SpellRegistry;
-import net.minecraft.commands.SharedSuggestionProvider;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.command.ISuggestionProvider;
+import net.minecraft.util.ResourceLocation;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -54,7 +54,7 @@ public class SpellArgument implements ArgumentType<String> {
             }
         }).toList();
 
-        return SharedSuggestionProvider.suggest(registeredSpells, builder);
+        return ISuggestionProvider.suggest(registeredSpells, builder);
     }
 
     @Override

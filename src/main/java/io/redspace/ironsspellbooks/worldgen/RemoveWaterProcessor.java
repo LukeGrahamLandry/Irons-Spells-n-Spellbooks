@@ -2,20 +2,20 @@ package io.redspace.ironsspellbooks.worldgen;
 
 import com.mojang.serialization.Codec;
 import io.redspace.ironsspellbooks.registries.StructureProcessorRegistry;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.SectionPos;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.SectionPos;
 import net.minecraft.tags.FluidTags;
-import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.chunk.ChunkAccess;
-import net.minecraft.world.level.chunk.LevelChunkSection;
-import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
-import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessor;
-import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorType;
-import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
-import net.minecraft.world.level.material.FluidState;
+import net.minecraft.util.math.ChunkPos;
+import net.minecraft.world.IWorldReader;
+import net.minecraft.block.BlockState;
+import net.minecraft.state.properties.BlockStateProperties;
+import net.minecraft.world.chunk.IChunk;
+import net.minecraft.world.chunk.ChunkSection;
+import net.minecraft.world.gen.feature.template.PlacementSettings;
+import net.minecraft.world.gen.feature.template.StructureProcessor;
+import net.minecraft.world.gen.feature.template.IStructureProcessorType;
+import net.minecraft.world.gen.feature.template.Template;
+import net.minecraft.fluid.FluidState;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -31,15 +31,15 @@ public class RemoveWaterProcessor extends StructureProcessor {
 
     @Nullable
     @Override
-    public StructureTemplate.StructureBlockInfo process(@Nonnull LevelReader level, @Nonnull BlockPos jigsawPiecePos, @Nonnull BlockPos jigsawPieceBottomCenterPos, @Nonnull StructureTemplate.StructureBlockInfo blockInfoLocal, @Nonnull StructureTemplate.StructureBlockInfo blockInfoGlobal, @Nonnull StructurePlaceSettings settings, @Nullable StructureTemplate template) {
+    public Template.BlockInfo process(@Nonnull IWorldReader level, @Nonnull BlockPos jigsawPiecePos, @Nonnull BlockPos jigsawPieceBottomCenterPos, @Nonnull Template.BlockInfo blockInfoLocal, @Nonnull Template.BlockInfo blockInfoGlobal, @Nonnull PlacementSettings settings, @Nullable Template template) {
         if (blockInfoGlobal.state.hasProperty(BlockStateProperties.WATERLOGGED) && !blockInfoGlobal.state.getValue(BlockStateProperties.WATERLOGGED)) {
             ChunkPos chunkPos = new ChunkPos(blockInfoGlobal.pos);
-            ChunkAccess chunk = level.getChunk(chunkPos.x, chunkPos.z);
+            IChunk chunk = level.getChunk(chunkPos.x, chunkPos.z);
             int sectionIndex = chunk.getSectionIndex(blockInfoGlobal.pos.getY());
 
             // if section index is < 0 we are out of bounds
             if (sectionIndex >= 0) {
-                LevelChunkSection section = chunk.getSection(sectionIndex);
+                ChunkSection section = chunk.getSection(sectionIndex);
                 // if we are waterlogged, reset us to our original state
                 if (this.getFluidState(section, blockInfoGlobal.pos).is(FluidTags.WATER)) {
                     this.setBlock(section, blockInfoGlobal.pos, blockInfoGlobal.state);
@@ -50,17 +50,17 @@ public class RemoveWaterProcessor extends StructureProcessor {
         return blockInfoGlobal;
     }
 
-    private void setBlock(LevelChunkSection section, BlockPos pos, BlockState state) {
+    private void setBlock(ChunkSection section, BlockPos pos, BlockState state) {
         section.setBlockState(SectionPos.sectionRelative(pos.getX()), SectionPos.sectionRelative(pos.getY()), SectionPos.sectionRelative(pos.getZ()), state);
     }
 
-    private FluidState getFluidState(LevelChunkSection section, BlockPos pos) {
+    private FluidState getFluidState(ChunkSection section, BlockPos pos) {
         return section.getFluidState(SectionPos.sectionRelative(pos.getX()), SectionPos.sectionRelative(pos.getY()), SectionPos.sectionRelative(pos.getZ()));
     }
 
     @Nonnull
     @Override
-    protected StructureProcessorType<?> getType() {
+    protected IStructureProcessorType<?> getType() {
         return StructureProcessorRegistry.REMOVE_WATER.get();
     }
 }

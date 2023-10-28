@@ -1,6 +1,6 @@
 package io.redspace.ironsspellbooks.entity.armor;
 
-import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.inventory.EquipmentSlotType;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.processor.IBone;
 import software.bernie.geckolib3.geo.render.built.GeoBone;
@@ -42,7 +42,7 @@ public class GenericCustomArmorRenderer<T extends GeoArmorItem & IAnimatable> ex
     }
 
     @Override
-    public GeoArmorRenderer applySlot(EquipmentSlot slot) {
+    public GeoArmorRenderer applySlot(EquipmentSlotType slot) {
         //What is this for?
         this.getGeoModelProvider().getModel(this.getGeoModelProvider().getModelResource(this.currentArmorItem));
 

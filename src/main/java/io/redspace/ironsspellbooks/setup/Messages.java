@@ -7,9 +7,9 @@ import io.redspace.ironsspellbooks.gui.overlays.network.ServerboundSetSpellBookA
 import io.redspace.ironsspellbooks.gui.scroll_forge.network.ServerboundScrollForgeSelectSpell;
 import io.redspace.ironsspellbooks.network.*;
 import io.redspace.ironsspellbooks.network.spell.*;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.Entity;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.Entity;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.PacketDistributor;
@@ -210,7 +210,7 @@ public class Messages {
         INSTANCE.sendToServer(message);
     }
 
-    public static <MSG> void sendToPlayer(MSG message, ServerPlayer player) {
+    public static <MSG> void sendToPlayer(MSG message, ServerPlayerEntity player) {
         INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), message);
 
     }
@@ -225,7 +225,7 @@ public class Messages {
 
     public static <MSG> void sendToPlayersTrackingEntity(MSG message, Entity entity, boolean sendToSource) {
         INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> entity), message);
-        if (sendToSource && entity instanceof ServerPlayer serverPlayer)
+        if (sendToSource && entity instanceof ServerPlayerEntity serverPlayer)
             sendToPlayer(message, serverPlayer);
     }
 }

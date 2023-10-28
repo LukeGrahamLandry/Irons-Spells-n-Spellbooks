@@ -66,17 +66,17 @@ import io.redspace.ironsspellbooks.render.*;
 import io.redspace.ironsspellbooks.compat.tetra.TetraProxy;
 import io.redspace.ironsspellbooks.util.AbstractClientPlayerMixinHelper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.client.model.geom.LayerDefinitions;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.renderer.entity.*;
 import net.minecraft.client.renderer.item.CompassItemPropertyFunction;
-import net.minecraft.client.renderer.item.ItemProperties;
+import net.minecraft.item.ItemModelsProperties;
 import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.ModelEvent;
@@ -99,9 +99,9 @@ public class ClientSetup {
         //LayerDefinition basicHumanLayer = LayerDefinition.create(HumanoidModel.createMesh(CubeDeformation.NONE, 0.0F), 64, 64);
 
         //See LayerDefinitions.createRoots
-        LayerDefinition energyOverlayLayer = LayerDefinition.create(HumanoidModel.createMesh(new CubeDeformation(0.5F), 0.0F), 64, 64);
-        LayerDefinition outerLayer = LayerDefinition.create(HumanoidModel.createMesh(LayerDefinitions.OUTER_ARMOR_DEFORMATION, 0.0F), 64, 32);
-        LayerDefinition innerLayer = LayerDefinition.create(HumanoidModel.createMesh(LayerDefinitions.INNER_ARMOR_DEFORMATION, 0.0F), 64, 32);
+        LayerDefinition energyOverlayLayer = LayerDefinition.create(BipedModel.createMesh(new CubeDeformation(0.5F), 0.0F), 64, 64);
+        LayerDefinition outerLayer = LayerDefinition.create(BipedModel.createMesh(LayerDefinitions.OUTER_ARMOR_DEFORMATION, 0.0F), 64, 32);
+        LayerDefinition innerLayer = LayerDefinition.create(BipedModel.createMesh(LayerDefinitions.INNER_ARMOR_DEFORMATION, 0.0F), 64, 32);
 
         //event.registerLayerDefinition(PyromancerRenderer.PYROMANCER_MODEL_LAYER, PyromancerModel::createBodyLayer);
         //event.registerLayerDefinition(PyromancerRenderer.PYROMANCER_INNER_ARMOR, () -> innerLayer);
@@ -153,8 +153,8 @@ public class ClientSetup {
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     private static void addLayerToPlayerSkin(EntityRenderersEvent.AddLayers event, String skinName) {
-        EntityRenderer<? extends Player> render = event.getSkin(skinName);
-        if (render instanceof LivingEntityRenderer livingRenderer) {
+        EntityRenderer<? extends PlayerEntity> render = event.getSkin(skinName);
+        if (render instanceof LivingRenderer livingRenderer) {
             livingRenderer.addLayer(new AngelWingsLayer<>(livingRenderer));
             livingRenderer.addLayer(new EnergySwirlLayer.Vanilla(livingRenderer, EVASION_TEXTURE, SyncedSpellData.EVASION));
             livingRenderer.addLayer(new EnergySwirlLayer.Vanilla(livingRenderer, CHARGE_TEXTURE, SyncedSpellData.CHARGED));
@@ -165,7 +165,7 @@ public class ClientSetup {
 
         for (Map.Entry<EntityType<?>, EntityRenderer<?>> entry : Minecraft.getInstance().getEntityRenderDispatcher().renderers.entrySet()) {
             EntityRenderer<?> livingEntityRendererTest = entry.getValue();
-            if (livingEntityRendererTest instanceof LivingEntityRenderer) {
+            if (livingEntityRendererTest instanceof LivingRenderer) {
                 EntityType<?> entityType = entry.getKey();
                 //noinspection unchecked,rawtypes
                 var renderer = event.getRenderer((EntityType) entityType);
@@ -279,7 +279,7 @@ public class ClientSetup {
     public static void clientSetup(final FMLClientSetupEvent e) {
         //Item Properties
         e.enqueueWork(() -> {
-            ItemProperties.register(ItemRegistry.WAYWARD_COMPASS.get(), new ResourceLocation("angle"),
+            ItemModelsProperties.register(ItemRegistry.WAYWARD_COMPASS.get(), new ResourceLocation("angle"),
                     new CompassItemPropertyFunction((level, itemStack, entity) -> WaywardCompass.getCatacombsLocation(entity, itemStack.getOrCreateTag())));
 
             //ItemProperties.register(ItemRegistry.AFFINITY_RING.get(), new ResourceLocation("school"),

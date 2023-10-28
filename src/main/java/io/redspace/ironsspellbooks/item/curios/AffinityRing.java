@@ -4,19 +4,21 @@ import io.redspace.ironsspellbooks.api.item.curios.RingData;
 import io.redspace.ironsspellbooks.api.registry.SpellRegistry;
 import io.redspace.ironsspellbooks.render.AffinityRingRenderer;
 import io.redspace.ironsspellbooks.render.SpecialItemRenderer;
-import net.minecraft.ChatFormatting;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
+import net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.item.ItemStack;
+import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.world.World;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.function.Consumer;
+
+import net.minecraft.item.Item.Properties;
 
 public class AffinityRing extends SimpleDescriptiveCurio {
 
@@ -25,27 +27,27 @@ public class AffinityRing extends SimpleDescriptiveCurio {
     }
 
     @Override
-    public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> tooltip, TooltipFlag pIsAdvanced) {
+    public void appendHoverText(ItemStack pStack, @Nullable World pLevel, List<ITextComponent> tooltip, ITooltipFlag pIsAdvanced) {
         var spell = RingData.getRingData(pStack).getSpell();
         if (!spell.equals(SpellRegistry.none())) {
-            tooltip.add(Component.empty());
-            tooltip.add(Component.translatable("curios.modifiers.ring").withStyle(ChatFormatting.GOLD));
-            tooltip.add(Component.translatable("tooltip.irons_spellbooks.enhance_spell_level", spell.getDisplayName().withStyle(spell.getSchoolType().getDisplayName().getStyle())).withStyle(ChatFormatting.YELLOW));
+            tooltip.add(ITextComponent.empty());
+            tooltip.add(ITextComponent.translatable("curios.modifiers.ring").withStyle(TextFormatting.GOLD));
+            tooltip.add(ITextComponent.translatable("tooltip.irons_spellbooks.enhance_spell_level", spell.getDisplayName().withStyle(spell.getSchoolType().getDisplayName().getStyle())).withStyle(TextFormatting.YELLOW));
         } else {
-            tooltip.add(Component.translatable("tooltip.irons_spellbooks.empty_affinity_ring").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
+            tooltip.add(ITextComponent.translatable("tooltip.irons_spellbooks.empty_affinity_ring").withStyle(TextFormatting.GRAY, TextFormatting.ITALIC));
         }
     }
 
     @Override
-    public Component getName(ItemStack pStack) {
-        return Component.translatable(this.getDescriptionId(pStack), RingData.getRingData(pStack).getNameForItem());
+    public ITextComponent getName(ItemStack pStack) {
+        return ITextComponent.translatable(this.getDescriptionId(pStack), RingData.getRingData(pStack).getNameForItem());
     }
 
     @Override
     public void initializeClient(@NotNull Consumer<IClientItemExtensions> consumer) {
         consumer.accept(new IClientItemExtensions() {
             @Override
-            public BlockEntityWithoutLevelRenderer getCustomRenderer() {
+            public ItemStackTileEntityRenderer getCustomRenderer() {
                 return new AffinityRingRenderer(Minecraft.getInstance().getItemRenderer(),
                         Minecraft.getInstance().getEntityModels());
             }

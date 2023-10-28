@@ -2,12 +2,12 @@ package io.redspace.ironsspellbooks.registries;
 
 import com.google.common.base.Suppliers;
 import io.redspace.ironsspellbooks.IronsSpellbooks;
-import net.minecraft.core.Registry;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.data.worldgen.features.OreFeatures;
 import net.minecraft.world.level.levelgen.VerticalAnchor;
-import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
-import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.feature.configurations.OreConfiguration;
+import net.minecraft.world.gen.feature.ConfiguredFeature;
+import net.minecraft.world.gen.feature.Feature;
+import net.minecraft.world.gen.feature.OreFeatureConfig;
 import net.minecraft.world.level.levelgen.placement.*;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
@@ -29,12 +29,12 @@ public class FeatureRegistry {
         Arcane Debris
      */
     //What blocks the ore can generate in
-    public static final Supplier<List<OreConfiguration.TargetBlockState>> ARCANE_DEBRIS_ORE_TARGET = Suppliers.memoize(() -> List.of(
-            OreConfiguration.target(OreFeatures.DEEPSLATE_ORE_REPLACEABLES, BlockRegistry.ARCANE_DEBRIS.get().defaultBlockState())
+    public static final Supplier<List<OreFeatureConfig.TargetBlockState>> ARCANE_DEBRIS_ORE_TARGET = Suppliers.memoize(() -> List.of(
+            OreFeatureConfig.target(OreFeatures.DEEPSLATE_ORE_REPLACEABLES, BlockRegistry.ARCANE_DEBRIS.get().defaultBlockState())
     ));
     //Vein size/conditions (this ore cannot spawn exposed to air)
     public static final RegistryObject<ConfiguredFeature<?, ?>> ORE_ARCANE_DEBRIS = CONFIGURED_FEATURES.register("ore_arcane_debris",
-            () -> new ConfiguredFeature<>(Feature.SCATTERED_ORE, new OreConfiguration(ARCANE_DEBRIS_ORE_TARGET.get(), 3, 1.0f)));
+            () -> new ConfiguredFeature<>(Feature.SCATTERED_ORE, new OreFeatureConfig(ARCANE_DEBRIS_ORE_TARGET.get(), 3, 1.0f)));
 
     public static final RegistryObject<PlacedFeature> ORE_ARCANE_DEBRIS_FEATURE = PLACED_FEATURES.register("ore_arcane_debris_feature",
             () -> new PlacedFeature(ORE_ARCANE_DEBRIS.getHolder().get(),

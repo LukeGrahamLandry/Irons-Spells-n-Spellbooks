@@ -1,7 +1,7 @@
 package io.redspace.ironsspellbooks.capabilities.magic;
 
 import io.redspace.ironsspellbooks.api.spells.ICastDataSerializable;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.PacketBuffer;
 
 public class ImpulseCastData implements ICastDataSerializable {
     public float x;
@@ -20,7 +20,7 @@ public class ImpulseCastData implements ICastDataSerializable {
     }
 
     @Override
-    public void writeToStream(FriendlyByteBuf buffer) {
+    public void writeToStream(PacketBuffer buffer) {
         buffer.writeFloat(x);
         buffer.writeFloat(y);
         buffer.writeFloat(z);
@@ -28,7 +28,7 @@ public class ImpulseCastData implements ICastDataSerializable {
     }
 
     @Override
-    public void readFromStream(FriendlyByteBuf buffer) {
+    public void readFromStream(PacketBuffer buffer) {
         this.x = buffer.readFloat();
         this.y = buffer.readFloat();
         this.z = buffer.readFloat();

@@ -1,19 +1,19 @@
 package io.redspace.ironsspellbooks.entity.spells.devour_jaw;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Vector3f;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
+import net.minecraft.util.math.vector.Vector3f;
 import io.redspace.ironsspellbooks.IronsSpellbooks;
-import net.minecraft.client.model.EvokerFangsModel;
+import net.minecraft.client.renderer.entity.model.EvokerFangsModel;
 import net.minecraft.client.model.geom.ModelLayers;
-import net.minecraft.client.model.geom.ModelPart;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.model.ModelRenderer;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
 
 public class DevourJawRenderer extends EntityRenderer<DevourJaw> {
 
@@ -24,7 +24,7 @@ public class DevourJawRenderer extends EntityRenderer<DevourJaw> {
         this.model = new DevourJawModel(pContext.bakeLayer(ModelLayers.EVOKER_FANGS));
     }
 
-    public void render(DevourJaw entity, float yaw, float partialTicks, PoseStack poseStack, MultiBufferSource multiBufferSource, int light) {
+    public void render(DevourJaw entity, float yaw, float partialTicks, MatrixStack poseStack, IRenderTypeBuffer multiBufferSource, int light) {
         if (entity.tickCount < entity.waitTime)
             return;
         float f = entity.tickCount + partialTicks;
@@ -33,7 +33,7 @@ public class DevourJawRenderer extends EntityRenderer<DevourJaw> {
         poseStack.scale(-1, -1, 1);
         poseStack.scale(1.85f, 1.85f, 1.85f);
         this.model.setupAnim(entity, f, 0.0F, 0.0F, entity.getYRot(), entity.getXRot());
-        VertexConsumer vertexconsumer = multiBufferSource.getBuffer(RenderType.entityCutoutNoCull(getTextureLocation(entity)));
+        IVertexBuilder vertexconsumer = multiBufferSource.getBuffer(RenderType.entityCutoutNoCull(getTextureLocation(entity)));
         this.model.renderToBuffer(poseStack, vertexconsumer, light, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
         poseStack.popPose();
         super.render(entity, yaw, partialTicks, poseStack, multiBufferSource, light);
@@ -45,12 +45,12 @@ public class DevourJawRenderer extends EntityRenderer<DevourJaw> {
     }
 
     static class DevourJawModel extends EvokerFangsModel<DevourJaw> {
-        private final ModelPart root;
-        private final ModelPart base;
-        private final ModelPart upperJaw;
-        private final ModelPart lowerJaw;
+        private final ModelRenderer root;
+        private final ModelRenderer base;
+        private final ModelRenderer upperJaw;
+        private final ModelRenderer lowerJaw;
 
-        public DevourJawModel(ModelPart pRoot) {
+        public DevourJawModel(ModelRenderer pRoot) {
             super(pRoot);
             this.root = pRoot;
             this.base = pRoot.getChild("base");
@@ -63,13 +63,13 @@ public class DevourJawRenderer extends EntityRenderer<DevourJaw> {
             time -= entity.waitTime;
             float interval = entity.warmupTime - entity.waitTime;
 
-            float f = Mth.clamp(time / interval, 0, 1);
+            float f = MathHelper.clamp(time / interval, 0, 1);
             f = 1 - f * f * f * f;
             this.upperJaw.zRot = (float) Math.PI - f * 0.35F * (float) Math.PI;
             this.lowerJaw.zRot = (float) Math.PI + f * 0.35F * (float) Math.PI;
 
             float f2 = (time / interval);
-            f2 = .5f * Mth.cos(.5f * Mth.PI * (f2 - 1)) + .5f;
+            f2 = .5f * MathHelper.cos(.5f * MathHelper.PI * (f2 - 1)) + .5f;
             f2 *= f2;
             this.upperJaw.y = -18F * f2 + 16f;
             this.lowerJaw.y = this.upperJaw.y;

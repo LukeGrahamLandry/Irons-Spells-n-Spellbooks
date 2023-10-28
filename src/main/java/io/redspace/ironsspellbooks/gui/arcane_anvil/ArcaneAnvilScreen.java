@@ -1,25 +1,25 @@
 package io.redspace.ironsspellbooks.gui.arcane_anvil;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import io.redspace.ironsspellbooks.IronsSpellbooks;
-import net.minecraft.client.gui.screens.inventory.ItemCombinerScreen;
+import net.minecraft.client.gui.screen.inventory.AbstractRepairScreen;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.entity.player.PlayerInventory;
 
-public class ArcaneAnvilScreen extends ItemCombinerScreen<ArcaneAnvilMenu> {
+public class ArcaneAnvilScreen extends AbstractRepairScreen<ArcaneAnvilMenu> {
     private static final ResourceLocation ANVIL_LOCATION = new ResourceLocation(IronsSpellbooks.MODID, "textures/gui/arcane_anvil.png");
 
-    public ArcaneAnvilScreen(ArcaneAnvilMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
+    public ArcaneAnvilScreen(ArcaneAnvilMenu pMenu, PlayerInventory pPlayerInventory, ITextComponent pTitle) {
         super(pMenu, pPlayerInventory, pTitle, ANVIL_LOCATION);
         this.titleLabelX = 48;
         this.titleLabelY = 24;
     }
 
     @Override
-    protected void renderBg(PoseStack pPoseStack, float pPartialTick, int pX, int pY) {
+    protected void renderBg(MatrixStack pPoseStack, float pPartialTick, int pX, int pY) {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, ANVIL_LOCATION);

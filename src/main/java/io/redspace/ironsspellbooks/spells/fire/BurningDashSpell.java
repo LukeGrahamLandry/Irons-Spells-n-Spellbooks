@@ -12,16 +12,16 @@ import io.redspace.ironsspellbooks.entity.mobs.abstract_spell_casting_mob.Abstra
 import io.redspace.ironsspellbooks.player.SpinAttackType;
 import io.redspace.ironsspellbooks.util.ParticleHelper;
 import io.redspace.ironsspellbooks.api.util.Utils;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.DamageSource;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.World;
+import net.minecraft.util.math.vector.Vector3d;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -33,8 +33,8 @@ public class BurningDashSpell extends AbstractSpell {
     private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "burning_dash");
 
     @Override
-    public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(Component.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(spellLevel, caster), 1)));
+    public List<IFormattableTextComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
+        return List.of(ITextComponent.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(spellLevel, caster), 1)));
     }
 
     private final DefaultConfig defaultConfig = new DefaultConfig()
@@ -68,7 +68,7 @@ public class BurningDashSpell extends AbstractSpell {
     }
 
     @Override
-    public void onClientCast(Level level, int spellLevel, LivingEntity entity, ICastData castData) {
+    public void onClientCast(World level, int spellLevel, LivingEntity entity, ICastData castData) {
         if (castData instanceof ImpulseCastData bdcd) {
             entity.hasImpulse = bdcd.hasImpulse;
             entity.setDeltaMovement(entity.getDeltaMovement().add(bdcd.x, bdcd.y, bdcd.z));
@@ -93,12 +93,12 @@ public class BurningDashSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level world, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
+    public void onCast(World world, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
         entity.hasImpulse = true;
         float multiplier = (15 + getSpellPower(spellLevel, entity)) / 12f;
 
         //Direction for Mobs to cast in
-        Vec3 forward = entity.getLookAngle();
+        Vector3d forward = entity.getLookAngle();
         if (playerMagicData.getAdditionalCastData() instanceof BurningDashDirectionOverrideCastData) {
             if (Utils.random.nextBoolean())
                 forward = forward.yRot(90);
@@ -139,7 +139,7 @@ public class BurningDashSpell extends AbstractSpell {
     }
 
     private void startSpinAttack(LivingEntity entity, int durationInTicks) {
-        if (entity instanceof Player player)
+        if (entity instanceof PlayerEntity player)
             player.startAutoSpinAttack(durationInTicks);
         else if (entity instanceof AbstractSpellCastingMob mob)
             mob.startAutoSpinAttack(durationInTicks);

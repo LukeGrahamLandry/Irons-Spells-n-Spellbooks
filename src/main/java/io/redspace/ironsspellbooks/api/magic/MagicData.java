@@ -10,11 +10,11 @@ import io.redspace.ironsspellbooks.capabilities.magic.PlayerMagicProvider;
 import io.redspace.ironsspellbooks.capabilities.magic.SyncedSpellData;
 import io.redspace.ironsspellbooks.capabilities.spell.SpellData;
 import net.minecraft.client.Minecraft;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,18 +30,18 @@ public class MagicData {
         this(false);
     }
 
-    public MagicData(ServerPlayer serverPlayer) {
+    public MagicData(ServerPlayerEntity serverPlayer) {
         this(false);
         this.serverPlayer = serverPlayer;
     }
 
-    public void setServerPlayer(ServerPlayer serverPlayer) {
+    public void setServerPlayer(ServerPlayerEntity serverPlayer) {
         if (this.serverPlayer == null) {
             this.serverPlayer = serverPlayer;
         }
     }
 
-    private ServerPlayer serverPlayer = null;
+    private ServerPlayerEntity serverPlayer = null;
     public static final String MANA = "mana";
     public static final String COOLDOWNS = "cooldowns";
 
@@ -207,7 +207,7 @@ public class MagicData {
     public static MagicData getPlayerMagicData(LivingEntity livingEntity) {
         if (livingEntity instanceof IMagicEntity magicEntity) {
             return magicEntity.getMagicData();
-        } else if (livingEntity instanceof ServerPlayer serverPlayer) {
+        } else if (livingEntity instanceof ServerPlayerEntity serverPlayer) {
 
             var capContainer = serverPlayer.getCapability(PlayerMagicProvider.PLAYER_MAGIC);
             if (capContainer.isPresent()) {
@@ -227,11 +227,11 @@ public class MagicData {
 
     }
 
-    public void saveNBTData(CompoundTag compound) {
+    public void saveNBTData(CompoundNBT compound) {
         compound.putInt(MANA, (int) mana);
 
         if (playerCooldowns.hasCooldownsActive()) {
-            ListTag listTag = new ListTag();
+            ListNBT listTag = new ListNBT();
             playerCooldowns.saveNBTData(listTag);
             if (!listTag.isEmpty()) {
                 compound.put(COOLDOWNS, listTag);
@@ -241,10 +241,10 @@ public class MagicData {
         getSyncedData().saveNBTData(compound);
     }
 
-    public void loadNBTData(CompoundTag compound) {
+    public void loadNBTData(CompoundNBT compound) {
         mana = compound.getInt(MANA);
 
-        ListTag listTag = (ListTag) compound.get(COOLDOWNS);
+        ListNBT listTag = (ListNBT) compound.get(COOLDOWNS);
         if (listTag != null && !listTag.isEmpty()) {
             playerCooldowns.loadNBTData(listTag);
         }

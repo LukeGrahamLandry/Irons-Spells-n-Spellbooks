@@ -14,17 +14,17 @@ import io.redspace.ironsspellbooks.entity.mobs.abstract_spell_casting_mob.Abstra
 import io.redspace.ironsspellbooks.registries.MobEffectRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.world.SimpleMenuProvider;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.inventory.container.SimpleNamedContainerProvider;
 import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.ChestMenu;
-import net.minecraft.world.inventory.PlayerEnderChestContainer;
-import net.minecraft.world.level.Level;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.container.ChestContainer;
+import net.minecraft.inventory.EnderChestInventory;
+import net.minecraft.world.World;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -77,14 +77,14 @@ public class SummonEnderChestSpell extends AbstractSpell {
         return Optional.empty();
     }
 
-    private static final Component CONTAINER_TITLE = Component.translatable("container.enderchest");
+    private static final ITextComponent CONTAINER_TITLE = ITextComponent.translatable("container.enderchest");
 
     @Override
-    public void onCast(Level world, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
-        if (entity instanceof Player player) {
-            PlayerEnderChestContainer playerenderchestcontainer = player.getEnderChestInventory();
-            player.openMenu(new SimpleMenuProvider((p_53124_, p_53125_, p_53126_) -> {
-                return ChestMenu.threeRows(p_53124_, p_53125_, playerenderchestcontainer);
+    public void onCast(World world, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
+        if (entity instanceof PlayerEntity player) {
+            EnderChestInventory playerenderchestcontainer = player.getEnderChestInventory();
+            player.openMenu(new SimpleNamedContainerProvider((p_53124_, p_53125_, p_53126_) -> {
+                return ChestContainer.threeRows(p_53124_, p_53125_, playerenderchestcontainer);
             }, CONTAINER_TITLE));
         }
         super.onCast(world, spellLevel, entity, playerMagicData);

@@ -7,24 +7,24 @@ import io.redspace.ironsspellbooks.entity.spells.AbstractConeProjectile;
 import io.redspace.ironsspellbooks.registries.EntityRegistry;
 import io.redspace.ironsspellbooks.api.spells.SchoolType;
 import io.redspace.ironsspellbooks.util.ParticleHelper;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.world.World;
+import net.minecraft.util.math.EntityRayTraceResult;
+import net.minecraft.util.math.vector.Vector3d;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 public class ElectrocuteProjectile extends AbstractConeProjectile {
-    private List<Vec3> beamVectors;
+    private List<Vector3d> beamVectors;
 
-    public ElectrocuteProjectile(EntityType<? extends AbstractConeProjectile> entityType, Level level) {
+    public ElectrocuteProjectile(EntityType<? extends AbstractConeProjectile> entityType, World level) {
         super(entityType, level);
     }
 
-    public ElectrocuteProjectile(Level level, LivingEntity entity) {
+    public ElectrocuteProjectile(World level, LivingEntity entity) {
         super(EntityRegistry.ELECTROCUTE_PROJECTILE.get(), level, entity);
     }
 
@@ -42,10 +42,10 @@ public class ElectrocuteProjectile extends AbstractConeProjectile {
         //irons_spellbooks.LOGGER.debug("generatingLightningBeams");
         Random random = new Random();
         beamVectors = new ArrayList<>();
-        Vec3 coreStart = new Vec3(0, 0, 0);
+        Vector3d coreStart = new Vector3d(0, 0, 0);
         int coreLength = random.nextInt(3) + 7;
         for (int core = 0; core < coreLength; core++) {
-            Vec3 coreEnd = coreStart.add(0, 0, 1).add(randomVector(.3f).multiply(2.5, 1, 2.5));
+            Vector3d coreEnd = coreStart.add(0, 0, 1).add(randomVector(.3f).multiply(2.5, 1, 2.5));
             beamVectors.add(coreStart);
             beamVectors.add(coreEnd);
             coreStart = coreEnd;
@@ -55,15 +55,15 @@ public class ElectrocuteProjectile extends AbstractConeProjectile {
         }
     }
 
-    public static List<Vec3> generateBranch(Vec3 origin, int maxLength, float splitChance, int recursionCount) {
-        List<Vec3> branchSegements = new ArrayList<>();
+    public static List<Vector3d> generateBranch(Vector3d origin, int maxLength, float splitChance, int recursionCount) {
+        List<Vector3d> branchSegements = new ArrayList<>();
         Random random = new Random();
         int branches = random.nextInt(maxLength + 1);
-        Vec3 branchStart = origin;
+        Vector3d branchStart = origin;
         int dir = random.nextBoolean() ? 1 : -1;
         float branchLength = .75f / (recursionCount + 1);
         for (int i = 0; i < branches; i++) {
-            Vec3 branchEnd = branchStart.add(dir * branchLength, 0, branchLength).add(randomVector(.3f));
+            Vector3d branchEnd = branchStart.add(dir * branchLength, 0, branchLength).add(randomVector(.3f));
             branchSegements.add(branchStart);
             branchSegements.add(branchEnd);
             if (random.nextFloat() <= splitChance)
@@ -77,14 +77,14 @@ public class ElectrocuteProjectile extends AbstractConeProjectile {
         return age;
     }
 
-    public static Vec3 randomVector(float radius) {
+    public static Vector3d randomVector(float radius) {
         double x = Math.random() * 2 * radius - radius;
         double y = Math.random() * 2 * radius - radius;
         double z = Math.random() * 2 * radius - radius;
-        return new Vec3(x, y, z);
+        return new Vector3d(x, y, z);
     }
 
-    public List<Vec3> getBeamCache() {
+    public List<Vector3d> getBeamCache() {
         if (beamVectors == null)
             generateLightningBeams();
         return beamVectors;
@@ -118,7 +118,7 @@ public class ElectrocuteProjectile extends AbstractConeProjectile {
     }
 
     @Override
-    protected void onHitEntity(EntityHitResult entityHitResult) {
+    protected void onHitEntity(EntityRayTraceResult entityHitResult) {
         var entity = entityHitResult.getEntity();
         DamageSources.applyDamage(entity, damage, SpellRegistry.ELECTROCUTE_SPELL.get().getDamageSource(this, getOwner()), SpellRegistry.ELECTROCUTE_SPELL.get().getSchoolType());
 

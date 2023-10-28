@@ -10,29 +10,29 @@ import io.redspace.ironsspellbooks.item.InkItem;
 import io.redspace.ironsspellbooks.registries.ItemRegistry;
 import io.redspace.ironsspellbooks.registries.MenuRegistry;
 import io.redspace.ironsspellbooks.util.ModTags;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ContainerLevelAccess;
-import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.SoundEvents;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.util.IWorldPosCallable;
+import net.minecraft.inventory.container.Slot;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.world.World;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
 import static io.redspace.ironsspellbooks.registries.BlockRegistry.SCROLL_FORGE_BLOCK;
 
-public class ScrollForgeMenu extends AbstractContainerMenu {
+public class ScrollForgeMenu extends Container {
     public final ScrollForgeTile blockEntity;
-    private final Level level;
+    private final World level;
 
-    public ScrollForgeMenu(int containerId, Inventory inv, FriendlyByteBuf extraData) {
+    public ScrollForgeMenu(int containerId, PlayerInventory inv, PacketBuffer extraData) {
         this(containerId, inv, inv.player.level.getBlockEntity(extraData.readBlockPos()));
     }
 
@@ -45,7 +45,7 @@ public class ScrollForgeMenu extends AbstractContainerMenu {
 
     //private List<SpellCardInfo> spellCards;
 
-    public ScrollForgeMenu(int containerId, Inventory inv, BlockEntity entity) {
+    public ScrollForgeMenu(int containerId, PlayerInventory inv, TileEntity entity) {
         //exists on server and render
         super(MenuRegistry.SCROLL_FORGE_MENU.get(), containerId);
         checkContainerSize(inv, 4);
@@ -83,11 +83,11 @@ public class ScrollForgeMenu extends AbstractContainerMenu {
             }
 
             @Override
-            public void onTake(Player player, ItemStack stack) {
+            public void onTake(PlayerEntity player, ItemStack stack) {
                 inkSlot.remove(1);
                 blankScrollSlot.remove(1);
                 focusSlot.remove(1);
-                level.playSound(null, blockEntity.getBlockPos(), SoundEvents.UI_CARTOGRAPHY_TABLE_TAKE_RESULT, SoundSource.BLOCKS, .8f, 1.1f);
+                level.playSound(null, blockEntity.getBlockPos(), SoundEvents.UI_CARTOGRAPHY_TABLE_TAKE_RESULT, SoundCategory.BLOCKS, .8f, 1.1f);
                 super.onTake(player, stack);
             }
         };
@@ -171,7 +171,7 @@ public class ScrollForgeMenu extends AbstractContainerMenu {
     private static final int TE_INVENTORY_SLOT_COUNT = 4;  // must be the number of slots you have!
 
     @Override
-    public ItemStack quickMoveStack(Player playerIn, int index) {
+    public ItemStack quickMoveStack(PlayerEntity playerIn, int index) {
         Slot sourceSlot = slots.get(index);
         if (sourceSlot == null || !sourceSlot.hasItem()) return ItemStack.EMPTY;  //EMPTY_ITEM
         ItemStack sourceStack = sourceSlot.getItem();
@@ -208,12 +208,12 @@ public class ScrollForgeMenu extends AbstractContainerMenu {
     }
 
     @Override
-    public boolean stillValid(Player pPlayer) {
-        return stillValid(ContainerLevelAccess.create(level, blockEntity.getBlockPos()),
+    public boolean stillValid(PlayerEntity pPlayer) {
+        return stillValid(IWorldPosCallable.create(level, blockEntity.getBlockPos()),
                 pPlayer, SCROLL_FORGE_BLOCK.get());
     }
 
-    private void addPlayerInventory(Inventory playerInventory) {
+    private void addPlayerInventory(PlayerInventory playerInventory) {
         for (int i = 0; i < 3; ++i) {
             for (int l = 0; l < 9; ++l) {
                 this.addSlot(new Slot(playerInventory, l + i * 9 + 9, 8 + l * 18 + 21, 84 + i * 18));
@@ -221,7 +221,7 @@ public class ScrollForgeMenu extends AbstractContainerMenu {
         }
     }
 
-    private void addPlayerHotbar(Inventory playerInventory) {
+    private void addPlayerHotbar(PlayerInventory playerInventory) {
         for (int i = 0; i < 9; ++i) {
             this.addSlot(new Slot(playerInventory, i, 8 + i * 18 + 21, 142));
         }

@@ -3,8 +3,8 @@ package io.redspace.ironsspellbooks.network.spell;
 import io.redspace.ironsspellbooks.api.spells.AbstractSpell;
 import io.redspace.ironsspellbooks.capabilities.magic.ClientSpellTargetingData;
 import io.redspace.ironsspellbooks.player.ClientMagicData;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.entity.LivingEntity;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.UUID;
@@ -22,13 +22,13 @@ public class ClientboundSyncTargetingData {
         spellId = spell.getSpellId();
     }
 
-    public ClientboundSyncTargetingData(FriendlyByteBuf buf) {
+    public ClientboundSyncTargetingData(PacketBuffer buf) {
         //targetUuid = buf.readUUID();
         targetUUID = buf.readUUID();
         spellId = buf.readUtf();
     }
 
-    public void toBytes(FriendlyByteBuf buf) {
+    public void toBytes(PacketBuffer buf) {
         buf.writeUUID(targetUUID);
         buf.writeUtf(spellId);
     }

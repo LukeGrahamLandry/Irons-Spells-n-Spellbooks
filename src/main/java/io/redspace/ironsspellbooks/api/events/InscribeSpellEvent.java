@@ -2,7 +2,7 @@ package io.redspace.ironsspellbooks.api.events;
 
 
 import io.redspace.ironsspellbooks.capabilities.spell.SpellData;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.Cancelable;
@@ -19,7 +19,7 @@ import net.minecraftforge.eventbus.api.Cancelable;
  **/
 public class InscribeSpellEvent extends PlayerEvent {
     private final SpellData spellData;
-    public InscribeSpellEvent(Player player, SpellData spellData)
+    public InscribeSpellEvent(PlayerEntity player, SpellData spellData)
     {
         super(player);
         this.spellData = spellData;

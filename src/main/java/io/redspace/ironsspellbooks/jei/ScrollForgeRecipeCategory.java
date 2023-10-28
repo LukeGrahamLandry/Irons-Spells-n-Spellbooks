@@ -10,9 +10,9 @@ import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
-import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.item.ItemStack;
 
 public class ScrollForgeRecipeCategory implements IRecipeCategory<ScrollForgeRecipe> {
     public static final RecipeType<ScrollForgeRecipe> SCROLL_FORGE_RECIPE_RECIPE_TYPE = RecipeType.create(IronsSpellbooks.MODID, "scroll_forge", ScrollForgeRecipe.class);
@@ -37,7 +37,7 @@ public class ScrollForgeRecipeCategory implements IRecipeCategory<ScrollForgeRec
     }
 
     @Override
-    public Component getTitle() {
+    public ITextComponent getTitle() {
         return BlockRegistry.SCROLL_FORGE_BLOCK.get().getName();
     }
 

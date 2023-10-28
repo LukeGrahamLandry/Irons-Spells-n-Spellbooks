@@ -1,13 +1,13 @@
 package io.redspace.ironsspellbooks.entity.mobs.goals;
 
 import io.redspace.ironsspellbooks.IronsSpellbooks;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.GlobalPos;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.PathfinderMob;
-import net.minecraft.world.entity.ai.village.poi.PoiManager;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.GlobalPos;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraft.entity.CreatureEntity;
+import net.minecraft.village.PointOfInterestManager;
 import net.minecraft.world.entity.ai.village.poi.PoiTypes;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.util.math.vector.Vector3d;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
@@ -18,16 +18,16 @@ public class RoamVillageGoal extends PatrolNearLocationGoal {
     GlobalPos villagePoi;
     int searchCooldown;
 
-    public RoamVillageGoal(PathfinderMob pMob, float radius, double pSpeedModifier) {
+    public RoamVillageGoal(CreatureEntity pMob, float radius, double pSpeedModifier) {
         super(pMob, radius, pSpeedModifier);
     }
 
     @Override
-    protected @Nullable Vec3 getPosition() {
+    protected @Nullable Vector3d getPosition() {
         if (villagePoi != null) {
             IronsSpellbooks.LOGGER.debug("RoamVillageGoal: finding position ({})", villagePoi.pos());
 
-            return Vec3.atBottomCenterOf(villagePoi.pos());
+            return Vector3d.atBottomCenterOf(villagePoi.pos());
         }
         IronsSpellbooks.LOGGER.debug("RoamVillageGoal: village poi null. going to: {}", super.getPosition());
 
@@ -55,11 +55,11 @@ public class RoamVillageGoal extends PatrolNearLocationGoal {
     }
 
     protected void findVillagePoi() {
-        if (mob.level instanceof ServerLevel serverLevel) {
+        if (mob.level instanceof ServerWorld serverLevel) {
 //            MinecraftServer minecraftserver = serverLevel.getServer();
 //            ServerLevel serverlevel = minecraftserver.getLevel(serverLevel.dimension());
             Optional<BlockPos> optional1 = serverLevel.getPoiManager().find((poiTypeHolder) -> poiTypeHolder.is(PoiTypes.MEETING),
-                    (x) -> true, mob.blockPosition(), 100, PoiManager.Occupancy.ANY);
+                    (x) -> true, mob.blockPosition(), 100, PointOfInterestManager.Status.ANY);
             optional1.ifPresent((blockPos -> this.villagePoi = GlobalPos.of(serverLevel.dimension(), blockPos)));
 
         }

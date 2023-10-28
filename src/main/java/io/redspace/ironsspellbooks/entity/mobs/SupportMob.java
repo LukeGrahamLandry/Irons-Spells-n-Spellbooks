@@ -1,6 +1,6 @@
 package io.redspace.ironsspellbooks.entity.mobs;
 
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.entity.LivingEntity;
 
 import javax.annotation.Nullable;
 

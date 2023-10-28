@@ -3,23 +3,23 @@ package io.redspace.ironsspellbooks.block.scroll_forge;
 import io.redspace.ironsspellbooks.api.registry.SpellRegistry;
 import io.redspace.ironsspellbooks.gui.scroll_forge.ScrollForgeMenu;
 import io.redspace.ironsspellbooks.registries.BlockRegistry;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.Connection;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.world.Containers;
-import net.minecraft.world.MenuProvider;
-import net.minecraft.world.SimpleContainer;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.Direction;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
+import net.minecraft.inventory.InventoryHelper;
+import net.minecraft.inventory.container.INamedContainerProvider;
+import net.minecraft.inventory.Inventory;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.item.ItemStack;
+import net.minecraft.block.Block;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.block.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
@@ -29,7 +29,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
 
-public class ScrollForgeTile extends BlockEntity implements MenuProvider {
+public class ScrollForgeTile extends TileEntity implements INamedContainerProvider {
     private ScrollForgeMenu menu;
 
     private final ItemStackHandler itemHandler = new ItemStackHandler(4) {
@@ -62,13 +62,13 @@ public class ScrollForgeTile extends BlockEntity implements MenuProvider {
     }
 
     @Override
-    public MutableComponent getDisplayName() {
-        return Component.translatable("ui.irons_spellbooks.scroll_forge_title");
+    public IFormattableTextComponent getDisplayName() {
+        return ITextComponent.translatable("ui.irons_spellbooks.scroll_forge_title");
     }
 
     @Nullable
     @Override
-    public AbstractContainerMenu createMenu(int containerId, Inventory inventory, Player player) {
+    public Container createMenu(int containerId, PlayerInventory inventory, PlayerEntity player) {
         menu = new ScrollForgeMenu(containerId, inventory, this);
         return menu;
     }
@@ -87,17 +87,17 @@ public class ScrollForgeTile extends BlockEntity implements MenuProvider {
 
 
     public void drops() {
-        SimpleContainer simpleContainer
-                = new SimpleContainer(itemHandler.getSlots());
+        Inventory simpleContainer
+                = new Inventory(itemHandler.getSlots());
         for (int i = 0; i < itemHandler.getSlots() - 1; i++) {
             simpleContainer.setItem(i, itemHandler.getStackInSlot(i));
         }
 
-        Containers.dropContents(this.level, this.worldPosition, simpleContainer);
+        InventoryHelper.dropContents(this.level, this.worldPosition, simpleContainer);
     }
 
     @Override
-    public void load(CompoundTag nbt) {
+    public void load(CompoundNBT nbt) {
         //irons_spellbooks.LOGGER.debug("ScrollForgeTile.loadingFromNBT: {}", nbt);
         super.load(nbt);
         if (nbt.contains("inventory")) {
@@ -118,35 +118,35 @@ public class ScrollForgeTile extends BlockEntity implements MenuProvider {
     }
 
     @Override
-    protected void saveAdditional(@Nonnull CompoundTag tag) {
+    protected void saveAdditional(@Nonnull CompoundNBT tag) {
         //irons_spellbooks.LOGGER.debug("saveAdditional tag:{}", tag);
         tag.put("inventory", itemHandler.serializeNBT());
     }
 
     @Override
-    public CompoundTag getUpdateTag() {
-        CompoundTag tag = new CompoundTag();
+    public CompoundNBT getUpdateTag() {
+        CompoundNBT tag = new CompoundNBT();
         tag.put("inventory", itemHandler.serializeNBT());
         //irons_spellbooks.LOGGER.debug("getUpdateTag tag:{}", tag);
         return tag;
     }
 
     @Override
-    public ClientboundBlockEntityDataPacket getUpdatePacket() {
-        var packet = ClientboundBlockEntityDataPacket.create(this);
+    public SUpdateTileEntityPacket getUpdatePacket() {
+        var packet = SUpdateTileEntityPacket.create(this);
         //irons_spellbooks.LOGGER.debug("getUpdatePacket: packet.getTag:{}", packet.getTag());
         return packet;
     }
 
     @Override
-    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
+    public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
         //irons_spellbooks.LOGGER.debug("onDataPacket: pkt.getTag:{}", pkt.getTag());
         handleUpdateTag(pkt.getTag());
         level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
     }
 
     @Override
-    public void handleUpdateTag(CompoundTag tag) {
+    public void handleUpdateTag(CompoundNBT tag) {
         //irons_spellbooks.LOGGER.debug("handleUpdateTag: tag:{}", tag);
         if (tag != null) {
             load(tag);

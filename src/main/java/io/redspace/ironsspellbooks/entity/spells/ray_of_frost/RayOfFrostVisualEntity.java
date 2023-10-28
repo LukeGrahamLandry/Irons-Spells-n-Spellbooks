@@ -2,26 +2,26 @@ package io.redspace.ironsspellbooks.entity.spells.ray_of_frost;
 
 import io.redspace.ironsspellbooks.api.util.Utils;
 import io.redspace.ironsspellbooks.registries.EntityRegistry;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.IPacket;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.world.World;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.entity.IEntityAdditionalSpawnData;
 import net.minecraftforge.network.NetworkHooks;
 
 public class RayOfFrostVisualEntity extends Entity implements IEntityAdditionalSpawnData {
     public static final int lifetime = 15;
-    public RayOfFrostVisualEntity(EntityType<?> pEntityType, Level pLevel) {
+    public RayOfFrostVisualEntity(EntityType<?> pEntityType, World pLevel) {
         super(pEntityType, pLevel);
     }
 
     public float distance;
 
-    public RayOfFrostVisualEntity(Level level, Vec3 start, Vec3 end, LivingEntity owner) {
+    public RayOfFrostVisualEntity(World level, Vector3d start, Vector3d end, LivingEntity owner) {
         super(EntityRegistry.RAY_OF_FROST_VISUAL_ENTITY.get(), level);
         this.setPos(start.subtract(0, .75f, 0));
         this.distance = (float) start.distanceTo(end);
@@ -53,27 +53,27 @@ public class RayOfFrostVisualEntity extends Entity implements IEntityAdditionalS
     }
 
     @Override
-    protected void readAdditionalSaveData(CompoundTag pCompound) {
+    protected void readAdditionalSaveData(CompoundNBT pCompound) {
 
     }
 
     @Override
-    protected void addAdditionalSaveData(CompoundTag pCompound) {
+    protected void addAdditionalSaveData(CompoundNBT pCompound) {
 
     }
 
     @Override
-    public Packet<?> getAddEntityPacket() {
+    public IPacket<?> getAddEntityPacket() {
         return NetworkHooks.getEntitySpawningPacket(this);
     }
 
     @Override
-    public void writeSpawnData(FriendlyByteBuf buffer) {
+    public void writeSpawnData(PacketBuffer buffer) {
         buffer.writeInt((int) (distance * 10));
     }
 
     @Override
-    public void readSpawnData(FriendlyByteBuf additionalData) {
+    public void readSpawnData(PacketBuffer additionalData) {
         this.distance = additionalData.readInt() / 10f;
     }
 }

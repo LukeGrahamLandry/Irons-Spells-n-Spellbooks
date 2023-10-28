@@ -117,7 +117,7 @@ public class DataFixerHelpers {
     /**
      * Returns true if data was updated
      */
-    public static boolean doFixUps(CompoundTag tag) {
+    public static boolean doFixUps(CompoundNBT tag) {
         var fix1 = fixIsbSpellbook(tag);
         var fix2 = fixIsbSpell(tag);
         var fix3 = fixItemsNames(tag);
@@ -128,11 +128,11 @@ public class DataFixerHelpers {
         return fix1 || fix2 || fix3 || fix4 || fix5 || fix6 || fix7;
     }
 
-    public static boolean fixIsbEnhance(CompoundTag tag) {
+    public static boolean fixIsbEnhance(CompoundNBT tag) {
         if (tag != null) {
             if (tag.contains(RingData.ISB_ENHANCE)) {
                 var ringTag = tag.get(RingData.ISB_ENHANCE);
-                if (ringTag instanceof IntTag legacyRingTag) {
+                if (ringTag instanceof IntNBT legacyRingTag) {
                     tag.remove(RingData.ISB_ENHANCE);
                     tag.putString(RingData.ISB_ENHANCE, LEGACY_SPELL_MAPPING.getOrDefault(legacyRingTag.getAsInt(), "irons_spellbooks:none"));
                     return true;
@@ -142,7 +142,7 @@ public class DataFixerHelpers {
         return false;
     }
 
-    public static boolean fixTetra(CompoundTag tag) {
+    public static boolean fixTetra(CompoundNBT tag) {
         if (!ModList.get().isLoaded("tetra")) {
             return false;
         }
@@ -152,7 +152,7 @@ public class DataFixerHelpers {
                 var socketTag = tag.get(key);
                 String poison = "sword_socket/irons_spellbooks_poison_rune_socket";
                 String nature = "sword_socket/irons_spellbooks_nature_rune_socket";
-                if (socketTag instanceof StringTag entry && entry.getAsString().equals(poison)) {
+                if (socketTag instanceof StringNBT entry && entry.getAsString().equals(poison)) {
                     tag.remove(key);
                     tag.putString(key, nature);
                     return true;
@@ -162,15 +162,15 @@ public class DataFixerHelpers {
         return false;
     }
 
-    public static boolean fixApoth(CompoundTag tag) {
+    public static boolean fixApoth(CompoundNBT tag) {
         if (!ModList.get().isLoaded("apotheosis")) {
             return false;
         }
         else if (tag != null) {
-            if (tag.get("affix_data") instanceof CompoundTag affixTag) {
-                if (affixTag.get("gems") instanceof ListTag gemList) {
-                    for (Tag gem : gemList) {
-                        var itemTag = ((CompoundTag) gem).getCompound("tag");
+            if (tag.get("affix_data") instanceof CompoundNBT affixTag) {
+                if (affixTag.get("gems") instanceof ListNBT gemList) {
+                    for (INBT gem : gemList) {
+                        var itemTag = ((CompoundNBT) gem).getCompound("tag");
                         if (itemTag.getString("gem").equals("irons_spellbooks:poison")) {
                             itemTag.putString("gem", "irons_spellbooks:nature");
                             return true;
@@ -183,13 +183,13 @@ public class DataFixerHelpers {
     }
 
 
-    public static boolean fixIsbSpellbook(CompoundTag tag) {
+    public static boolean fixIsbSpellbook(CompoundNBT tag) {
         if (tag != null) {
-            var spellBookTag = (CompoundTag) tag.get(SpellBookData.ISB_SPELLBOOK);
+            var spellBookTag = (CompoundNBT) tag.get(SpellBookData.ISB_SPELLBOOK);
             if (spellBookTag != null) {
-                ListTag listTagSpells = (ListTag) spellBookTag.get(SpellBookData.SPELLS);
+                ListNBT listTagSpells = (ListNBT) spellBookTag.get(SpellBookData.SPELLS);
                 if (listTagSpells != null && !listTagSpells.isEmpty()) {
-                    if (((CompoundTag) listTagSpells.get(0)).contains(SpellBookData.LEGACY_ID)) {
+                    if (((CompoundNBT) listTagSpells.get(0)).contains(SpellBookData.LEGACY_ID)) {
                         DataFixerHelpers.fixSpellbookData(listTagSpells);
                         return true;
                     }
@@ -199,9 +199,9 @@ public class DataFixerHelpers {
         return false;
     }
 
-    public static boolean fixIsbSpell(CompoundTag tag) {
+    public static boolean fixIsbSpell(CompoundNBT tag) {
         if (tag != null) {
-            var spellTag = (CompoundTag) tag.get(SpellData.ISB_SPELL);
+            var spellTag = (CompoundNBT) tag.get(SpellData.ISB_SPELL);
             if (spellTag != null) {
                 if (spellTag.contains(SpellData.LEGACY_SPELL_TYPE)) {
                     DataFixerHelpers.fixScrollData(spellTag);
@@ -213,7 +213,7 @@ public class DataFixerHelpers {
         return false;
     }
 
-    public static boolean fixItemsNames(CompoundTag tag) {
+    public static boolean fixItemsNames(CompoundNBT tag) {
         //itemStack.save saves a compound tag with id "id". it can probably be safely assumed that all items are saved like this
         //8 is string tag
         if (tag != null && tag.contains("id", 8)) {
@@ -227,12 +227,12 @@ public class DataFixerHelpers {
         return false;
     }
 
-    public static boolean fixUpgradeType(CompoundTag tag) {
+    public static boolean fixUpgradeType(CompoundNBT tag) {
         if (tag != null && tag.contains(UpgradeData.Upgrades)) {
             //IronsSpellbooks.LOGGER.debug("fixUpgradeType: found tag with upgrades {}",tag);
-            ListTag upgrades = tag.getList(UpgradeData.Upgrades, 10);
-            for (Tag t : upgrades) {
-                CompoundTag upgrade = (CompoundTag) t;
+            ListNBT upgrades = tag.getList(UpgradeData.Upgrades, 10);
+            for (INBT t : upgrades) {
+                CompoundNBT upgrade = (CompoundNBT) t;
                 String upgradeKey = upgrade.getString(UpgradeData.Upgrade_Key);
                 //IronsSpellbooks.LOGGER.debug("fixUpgradeType: {} | needsFixing: {}", upgradeKey, LEGACY_UPGRADE_TYPE_IDS.get(upgradeKey) != null);
                 String newKey = LEGACY_UPGRADE_TYPE_IDS.get(upgradeKey);
@@ -245,15 +245,15 @@ public class DataFixerHelpers {
         return false;
     }
 
-    public static void fixScrollData(CompoundTag tag) {
+    public static void fixScrollData(CompoundNBT tag) {
         var legacySpellId = tag.getInt(SpellData.LEGACY_SPELL_TYPE);
         tag.remove(SpellData.LEGACY_SPELL_TYPE);
         tag.putString(SpellData.SPELL_ID, LEGACY_SPELL_MAPPING.getOrDefault(legacySpellId, "irons_spellbooks:none"));
     }
 
-    public static void fixSpellbookData(ListTag listTag) {
+    public static void fixSpellbookData(ListNBT listTag) {
         listTag.forEach(tag -> {
-            CompoundTag t = (CompoundTag) tag;
+            CompoundNBT t = (CompoundNBT) tag;
             int legacySpellId = t.getInt(SpellBookData.LEGACY_ID);
             t.putString(SpellBookData.ID, LEGACY_SPELL_MAPPING.getOrDefault(legacySpellId, "irons_spellbooks:none"));
             t.remove(SpellBookData.LEGACY_ID);

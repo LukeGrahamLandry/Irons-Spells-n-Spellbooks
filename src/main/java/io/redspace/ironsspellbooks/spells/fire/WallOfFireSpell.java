@@ -10,20 +10,20 @@ import io.redspace.ironsspellbooks.damage.ISpellDamageSource;
 import io.redspace.ironsspellbooks.entity.spells.wall_of_fire.WallOfFireEntity;
 import io.redspace.ironsspellbooks.network.ServerboundCancelCast;
 import io.redspace.ironsspellbooks.api.util.Utils;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.ClipContext;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.particles.ParticleTypes;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.DamageSource;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.util.math.RayTraceContext;
+import net.minecraft.world.World;
+import net.minecraft.world.gen.Heightmap;
+import net.minecraft.util.math.vector.Vector3d;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -35,9 +35,9 @@ public class WallOfFireSpell extends AbstractSpell {
     private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "wall_of_fire");
 
     @Override
-    public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
+    public List<IFormattableTextComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
-                Component.translatable("ui.irons_spellbooks.distance", Utils.stringTruncation(getWallLength(spellLevel, caster), 1))
+                ITextComponent.translatable("ui.irons_spellbooks.distance", Utils.stringTruncation(getWallLength(spellLevel, caster), 1))
         );
     }
 
@@ -82,7 +82,7 @@ public class WallOfFireSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level world, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
+    public void onCast(World world, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
         if (playerMagicData.isCasting() && playerMagicData.getCastingSpellId().equals(this.getSpellId()) && playerMagicData.getAdditionalCastData() == null) {
             //IronsSpellbooks.LOGGER.debug("WallOfFireSpell: creating new data");
             var fireWallData = new FireWallData(getWallLength(spellLevel, entity));
@@ -96,7 +96,7 @@ public class WallOfFireSpell extends AbstractSpell {
     }
 
     @Override
-    public void onServerCastTick(Level level, int spellLevel, LivingEntity entity, @Nullable MagicData playerMagicData) {
+    public void onServerCastTick(World level, int spellLevel, LivingEntity entity, @Nullable MagicData playerMagicData) {
         //IronsSpellbooks.LOGGER.debug("WallOfFireSpell.onServerCastTick");
         if (playerMagicData.getAdditionalCastData() instanceof FireWallData fireWallData) {
             //IronsSpellbooks.LOGGER.debug("WallOfFireSpell.onServerCastTick {}", fireWallData.ticks);
@@ -108,7 +108,7 @@ public class WallOfFireSpell extends AbstractSpell {
     }
 
     @Override
-    public void onServerCastComplete(Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData, boolean cancelled) {
+    public void onServerCastComplete(World level, int spellLevel, LivingEntity entity, MagicData playerMagicData, boolean cancelled) {
         //IronsSpellbooks.LOGGER.debug("WallOfFireSpell.onServerCastComplete.1");
         if (playerMagicData.getAdditionalCastData() instanceof FireWallData fireWallData) {
             //IronsSpellbooks.LOGGER.debug("WallOfFireSpell.onServerCastComplete.2");
@@ -120,7 +120,7 @@ public class WallOfFireSpell extends AbstractSpell {
             if (fireWallData.anchors.size() > 0) {
                 //IronsSpellbooks.LOGGER.debug("WallOfFireSpell.onServerCastComplete.4");
                 WallOfFireEntity fireWall = new WallOfFireEntity(level, entity, fireWallData.anchors, getDamage(spellLevel, entity));
-                Vec3 origin = fireWallData.anchors.get(0);
+                Vector3d origin = fireWallData.anchors.get(0);
                 for (int i = 1; i < fireWallData.anchors.size(); i++) {
                     origin.add(fireWallData.anchors.get(i));
                 }
@@ -145,8 +145,8 @@ public class WallOfFireSpell extends AbstractSpell {
         return getSpellPower(spellLevel, sourceEntity);
     }
 
-    public void addAnchor(FireWallData fireWallData, Level level, LivingEntity entity) {
-        Vec3 anchor = Utils.getTargetBlock(level, entity, ClipContext.Fluid.ANY, 20).getLocation();
+    public void addAnchor(FireWallData fireWallData, World level, LivingEntity entity) {
+        Vector3d anchor = Utils.getTargetBlock(level, entity, RayTraceContext.FluidMode.ANY, 20).getLocation();
 
         anchor = setOnGround(anchor, level);
         var anchorPoints = fireWallData.anchors;
@@ -168,7 +168,7 @@ public class WallOfFireSpell extends AbstractSpell {
                 anchor = anchorPoints.get(i - 1).add(anchor.subtract(anchorPoints.get(i - 1)).normalize().scale(maxDistance));
                 anchor = setOnGround(anchor, level);
                 anchorPoints.add(anchor);
-                if (entity instanceof ServerPlayer serverPlayer) {
+                if (entity instanceof ServerPlayerEntity serverPlayer) {
                     var playerMagicData = MagicData.getPlayerMagicData(serverPlayer);
                     boolean triggerCooldown = playerMagicData.getCastSource() != CastSource.SCROLL;
                     ServerboundCancelCast.cancelCast(serverPlayer, triggerCooldown);
@@ -181,23 +181,23 @@ public class WallOfFireSpell extends AbstractSpell {
         //IronsSpellbooks.LOGGER.debug("WallOfFireSpell: adding anchor");
     }
 
-    private Vec3 setOnGround(Vec3 in, Level level) {
+    private Vector3d setOnGround(Vector3d in, World level) {
         if (level.getBlockState(new BlockPos(in.x, in.y + .5f, in.z)).isAir()) {
             for (int i = 0; i < 15; i++) {
                 if (!level.getBlockState(new BlockPos(in.x, in.y - i, in.z)).isAir()) {
-                    return new Vec3(in.x, in.y - i + 1, in.z);
+                    return new Vector3d(in.x, in.y - i + 1, in.z);
                 }
             }
-            return new Vec3(in.x, in.y - 15, in.z);
+            return new Vector3d(in.x, in.y - 15, in.z);
         } else {
-            double y = level.getHeight(Heightmap.Types.MOTION_BLOCKING, (int) in.x, (int) in.z);
-            return new Vec3(in.x, y, in.z);
+            double y = level.getHeight(Heightmap.Type.MOTION_BLOCKING, (int) in.x, (int) in.z);
+            return new Vector3d(in.x, y, in.z);
         }
     }
 
     public class FireWallData implements ICastData {
         private Entity castingEntity;
-        public List<Vec3> anchors = new ArrayList<>();
+        public List<Vector3d> anchors = new ArrayList<>();
         public float maxTotalDistance;
         public float accumulatedDistance;
         public int ticks;

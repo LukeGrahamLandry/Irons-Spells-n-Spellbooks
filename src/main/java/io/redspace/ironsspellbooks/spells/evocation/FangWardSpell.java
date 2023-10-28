@@ -7,17 +7,17 @@ import io.redspace.ironsspellbooks.api.spells.*;
 import io.redspace.ironsspellbooks.api.magic.MagicData;
 import io.redspace.ironsspellbooks.entity.spells.ExtendedEvokerFang;
 import io.redspace.ironsspellbooks.api.util.Utils;
-import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.util.Mth;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec2;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.SoundEvents;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.world.World;
+import net.minecraft.util.math.vector.Vector2f;
+import net.minecraft.util.math.vector.Vector3d;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,9 +27,9 @@ public class FangWardSpell extends AbstractSpell {
     private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "fang_ward");
 
     @Override
-    public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(Component.translatable("ui.irons_spellbooks.ring_count", getRings(spellLevel, caster)),
-                Component.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(spellLevel, caster), 1)));
+    public List<IFormattableTextComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
+        return List.of(ITextComponent.translatable("ui.irons_spellbooks.ring_count", getRings(spellLevel, caster)),
+                ITextComponent.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(spellLevel, caster), 1)));
     }
 
     private final DefaultConfig defaultConfig = new DefaultConfig()
@@ -74,15 +74,15 @@ public class FangWardSpell extends AbstractSpell {
 
 
     @Override
-    public void onCast(Level world, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
+    public void onCast(World world, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
         int rings = getRings(spellLevel, entity);
         int count = 5;
-        Vec3 center = entity.getEyePosition();
+        Vector3d center = entity.getEyePosition();
 
         for (int r = 0; r < rings; r++) {
             float fangs = count + r * r;
             for (int i = 0; i < fangs; i++) {
-                Vec3 spawn = center.add(new Vec3(0, 0, 1.5 * (r + 1)).yRot(entity.getYRot() * Mth.DEG_TO_RAD + ((6.281f / fangs) * i)));
+                Vector3d spawn = center.add(new Vector3d(0, 0, 1.5 * (r + 1)).yRot(entity.getYRot() * MathHelper.DEG_TO_RAD + ((6.281f / fangs) * i)));
                 spawn = Utils.moveToRelativeGroundLevel(world, spawn, 5);
                 if (!world.getBlockState(new BlockPos(spawn).below()).isAir()) {
                     ExtendedEvokerFang fang = new ExtendedEvokerFang(world, spawn.x, spawn.y, spawn.z, get2DAngle(center, spawn), r, entity, getDamage(spellLevel, entity));
@@ -93,8 +93,8 @@ public class FangWardSpell extends AbstractSpell {
         super.onCast(world, spellLevel, entity, playerMagicData);
     }
 
-    private float get2DAngle(Vec3 a, Vec3 b) {
-        return Utils.getAngle(new Vec2((float) a.x, (float) a.z), new Vec2((float) b.x, (float) b.z));
+    private float get2DAngle(Vector3d a, Vector3d b) {
+        return Utils.getAngle(new Vector2f((float) a.x, (float) a.z), new Vector2f((float) b.x, (float) b.z));
     }
 
 //    private int getGroundLevel(Level level, Vec3 start, int maxSteps) {

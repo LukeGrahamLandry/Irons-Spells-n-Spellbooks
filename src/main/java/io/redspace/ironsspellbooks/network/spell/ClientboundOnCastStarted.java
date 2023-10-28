@@ -1,7 +1,7 @@
 package io.redspace.ironsspellbooks.network.spell;
 
 import io.redspace.ironsspellbooks.player.ClientSpellCastHelper;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.UUID;
@@ -19,13 +19,13 @@ public class ClientboundOnCastStarted {
         this.castingEntityId = castingEntityId;
     }
 
-    public ClientboundOnCastStarted(FriendlyByteBuf buf) {
+    public ClientboundOnCastStarted(PacketBuffer buf) {
         spellId = buf.readUtf();
         spellLevel = buf.readInt();
         castingEntityId = buf.readUUID();
     }
 
-    public void toBytes(FriendlyByteBuf buf) {
+    public void toBytes(PacketBuffer buf) {
         buf.writeUtf(spellId);
         buf.writeInt(spellLevel);
         buf.writeUUID(castingEntityId);

@@ -3,10 +3,10 @@ package io.redspace.ironsspellbooks.network;
 import io.redspace.ironsspellbooks.api.registry.SpellRegistry;
 import io.redspace.ironsspellbooks.api.spells.AbstractSpell;
 import io.redspace.ironsspellbooks.player.ClientInputEvents;
-import net.minecraft.ChatFormatting;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.Component;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
@@ -25,13 +25,13 @@ public class ClientboundCastErrorMessage {
         this.errorType = errorType;
     }
 
-    public ClientboundCastErrorMessage(FriendlyByteBuf buf) {
+    public ClientboundCastErrorMessage(PacketBuffer buf) {
         errorType = buf.readEnum(ErrorType.class);
         spellId = buf.readUtf();
 
     }
 
-    public void toBytes(FriendlyByteBuf buf) {
+    public void toBytes(PacketBuffer buf) {
         buf.writeEnum(errorType);
         buf.writeUtf(spellId);
     }
@@ -43,9 +43,9 @@ public class ClientboundCastErrorMessage {
             if (errorType == ErrorType.COOLDOWN) {
                 //ignore cooldown message if we are simply holding right click.
                 if (ClientInputEvents.hasReleasedSinceCasting)
-                    Minecraft.getInstance().gui.setOverlayMessage(Component.translatable("ui.irons_spellbooks.cast_error_cooldown", spell.getDisplayName()).withStyle(ChatFormatting.RED), false);
+                    Minecraft.getInstance().gui.setOverlayMessage(ITextComponent.translatable("ui.irons_spellbooks.cast_error_cooldown", spell.getDisplayName()).withStyle(TextFormatting.RED), false);
             } else {
-                Minecraft.getInstance().gui.setOverlayMessage(Component.translatable("ui.irons_spellbooks.cast_error_mana", spell.getDisplayName()).withStyle(ChatFormatting.RED), false);
+                Minecraft.getInstance().gui.setOverlayMessage(ITextComponent.translatable("ui.irons_spellbooks.cast_error_mana", spell.getDisplayName()).withStyle(TextFormatting.RED), false);
             }
         });
 

@@ -10,18 +10,18 @@ import io.redspace.ironsspellbooks.setup.Messages;
 import io.redspace.ironsspellbooks.api.util.AnimationHolder;
 import io.redspace.ironsspellbooks.util.Log;
 import io.redspace.ironsspellbooks.api.util.Utils;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.ClipContext;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.particles.ParticleTypes;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.SoundEvents;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.util.math.RayTraceContext;
+import net.minecraft.world.World;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.vector.Vector3d;
 
 import java.util.List;
 import java.util.Optional;
@@ -71,13 +71,13 @@ public class TeleportSpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
+    public void onCast(World level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
         if (Log.SPELL_DEBUG) {
             IronsSpellbooks.LOGGER.debug("TeleportSpell.onCast isClient:{}, entity:{}, pmd:{}", level.isClientSide, entity, playerMagicData);
         }
         var teleportData = (TeleportData) playerMagicData.getAdditionalCastData();
 
-        Vec3 dest = null;
+        Vector3d dest = null;
         if (teleportData != null) {
             var potentialTarget = teleportData.getTeleportTargetPosition();
             if (potentialTarget != null) {
@@ -104,31 +104,31 @@ public class TeleportSpell extends AbstractSpell {
         super.onCast(level, spellLevel, entity, playerMagicData);
     }
 
-    public static Vec3 findTeleportLocation(Level level, LivingEntity entity, float maxDistance) {
+    public static Vector3d findTeleportLocation(World level, LivingEntity entity, float maxDistance) {
         if (Log.SPELL_DEBUG) {
             IronsSpellbooks.LOGGER.debug("TeleportSpell.findTeleportLocation isClient:{}, entity:{}", level.isClientSide, entity);
         }
 
-        var blockHitResult = Utils.getTargetBlock(level, entity, ClipContext.Fluid.NONE, maxDistance);
+        var blockHitResult = Utils.getTargetBlock(level, entity, RayTraceContext.FluidMode.NONE, maxDistance);
         var pos = blockHitResult.getBlockPos();
 
-        Vec3 bbOffset = entity.getForward().normalize().multiply(entity.getBbWidth() / 3, 0, entity.getBbHeight() / 3);
-        Vec3 bbImpact = blockHitResult.getLocation().subtract(bbOffset);
+        Vector3d bbOffset = entity.getForward().normalize().multiply(entity.getBbWidth() / 3, 0, entity.getBbHeight() / 3);
+        Vector3d bbImpact = blockHitResult.getLocation().subtract(bbOffset);
         //        Vec3 lower = level.clip(new ClipContext(start, start.add(0, maxSteps * -2, 0), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, null)).getLocation();
-        int ledgeY = (int) level.clip(new ClipContext(Vec3.atBottomCenterOf(pos).add(0, 3, 0), Vec3.atBottomCenterOf(pos), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, null)).getLocation().y;
-        Vec3 correctedPos = new Vec3(pos.getX(), ledgeY, pos.getZ());
+        int ledgeY = (int) level.clip(new RayTraceContext(Vector3d.atBottomCenterOf(pos).add(0, 3, 0), Vector3d.atBottomCenterOf(pos), RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, null)).getLocation().y;
+        Vector3d correctedPos = new Vector3d(pos.getX(), ledgeY, pos.getZ());
         boolean isAir = level.getBlockState(new BlockPos(correctedPos)).isAir();
-        boolean los = level.clip(new ClipContext(bbImpact, bbImpact.add(0, ledgeY - pos.getY(), 0), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, entity)).getType() == HitResult.Type.MISS;
+        boolean los = level.clip(new RayTraceContext(bbImpact, bbImpact.add(0, ledgeY - pos.getY(), 0), RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, entity)).getType() == RayTraceResult.Type.MISS;
 
         if (isAir && los && Math.abs(ledgeY - pos.getY()) <= 3) {
             return correctedPos.add(0.5, 0.076, 0.5);
         } else {
-            return level.clip(new ClipContext(bbImpact, bbImpact.add(0, -entity.getEyeHeight(), 0), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, entity)).getLocation().add(0, 0.076, 0);
+            return level.clip(new RayTraceContext(bbImpact, bbImpact.add(0, -entity.getEyeHeight(), 0), RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, entity)).getLocation().add(0, 0.076, 0);
         }
 
     }
 
-    public static void particleCloud(Level level, Vec3 pos) {
+    public static void particleCloud(World level, Vector3d pos) {
         if (level.isClientSide) {
             double width = 0.5;
             float height = 1;
@@ -149,17 +149,17 @@ public class TeleportSpell extends AbstractSpell {
     }
 
     public static class TeleportData implements ICastData {
-        private Vec3 teleportTargetPosition;
+        private Vector3d teleportTargetPosition;
 
-        public TeleportData(Vec3 teleportTargetPosition) {
+        public TeleportData(Vector3d teleportTargetPosition) {
             this.teleportTargetPosition = teleportTargetPosition;
         }
 
-        public void setTeleportTargetPosition(Vec3 targetPosition) {
+        public void setTeleportTargetPosition(Vector3d targetPosition) {
             this.teleportTargetPosition = targetPosition;
         }
 
-        public Vec3 getTeleportTargetPosition() {
+        public Vector3d getTeleportTargetPosition() {
             return this.teleportTargetPosition;
         }
 
@@ -170,8 +170,8 @@ public class TeleportSpell extends AbstractSpell {
     }
 
     @Override
-    public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(Component.translatable("ui.irons_spellbooks.distance", Utils.stringTruncation(getDistance(spellLevel, caster), 1)));
+    public List<IFormattableTextComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
+        return List.of(ITextComponent.translatable("ui.irons_spellbooks.distance", Utils.stringTruncation(getDistance(spellLevel, caster), 1)));
     }
 
     @Override

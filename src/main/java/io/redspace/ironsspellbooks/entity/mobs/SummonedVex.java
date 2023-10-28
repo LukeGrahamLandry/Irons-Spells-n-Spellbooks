@@ -8,50 +8,50 @@ import io.redspace.ironsspellbooks.registries.MobEffectRegistry;
 import io.redspace.ironsspellbooks.api.spells.SchoolType;
 import io.redspace.ironsspellbooks.util.OwnerHelper;
 import io.redspace.ironsspellbooks.api.util.Utils;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.ai.goal.FloatGoal;
-import net.minecraft.world.entity.ai.goal.Goal;
-import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
-import net.minecraft.world.entity.monster.Vex;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.SoundEvents;
+import net.minecraft.util.DamageSource;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.ai.goal.SwimGoal;
+import net.minecraft.entity.ai.goal.Goal;
+import net.minecraft.entity.ai.goal.LookAtGoal;
+import net.minecraft.entity.monster.VexEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.World;
+import net.minecraft.util.math.vector.Vector3d;
 
 import javax.annotation.Nullable;
 import java.util.EnumSet;
 import java.util.UUID;
 
-public class SummonedVex extends Vex implements MagicSummon {
+public class SummonedVex extends VexEntity implements MagicSummon {
     //private static final EntityDataAccessor<Optional<UUID>> DATA_ID_SUMMONER_UUID = SynchedEntityData.defineId(SummonedVex.class, EntityDataSerializers.OPTIONAL_UUID);
 
     protected LivingEntity cachedSummoner;
     protected UUID summonerUUID;
 
-    public SummonedVex(EntityType<? extends Vex> pEntityType, Level pLevel) {
+    public SummonedVex(EntityType<? extends VexEntity> pEntityType, World pLevel) {
         super(EntityRegistry.SUMMONED_VEX.get(), pLevel);
         xpReward = 0;
     }
 
-    public SummonedVex(Level pLevel, LivingEntity owner) {
+    public SummonedVex(World pLevel, LivingEntity owner) {
         this(EntityRegistry.SUMMONED_VEX.get(), pLevel);
         setSummoner(owner);
     }
 
     @Override
     public void registerGoals() {
-        this.goalSelector.addGoal(0, new FloatGoal(this));
+        this.goalSelector.addGoal(0, new SwimGoal(this));
         this.goalSelector.addGoal(4, new VexChargeAttackGoal());
         this.goalSelector.addGoal(7, new GenericFollowOwnerGoal(this, this::getSummoner, .65f, 35, 10, true, 50));
-        this.goalSelector.addGoal(9, new LookAtPlayerGoal(this, Player.class, 3.0F, 1.0F));
-        this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Mob.class, 8.0F));
+        this.goalSelector.addGoal(9, new LookAtGoal(this, PlayerEntity.class, 3.0F, 1.0F));
+        this.goalSelector.addGoal(10, new LookAtGoal(this, MobEntity.class, 8.0F));
         this.goalSelector.addGoal(16, new VexRandomMoveGoal());
 
         this.targetSelector.addGoal(1, new GenericOwnerHurtByTargetGoal(this, this::getSummoner));
@@ -62,7 +62,7 @@ public class SummonedVex extends Vex implements MagicSummon {
     }
 
     @Override
-    public boolean isPreventingPlayerRest(Player pPlayer) {
+    public boolean isPreventingPlayerRest(PlayerEntity pPlayer) {
         return !this.isAlliedTo(pPlayer);
     }
 
@@ -103,13 +103,13 @@ public class SummonedVex extends Vex implements MagicSummon {
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag compoundTag) {
+    public void readAdditionalSaveData(CompoundNBT compoundTag) {
         super.readAdditionalSaveData(compoundTag);
         this.summonerUUID = OwnerHelper.deserializeOwner(compoundTag);
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag compoundTag) {
+    public void addAdditionalSaveData(CompoundNBT compoundTag) {
         super.addAdditionalSaveData(compoundTag);
         OwnerHelper.serializeOwner(compoundTag, summonerUUID);
     }
@@ -162,7 +162,7 @@ public class SummonedVex extends Vex implements MagicSummon {
         public void start() {
             LivingEntity livingentity = SummonedVex.this.getTarget();
             if (livingentity != null) {
-                Vec3 vec3 = livingentity.getEyePosition();
+                Vector3d vec3 = livingentity.getEyePosition();
                 SummonedVex.this.moveControl.setWantedPosition(vec3.x, vec3.y, vec3.z, 1.0D);
             }
 
@@ -193,7 +193,7 @@ public class SummonedVex extends Vex implements MagicSummon {
                 } else {
                     double d0 = SummonedVex.this.distanceToSqr(livingentity);
                     if (d0 < 9.0D) {
-                        Vec3 vec3 = livingentity.getEyePosition();
+                        Vector3d vec3 = livingentity.getEyePosition();
                         SummonedVex.this.moveControl.setWantedPosition(vec3.x, vec3.y, vec3.z, 1.0D);
                     }
                 }

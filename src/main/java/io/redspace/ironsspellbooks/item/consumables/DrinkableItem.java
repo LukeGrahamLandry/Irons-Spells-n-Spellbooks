@@ -1,20 +1,27 @@
 package io.redspace.ironsspellbooks.item.consumables;
 
-import net.minecraft.ChatFormatting;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.advancements.CriteriaTriggers;
-import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.util.Hand;
+import net.minecraft.util.ActionResult;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.item.*;
-import net.minecraft.world.level.Level;
+import net.minecraft.world.World;
 import net.minecraft.world.level.gameevent.GameEvent;
 
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.function.BiConsumer;
+
+import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.item.Item;
+import net.minecraft.item.Item.Properties;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.UseAction;
+import net.minecraft.util.DrinkHelper;
 
 public class DrinkableItem extends Item {
     public DrinkableItem(Properties pProperties, BiConsumer<ItemStack, LivingEntity> drinkAction, @Nullable Item returnItem, boolean showDescription) {
@@ -32,10 +39,10 @@ public class DrinkableItem extends Item {
     private final Item returnItem;
     private final boolean showDesc;
 
-    public ItemStack finishUsingItem(ItemStack pStack, Level pLevel, LivingEntity pEntityLiving) {
-        Player player = pEntityLiving instanceof Player ? (Player) pEntityLiving : null;
-        if (player instanceof ServerPlayer) {
-            CriteriaTriggers.CONSUME_ITEM.trigger((ServerPlayer) player, pStack);
+    public ItemStack finishUsingItem(ItemStack pStack, World pLevel, LivingEntity pEntityLiving) {
+        PlayerEntity player = pEntityLiving instanceof PlayerEntity ? (PlayerEntity) pEntityLiving : null;
+        if (player instanceof ServerPlayerEntity) {
+            CriteriaTriggers.CONSUME_ITEM.trigger((ServerPlayerEntity) player, pStack);
         }
 
         if (!pLevel.isClientSide) {
@@ -64,21 +71,21 @@ public class DrinkableItem extends Item {
         return 32;
     }
 
-    public UseAnim getUseAnimation(ItemStack pStack) {
-        return UseAnim.DRINK;
+    public UseAction getUseAnimation(ItemStack pStack) {
+        return UseAction.DRINK;
     }
 
-    public InteractionResultHolder<ItemStack> use(Level pLevel, Player pPlayer, InteractionHand pHand) {
-        return ItemUtils.startUsingInstantly(pLevel, pPlayer, pHand);
+    public ActionResult<ItemStack> use(World pLevel, PlayerEntity pPlayer, Hand pHand) {
+        return DrinkHelper.startUsingInstantly(pLevel, pPlayer, pHand);
     }
 
     @Override
-    public void appendHoverText(ItemStack pStack, @org.jetbrains.annotations.Nullable Level pLevel, List<Component> pTooltipComponents, TooltipFlag pIsAdvanced) {
+    public void appendHoverText(ItemStack pStack, @org.jetbrains.annotations.Nullable World pLevel, List<ITextComponent> pTooltipComponents, ITooltipFlag pIsAdvanced) {
         super.appendHoverText(pStack, pLevel, pTooltipComponents, pIsAdvanced);
         if(showDesc ){
-            pTooltipComponents.add(Component.empty());
-            pTooltipComponents.add(Component.translatable("potion.whenDrank").withStyle(ChatFormatting.DARK_PURPLE));
-            pTooltipComponents.add(Component.translatable(this.getDescriptionId() + ".desc").withStyle(ChatFormatting.BLUE));
+            pTooltipComponents.add(ITextComponent.empty());
+            pTooltipComponents.add(ITextComponent.translatable("potion.whenDrank").withStyle(TextFormatting.DARK_PURPLE));
+            pTooltipComponents.add(ITextComponent.translatable(this.getDescriptionId() + ".desc").withStyle(TextFormatting.BLUE));
         }
     }
 }

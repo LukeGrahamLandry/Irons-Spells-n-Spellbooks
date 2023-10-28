@@ -2,7 +2,7 @@ package io.redspace.ironsspellbooks.damage;
 
 import io.redspace.ironsspellbooks.api.spells.AbstractSpell;
 import io.redspace.ironsspellbooks.api.spells.SchoolType;
-import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.util.DamageSource;
 
 /**
  * While only a burden on 1.20.1, this interface makes 1.19.2 and 1.20.1 code be able to mesh together seamlessly

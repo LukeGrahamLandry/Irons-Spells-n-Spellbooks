@@ -1,12 +1,12 @@
 package io.redspace.ironsspellbooks.effect;
 
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.effect.MobEffectCategory;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.util.DamageSource;
+import net.minecraft.potion.Effect;
+import net.minecraft.potion.EffectType;
+import net.minecraft.entity.LivingEntity;
 
-public class EnchantedWardEffect extends MobEffect {
-    public EnchantedWardEffect(MobEffectCategory pCategory, int pColor) {
+public class EnchantedWardEffect extends Effect {
+    public EnchantedWardEffect(EffectType pCategory, int pColor) {
         super(pCategory, pColor);
     }
 

@@ -1,16 +1,16 @@
 package io.redspace.ironsspellbooks.api.spells;
 
-import com.mojang.math.Vector3f;
+import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.Style;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvent;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.attributes.Attribute;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.util.LazyOptional;
 
 import java.util.Optional;
@@ -28,14 +28,14 @@ public class SchoolType {
 
     final ResourceLocation id;
     final TagKey<Item> focus;
-    final Component displayName;
+    final ITextComponent displayName;
     final Style displayStyle;
 //    final PlaceholderDamageType damageType;
     final LazyOptional<Attribute> powerAttribute;
     final LazyOptional<Attribute> resistanceAttribute;
     final LazyOptional<SoundEvent> defaultCastSound;
 
-    public SchoolType(ResourceLocation id, TagKey<Item> focus, Component displayName, LazyOptional<Attribute> powerAttribute, LazyOptional<Attribute> resistanceAttribute, LazyOptional<SoundEvent> defaultCastSound) {
+    public SchoolType(ResourceLocation id, TagKey<Item> focus, ITextComponent displayName, LazyOptional<Attribute> powerAttribute, LazyOptional<Attribute> resistanceAttribute, LazyOptional<SoundEvent> defaultCastSound) {
         this.id = id;
         this.focus = focus;
         this.displayName = displayName;
@@ -71,7 +71,7 @@ public class SchoolType {
         return id;
     }
 
-    public Component getDisplayName() {
+    public ITextComponent getDisplayName() {
         return displayName;
     }
 

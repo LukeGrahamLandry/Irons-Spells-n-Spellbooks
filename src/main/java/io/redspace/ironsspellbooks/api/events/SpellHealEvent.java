@@ -2,7 +2,7 @@ package io.redspace.ironsspellbooks.api.events;
 
 
 import io.redspace.ironsspellbooks.api.spells.SchoolType;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.eventbus.api.Cancelable;

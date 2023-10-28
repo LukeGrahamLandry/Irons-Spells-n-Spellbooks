@@ -4,11 +4,11 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import io.redspace.ironsspellbooks.IronsSpellbooks;
-import net.minecraft.ChatFormatting;
-import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.commands.Commands;
-import net.minecraft.network.chat.ClickEvent;
-import net.minecraft.network.chat.Component;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.command.CommandSource;
+import net.minecraft.command.Commands;
+import net.minecraft.util.text.event.ClickEvent;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.fml.ModList;
 
 import java.io.BufferedWriter;
@@ -17,9 +17,9 @@ import java.io.FileWriter;
 
 public class GenerateModList {
 
-    private static final SimpleCommandExceptionType ERROR_FAILED = new SimpleCommandExceptionType(Component.translatable("commands.irons_spellbooks.generate_mod_list.failed"));
+    private static final SimpleCommandExceptionType ERROR_FAILED = new SimpleCommandExceptionType(ITextComponent.translatable("commands.irons_spellbooks.generate_mod_list.failed"));
 
-    public static void register(CommandDispatcher<CommandSourceStack> pDispatcher) {
+    public static void register(CommandDispatcher<CommandSource> pDispatcher) {
         if (pDispatcher.getRoot().getChild("modlist") == null) {
             pDispatcher.register(Commands.literal("modlist").requires((p_138819_) -> {
                 return p_138819_.hasPermission(2);
@@ -31,7 +31,7 @@ public class GenerateModList {
         }
     }
 
-    private static int generateModList(CommandSourceStack source) throws CommandSyntaxException {
+    private static int generateModList(CommandSource source) throws CommandSyntaxException {
         var sb = new StringBuilder();
 
         sb.append("mod_id");
@@ -72,11 +72,11 @@ public class GenerateModList {
             writer.write(sb.toString());
             writer.close();
 
-            Component component = Component.literal(file.getName()).withStyle(ChatFormatting.UNDERLINE).withStyle((style) -> {
+            ITextComponent component = ITextComponent.literal(file.getName()).withStyle(TextFormatting.UNDERLINE).withStyle((style) -> {
                 return style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_FILE, file.getAbsolutePath()));
             });
 
-            source.sendSuccess(Component.translatable("commands.irons_spellbooks.generate_mod_list.success", component), true);
+            source.sendSuccess(ITextComponent.translatable("commands.irons_spellbooks.generate_mod_list.success", component), true);
 
         } catch (Exception e) {
             IronsSpellbooks.LOGGER.info(e.getMessage());

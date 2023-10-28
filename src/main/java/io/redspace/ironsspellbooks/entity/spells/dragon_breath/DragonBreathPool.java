@@ -5,19 +5,19 @@ import io.redspace.ironsspellbooks.api.registry.SpellRegistry;
 import io.redspace.ironsspellbooks.damage.DamageSources;
 import io.redspace.ironsspellbooks.entity.spells.AoeEntity;
 import io.redspace.ironsspellbooks.registries.EntityRegistry;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.projectile.Projectile;
-import net.minecraft.world.level.Level;
+import net.minecraft.particles.IParticleData;
+import net.minecraft.particles.ParticleTypes;
+import net.minecraft.util.DamageSource;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.projectile.ProjectileEntity;
+import net.minecraft.world.World;
 
 public class DragonBreathPool extends AoeEntity {
 
     public static final DamageSource DAMAGE_SOURCE = new DamageSource(SpellRegistry.DRAGON_BREATH_SPELL.get().getDeathMessageId() + "_pool").setMagic();
 
-    public DragonBreathPool(EntityType<? extends Projectile> pEntityType, Level pLevel) {
+    public DragonBreathPool(EntityType<? extends ProjectileEntity> pEntityType, World pLevel) {
         super(pEntityType, pLevel);
         setCircular();
         setRadius(1.8f);
@@ -26,7 +26,7 @@ public class DragonBreathPool extends AoeEntity {
         IronsSpellbooks.LOGGER.debug("Creating DragonBreathPool");
     }
 
-    public DragonBreathPool(Level level) {
+    public DragonBreathPool(World level) {
         this(EntityRegistry.DRAGON_BREATH_POOL.get(), level);
     }
 
@@ -43,7 +43,7 @@ public class DragonBreathPool extends AoeEntity {
     }
 
     @Override
-    public ParticleOptions getParticle() {
+    public IParticleData getParticle() {
         return ParticleTypes.DRAGON_BREATH;
     }
 }

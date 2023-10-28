@@ -3,7 +3,7 @@ package io.redspace.ironsspellbooks.entity.mobs.raise_dead_summons;
 
 import io.redspace.ironsspellbooks.IronsSpellbooks;
 import io.redspace.ironsspellbooks.entity.mobs.SummonedSkeleton;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.ResourceLocation;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 
 public class SummonedSkeletonModel extends AnimatedGeoModel<SummonedSkeleton> {

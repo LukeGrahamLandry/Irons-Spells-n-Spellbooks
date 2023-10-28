@@ -2,10 +2,10 @@ package io.redspace.ironsspellbooks.api.magic;
 
 import io.redspace.ironsspellbooks.api.spells.AbstractSpell;
 import io.redspace.ironsspellbooks.api.spells.CastSource;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.entity.player.ServerPlayerEntity;
 
 public interface IMagicManager {
-    void setPlayerCurrentMana(ServerPlayer serverPlayer, int newManaValue);
+    void setPlayerCurrentMana(ServerPlayerEntity serverPlayer, int newManaValue);
 
-    void addCooldown(ServerPlayer serverPlayer, AbstractSpell spell, CastSource castSource);
+    void addCooldown(ServerPlayerEntity serverPlayer, AbstractSpell spell, CastSource castSource);
 }

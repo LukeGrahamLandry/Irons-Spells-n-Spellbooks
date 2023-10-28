@@ -1,25 +1,25 @@
 package io.redspace.ironsspellbooks.entity.mobs.goals;
 
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.ai.goal.Goal;
-import net.minecraft.world.entity.ai.goal.target.TargetGoal;
-import net.minecraft.world.entity.ai.targeting.TargetingConditions;
-import net.minecraft.world.entity.npc.Villager;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.phys.AABB;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.ai.goal.Goal;
+import net.minecraft.entity.ai.goal.TargetGoal;
+import net.minecraft.entity.EntityPredicate;
+import net.minecraft.entity.merchant.villager.VillagerEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.math.AxisAlignedBB;
 
 import javax.annotation.Nullable;
 import java.util.EnumSet;
 import java.util.List;
 
 public class GenericDefendVillageTargetGoal extends TargetGoal {
-    private final Mob protector;
+    private final MobEntity protector;
     @Nullable
     private LivingEntity potentialTarget;
-    private final TargetingConditions attackTargeting = TargetingConditions.forCombat().range(64.0D);
+    private final EntityPredicate attackTargeting = EntityPredicate.forCombat().range(64.0D);
 
-    public GenericDefendVillageTargetGoal(Mob mob) {
+    public GenericDefendVillageTargetGoal(MobEntity mob) {
         super(mob, false, true);
         this.protector = mob;
         this.setFlags(EnumSet.of(Goal.Flag.TARGET));
@@ -30,14 +30,14 @@ public class GenericDefendVillageTargetGoal extends TargetGoal {
      * method as well.
      */
     public boolean canUse() {
-        AABB aabb = this.protector.getBoundingBox().inflate(10.0D, 8.0D, 10.0D);
-        List<? extends LivingEntity> list = this.protector.level.getNearbyEntities(Villager.class, this.attackTargeting, this.protector, aabb);
-        List<Player> list1 = this.protector.level.getNearbyPlayers(this.attackTargeting, this.protector, aabb);
+        AxisAlignedBB aabb = this.protector.getBoundingBox().inflate(10.0D, 8.0D, 10.0D);
+        List<? extends LivingEntity> list = this.protector.level.getNearbyEntities(VillagerEntity.class, this.attackTargeting, this.protector, aabb);
+        List<PlayerEntity> list1 = this.protector.level.getNearbyPlayers(this.attackTargeting, this.protector, aabb);
 
         for(LivingEntity livingentity : list) {
-            Villager villager = (Villager)livingentity;
+            VillagerEntity villager = (VillagerEntity)livingentity;
 
-            for(Player player : list1) {
+            for(PlayerEntity player : list1) {
                 int i = villager.getPlayerReputation(player);
                 if (i <= -100) {
                     this.potentialTarget = player;
@@ -48,7 +48,7 @@ public class GenericDefendVillageTargetGoal extends TargetGoal {
         if (this.potentialTarget == null) {
             return false;
         } else {
-            return !(this.potentialTarget instanceof Player) || !this.potentialTarget.isSpectator() && !((Player)this.potentialTarget).isCreative();
+            return !(this.potentialTarget instanceof PlayerEntity) || !this.potentialTarget.isSpectator() && !((PlayerEntity)this.potentialTarget).isCreative();
         }
     }
 

@@ -7,41 +7,41 @@ import io.redspace.ironsspellbooks.registries.EntityRegistry;
 import io.redspace.ironsspellbooks.api.spells.SchoolType;
 import io.redspace.ironsspellbooks.util.ParticleHelper;
 import io.redspace.ironsspellbooks.api.util.Utils;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.projectile.ItemSupplier;
-import net.minecraft.world.entity.projectile.Projectile;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.Explosion;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.SoundEvents;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.IRendersAsItem;
+import net.minecraft.entity.projectile.ProjectileEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.world.Explosion;
+import net.minecraft.world.World;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.vector.Vector3d;
 
 import java.util.Optional;
 
-public class MagicFireball extends AbstractMagicProjectile implements ItemSupplier {
-    public MagicFireball(EntityType<? extends Projectile> pEntityType, Level pLevel) {
+public class MagicFireball extends AbstractMagicProjectile implements IRendersAsItem {
+    public MagicFireball(EntityType<? extends ProjectileEntity> pEntityType, World pLevel) {
         super(pEntityType, pLevel);
     }
 
-    public MagicFireball(Level pLevel, LivingEntity pShooter) {
+    public MagicFireball(World pLevel, LivingEntity pShooter) {
         this(EntityRegistry.MAGIC_FIREBALL.get(), pLevel);
         this.setOwner(pShooter);
     }
 
     @Override
     public void trailParticles() {
-        Vec3 vec3 = getDeltaMovement();
+        Vector3d vec3 = getDeltaMovement();
         double d0 = this.getX() - vec3.x;
         double d1 = this.getY() - vec3.y;
         double d2 = this.getZ() - vec3.z;
         for (int i = 0; i < 8; i++) {
-            Vec3 motion = Utils.getRandomVec3(.1).subtract(getDeltaMovement().scale(.1f));
-            Vec3 pos = Utils.getRandomVec3(.3);
+            Vector3d motion = Utils.getRandomVec3(.1).subtract(getDeltaMovement().scale(.1f));
+            Vector3d pos = Utils.getRandomVec3(.3);
             this.level.addParticle(ParticleHelper.EMBERS, d0 + pos.x, d1 + 0.5D + pos.y, d2 + pos.z, motion.x, motion.y, motion.z);
         }
     }
@@ -61,7 +61,7 @@ public class MagicFireball extends AbstractMagicProjectile implements ItemSuppli
     }
 
     @Override
-    protected void onHit(HitResult hitResult) {
+    protected void onHit(RayTraceResult hitResult) {
         if (!this.level.isClientSide) {
             impactParticles(xOld, yOld, zOld);
             float explosionRadius = getExplosionRadius();
@@ -75,7 +75,7 @@ public class MagicFireball extends AbstractMagicProjectile implements ItemSuppli
                 }
             }
             boolean flag = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.level, this.getOwner());
-            this.level.explode(null, SpellRegistry.FIREBALL_SPELL.get().getDamageSource(this, getOwner()), null, this.getX(), this.getY(), this.getZ(), (float) this.getExplosionRadius(), flag, flag ? Explosion.BlockInteraction.DESTROY : Explosion.BlockInteraction.NONE);
+            this.level.explode(null, SpellRegistry.FIREBALL_SPELL.get().getDamageSource(this, getOwner()), null, this.getX(), this.getY(), this.getZ(), (float) this.getExplosionRadius(), flag, flag ? Explosion.Mode.DESTROY : Explosion.Mode.NONE);
             this.discard();
         }
     }

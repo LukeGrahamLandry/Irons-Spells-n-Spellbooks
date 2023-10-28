@@ -2,24 +2,30 @@ package io.redspace.ironsspellbooks.entity.spells;
 
 import io.redspace.ironsspellbooks.api.entity.NoKnockbackProjectile;
 import io.redspace.ironsspellbooks.api.util.Utils;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializers;
-import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.util.Mth;
+import net.minecraft.particles.IParticleData;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.entity.*;
-import net.minecraft.world.entity.projectile.Projectile;
-import net.minecraft.world.level.Level;
+import net.minecraft.entity.projectile.ProjectileEntity;
+import net.minecraft.world.World;
 import net.minecraft.world.phys.Vec2;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.fluids.FluidType;
 
 import java.util.List;
 
-public abstract class AoeEntity extends Projectile implements NoKnockbackProjectile {
-    private static final EntityDataAccessor<Float> DATA_RADIUS = SynchedEntityData.defineId(AoeEntity.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Boolean> DATA_CIRCULAR = SynchedEntityData.defineId(AoeEntity.class, EntityDataSerializers.BOOLEAN);
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntitySize;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.Pose;
+
+public abstract class AoeEntity extends ProjectileEntity implements NoKnockbackProjectile {
+    private static final DataParameter<Float> DATA_RADIUS = EntityDataManager.defineId(AoeEntity.class, DataSerializers.FLOAT);
+    private static final DataParameter<Boolean> DATA_CIRCULAR = EntityDataManager.defineId(AoeEntity.class, DataSerializers.BOOLEAN);
 
     protected float damage;
     protected int duration = 600;
@@ -29,7 +35,7 @@ public abstract class AoeEntity extends Projectile implements NoKnockbackProject
     protected float radiusPerTick;
     protected int effectDuration;
 
-    public AoeEntity(EntityType<? extends Projectile> pEntityType, Level pLevel) {
+    public AoeEntity(EntityType<? extends ProjectileEntity> pEntityType, World pLevel) {
         super(pEntityType, pLevel);
         this.noPhysics = true;
         this.blocksBuilding = false;
@@ -95,8 +101,8 @@ public abstract class AoeEntity extends Projectile implements NoKnockbackProject
         }
     }
 
-    protected Vec3 getInflation() {
-        return Vec3.ZERO;
+    protected Vector3d getInflation() {
+        return Vector3d.ZERO;
     }
 
     /**
@@ -125,28 +131,28 @@ public abstract class AoeEntity extends Projectile implements NoKnockbackProject
             return;
 
         float f = getParticleCount();
-        f = Mth.clamp(f * getRadius(), f / 4, f * 10);
+        f = MathHelper.clamp(f * getRadius(), f / 4, f * 10);
         for (int i = 0; i < f; i++) {
             if (f - i < 1 && random.nextFloat() > f - i)
                 return;
             var r = getRadius();
-            Vec3 pos;
+            Vector3d pos;
             if (isCircular()) {
                 var distance = r * (1 - this.random.nextFloat() * this.random.nextFloat());
                 var theta = this.random.nextFloat() * 6.282f; // two pi :nerd:
-                pos = new Vec3(
-                        distance * Mth.cos(theta),
+                pos = new Vector3d(
+                        distance * MathHelper.cos(theta),
                         .2f,
-                        distance * Mth.sin(theta)
+                        distance * MathHelper.sin(theta)
                 );
             } else {
-                pos = new Vec3(
+                pos = new Vector3d(
                         Utils.getRandomScaled(r * .85f),
                         .2f,
                         Utils.getRandomScaled(r * .85f)
                 );
             }
-            Vec3 motion = new Vec3(
+            Vector3d motion = new Vector3d(
                     Utils.getRandomScaled(.03f),
                     this.random.nextDouble() * .01f,
                     Utils.getRandomScaled(.03f)
@@ -176,7 +182,7 @@ public abstract class AoeEntity extends Projectile implements NoKnockbackProject
     }
 
     @Override
-    public void onSyncedDataUpdated(EntityDataAccessor<?> pKey) {
+    public void onSyncedDataUpdated(DataParameter<?> pKey) {
         if (DATA_RADIUS.equals(pKey)) {
             this.refreshDimensions();
             if (getRadius() < .1f)
@@ -188,7 +194,7 @@ public abstract class AoeEntity extends Projectile implements NoKnockbackProject
 
     public void setRadius(float pRadius) {
         if (!this.level.isClientSide) {
-            this.getEntityData().set(DATA_RADIUS, Mth.clamp(pRadius, 0.0F, 32.0F));
+            this.getEntityData().set(DATA_RADIUS, MathHelper.clamp(pRadius, 0.0F, 32.0F));
         }
     }
 
@@ -220,14 +226,14 @@ public abstract class AoeEntity extends Projectile implements NoKnockbackProject
 
     public abstract float getParticleCount();
 
-    public abstract ParticleOptions getParticle();
+    public abstract IParticleData getParticle();
 
     @Override
-    public EntityDimensions getDimensions(Pose pPose) {
-        return EntityDimensions.scalable(this.getRadius() * 2.0F, 0.8F);
+    public EntitySize getDimensions(Pose pPose) {
+        return EntitySize.scalable(this.getRadius() * 2.0F, 0.8F);
     }
 
-    protected void addAdditionalSaveData(CompoundTag pCompound) {
+    protected void addAdditionalSaveData(CompoundNBT pCompound) {
         pCompound.putInt("Age", this.tickCount);
         pCompound.putInt("Duration", this.duration);
         pCompound.putInt("ReapplicationDelay", this.reapplicationDelay);
@@ -242,7 +248,7 @@ public abstract class AoeEntity extends Projectile implements NoKnockbackProject
 
     }
 
-    protected void readAdditionalSaveData(CompoundTag pCompound) {
+    protected void readAdditionalSaveData(CompoundNBT pCompound) {
         this.tickCount = pCompound.getInt("Age");
         if (pCompound.getInt("Duration") > 0)
             this.duration = pCompound.getInt("Duration");

@@ -1,10 +1,10 @@
 package io.redspace.ironsspellbooks.entity.mobs.goals;
 
 import io.redspace.ironsspellbooks.IronsSpellbooks;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.ai.goal.Goal;
-import net.minecraft.world.entity.ai.goal.target.TargetGoal;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.ai.goal.Goal;
+import net.minecraft.entity.ai.goal.TargetGoal;
 
 import javax.annotation.Nullable;
 import java.util.EnumSet;
@@ -13,7 +13,7 @@ public class DebugTargetClosestEntityGoal extends TargetGoal {
     @Nullable
     protected LivingEntity target;
 
-    public DebugTargetClosestEntityGoal(Mob pMob) {
+    public DebugTargetClosestEntityGoal(MobEntity pMob) {
         super(pMob, false, false);
         this.setFlags(EnumSet.of(Goal.Flag.TARGET));
     }

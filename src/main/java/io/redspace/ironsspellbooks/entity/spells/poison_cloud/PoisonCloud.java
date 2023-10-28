@@ -5,25 +5,25 @@ import io.redspace.ironsspellbooks.damage.DamageSources;
 import io.redspace.ironsspellbooks.entity.spells.AoeEntity;
 import io.redspace.ironsspellbooks.registries.EntityRegistry;
 import io.redspace.ironsspellbooks.util.ParticleHelper;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.projectile.Projectile;
-import net.minecraft.world.level.Level;
+import net.minecraft.particles.IParticleData;
+import net.minecraft.util.DamageSource;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.potion.Effects;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.projectile.ProjectileEntity;
+import net.minecraft.world.World;
 
 public class PoisonCloud extends AoeEntity {
 
     public static final DamageSource DAMAGE_SOURCE = new DamageSource(String.format("%s.%s", IronsSpellbooks.MODID, "poison_cloud"));
 
-    public PoisonCloud(EntityType<? extends Projectile> pEntityType, Level pLevel) {
+    public PoisonCloud(EntityType<? extends ProjectileEntity> pEntityType, World pLevel) {
         super(pEntityType, pLevel);
 
     }
 
-    public PoisonCloud(Level level) {
+    public PoisonCloud(World level) {
         this(EntityRegistry.POISON_CLOUD.get(), level);
     }
 
@@ -32,7 +32,7 @@ public class PoisonCloud extends AoeEntity {
         var damageSource = DamageSources.indirectDamageSource(DAMAGE_SOURCE, this, getOwner());
         DamageSources.ignoreNextKnockback(target);
         target.hurt(damageSource, getDamage());
-        target.addEffect(new MobEffectInstance(MobEffects.POISON, 120, (int) getDamage()));
+        target.addEffect(new EffectInstance(Effects.POISON, 120, (int) getDamage()));
     }
 
     @Override
@@ -41,7 +41,7 @@ public class PoisonCloud extends AoeEntity {
     }
 
     @Override
-    public ParticleOptions getParticle() {
+    public IParticleData getParticle() {
         return ParticleHelper.POISON_CLOUD;
     }
 }

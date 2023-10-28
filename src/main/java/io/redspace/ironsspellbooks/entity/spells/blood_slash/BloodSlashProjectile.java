@@ -12,63 +12,69 @@ import io.redspace.ironsspellbooks.entity.mobs.AntiMagicSusceptible;
 import io.redspace.ironsspellbooks.registries.EntityRegistry;
 import io.redspace.ironsspellbooks.api.spells.SchoolType;
 import io.redspace.ironsspellbooks.util.ParticleHelper;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializers;
-import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.util.Mth;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.entity.*;
-import net.minecraft.world.entity.projectile.Projectile;
-import net.minecraft.world.entity.projectile.ProjectileUtil;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.entity.projectile.ProjectileEntity;
+import net.minecraft.entity.projectile.ProjectileHelper;
+import net.minecraft.world.World;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.common.MinecraftForge;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class BloodSlashProjectile extends Projectile implements AntiMagicSusceptible {
-    private static final EntityDataAccessor<Float> DATA_RADIUS = SynchedEntityData.defineId(BloodSlashProjectile.class, EntityDataSerializers.FLOAT);
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntitySize;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.Pose;
+
+public class BloodSlashProjectile extends ProjectileEntity implements AntiMagicSusceptible {
+    private static final DataParameter<Float> DATA_RADIUS = EntityDataManager.defineId(BloodSlashProjectile.class, DataSerializers.FLOAT);
     private static final double SPEED = 1d;
     private static final int EXPIRE_TIME = 4 * 20;
     public final int animationSeed;
     private final float maxRadius;
-    private EntityDimensions dimensions;
-    public AABB oldBB;
+    private EntitySize dimensions;
+    public AxisAlignedBB oldBB;
     private int age;
     private float damage;
     public int animationTime;
     private List<Entity> victims;
 
-    public BloodSlashProjectile(EntityType<? extends BloodSlashProjectile> entityType, Level level) {
+    public BloodSlashProjectile(EntityType<? extends BloodSlashProjectile> entityType, World level) {
         super(entityType, level);
         animationSeed = Utils.random.nextInt(9999);
 
         float initialRadius = 2;
         maxRadius = 4;
-        dimensions = EntityDimensions.scalable(initialRadius, 0.5f);
+        dimensions = EntitySize.scalable(initialRadius, 0.5f);
 
         oldBB = getBoundingBox();
         victims = new ArrayList<>();
         this.setNoGravity(true);
     }
 
-    public BloodSlashProjectile(EntityType<? extends BloodSlashProjectile> entityType, Level levelIn, LivingEntity shooter) {
+    public BloodSlashProjectile(EntityType<? extends BloodSlashProjectile> entityType, World levelIn, LivingEntity shooter) {
         this(entityType, levelIn);
         setOwner(shooter);
         setYRot(shooter.getYRot());
         setXRot(shooter.getXRot());
     }
 
-    public BloodSlashProjectile(Level levelIn, LivingEntity shooter) {
+    public BloodSlashProjectile(World levelIn, LivingEntity shooter) {
         this(EntityRegistry.BLOOD_SLASH_PROJECTILE.get(), levelIn, shooter);
     }
 
-    public void shoot(Vec3 rotation) {
+    public void shoot(Vector3d rotation) {
         setDeltaMovement(rotation.scale(SPEED));
     }
 
@@ -85,7 +91,7 @@ public class BloodSlashProjectile extends Projectile implements AntiMagicSuscept
 
     public void setRadius(float newRadius) {
         if (newRadius <= maxRadius && !this.level.isClientSide) {
-            this.getEntityData().set(DATA_RADIUS, Mth.clamp(newRadius, 0.0F, maxRadius));
+            this.getEntityData().set(DATA_RADIUS, MathHelper.clamp(newRadius, 0.0F, maxRadius));
         }
     }
 
@@ -112,9 +118,9 @@ public class BloodSlashProjectile extends Projectile implements AntiMagicSuscept
         setRadius(getRadius() + 0.12f);
 
         if (!level.isClientSide) {
-            HitResult hitresult = ProjectileUtil.getHitResult(this, this::canHitEntity);
-            if (hitresult.getType() == HitResult.Type.BLOCK) {
-                onHitBlock((BlockHitResult) hitresult);
+            RayTraceResult hitresult = ProjectileHelper.getHitResult(this, this::canHitEntity);
+            if (hitresult.getType() == RayTraceResult.Type.BLOCK) {
+                onHitBlock((BlockRayTraceResult) hitresult);
             }
             for (Entity entity : level.getEntities(this, this.getBoundingBox()).stream().filter(target -> canHitEntity(target) && !victims.contains(target)).collect(Collectors.toSet())) {
                 damageEntity(entity);
@@ -139,13 +145,13 @@ public class BloodSlashProjectile extends Projectile implements AntiMagicSuscept
         spawnParticles();
     }
 
-    public EntityDimensions getDimensions(Pose p_19721_) {
+    public EntitySize getDimensions(Pose p_19721_) {
         //irons_spellbooks.LOGGER.info("Accessing Blood Slash Dimensions. Age: {}", age);
         this.getBoundingBox();
-        return EntityDimensions.scalable(this.getRadius() + 2.0F, 0.5F);
+        return EntitySize.scalable(this.getRadius() + 2.0F, 0.5F);
     }
 
-    public void onSyncedDataUpdated(EntityDataAccessor<?> p_19729_) {
+    public void onSyncedDataUpdated(DataParameter<?> p_19729_) {
         //irons_spellbooks.LOGGER.info("onSynchedDataUpdated");
 
         if (DATA_RADIUS.equals(p_19729_)) {
@@ -180,7 +186,7 @@ public class BloodSlashProjectile extends Projectile implements AntiMagicSuscept
 //    }
 
     @Override
-    protected void onHitBlock(BlockHitResult blockHitResult) {
+    protected void onHitBlock(BlockRayTraceResult blockHitResult) {
         super.onHitBlock(blockHitResult);
         discard();
     }
@@ -204,7 +210,7 @@ public class BloodSlashProjectile extends Projectile implements AntiMagicSuscept
 
             float width = (float) getBoundingBox().getXsize();
             float step = .25f;
-            float radians = Mth.DEG_TO_RAD * getYRot();
+            float radians = MathHelper.DEG_TO_RAD * getYRot();
             float speed = .1f;
             for (int i = 0; i < width / step; i++) {
                 double x = getX();
@@ -235,13 +241,13 @@ public class BloodSlashProjectile extends Projectile implements AntiMagicSuscept
     }
 
     @Override
-    protected void addAdditionalSaveData(CompoundTag pCompound) {
+    protected void addAdditionalSaveData(CompoundNBT pCompound) {
         super.addAdditionalSaveData(pCompound);
         pCompound.putFloat("Damage", this.damage);
     }
 
     @Override
-    protected void readAdditionalSaveData(CompoundTag pCompound) {
+    protected void readAdditionalSaveData(CompoundNBT pCompound) {
         super.readAdditionalSaveData(pCompound);
         this.damage = pCompound.getFloat("Damage");
     }

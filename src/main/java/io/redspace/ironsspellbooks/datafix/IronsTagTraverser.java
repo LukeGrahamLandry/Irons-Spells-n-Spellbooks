@@ -29,49 +29,49 @@ public class IronsTagTraverser implements TagVisitor {
         return changeCount.get();
     }
 
-    public void visit(@Nullable Tag pTag) {
+    public void visit(@Nullable INBT pTag) {
         if (pTag != null) {
             pTag.accept(this);
         }
     }
 
-    public void visitString(StringTag pTag) {
+    public void visitString(StringNBT pTag) {
     }
 
-    public void visitByte(ByteTag pTag) {
+    public void visitByte(ByteNBT pTag) {
     }
 
-    public void visitShort(ShortTag pTag) {
+    public void visitShort(ShortNBT pTag) {
     }
 
-    public void visitInt(IntTag pTag) {
+    public void visitInt(IntNBT pTag) {
     }
 
-    public void visitLong(LongTag pTag) {
+    public void visitLong(LongNBT pTag) {
     }
 
-    public void visitFloat(FloatTag pTag) {
+    public void visitFloat(FloatNBT pTag) {
     }
 
-    public void visitDouble(DoubleTag pTag) {
+    public void visitDouble(DoubleNBT pTag) {
     }
 
-    public void visitByteArray(ByteArrayTag pTag) {
+    public void visitByteArray(ByteArrayNBT pTag) {
     }
 
-    public void visitIntArray(IntArrayTag pTag) {
+    public void visitIntArray(IntArrayNBT pTag) {
     }
 
-    public void visitLongArray(LongArrayTag pTag) {
+    public void visitLongArray(LongArrayNBT pTag) {
     }
 
-    public void visitList(ListTag pTag) {
+    public void visitList(ListNBT pTag) {
         for (int i = 0; i < pTag.size(); ++i) {
             new IronsTagTraverser(changeCount).visit(pTag.get(i));
         }
     }
 
-    public void visitCompound(CompoundTag pTag) {
+    public void visitCompound(CompoundNBT pTag) {
         if (DataFixerHelpers.doFixUps(pTag)) {
             changeCount.incrementAndGet();
         }
@@ -84,6 +84,6 @@ public class IronsTagTraverser implements TagVisitor {
         }
     }
 
-    public void visitEnd(EndTag pTag) {
+    public void visitEnd(EndNBT pTag) {
     }
 }

@@ -1,14 +1,14 @@
 package io.redspace.ironsspellbooks.item.weapons;
 
 import io.redspace.ironsspellbooks.registries.ItemRegistry;
-import net.minecraft.util.LazyLoadedValue;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.Tier;
-import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.util.LazyValue;
+import net.minecraft.item.Items;
+import net.minecraft.item.IItemTier;
+import net.minecraft.item.crafting.Ingredient;
 
 import java.util.function.Supplier;
 
-public enum ExtendedWeaponTiers implements Tier {
+public enum ExtendedWeaponTiers implements IItemTier {
     KEEPER_FLAMBERGE(1000, 4, () -> Ingredient.of(Items.NETHERITE_SCRAP)),
     METAL_MAGEHUNTER(1561, 12, () -> Ingredient.of(ItemRegistry.ARCANE_INGOT.get())),
     CRYSTAL_MAGEHUNTER(1561, 12, () -> Ingredient.of(Items.DIAMOND)),
@@ -21,7 +21,7 @@ public enum ExtendedWeaponTiers implements Tier {
     private final float speed;
     private final float damage;
     private final int enchantmentValue;
-    private final LazyLoadedValue<Ingredient> repairIngredient;
+    private final LazyValue<Ingredient> repairIngredient;
 
     private ExtendedWeaponTiers(int pLevel, int pUses, int pEnchantmentValue, Supplier<Ingredient> pRepairIngredient) {
         this.level = pLevel;
@@ -29,7 +29,7 @@ public enum ExtendedWeaponTiers implements Tier {
         this.speed = 0;
         this.damage = 0;
         this.enchantmentValue = pEnchantmentValue;
-        this.repairIngredient = new LazyLoadedValue<>(pRepairIngredient);
+        this.repairIngredient = new LazyValue<>(pRepairIngredient);
     }
 
     private ExtendedWeaponTiers(int pUses, int pEnchantmentValue, Supplier<Ingredient> pRepairIngredient) {

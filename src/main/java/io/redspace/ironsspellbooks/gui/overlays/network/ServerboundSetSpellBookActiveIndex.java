@@ -2,8 +2,8 @@ package io.redspace.ironsspellbooks.gui.overlays.network;
 
 import io.redspace.ironsspellbooks.capabilities.spellbook.SpellBookData;
 import io.redspace.ironsspellbooks.item.SpellBook;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
@@ -16,12 +16,12 @@ public class ServerboundSetSpellBookActiveIndex {
         this.selectedIndex = selectedIndex;
     }
 
-    public ServerboundSetSpellBookActiveIndex(FriendlyByteBuf buf) {
+    public ServerboundSetSpellBookActiveIndex(PacketBuffer buf) {
         selectedIndex = buf.readInt();
 
     }
 
-    public void toBytes(FriendlyByteBuf buf) {
+    public void toBytes(PacketBuffer buf) {
 
         buf.writeInt(selectedIndex);
     }
@@ -31,7 +31,7 @@ public class ServerboundSetSpellBookActiveIndex {
         NetworkEvent.Context ctx = supplier.get();
         ctx.enqueueWork(() -> {
             // Here we are server side
-            ServerPlayer serverPlayer = ctx.getSender();
+            ServerPlayerEntity serverPlayer = ctx.getSender();
             if (serverPlayer != null) {
                 //This could be simplified by passing in a hand too
                 var mainHandStack = serverPlayer.getMainHandItem();

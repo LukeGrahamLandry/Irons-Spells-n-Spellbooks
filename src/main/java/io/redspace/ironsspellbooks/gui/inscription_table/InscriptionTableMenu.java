@@ -9,26 +9,31 @@ import io.redspace.ironsspellbooks.item.SpellBook;
 import io.redspace.ironsspellbooks.registries.BlockRegistry;
 import io.redspace.ironsspellbooks.registries.ItemRegistry;
 import io.redspace.ironsspellbooks.registries.MenuRegistry;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.Container;
-import net.minecraft.world.SimpleContainer;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.Inventory;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.inventory.*;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 
-public class InscriptionTableMenu extends AbstractContainerMenu {
+import net.minecraft.inventory.CraftResultInventory;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.Slot;
+import net.minecraft.util.IWorldPosCallable;
+
+public class InscriptionTableMenu extends Container {
     //    public final InscriptionTableTile blockEntity;
-    private final Level level;
+    private final World level;
     private final Slot spellBookSlot;
     private final Slot scrollSlot;
     private final Slot resultSlot;
     private int selectedSpellIndex = -1;
 
-    protected final ResultContainer resultSlots = new ResultContainer();
-    protected final Container inputSlots = new SimpleContainer(2) {
+    protected final CraftResultInventory resultSlots = new CraftResultInventory();
+    protected final IInventory inputSlots = new Inventory(2) {
         /**
          * For block entities, ensures the chunk containing the block entity is saved to disk later - the game won't think
          * it hasn't changed and skip it.
@@ -39,14 +44,14 @@ public class InscriptionTableMenu extends AbstractContainerMenu {
         }
     };
 
-    public InscriptionTableMenu(int containerId, Inventory inv, FriendlyByteBuf extraData) {
-        this(containerId, inv, ContainerLevelAccess.NULL/* inv.player.level.getBlockEntity(extraData.readBlockPos())*/);
+    public InscriptionTableMenu(int containerId, PlayerInventory inv, PacketBuffer extraData) {
+        this(containerId, inv, IWorldPosCallable.NULL/* inv.player.level.getBlockEntity(extraData.readBlockPos())*/);
     }
 
-    protected final ContainerLevelAccess access;
+    protected final IWorldPosCallable access;
 
 
-    public InscriptionTableMenu(int containerId, Inventory inv, ContainerLevelAccess access/* BlockEntity entity*/) {
+    public InscriptionTableMenu(int containerId, PlayerInventory inv, IWorldPosCallable access/* BlockEntity entity*/) {
         super(MenuRegistry.INSCRIPTION_TABLE_MENU.get(), containerId);
         this.access = access;
         //exists on server and render
@@ -65,7 +70,7 @@ public class InscriptionTableMenu extends AbstractContainerMenu {
             }
 
             @Override
-            public void onTake(Player pPlayer, ItemStack pStack) {
+            public void onTake(PlayerEntity pPlayer, ItemStack pStack) {
                 InscriptionTableMenu.this.setSelectedSpell(-1);
                 super.onTake(pPlayer, pStack);
             }
@@ -84,7 +89,7 @@ public class InscriptionTableMenu extends AbstractContainerMenu {
             }
 
             @Override
-            public void onTake(Player player, ItemStack stack) {
+            public void onTake(PlayerEntity player, ItemStack stack) {
                 //Ironsspellbooks.logger.debug("InscriptionTableMenu.take spell!");
                 var spellBookStack = spellBookSlot.getItem();
                 var spellBookData = SpellBookData.getSpellBookData(spellBookStack);
@@ -117,7 +122,7 @@ public class InscriptionTableMenu extends AbstractContainerMenu {
     }
 
     @Override
-    public void slotsChanged(Container pContainer) {
+    public void slotsChanged(IInventory pContainer) {
         super.slotsChanged(pContainer);
         //Ironsspellbooks.logger.debug("InscriptionTableMenu.slotsChanged");
         setupResultSlot();
@@ -142,7 +147,7 @@ public class InscriptionTableMenu extends AbstractContainerMenu {
     }
 
     @Override
-    public boolean clickMenuButton(Player pPlayer, int pId) {
+    public boolean clickMenuButton(PlayerEntity pPlayer, int pId) {
         //Called whenever the client clicks on a button. The ID passed in is the spell slot index or -1. If it is positive, it is to select that slot. If it is negative, it is to inscribe
         if (pId < 0) {
             if (selectedSpellIndex >= 0 && getScrollSlot().getItem().is(ItemRegistry.SCROLL.get())){
@@ -200,7 +205,7 @@ public class InscriptionTableMenu extends AbstractContainerMenu {
     private static final int TE_INVENTORY_SLOT_COUNT = 3;  // must be the number of slots you have!
 
     @Override
-    public ItemStack quickMoveStack(Player playerIn, int index) {
+    public ItemStack quickMoveStack(PlayerEntity playerIn, int index) {
         Slot sourceSlot = slots.get(index);
         if (sourceSlot == null || !sourceSlot.hasItem()) return ItemStack.EMPTY;  //EMPTY_ITEM
         ItemStack sourceStack = sourceSlot.getItem();
@@ -232,7 +237,7 @@ public class InscriptionTableMenu extends AbstractContainerMenu {
     }
 
     @Override
-    public boolean stillValid(Player pPlayer) {
+    public boolean stillValid(PlayerEntity pPlayer) {
 //        return stillValid(ContainerLevelAccess.create(level, blockEntity.getBlockPos()),
 //                pPlayer, INSCRIPTION_TABLE_BLOCK.get());
         return this.access.evaluate((level, blockPos) -> {
@@ -240,7 +245,7 @@ public class InscriptionTableMenu extends AbstractContainerMenu {
         }, true);
     }
 
-    private void addPlayerInventory(Inventory playerInventory) {
+    private void addPlayerInventory(PlayerInventory playerInventory) {
         for (int i = 0; i < 3; ++i) {
             for (int l = 0; l < 9; ++l) {
                 this.addSlot(new Slot(playerInventory, l + i * 9 + 9, 8 + l * 18, 84 + i * 18));
@@ -248,14 +253,14 @@ public class InscriptionTableMenu extends AbstractContainerMenu {
         }
     }
 
-    private void addPlayerHotbar(Inventory playerInventory) {
+    private void addPlayerHotbar(PlayerInventory playerInventory) {
         for (int i = 0; i < 9; ++i) {
             this.addSlot(new Slot(playerInventory, i, 8 + i * 18, 142));
         }
     }
 
     @Override
-    public void removed(Player pPlayer) {
+    public void removed(PlayerEntity pPlayer) {
         super.removed(pPlayer);
         this.access.execute((p_39796_, p_39797_) -> {
             this.clearContainer(pPlayer, this.inputSlots);

@@ -4,8 +4,8 @@ import io.redspace.ironsspellbooks.api.magic.MagicHelper;
 import io.redspace.ironsspellbooks.api.magic.MagicData;
 import io.redspace.ironsspellbooks.item.Scroll;
 import io.redspace.ironsspellbooks.api.spells.CastType;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
@@ -17,24 +17,24 @@ public class ServerboundCancelCast {
         this.triggerCooldown = triggerCooldown;
     }
 
-    public ServerboundCancelCast(FriendlyByteBuf buf) {
+    public ServerboundCancelCast(PacketBuffer buf) {
         triggerCooldown = buf.readBoolean();
     }
 
-    public void toBytes(FriendlyByteBuf buf) {
+    public void toBytes(PacketBuffer buf) {
         buf.writeBoolean(triggerCooldown);
     }
 
     public boolean handle(Supplier<NetworkEvent.Context> supplier) {
         NetworkEvent.Context ctx = supplier.get();
         ctx.enqueueWork(() -> {
-            ServerPlayer serverPlayer = ctx.getSender();
+            ServerPlayerEntity serverPlayer = ctx.getSender();
             cancelCast(serverPlayer, triggerCooldown);
         });
         return true;
     }
 
-    public static void cancelCast(ServerPlayer serverPlayer, boolean triggerCooldown) {
+    public static void cancelCast(ServerPlayerEntity serverPlayer, boolean triggerCooldown) {
         if (serverPlayer != null) {
             var playerMagicData = MagicData.getPlayerMagicData(serverPlayer);
             if (playerMagicData.isCasting()) {

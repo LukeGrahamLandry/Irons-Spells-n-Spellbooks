@@ -1,26 +1,26 @@
 package io.redspace.ironsspellbooks.render;
 
-import com.mojang.blaze3d.platform.Lighting;
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.renderer.RenderHelper;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import io.redspace.ironsspellbooks.IronsSpellbooks;
 import io.redspace.ironsspellbooks.api.item.curios.RingData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.EntityModelSet;
-import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
+import net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer;
 import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
-import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.model.ItemCameraTransforms;
+import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.client.renderer.model.IBakedModel;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.item.ItemStack;
 
-public class SpecialItemRenderer extends BlockEntityWithoutLevelRenderer {
+public class SpecialItemRenderer extends ItemStackTileEntityRenderer {
 
     private final ItemRenderer renderer;
-    public final BakedModel guiModel;
-    public final BakedModel normalModel;
+    public final IBakedModel guiModel;
+    public final IBakedModel normalModel;
 
     public SpecialItemRenderer(ItemRenderer renderDispatcher, EntityModelSet modelSet, String name) {
         super(Minecraft.getInstance().getBlockEntityRenderDispatcher(), modelSet);
@@ -30,19 +30,19 @@ public class SpecialItemRenderer extends BlockEntityWithoutLevelRenderer {
     }
 
     @Override
-    public void renderByItem(ItemStack itemStack, ItemTransforms.TransformType transformType, PoseStack poseStack, MultiBufferSource bufferSource, int combinedLightIn, int combinedOverlayIn) {
+    public void renderByItem(ItemStack itemStack, ItemCameraTransforms.TransformType transformType, MatrixStack poseStack, IRenderTypeBuffer bufferSource, int combinedLightIn, int combinedOverlayIn) {
         poseStack.pushPose();
         poseStack.translate(0.5f, 0.5f, 0.5f);
-        BakedModel model;
-        if (transformType == ItemTransforms.TransformType.GUI) {
-            Lighting.setupForFlatItems();
+        IBakedModel model;
+        if (transformType == ItemCameraTransforms.TransformType.GUI) {
+            RenderHelper.setupForFlatItems();
             model = this.guiModel;
             renderer.render(itemStack, transformType, false, poseStack, bufferSource, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, model);
             Minecraft.getInstance().renderBuffers().bufferSource().endBatch();
-            Lighting.setupFor3DItems();
+            RenderHelper.setupFor3DItems();
         } else {
             model = this.normalModel;
-            boolean leftHand = transformType == ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND || transformType == ItemTransforms.TransformType.THIRD_PERSON_LEFT_HAND;
+            boolean leftHand = transformType == ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND || transformType == ItemCameraTransforms.TransformType.THIRD_PERSON_LEFT_HAND;
             renderer.render(itemStack, transformType, leftHand, poseStack, bufferSource, combinedLightIn, combinedOverlayIn, model);
         }
         poseStack.popPose();

@@ -6,30 +6,30 @@ import io.redspace.ironsspellbooks.damage.DamageSources;
 import io.redspace.ironsspellbooks.entity.mobs.AntiMagicSusceptible;
 import io.redspace.ironsspellbooks.registries.EntityRegistry;
 import io.redspace.ironsspellbooks.api.spells.SchoolType;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.projectile.WitherSkull;
-import net.minecraft.world.level.Explosion;
-import net.minecraft.world.level.Level;
+import net.minecraft.network.IPacket;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.projectile.WitherSkullEntity;
+import net.minecraft.world.Explosion;
+import net.minecraft.world.World;
 import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.network.NetworkHooks;
 
-public class ExtendedWitherSkull extends WitherSkull implements AntiMagicSusceptible {
-    public ExtendedWitherSkull(EntityType<? extends WitherSkull> pEntityType, Level pLevel) {
+public class ExtendedWitherSkull extends WitherSkullEntity implements AntiMagicSusceptible {
+    public ExtendedWitherSkull(EntityType<? extends WitherSkullEntity> pEntityType, World pLevel) {
         super(pEntityType, pLevel);
     }
 
     protected float damage;
 
-    public ExtendedWitherSkull(LivingEntity shooter, Level level, float speed, float damage) {
+    public ExtendedWitherSkull(LivingEntity shooter, World level, float speed, float damage) {
         super(EntityRegistry.WITHER_SKULL_PROJECTILE.get(), level);
         setOwner(shooter);
 
-        Vec3 power = shooter.getLookAngle().normalize().scale(speed);
+        Vector3d power = shooter.getLookAngle().normalize().scale(speed);
 
         this.xPower = power.x;
         this.yPower = power.y;
@@ -38,7 +38,7 @@ public class ExtendedWitherSkull extends WitherSkull implements AntiMagicSuscept
     }
 
     @Override
-    protected void onHit(HitResult hitResult) {
+    protected void onHit(RayTraceResult hitResult) {
 
         if (!this.level.isClientSide) {
             float explosionRadius = 2;
@@ -52,13 +52,13 @@ public class ExtendedWitherSkull extends WitherSkull implements AntiMagicSuscept
                 }
             }
 
-            this.level.explode(this, this.getX(), this.getY(), this.getZ(), 0.0F, false, Explosion.BlockInteraction.NONE);
+            this.level.explode(this, this.getX(), this.getY(), this.getZ(), 0.0F, false, Explosion.Mode.NONE);
             this.discard();
         }
     }
 
     @Override
-    public Packet<?> getAddEntityPacket() {
+    public IPacket<?> getAddEntityPacket() {
         return NetworkHooks.getEntitySpawningPacket(this);
     }
 

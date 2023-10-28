@@ -12,19 +12,19 @@ import io.redspace.ironsspellbooks.util.CodeTimer;
 import it.unimi.dsi.fastutil.objects.Object2FloatMap;
 import it.unimi.dsi.fastutil.objects.Object2FloatMaps;
 import it.unimi.dsi.fastutil.objects.Object2FloatOpenCustomHashMap;
-import net.minecraft.Util;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.NbtIo;
-import net.minecraft.resources.ResourceKey;
+import net.minecraft.util.Util;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.Tuple;
-import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.chunk.storage.ChunkStorage;
-import net.minecraft.world.level.chunk.storage.RegionFile;
-import net.minecraft.world.level.levelgen.WorldGenSettings;
-import net.minecraft.world.level.storage.DimensionDataStorage;
-import net.minecraft.world.level.storage.LevelStorageSource;
+import net.minecraft.util.math.ChunkPos;
+import net.minecraft.world.World;
+import net.minecraft.world.chunk.storage.ChunkLoader;
+import net.minecraft.world.chunk.storage.RegionFile;
+import net.minecraft.world.gen.settings.DimensionGeneratorSettings;
+import net.minecraft.world.storage.DimensionSavedDataManager;
+import net.minecraft.world.storage.SaveFormat;
 
 import java.io.*;
 import java.lang.reflect.Array;
@@ -40,24 +40,24 @@ public class IronsWorldUpgrader {
     final byte[] INHABITED_TIME_MARKER = new byte[]{0x49, 0x6E, 0x68, 0x61, 0x62, 0x69, 0x74, 0x65, 0x64, 0x54, 0x69, 0x6D, 0x65};
     public static final String REGION_FOLDER = "region";
     public static final String ENTITY_FOLDER = "entities";
-    private final LevelStorageSource.LevelStorageAccess levelStorage;
+    private final SaveFormat.LevelSave levelStorage;
     private final DataFixer dataFixer;
     private int converted;
     private int skipped;
     private int fixes;
     private boolean running;
-    private final Object2FloatMap<ResourceKey<Level>> progressMap = Object2FloatMaps.synchronize(new Object2FloatOpenCustomHashMap<>(Util.identityStrategy()));
+    private final Object2FloatMap<RegistryKey<World>> progressMap = Object2FloatMaps.synchronize(new Object2FloatOpenCustomHashMap<>(Util.identityStrategy()));
     private static final Pattern REGEX = Pattern.compile("^r\\.(-?[0-9]+)\\.(-?[0-9]+)\\.mca$");
-    private final DimensionDataStorage overworldDataStorage;
+    private final DimensionSavedDataManager overworldDataStorage;
     private final IronsSpellBooksWorldData ironsSpellBooksWorldData;
-    private Set<ResourceKey<Level>> levels = null;
+    private Set<RegistryKey<World>> levels = null;
 
-    public IronsWorldUpgrader(LevelStorageSource.LevelStorageAccess pLevelStorage, WorldGenSettings pWorldGenSettings) {
+    public IronsWorldUpgrader(SaveFormat.LevelSave pLevelStorage, DimensionGeneratorSettings pWorldGenSettings) {
         this.levels = pWorldGenSettings.levels();
         this.levelStorage = pLevelStorage;
         this.dataFixer = new DataFixerBuilder(1).buildUnoptimized();
 
-        var file = this.levelStorage.getDimensionPath(Level.OVERWORLD).resolve("data").toFile();
+        var file = this.levelStorage.getDimensionPath(World.OVERWORLD).resolve("data").toFile();
 
         try {
             if (!file.exists()) {
@@ -67,7 +67,7 @@ public class IronsWorldUpgrader {
 
         }
 
-        this.overworldDataStorage = new DimensionDataStorage(file, dataFixer);
+        this.overworldDataStorage = new DimensionSavedDataManager(file, dataFixer);
         this.ironsSpellBooksWorldData = overworldDataStorage.computeIfAbsent(
                 IronsSpellBooksWorldData::load,
                 IronsSpellBooksWorldData::new,
@@ -128,12 +128,12 @@ public class IronsWorldUpgrader {
             if (files != null) {
                 Arrays.stream(files).toList().forEach(file -> {
                     try {
-                        var compoundTag = NbtIo.readCompressed(file);
+                        var compoundTag = CompressedStreamTools.readCompressed(file);
                         var ironsTraverser = new IronsTagTraverser();
                         ironsTraverser.visit(compoundTag);
 
                         if (ironsTraverser.changesMade()) {
-                            NbtIo.writeCompressed(compoundTag, file);
+                            CompressedStreamTools.writeCompressed(compoundTag, file);
                         }
 
                         fixes += ironsTraverser.totalChanges();
@@ -145,7 +145,7 @@ public class IronsWorldUpgrader {
         });
     }
 
-    private boolean preScanChunkUpdateNeeded(ChunkStorage chunkStorage, ChunkPos chunkPos) throws Exception {
+    private boolean preScanChunkUpdateNeeded(ChunkLoader chunkStorage, ChunkPos chunkPos) throws Exception {
         var regionFile = chunkStorage.worker.storage.getRegionFile(chunkPos);
         var dataInputStream = regionFile.getChunkDataInputStream(chunkPos);
 
@@ -177,45 +177,45 @@ public class IronsWorldUpgrader {
         long nextProgressReportMS = System.currentTimeMillis() + REPORT_PROGRESS_MS;
         int totalChunks = 0;
 
-        ImmutableMap.Builder<ResourceKey<Level>, ListIterator<ChunkPos>> builder = ImmutableMap.builder();
+        ImmutableMap.Builder<RegistryKey<World>, ListIterator<ChunkPos>> builder = ImmutableMap.builder();
 
-        for (ResourceKey<Level> resourcekey : levels) {
+        for (RegistryKey<World> resourcekey : levels) {
             List<ChunkPos> list = this.getAllChunkPos(resourcekey, regionFolder);
             builder.put(resourcekey, list.listIterator());
             totalChunks += list.size();
         }
 
         if (totalChunks > 0) {
-            ImmutableMap<ResourceKey<Level>, ListIterator<ChunkPos>> immutablemap = builder.build();
-            ImmutableMap.Builder<ResourceKey<Level>, ChunkStorage> builder1 = ImmutableMap.builder();
+            ImmutableMap<RegistryKey<World>, ListIterator<ChunkPos>> immutablemap = builder.build();
+            ImmutableMap.Builder<RegistryKey<World>, ChunkLoader> builder1 = ImmutableMap.builder();
 
-            for (ResourceKey<Level> resourcekey1 : levels) {
+            for (RegistryKey<World> resourcekey1 : levels) {
                 Path path = this.levelStorage.getDimensionPath(resourcekey1);
-                builder1.put(resourcekey1, new ChunkStorage(path.resolve(regionFolder), this.dataFixer, true));
+                builder1.put(resourcekey1, new ChunkLoader(path.resolve(regionFolder), this.dataFixer, true));
             }
 
-            ImmutableMap<ResourceKey<Level>, ChunkStorage> immutablemap1 = builder1.build();
+            ImmutableMap<RegistryKey<World>, ChunkLoader> immutablemap1 = builder1.build();
             while (this.running) {
                 boolean processedItem = false;
 
-                for (ResourceKey<Level> resourcekey2 : levels) {
+                for (RegistryKey<World> resourcekey2 : levels) {
                     ListIterator<ChunkPos> listiterator = immutablemap.get(resourcekey2);
-                    ChunkStorage chunkstorage = immutablemap1.get(resourcekey2);
+                    ChunkLoader chunkstorage = immutablemap1.get(resourcekey2);
                     if (listiterator.hasNext()) {
                         ChunkPos chunkpos = listiterator.next();
                         boolean updated = false;
 
                         try {
                             if (!preScan || preScanChunkUpdateNeeded(chunkstorage, chunkpos)) {
-                                CompoundTag chunkDataTag = chunkstorage.read(chunkpos).join().orElse(null);
+                                CompoundNBT chunkDataTag = chunkstorage.read(chunkpos).join().orElse(null);
 
                                 if (chunkDataTag != null && chunkDataTag.getInt("InhabitedTime") != 0) {
-                                    ListTag blockEntitiesTag;
+                                    ListNBT blockEntitiesTag;
 
                                     if (filterTag != null) {
-                                        blockEntitiesTag = (ListTag) chunkDataTag.get(filterTag);
+                                        blockEntitiesTag = (ListNBT) chunkDataTag.get(filterTag);
                                     } else {
-                                        blockEntitiesTag = new ListTag();
+                                        blockEntitiesTag = new ListNBT();
                                         blockEntitiesTag.add(chunkDataTag);
                                     }
 
@@ -254,7 +254,7 @@ public class IronsWorldUpgrader {
                 }
             }
 
-            for (ChunkStorage chunkstorage1 : immutablemap1.values()) {
+            for (ChunkLoader chunkstorage1 : immutablemap1.values()) {
                 try {
                     chunkstorage1.close();
                 } catch (IOException ioexception) {
@@ -264,7 +264,7 @@ public class IronsWorldUpgrader {
         }
     }
 
-    private List<ChunkPos> getAllChunkPos(ResourceKey<Level> p_18831_, String folder) {
+    private List<ChunkPos> getAllChunkPos(RegistryKey<World> p_18831_, String folder) {
         File file1 = this.levelStorage.getDimensionPath(p_18831_).toFile();
         File file2 = new File(file1, folder);
         File[] afile = file2.listFiles((p_18822_, p_18823_) -> {

@@ -3,17 +3,17 @@ package io.redspace.ironsspellbooks.entity.spells;
 import io.redspace.ironsspellbooks.api.entity.NoKnockbackProjectile;
 import io.redspace.ironsspellbooks.entity.spells.shield.ShieldEntity;
 import io.redspace.ironsspellbooks.api.util.Utils;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.util.Mth;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.projectile.Projectile;
-import net.minecraft.world.level.ClipContext;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.projectile.ProjectileEntity;
+import net.minecraft.util.math.RayTraceContext;
+import net.minecraft.world.World;
+import net.minecraft.util.math.EntityRayTraceResult;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.entity.PartEntity;
 
 import java.util.ArrayList;
@@ -21,19 +21,19 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public abstract class AbstractConeProjectile extends Projectile implements NoKnockbackProjectile {
+public abstract class AbstractConeProjectile extends ProjectileEntity implements NoKnockbackProjectile {
     protected static final int FAILSAFE_EXPIRE_TIME = 20 * 20;
     protected int age;
     protected float damage;
     protected boolean dealDamageActive = true;
     protected final ConePart[] subEntities;
 
-    public AbstractConeProjectile(EntityType<? extends AbstractConeProjectile> entityType, Level level, LivingEntity entity) {
+    public AbstractConeProjectile(EntityType<? extends AbstractConeProjectile> entityType, World level, LivingEntity entity) {
         this(entityType, level);
         setOwner(entity);
     }
 
-    public AbstractConeProjectile(EntityType<? extends AbstractConeProjectile> entityType, Level level) {
+    public AbstractConeProjectile(EntityType<? extends AbstractConeProjectile> entityType, World level) {
         super(entityType, level);
         this.noPhysics = true;
         this.blocksBuilding = false;
@@ -58,7 +58,7 @@ public abstract class AbstractConeProjectile extends Projectile implements NoKno
     public abstract void spawnParticles();
 
     @Override
-    protected abstract void onHitEntity(EntityHitResult entityHitResult);
+    protected abstract void onHitEntity(EntityRayTraceResult entityHitResult);
 
     @Override
     public boolean isMultipartEntity() {
@@ -85,16 +85,16 @@ public abstract class AbstractConeProjectile extends Projectile implements NoKno
     protected void defineSynchedData() {
     }
 
-    protected static Vec3 rayTrace(Entity owner) {
+    protected static Vector3d rayTrace(Entity owner) {
         float f = owner.getXRot();
         float f1 = owner.getYRot();
-        float f2 = Mth.cos(-f1 * ((float) Math.PI / 180F) - (float) Math.PI);
-        float f3 = Mth.sin(-f1 * ((float) Math.PI / 180F) - (float) Math.PI);
-        float f4 = -Mth.cos(-f * ((float) Math.PI / 180F));
-        float f5 = Mth.sin(-f * ((float) Math.PI / 180F));
+        float f2 = MathHelper.cos(-f1 * ((float) Math.PI / 180F) - (float) Math.PI);
+        float f3 = MathHelper.sin(-f1 * ((float) Math.PI / 180F) - (float) Math.PI);
+        float f4 = -MathHelper.cos(-f * ((float) Math.PI / 180F));
+        float f5 = MathHelper.sin(-f * ((float) Math.PI / 180F));
         float f6 = f3 * f4;
         float f7 = f2 * f4;
-        return new Vec3(f6, f5, f7);
+        return new Vector3d(f6, f5, f7);
     }
 
     @Override
@@ -130,10 +130,10 @@ public abstract class AbstractConeProjectile extends Projectile implements NoKno
                 var subEntity = subEntities[i];
 
                 double distance = 1 + (i * scale * subEntity.getDimensions(null).width / 2);
-                Vec3 newVector = ownerEyePos.add(rayTraceVector.multiply(distance, distance, distance));
+                Vector3d newVector = ownerEyePos.add(rayTraceVector.multiply(distance, distance, distance));
                 subEntity.setPos(newVector);
                 subEntity.setDeltaMovement(newVector);
-                var vec3 = new Vec3(subEntity.getX(), subEntity.getY(), subEntity.getZ());
+                var vec3 = new Vector3d(subEntity.getX(), subEntity.getY(), subEntity.getZ());
                 subEntity.xo = vec3.x;
                 subEntity.yo = vec3.y;
                 subEntity.zo = vec3.z;
@@ -148,7 +148,7 @@ public abstract class AbstractConeProjectile extends Projectile implements NoKno
             if (dealDamageActive) {
                 for (Entity entity : getSubEntityCollisions()) {
                     //irons_spellbooks.LOGGER.debug("ConeOfColdHit : {}", entity.getName().getString());
-                    onHitEntity(new EntityHitResult(entity));
+                    onHitEntity(new EntityRayTraceResult(entity));
                 }
                 dealDamageActive = false;
             }
@@ -174,21 +174,21 @@ public abstract class AbstractConeProjectile extends Projectile implements NoKno
     }
 
     protected static boolean hasLineOfSight(Entity start, Entity target) {
-        Vec3 vec3 = new Vec3(start.getX(), start.getEyeY(), start.getZ());
-        Vec3 vec31 = new Vec3(target.getX(), target.getEyeY(), target.getZ());
+        Vector3d vec3 = new Vector3d(start.getX(), start.getEyeY(), start.getZ());
+        Vector3d vec31 = new Vector3d(target.getX(), target.getEyeY(), target.getZ());
 
-        boolean isShieldBlockingLOS = Utils.raycastForEntity(start.level, start, vec3, vec31, false, 0, (entity) -> entity instanceof ShieldEntity).getType() == HitResult.Type.ENTITY;
-        return !isShieldBlockingLOS && start.level.clip(new ClipContext(vec3, vec31, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, start)).getType() == HitResult.Type.MISS;
+        boolean isShieldBlockingLOS = Utils.raycastForEntity(start.level, start, vec3, vec31, false, 0, (entity) -> entity instanceof ShieldEntity).getType() == RayTraceResult.Type.ENTITY;
+        return !isShieldBlockingLOS && start.level.clip(new RayTraceContext(vec3, vec31, RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, start)).getType() == RayTraceResult.Type.MISS;
     }
 
     @Override
-    protected void addAdditionalSaveData(CompoundTag pCompound) {
+    protected void addAdditionalSaveData(CompoundNBT pCompound) {
         super.addAdditionalSaveData(pCompound);
         pCompound.putFloat("Damage", this.damage);
     }
 
     @Override
-    protected void readAdditionalSaveData(CompoundTag pCompound) {
+    protected void readAdditionalSaveData(CompoundNBT pCompound) {
         super.readAdditionalSaveData(pCompound);
         this.damage = pCompound.getFloat("Damage");
     }

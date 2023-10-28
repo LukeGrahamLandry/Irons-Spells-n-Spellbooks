@@ -3,7 +3,7 @@ package io.redspace.ironsspellbooks.gui.overlays;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Vector3f;
-import com.mojang.math.Vector4f;
+import net.minecraft.util.math.vector.Vector4f;
 import io.redspace.ironsspellbooks.IronsSpellbooks;
 import io.redspace.ironsspellbooks.capabilities.spell.SpellData;
 import io.redspace.ironsspellbooks.capabilities.spellbook.SpellBookData;
@@ -14,23 +14,29 @@ import io.redspace.ironsspellbooks.setup.Messages;
 import io.redspace.ironsspellbooks.api.spells.AbstractSpell;
 import io.redspace.ironsspellbooks.util.TooltipsUtils;
 import io.redspace.ironsspellbooks.api.util.Utils;
-import net.minecraft.ChatFormatting;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.Style;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.phys.Vec2;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.vector.Vector2f;
 import net.minecraftforge.client.gui.overlay.ForgeGui;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.List;
 
-public class SpellWheelOverlay extends GuiComponent {
+import com.mojang.blaze3d.matrix.MatrixStack;
+import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.renderer.vertex.VertexFormat;
+
+public class SpellWheelOverlay extends AbstractGui {
     public static SpellWheelOverlay instance = new SpellWheelOverlay();
 
     public final static ResourceLocation TEXTURE = new ResourceLocation(IronsSpellbooks.MODID, "textures/gui/icons.png");
@@ -68,7 +74,7 @@ public class SpellWheelOverlay extends GuiComponent {
         Minecraft.getInstance().mouseHandler.grabMouse();
     }
 
-    public void render(ForgeGui gui, PoseStack poseStack, float partialTick, int screenWidth, int screenHeight) {
+    public void render(ForgeGui gui, MatrixStack poseStack, float partialTick, int screenWidth, int screenHeight) {
         if (!active)
             return;
 
@@ -81,7 +87,7 @@ public class SpellWheelOverlay extends GuiComponent {
 
         poseStack.pushPose();
 
-        Player player = minecraft.player;
+        PlayerEntity player = minecraft.player;
         int centerX = screenWidth / 2;
         int centerY = screenHeight / 2;
 
@@ -94,13 +100,13 @@ public class SpellWheelOverlay extends GuiComponent {
             return;
         }
 
-        Vec2 screenCenter = new Vec2(minecraft.getWindow().getScreenWidth() * .5f, minecraft.getWindow().getScreenHeight() * .5f);
-        Vec2 mousePos = new Vec2((float) minecraft.mouseHandler.xpos(), (float) minecraft.mouseHandler.ypos());
+        Vector2f screenCenter = new Vector2f(minecraft.getWindow().getScreenWidth() * .5f, minecraft.getWindow().getScreenHeight() * .5f);
+        Vector2f mousePos = new Vector2f((float) minecraft.mouseHandler.xpos(), (float) minecraft.mouseHandler.ypos());
         double radiansPerSpell = Math.toRadians(360 / (float) spellCount);
 
         float mouseRotation = (Utils.getAngle(mousePos, screenCenter) + 1.570f + (float) radiansPerSpell * .5f) % 6.283f;
 
-        selection = (int) Mth.clamp(mouseRotation / radiansPerSpell, 0, spellCount - 1);
+        selection = (int) MathHelper.clamp(mouseRotation / radiansPerSpell, 0, spellCount - 1);
         if (mousePos.distanceToSqr(screenCenter) < ringOuterEdgeMin * ringOuterEdgeMin) {
             selection = Math.max(0, spellBookData.getActiveSpellIndex());
         }
@@ -111,9 +117,9 @@ public class SpellWheelOverlay extends GuiComponent {
         RenderSystem.disableTexture();
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
-        final Tesselator tesselator = Tesselator.getInstance();
+        final Tessellator tesselator = Tessellator.getInstance();
         final BufferBuilder buffer = tesselator.getBuilder();
-        buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+        buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormats.POSITION_COLOR);
 
         drawRadialBackgrounds(buffer, centerX, centerY, selection, spellData);
         drawDividingLines(buffer, centerX, centerY, spellData);
@@ -138,8 +144,8 @@ public class SpellWheelOverlay extends GuiComponent {
             int textCenterMargin = 5;
             int textTitleMargin = 5;
             var title = currentSpell.getSpell().getDisplayName().withStyle(Style.EMPTY.withUnderlined(true));
-            var level = Component.translatable("ui.irons_spellbooks.level", TooltipsUtils.getLevelComponenet(selectedSpell, player).withStyle(selectedSpell.getSpell().getRarity(selectedSpell.getLevel()).getDisplayName().getStyle()));
-            var mana = Component.translatable("ui.irons_spellbooks.mana_cost", selectedSpell.getSpell().getManaCost(selectedSpell.getLevel(), null)).withStyle(ChatFormatting.AQUA);
+            var level = ITextComponent.translatable("ui.irons_spellbooks.level", TooltipsUtils.getLevelComponenet(selectedSpell, player).withStyle(selectedSpell.getSpell().getRarity(selectedSpell.getLevel()).getDisplayName().getStyle()));
+            var mana = ITextComponent.translatable("ui.irons_spellbooks.mana_cost", selectedSpell.getSpell().getManaCost(selectedSpell.getLevel(), null)).withStyle(TextFormatting.AQUA);
 //            selectedSpell.getUniqueInfo(minecraft.player).forEach((line) -> lines.add(line.withStyle(ChatFormatting.DARK_GREEN)));
 
             drawTextBackground(poseStack, centerX, centerY, ringOuterEdge + textHeight - textTitleMargin - font.lineHeight, textCenterMargin, Math.max(2, info.size()) * font.lineHeight);
@@ -155,11 +161,11 @@ public class SpellWheelOverlay extends GuiComponent {
         }
 
         //Spell Icons
-        float scale = Mth.clamp(1 + (15 - spellCount) / 15f, 1, 2) * .65f;
+        float scale = MathHelper.clamp(1 + (15 - spellCount) / 15f, 1, 2) * .65f;
         double radius = 3 / scale * (ringInnerEdge + ringInnerEdge) * .5 * (.85f + .15f * (spellData.size() / 15f));
-        Vec2[] locations = new Vec2[spellCount];
+        Vector2f[] locations = new Vector2f[spellCount];
         for (int i = 0; i < locations.length; i++) {
-            locations[i] = new Vec2((float) (Math.sin(radiansPerSpell * i) * radius), (float) (-Math.cos(radiansPerSpell * i) * radius));
+            locations[i] = new Vector2f((float) (Math.sin(radiansPerSpell * i) * radius), (float) (-Math.cos(radiansPerSpell * i) * radius));
         }
         for (int i = 0; i < locations.length; i++) {
             var spell = spellData.get(i);
@@ -192,14 +198,14 @@ public class SpellWheelOverlay extends GuiComponent {
         poseStack.popPose();
     }
 
-    private void drawTextBackground(PoseStack poseStack, double centerX, double centerY, double textYOffset, int textCenterMargin, int textHeight) {
+    private void drawTextBackground(MatrixStack poseStack, double centerX, double centerY, double textYOffset, int textCenterMargin, int textHeight) {
         fill(poseStack, 0, 0, (int) (centerX * 2), (int) (centerY * 2), 0);
         RenderSystem.disableTexture();
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
-        final Tesselator tesselator = Tesselator.getInstance();
+        final Tessellator tesselator = Tessellator.getInstance();
         final BufferBuilder buffer = tesselator.getBuilder();
-        buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+        buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormats.POSITION_COLOR);
 
         centerY = centerY - textYOffset - 2;
         int heightMax = textHeight / 2 + 4;
@@ -303,7 +309,7 @@ public class SpellWheelOverlay extends GuiComponent {
         ringOuterEdge = Math.max(ringOuterEdgeMin, ringOuterEdgeMax);
 
         for (int i = 0; i < spells.size(); i++) {
-            final double closeWidth = 8 * Mth.DEG_TO_RAD;
+            final double closeWidth = 8 * MathHelper.DEG_TO_RAD;
             final double farWidth = closeWidth / 4;
             final double beginCloseRadians = i * radiansPerSpell - (quarterCircle + (radiansPerSpell / 2)) - (closeWidth / 4);
             final double endCloseRadians = beginCloseRadians + closeWidth;

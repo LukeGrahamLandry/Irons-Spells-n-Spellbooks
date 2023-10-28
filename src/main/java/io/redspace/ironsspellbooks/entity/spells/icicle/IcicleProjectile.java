@@ -9,13 +9,13 @@ import io.redspace.ironsspellbooks.registries.EntityRegistry;
 import io.redspace.ironsspellbooks.registries.SoundRegistry;
 import io.redspace.ironsspellbooks.api.spells.SchoolType;
 import io.redspace.ironsspellbooks.util.ParticleHelper;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.particles.ParticleTypes;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.world.World;
+import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.EntityRayTraceResult;
 
 import java.util.Optional;
 
@@ -26,25 +26,25 @@ import java.util.Optional;
 
 public class IcicleProjectile extends AbstractMagicProjectile {
 
-    public IcicleProjectile(EntityType<? extends IcicleProjectile> entityType, Level level) {
+    public IcicleProjectile(EntityType<? extends IcicleProjectile> entityType, World level) {
         super(entityType, level);
         this.setNoGravity(true);
     }
 
-    public IcicleProjectile(Level levelIn, LivingEntity shooter) {
+    public IcicleProjectile(World levelIn, LivingEntity shooter) {
         super(EntityRegistry.ICICLE_PROJECTILE.get(), levelIn);
         setOwner(shooter);
     }
 
     @Override
-    protected void onHitBlock(BlockHitResult blockHitResult) {
+    protected void onHitBlock(BlockRayTraceResult blockHitResult) {
         super.onHitBlock(blockHitResult);
         kill();
 
     }
 
     @Override
-    protected void onHitEntity(EntityHitResult entityHitResult) {
+    protected void onHitEntity(EntityRayTraceResult entityHitResult) {
         super.onHitEntity(entityHitResult);
         DamageSources.applyDamage(entityHitResult.getEntity(), getDamage(), SpellRegistry.ICICLE_SPELL.get().getDamageSource(this, getOwner()));
     }

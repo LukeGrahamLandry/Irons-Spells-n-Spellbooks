@@ -3,7 +3,7 @@ package io.redspace.ironsspellbooks.api.events;
 
 import io.redspace.ironsspellbooks.api.magic.MagicData;
 import io.redspace.ironsspellbooks.capabilities.spell.SpellData;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.Cancelable;
@@ -23,7 +23,7 @@ public class ChangeManaEvent extends PlayerEvent {
     private final float oldMana;
     private float newMana;
 
-    public ChangeManaEvent(Player player, MagicData magicData, float oldMana, float newMana) {
+    public ChangeManaEvent(PlayerEntity player, MagicData magicData, float oldMana, float newMana) {
         super(player);
         this.magicData = magicData;
         this.oldMana = oldMana;

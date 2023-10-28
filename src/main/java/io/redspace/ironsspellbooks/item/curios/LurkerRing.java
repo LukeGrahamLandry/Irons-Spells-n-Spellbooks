@@ -2,15 +2,17 @@ package io.redspace.ironsspellbooks.item.curios;
 
 import io.redspace.ironsspellbooks.api.util.Utils;
 import io.redspace.ironsspellbooks.util.SpellbookModCreativeTabs;
-import net.minecraft.ChatFormatting;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.chat.Component;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.network.chat.Style;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.item.ItemStack;
 
 import java.util.List;
 
 import static io.redspace.ironsspellbooks.api.registry.AttributeRegistry.COOLDOWN_REDUCTION;
+
+import net.minecraft.item.Item.Properties;
 
 public class LurkerRing extends SimpleDescriptiveCurio {
     public static final int COOLDOWN_IN_TICKS = 15 * 20;
@@ -22,18 +24,18 @@ public class LurkerRing extends SimpleDescriptiveCurio {
 
 
     @Override
-    public List<Component> getDescriptionLines(ItemStack stack) {
+    public List<ITextComponent> getDescriptionLines(ItemStack stack) {
         double playerCooldownModifier = Minecraft.getInstance().player == null ? 1 : Minecraft.getInstance().player.getAttributeValue(COOLDOWN_REDUCTION.get());
 
         return List.of(
-                Component.translatable("tooltip.irons_spellbooks.passive_ability", Utils.timeFromTicks((float) (COOLDOWN_IN_TICKS * (2 - Utils.softCapFormula(playerCooldownModifier))), 1)).withStyle(ChatFormatting.GREEN),
+                ITextComponent.translatable("tooltip.irons_spellbooks.passive_ability", Utils.timeFromTicks((float) (COOLDOWN_IN_TICKS * (2 - Utils.softCapFormula(playerCooldownModifier))), 1)).withStyle(TextFormatting.GREEN),
                 getDescription(stack)
         );
     }
 
     @Override
-    public Component getDescription(ItemStack stack) {
-        return Component.literal(" ").append(Component.translatable(this.getDescriptionId() + ".desc",
+    public ITextComponent getDescription(ItemStack stack) {
+        return ITextComponent.literal(" ").append(ITextComponent.translatable(this.getDescriptionId() + ".desc",
                 (int) ((MULTIPLIER - 1) * 100)
         )).withStyle(descriptionStyle);
     }

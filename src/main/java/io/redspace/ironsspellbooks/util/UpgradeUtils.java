@@ -2,10 +2,10 @@ package io.redspace.ironsspellbooks.util;
 
 import io.redspace.ironsspellbooks.capabilities.magic.UpgradeData;
 import io.redspace.ironsspellbooks.item.armor.UpgradeType;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.entity.ai.attributes.Attribute;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.event.ItemAttributeModifierEvent;
 
 import java.util.Collection;
@@ -15,23 +15,23 @@ import java.util.UUID;
 public class UpgradeUtils {
 
     //We need consistent UUIDs. Different Attributes on a player piece can have the same uuid, but duplicate UUID and attributes will break (UUID per attribute you can say)
-    public static final Map<EquipmentSlot, UUID> UPGRADE_UUIDS_BY_SLOT = Map.of(
-            EquipmentSlot.HEAD, UUID.fromString("f6c19678-1c70-4d41-ad19-cd84d8610242"),
-            EquipmentSlot.CHEST, UUID.fromString("8d02c916-b0eb-4d17-8414-329b4bd38ae7"),
-            EquipmentSlot.LEGS, UUID.fromString("3739c748-98d4-4a2d-9c25-3b4dec74823d"),
-            EquipmentSlot.FEET, UUID.fromString("41cede88-7881-42dd-aac3-d6ab4b56b1f2"),
-            EquipmentSlot.MAINHAND, UUID.fromString("c3865ad7-1f35-46d4-8b4b-a6b934a1a896"),
-            EquipmentSlot.OFFHAND, UUID.fromString("c508430e-7497-42a9-9a9c-1a324dccca54")
+    public static final Map<EquipmentSlotType, UUID> UPGRADE_UUIDS_BY_SLOT = Map.of(
+            EquipmentSlotType.HEAD, UUID.fromString("f6c19678-1c70-4d41-ad19-cd84d8610242"),
+            EquipmentSlotType.CHEST, UUID.fromString("8d02c916-b0eb-4d17-8414-329b4bd38ae7"),
+            EquipmentSlotType.LEGS, UUID.fromString("3739c748-98d4-4a2d-9c25-3b4dec74823d"),
+            EquipmentSlotType.FEET, UUID.fromString("41cede88-7881-42dd-aac3-d6ab4b56b1f2"),
+            EquipmentSlotType.MAINHAND, UUID.fromString("c3865ad7-1f35-46d4-8b4b-a6b934a1a896"),
+            EquipmentSlotType.OFFHAND, UUID.fromString("c508430e-7497-42a9-9a9c-1a324dccca54")
     );
 
-    public static EquipmentSlot getRelevantEquipmentSlot(ItemStack itemStack) {
-        for (EquipmentSlot slot : EquipmentSlot.values())
+    public static EquipmentSlotType getRelevantEquipmentSlot(ItemStack itemStack) {
+        for (EquipmentSlotType slot : EquipmentSlotType.values())
             if (!itemStack.getAttributeModifiers(slot).isEmpty())
                 return slot;
-        return EquipmentSlot.MAINHAND;
+        return EquipmentSlotType.MAINHAND;
     }
 
-    public static UUID UUIDForSlot(EquipmentSlot slot) {
+    public static UUID UUIDForSlot(EquipmentSlotType slot) {
         return UPGRADE_UUIDS_BY_SLOT.get(slot);
     }
 

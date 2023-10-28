@@ -5,8 +5,8 @@ import io.redspace.ironsspellbooks.entity.mobs.abstract_spell_casting_mob.Abstra
 import io.redspace.ironsspellbooks.entity.mobs.abstract_spell_casting_mob.AbstractSpellCastingMobModel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.PartNames;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.processor.IBone;
 
@@ -31,7 +31,7 @@ public class PriestModel extends AbstractSpellCastingMobModel {
             if (Minecraft.getInstance().isPaused() || !entity.shouldBeExtraAnimated())
                 return;
             IBone head = this.getAnimationProcessor().getBone(PartNames.HEAD);
-            head.setRotationZ(0.3F * Mth.sin(0.45F * (entity.tickCount + animationEvent.getPartialTick())));
+            head.setRotationZ(0.3F * MathHelper.sin(0.45F * (entity.tickCount + animationEvent.getPartialTick())));
             head.setRotationX(-0.4F);
         }
     }

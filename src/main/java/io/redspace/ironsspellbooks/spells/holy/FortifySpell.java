@@ -13,14 +13,14 @@ import io.redspace.ironsspellbooks.registries.SoundRegistry;
 import io.redspace.ironsspellbooks.setup.Messages;
 import io.redspace.ironsspellbooks.spells.*;
 import io.redspace.ironsspellbooks.api.util.Utils;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.AABB;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.world.World;
+import net.minecraft.util.math.AxisAlignedBB;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -31,10 +31,10 @@ public class FortifySpell extends AbstractSpell {
     private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "fortify");
 
     @Override
-    public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
+    public List<IFormattableTextComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
-                Component.translatable("ui.irons_spellbooks.absorption", Utils.stringTruncation(getSpellPower(spellLevel, caster), 0)),
-                Component.translatable("ui.irons_spellbooks.radius", Utils.stringTruncation(radius, 1))
+                ITextComponent.translatable("ui.irons_spellbooks.absorption", Utils.stringTruncation(getSpellPower(spellLevel, caster), 0)),
+                ITextComponent.translatable("ui.irons_spellbooks.radius", Utils.stringTruncation(radius, 1))
         );
     }
 
@@ -81,7 +81,7 @@ public class FortifySpell extends AbstractSpell {
     }
 
     @Override
-    public void onServerPreCast(Level level, int spellLevel, LivingEntity entity, @Nullable MagicData playerMagicData) {
+    public void onServerPreCast(World level, int spellLevel, LivingEntity entity, @Nullable MagicData playerMagicData) {
         super.onServerPreCast(level, spellLevel, entity, playerMagicData);
         if (playerMagicData == null)
             return;
@@ -91,10 +91,10 @@ public class FortifySpell extends AbstractSpell {
     }
 
     @Override
-    public void onCast(Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
-        level.getEntitiesOfClass(LivingEntity.class, new AABB(entity.position().subtract(radius, radius, radius), entity.position().add(radius, radius, radius))).forEach((target) -> {
+    public void onCast(World level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
+        level.getEntitiesOfClass(LivingEntity.class, new AxisAlignedBB(entity.position().subtract(radius, radius, radius), entity.position().add(radius, radius, radius))).forEach((target) -> {
             if (Utils.shouldHealEntity(entity, target) && entity.distanceTo(target) <= radius) {
-                target.addEffect(new MobEffectInstance(MobEffectRegistry.FORTIFY.get(), 20 * 120, (int) getSpellPower(spellLevel, entity), false, false, true));
+                target.addEffect(new EffectInstance(MobEffectRegistry.FORTIFY.get(), 20 * 120, (int) getSpellPower(spellLevel, entity), false, false, true));
                 Messages.sendToPlayersTrackingEntity(new ClientboundAborptionParticles(target.position()), entity, true);
             }
         });

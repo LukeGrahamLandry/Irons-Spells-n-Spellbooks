@@ -4,11 +4,11 @@ import io.redspace.ironsspellbooks.api.item.weapons.MagicSwordItem;
 import io.redspace.ironsspellbooks.registries.ItemRegistry;
 import io.redspace.ironsspellbooks.api.spells.AbstractSpell;
 import io.redspace.ironsspellbooks.api.registry.SpellRegistry;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.item.ItemStack;
 
 import java.util.Objects;
 
@@ -18,7 +18,7 @@ public class SpellData implements Comparable<SpellData> {
     public static final String SPELL_ID = "id";
     public static final String SPELL_LEVEL = "level";
     public static final SpellData EMPTY = new SpellData(SpellRegistry.none(), 0);
-    private MutableComponent displayName;
+    private IFormattableTextComponent displayName;
     private final AbstractSpell spell;
     private final int spellLevel;
 
@@ -32,7 +32,7 @@ public class SpellData implements Comparable<SpellData> {
     }
 
     public static SpellData getSpellData(ItemStack stack) {
-        CompoundTag tag = stack.getTagElement(ISB_SPELL);
+        CompoundNBT tag = stack.getTagElement(ISB_SPELL);
 
         if (tag != null) {
 //            if (tag.contains(LEGACY_SPELL_TYPE)) {
@@ -50,12 +50,12 @@ public class SpellData implements Comparable<SpellData> {
     }
 
     public static boolean hasSpellData(ItemStack itemStack) {
-        CompoundTag tag = itemStack.getTagElement(ISB_SPELL);
+        CompoundNBT tag = itemStack.getTagElement(ISB_SPELL);
         return tag != null;
     }
 
     public static void setSpellData(ItemStack stack, String spellId, int spellLevel) {
-        var spellTag = new CompoundTag();
+        var spellTag = new CompoundNBT();
         spellTag.putString(SPELL_ID, spellId);
         spellTag.putInt(SPELL_LEVEL, spellLevel);
         stack.addTagElement(ISB_SPELL, spellTag);
@@ -80,9 +80,9 @@ public class SpellData implements Comparable<SpellData> {
         return spellLevel;
     }
 
-    public Component getDisplayName() {
+    public ITextComponent getDisplayName() {
         if (displayName == null) {
-            displayName = getSpell().getDisplayName().append(" ").append(Component.translatable(ItemRegistry.SCROLL.get().getDescriptionId()));//.append(" ").append(Component.translatable("tooltip.irons_spellbooks.rarity",getSpell().getRarity().getDisplayName().getString()));
+            displayName = getSpell().getDisplayName().append(" ").append(ITextComponent.translatable(ItemRegistry.SCROLL.get().getDescriptionId()));//.append(" ").append(Component.translatable("tooltip.irons_spellbooks.rarity",getSpell().getRarity().getDisplayName().getString()));
         }
         return displayName;
     }

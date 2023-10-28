@@ -1,22 +1,22 @@
 package io.redspace.ironsspellbooks.entity.spells;
 
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityDimensions;
-import net.minecraft.world.entity.Pose;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.DamageSource;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntitySize;
+import net.minecraft.entity.Pose;
 import net.minecraftforge.entity.PartEntity;
 
 public class ShieldPart extends PartEntity<AbstractShieldEntity> {
 
     public final AbstractShieldEntity parentEntity;
     public final String name;
-    private final EntityDimensions size;
+    private final EntitySize size;
     private final boolean hasCollision;
 
     public ShieldPart(AbstractShieldEntity shieldEntity, String name, float scaleX, float scaleY, boolean hasCollision) {
         super(shieldEntity);
-        this.size = EntityDimensions.scalable(scaleX, scaleY);
+        this.size = EntitySize.scalable(scaleX, scaleY);
         this.refreshDimensions();
         this.parentEntity = shieldEntity;
         this.name = name;
@@ -47,12 +47,12 @@ public class ShieldPart extends PartEntity<AbstractShieldEntity> {
     }
 
     @Override
-    protected void readAdditionalSaveData(CompoundTag compoundTag) {
+    protected void readAdditionalSaveData(CompoundNBT compoundTag) {
 
     }
 
     @Override
-    protected void addAdditionalSaveData(CompoundTag compoundTag) {
+    protected void addAdditionalSaveData(CompoundNBT compoundTag) {
 
     }
 
@@ -62,7 +62,7 @@ public class ShieldPart extends PartEntity<AbstractShieldEntity> {
     }
 
     @Override
-    public EntityDimensions getDimensions(Pose pose) {
+    public EntitySize getDimensions(Pose pose) {
         return this.size;
     }
 

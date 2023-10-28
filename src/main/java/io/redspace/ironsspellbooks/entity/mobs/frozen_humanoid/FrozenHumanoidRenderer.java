@@ -2,26 +2,26 @@ package io.redspace.ironsspellbooks.entity.mobs.frozen_humanoid;
 
 
 import io.redspace.ironsspellbooks.IronsSpellbooks;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.client.model.geom.ModelLayers;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.client.renderer.entity.LivingEntityRenderer;
-import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
-import net.minecraft.world.entity.Pose;
+import net.minecraft.client.renderer.entity.LivingRenderer;
+import net.minecraft.util.Direction;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.entity.Pose;
 
-public class FrozenHumanoidRenderer extends LivingEntityRenderer<FrozenHumanoid, HumanoidModel<FrozenHumanoid>> {
+public class FrozenHumanoidRenderer extends LivingRenderer<FrozenHumanoid, BipedModel<FrozenHumanoid>> {
 
     private static final ResourceLocation TEXTURE = new ResourceLocation(IronsSpellbooks.MODID, "textures/entity/frozen_humanoid.png");
 
     public FrozenHumanoidRenderer(EntityRendererProvider.Context context) {
-        super(context, new HumanoidModel<>(context.bakeLayer(ModelLayers.PLAYER)), 0.36f);
+        super(context, new BipedModel<>(context.bakeLayer(ModelLayers.PLAYER)), 0.36f);
 
     }
 
@@ -36,7 +36,7 @@ public class FrozenHumanoidRenderer extends LivingEntityRenderer<FrozenHumanoid,
     }
 
     @Override
-    public void render(FrozenHumanoid iceMan, float pEntityYaw, float pPartialTicks, PoseStack pMatrixStack, MultiBufferSource pBuffer, int pPackedLight) {
+    public void render(FrozenHumanoid iceMan, float pEntityYaw, float pPartialTicks, MatrixStack pMatrixStack, IRenderTypeBuffer pBuffer, int pPackedLight) {
         if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderLivingEvent.Pre<>(iceMan, this, pPartialTicks, pMatrixStack, pBuffer, pPackedLight)))
             return;
         pMatrixStack.pushPose();
@@ -50,7 +50,7 @@ public class FrozenHumanoidRenderer extends LivingEntityRenderer<FrozenHumanoid,
         float f2 = yHeadRot - bodyYRot;
         if (shouldSit) {
             f2 = yHeadRot - bodyYRot;
-            float f3 = Mth.wrapDegrees(f2);
+            float f3 = MathHelper.wrapDegrees(f2);
             if (f3 < -85.0F) {
                 f3 = -85.0F;
             }
@@ -67,7 +67,7 @@ public class FrozenHumanoidRenderer extends LivingEntityRenderer<FrozenHumanoid,
             f2 = yHeadRot - bodyYRot;
         }
 
-        float f6 = Mth.lerp(pPartialTicks, iceMan.xRotO, iceMan.getXRot());
+        float f6 = MathHelper.lerp(pPartialTicks, iceMan.xRotO, iceMan.getXRot());
         if (isEntityUpsideDown(iceMan)) {
             f6 *= -1.0F;
             f2 *= -1.0F;
@@ -102,7 +102,7 @@ public class FrozenHumanoidRenderer extends LivingEntityRenderer<FrozenHumanoid,
         boolean flag2 = minecraft.shouldEntityAppearGlowing(iceMan);
         RenderType rendertype = this.getRenderType(iceMan, flag, flag1, flag2);
         if (rendertype != null) {
-            VertexConsumer vertexconsumer = pBuffer.getBuffer(rendertype);
+            IVertexBuilder vertexconsumer = pBuffer.getBuffer(rendertype);
             int i = getOverlayCoords(iceMan, this.getWhiteOverlayProgress(iceMan, pPartialTicks));
             this.model.renderToBuffer(pMatrixStack, vertexconsumer, pPackedLight, i, 1.0F, 1.0F, 1.0F, flag1 ? 0.15F : 1.0F);
         }

@@ -3,36 +3,41 @@ package io.redspace.ironsspellbooks.particle;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
-import com.mojang.math.Quaternion;
-import com.mojang.math.Vector3f;
+import net.minecraft.util.math.vector.Quaternion;
+import net.minecraft.util.math.vector.Vector3f;
 import io.redspace.ironsspellbooks.IronsSpellbooks;
 import io.redspace.ironsspellbooks.api.util.Utils;
-import net.minecraft.Util;
-import net.minecraft.client.Camera;
-import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.util.Util;
+import net.minecraft.client.renderer.ActiveRenderInfo;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.client.particle.*;
 import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.util.Mth;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
-public class ZapParticle extends TextureSheetParticle {
+import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.renderer.vertex.VertexFormat;
+
+public class ZapParticle extends SpriteTexturedParticle {
     private static final Vector3f ROTATION_VECTOR = Util.make(new Vector3f(0.5F, 0.5F, 0.5F), Vector3f::normalize);
     private static final Vector3f TRANSFORM_VECTOR = new Vector3f(-1.0F, -1.0F, 0.0F);
-    private static final float DEGREES_90 = Mth.PI / 2f;
+    private static final float DEGREES_90 = MathHelper.PI / 2f;
 
-    Vec3 destination;
+    Vector3d destination;
 
-    ZapParticle(ClientLevel pLevel, double pX, double pY, double pZ, double xd, double yd, double zd, ZapParticleOption options) {
+    ZapParticle(ClientWorld pLevel, double pX, double pY, double pZ, double xd, double yd, double zd, ZapParticleOption options) {
         super(pLevel, pX, pY, pZ, 0, 0, 0);
         this.setSize(1, 1);
         this.quadSize = 1f;
-        this.destination = options.getDestination().getPosition(pLevel).orElse(new Vec3(pX, pY, pZ));
+        this.destination = options.getDestination().getPosition(pLevel).orElse(new Vector3d(pX, pY, pZ));
         this.lifetime = Utils.random.nextIntBetweenInclusive(3, 8);
         this.rCol = 1;
         this.gCol = 1;
@@ -64,11 +69,11 @@ public class ZapParticle extends TextureSheetParticle {
 
 
     @Override
-    public void render(VertexConsumer consumer, Camera camera, float partialTick) {
-        Vec3 vec3 = camera.getPosition();
-        float f = (float) (Mth.lerp((double) partialTick, this.xo, this.x) - vec3.x());
-        float f1 = (float) (Mth.lerp((double) partialTick, this.yo, this.y) - vec3.y());
-        float f2 = (float) (Mth.lerp((double) partialTick, this.zo, this.z) - vec3.z());
+    public void render(IVertexBuilder consumer, ActiveRenderInfo camera, float partialTick) {
+        Vector3d vec3 = camera.getPosition();
+        float f = (float) (MathHelper.lerp((double) partialTick, this.xo, this.x) - vec3.x());
+        float f1 = (float) (MathHelper.lerp((double) partialTick, this.yo, this.y) - vec3.y());
+        float f2 = (float) (MathHelper.lerp((double) partialTick, this.zo, this.z) - vec3.z());
 
         Quaternion quaternion = new Quaternion(ROTATION_VECTOR, 0.0F, true);
 
@@ -120,7 +125,7 @@ public class ZapParticle extends TextureSheetParticle {
 //        quad(consumer, partialTick, f, f1, f2, quaternion, left);
     }
 
-    private void drawLightningBeam(VertexConsumer consumer, float partialTick, float f, float f1, float f2, Quaternion quaternion, Vector3f start, Vector3f end, float chanceToBranch, RandomSource randomSource) {
+    private void drawLightningBeam(IVertexBuilder consumer, float partialTick, float f, float f1, float f2, Quaternion quaternion, Vector3f start, Vector3f end, float chanceToBranch, RandomSource randomSource) {
 
         setRGBA(1, 1, 1, 1);
         tube(consumer, partialTick, f, f1, f2, quaternion, start, end, .06f);
@@ -137,7 +142,7 @@ public class ZapParticle extends TextureSheetParticle {
         }
     }
 
-    private void tube(VertexConsumer consumer, float partialTick, float f, float f1, float f2, Quaternion quaternion, Vector3f start, Vector3f end, float width) {
+    private void tube(IVertexBuilder consumer, float partialTick, float f, float f1, float f2, Quaternion quaternion, Vector3f start, Vector3f end, float width) {
         float h = width * .5f;
 
 //        Vector3f[] avector3f = new Vector3f[]{
@@ -177,7 +182,7 @@ public class ZapParticle extends TextureSheetParticle {
         quad(consumer, partialTick, f, f1, f2, quaternion, bottom);
     }
 
-    public void drawQuad(VertexConsumer consumer, Vec3 from, Vec3 to, float width, float height, int r, int g, int b, int a) {
+    public void drawQuad(IVertexBuilder consumer, Vector3d from, Vector3d to, float width, float height, int r, int g, int b, int a) {
         //to = new Vec3(1, 0, 10);
         float halfWidth = width * .5f;
         float halfHeight = height * .5f;
@@ -192,15 +197,15 @@ public class ZapParticle extends TextureSheetParticle {
         this.makeCornerVertex(consumer, (float) to.x - halfWidth, (float) to.y - halfHeight, (float) to.z, this.getU0(), this.getV1());
     }
 
-    private void makeCornerVertex(VertexConsumer pConsumer, double x, double y, double z, float p_233996_, float p_233997_) {
+    private void makeCornerVertex(IVertexBuilder pConsumer, double x, double y, double z, float p_233996_, float p_233997_) {
         pConsumer.vertex(x, y, z).uv(p_233996_, p_233997_).color(this.rCol, this.gCol, this.bCol, this.alpha).uv2(LightTexture.FULL_BRIGHT).endVertex();
     }
 
-    private void makeCornerVertex(VertexConsumer pConsumer, Vector3f pVec3f, float p_233996_, float p_233997_, int p_233998_) {
+    private void makeCornerVertex(IVertexBuilder pConsumer, Vector3f pVec3f, float p_233996_, float p_233997_, int p_233998_) {
         pConsumer.vertex((double) pVec3f.x(), (double) pVec3f.y(), (double) pVec3f.z()).uv(p_233996_, p_233997_).color(this.rCol, this.gCol, this.bCol, this.alpha).uv2(p_233998_).endVertex();
     }
 
-    private void quad(VertexConsumer pConsumer, float partialTick, float f, float f1, float f2, Quaternion quaternion, Vector3f[] avector3f) {
+    private void quad(IVertexBuilder pConsumer, float partialTick, float f, float f1, float f2, Quaternion quaternion, Vector3f[] avector3f) {
         float f3 = this.getQuadSize(partialTick);
 
         for (int i = 0; i < 4; ++i) {
@@ -220,21 +225,21 @@ public class ZapParticle extends TextureSheetParticle {
 
     @NotNull
     @Override
-    public ParticleRenderType getRenderType() {
+    public IParticleRenderType getRenderType() {
         return PARTICLE_EMISSIVE;
     }
 
-    ParticleRenderType PARTICLE_EMISSIVE = new ParticleRenderType() {
+    IParticleRenderType PARTICLE_EMISSIVE = new IParticleRenderType() {
         public void begin(BufferBuilder p_107455_, TextureManager p_107456_) {
             RenderSystem.depthMask(true);
-            RenderSystem.setShaderTexture(0, TextureAtlas.LOCATION_PARTICLES);
+            RenderSystem.setShaderTexture(0, AtlasTexture.LOCATION_PARTICLES);
             RenderSystem.enableBlend();
             RenderSystem.disableCull();
             RenderSystem.blendFunc(GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE);
-            p_107455_.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.PARTICLE);
+            p_107455_.begin(VertexFormat.Mode.QUADS, DefaultVertexFormats.PARTICLE);
         }
 
-        public void end(Tesselator p_107458_) {
+        public void end(Tessellator p_107458_) {
             p_107458_.end();
         }
 
@@ -249,14 +254,14 @@ public class ZapParticle extends TextureSheetParticle {
     }
 
     @OnlyIn(Dist.CLIENT)
-    public static class Provider implements ParticleProvider<ZapParticleOption> {
-        private final SpriteSet sprite;
+    public static class Provider implements IParticleFactory<ZapParticleOption> {
+        private final IAnimatedSprite sprite;
 
-        public Provider(SpriteSet pSprite) {
+        public Provider(IAnimatedSprite pSprite) {
             this.sprite = pSprite;
         }
 
-        public Particle createParticle(@NotNull ZapParticleOption options, @NotNull ClientLevel pLevel, double pX, double pY, double pZ, double pXSpeed, double pYSpeed, double pZSpeed) {
+        public Particle createParticle(@NotNull ZapParticleOption options, @NotNull ClientWorld pLevel, double pX, double pY, double pZ, double pXSpeed, double pYSpeed, double pZSpeed) {
             var particle = new ZapParticle(pLevel, pX, pY, pZ, pXSpeed, pYSpeed, pZSpeed, options);
             particle.pickSprite(this.sprite);
             particle.setAlpha(1.0F);

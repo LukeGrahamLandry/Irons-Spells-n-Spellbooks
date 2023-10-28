@@ -6,39 +6,45 @@ import io.redspace.ironsspellbooks.entity.mobs.goals.GenericFollowOwnerGoal;
 import io.redspace.ironsspellbooks.registries.EntityRegistry;
 import io.redspace.ironsspellbooks.registries.MobEffectRegistry;
 import io.redspace.ironsspellbooks.util.OwnerHelper;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.SoundEvents;
+import net.minecraft.util.Hand;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.DamageSource;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.attributes.AttributeModifierMap;
+import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
-import net.minecraft.world.entity.animal.horse.AbstractHorse;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.entity.passive.horse.AbstractHorseEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.World;
+import net.minecraft.util.math.vector.Vector3d;
 
 import javax.annotation.Nullable;
 
-public class SummonedHorse extends AbstractHorse implements MagicSummon {
-    public SummonedHorse(EntityType<? extends AbstractHorse> pEntityType, Level pLevel) {
+import net.minecraft.entity.ai.goal.LookAtGoal;
+import net.minecraft.entity.ai.goal.LookRandomlyGoal;
+import net.minecraft.entity.ai.goal.PanicGoal;
+import net.minecraft.entity.ai.goal.SwimGoal;
+import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
+
+public class SummonedHorse extends AbstractHorseEntity implements MagicSummon {
+    public SummonedHorse(EntityType<? extends AbstractHorseEntity> pEntityType, World pLevel) {
         super(pEntityType, pLevel);
         //randomizeAttributes(Utils.random);
 
     }
 
-    public SummonedHorse(Level pLevel) {
+    public SummonedHorse(World pLevel) {
         this(EntityRegistry.SPECTRAL_STEED.get(), pLevel);
         //randomizeAttributes(Utils.random);
 
     }
 
-    public SummonedHorse(Level pLevel, LivingEntity owner) {
+    public SummonedHorse(World pLevel, LivingEntity owner) {
         this(pLevel);
         setOwnerUUID(owner.getUUID());
         setSummoner(owner);
@@ -48,21 +54,21 @@ public class SummonedHorse extends AbstractHorse implements MagicSummon {
 
     @Override
     protected void registerGoals() {
-        this.goalSelector.addGoal(1, new FloatGoal(this));
+        this.goalSelector.addGoal(1, new SwimGoal(this));
         this.goalSelector.addGoal(2, new GenericFollowOwnerGoal(this, this::getSummoner, 0.8f, 12, 4, false, 32));
         this.goalSelector.addGoal(3, new PanicGoal(this, 0.9f));
-        this.goalSelector.addGoal(6, new WaterAvoidingRandomStrollGoal(this, 0.6D));
-        this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 6.0F));
-        this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(6, new WaterAvoidingRandomWalkingGoal(this, 0.6D));
+        this.goalSelector.addGoal(7, new LookAtGoal(this, PlayerEntity.class, 6.0F));
+        this.goalSelector.addGoal(8, new LookRandomlyGoal(this));
 
     }
 
     @Override
-    public void openCustomInventoryScreen(Player pPlayer) {
+    public void openCustomInventoryScreen(PlayerEntity pPlayer) {
         return;
     }
 
-    public static AttributeSupplier.Builder prepareAttributes() {
+    public static AttributeModifierMap.MutableAttribute prepareAttributes() {
         return LivingEntity.createLivingAttributes()
                 .add(Attributes.MAX_HEALTH, 15)
                 .add(Attributes.JUMP_STRENGTH, 1.0)
@@ -119,7 +125,7 @@ public class SummonedHorse extends AbstractHorse implements MagicSummon {
         if (level.isClientSide) {
             if (Utils.random.nextFloat() < .25f) {
                 float radius = .75f;
-                Vec3 vec = new Vec3(
+                Vector3d vec = new Vector3d(
                         random.nextFloat() * 2 * radius - radius,
                         random.nextFloat() * 2 * radius - radius,
                         random.nextFloat() * 2 * radius - radius
@@ -130,7 +136,7 @@ public class SummonedHorse extends AbstractHorse implements MagicSummon {
     }
 
     @Override
-    public InteractionResult mobInteract(Player pPlayer, InteractionHand pHand) {
+    public ActionResultType mobInteract(PlayerEntity pPlayer, Hand pHand) {
         if (this.isVehicle()) {
             return super.mobInteract(pPlayer, pHand);
         }
@@ -139,7 +145,7 @@ public class SummonedHorse extends AbstractHorse implements MagicSummon {
         } else {
             this.makeMad();
         }
-        return InteractionResult.sidedSuccess(this.level.isClientSide);
+        return ActionResultType.sidedSuccess(this.level.isClientSide);
     }
 
     @Override
@@ -167,19 +173,19 @@ public class SummonedHorse extends AbstractHorse implements MagicSummon {
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag compoundTag) {
+    public void readAdditionalSaveData(CompoundNBT compoundTag) {
         super.readAdditionalSaveData(compoundTag);
         setOwnerUUID(OwnerHelper.deserializeOwner(compoundTag));
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag compoundTag) {
+    public void addAdditionalSaveData(CompoundNBT compoundTag) {
         super.addAdditionalSaveData(compoundTag);
         OwnerHelper.serializeOwner(compoundTag, getOwnerUUID());
     }
 
     @Override
-    public boolean canBeLeashed(Player pPlayer) {
+    public boolean canBeLeashed(PlayerEntity pPlayer) {
         return false;
     }
 

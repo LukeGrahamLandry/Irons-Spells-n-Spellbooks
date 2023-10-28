@@ -2,7 +2,7 @@ package io.redspace.ironsspellbooks.entity.armor.pumpkin;
 
 import io.redspace.ironsspellbooks.IronsSpellbooks;
 import io.redspace.ironsspellbooks.item.armor.PumpkinArmorItem;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.ResourceLocation;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 
 public class PumpkinArmorModel extends AnimatedGeoModel<PumpkinArmorItem> {

@@ -7,37 +7,37 @@ import io.redspace.ironsspellbooks.registries.EntityRegistry;
 import io.redspace.ironsspellbooks.registries.MobEffectRegistry;
 import io.redspace.ironsspellbooks.util.OwnerHelper;
 import io.redspace.ironsspellbooks.api.util.Utils;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.FloatGoal;
-import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
-import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
-import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
-import net.minecraft.world.entity.animal.PolarBear;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Hand;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.DamageSource;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.ai.attributes.AttributeModifierMap;
+import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.entity.ai.goal.SwimGoal;
+import net.minecraft.entity.ai.goal.LookAtGoal;
+import net.minecraft.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
+import net.minecraft.entity.passive.PolarBearEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.World;
+import net.minecraft.util.math.vector.Vector3d;
 
 import javax.annotation.Nullable;
 import java.util.UUID;
 
-public class SummonedPolarBear extends PolarBear implements MagicSummon {
-    public SummonedPolarBear(EntityType<? extends PolarBear> pEntityType, Level pLevel) {
+public class SummonedPolarBear extends PolarBearEntity implements MagicSummon {
+    public SummonedPolarBear(EntityType<? extends PolarBearEntity> pEntityType, World pLevel) {
         super(pEntityType, pLevel);
         maxUpStep = 1f;
         xpReward = 0;
     }
 
-    public SummonedPolarBear(Level pLevel, LivingEntity owner) {
+    public SummonedPolarBear(World pLevel, LivingEntity owner) {
         this(EntityRegistry.SUMMONED_POLAR_BEAR.get(), pLevel);
         setSummoner(owner);
     }
@@ -48,12 +48,12 @@ public class SummonedPolarBear extends PolarBear implements MagicSummon {
     @Override
     public void registerGoals() {
 
-        this.goalSelector.addGoal(0, new FloatGoal(this));
+        this.goalSelector.addGoal(0, new SwimGoal(this));
         this.goalSelector.addGoal(1, new PolarBearMeleeAttackGoal());
         this.goalSelector.addGoal(7, new GenericFollowOwnerGoal(this, this::getSummoner, 0.9f, 15, 5, false, 25));
-        this.goalSelector.addGoal(8, new WaterAvoidingRandomStrollGoal(this, 0.8D));
-        this.goalSelector.addGoal(9, new LookAtPlayerGoal(this, Player.class, 3.0F, 1.0F));
-        this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Mob.class, 8.0F));
+        this.goalSelector.addGoal(8, new WaterAvoidingRandomWalkingGoal(this, 0.8D));
+        this.goalSelector.addGoal(9, new LookAtGoal(this, PlayerEntity.class, 3.0F, 1.0F));
+        this.goalSelector.addGoal(10, new LookAtGoal(this, MobEntity.class, 8.0F));
 
         this.targetSelector.addGoal(1, new GenericOwnerHurtByTargetGoal(this, this::getSummoner));
         this.targetSelector.addGoal(2, new GenericOwnerHurtTargetGoal(this, this::getSummoner));
@@ -63,14 +63,14 @@ public class SummonedPolarBear extends PolarBear implements MagicSummon {
     }
 
     @Override
-    public InteractionResult mobInteract(Player pPlayer, InteractionHand pHand) {
+    public ActionResultType mobInteract(PlayerEntity pPlayer, Hand pHand) {
         if (this.isVehicle()) {
             return super.mobInteract(pPlayer, pHand);
         }
         if (pPlayer == getSummoner()) {
             this.doPlayerRide(pPlayer);
         }
-        return InteractionResult.sidedSuccess(this.level.isClientSide);
+        return ActionResultType.sidedSuccess(this.level.isClientSide);
     }
 
     @Nullable
@@ -78,7 +78,7 @@ public class SummonedPolarBear extends PolarBear implements MagicSummon {
         return this.getFirstPassenger();
     }
 
-    protected void doPlayerRide(Player pPlayer) {
+    protected void doPlayerRide(PlayerEntity pPlayer) {
         this.setStanding(false);
         if (!this.level.isClientSide) {
             pPlayer.setYRot(this.getYRot());
@@ -113,13 +113,13 @@ public class SummonedPolarBear extends PolarBear implements MagicSummon {
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag compoundTag) {
+    public void readAdditionalSaveData(CompoundNBT compoundTag) {
         super.readAdditionalSaveData(compoundTag);
         this.summonerUUID = OwnerHelper.deserializeOwner(compoundTag);
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag compoundTag) {
+    public void addAdditionalSaveData(CompoundNBT compoundTag) {
         super.addAdditionalSaveData(compoundTag);
         OwnerHelper.serializeOwner(compoundTag, summonerUUID);
     }
@@ -149,8 +149,8 @@ public class SummonedPolarBear extends PolarBear implements MagicSummon {
         return super.hurt(pSource, pAmount);
     }
 
-    public static AttributeSupplier.Builder createAttributes() {
-        return Mob.createMobAttributes()
+    public static AttributeModifierMap.MutableAttribute createAttributes() {
+        return MobEntity.createMobAttributes()
                 //Health and Damage overridden by summoning via spell
                 .add(Attributes.MAX_HEALTH, 30.0D)
                 .add(Attributes.FOLLOW_RANGE, 20.0D)
@@ -159,7 +159,7 @@ public class SummonedPolarBear extends PolarBear implements MagicSummon {
     }
 
     @Override
-    public void travel(Vec3 pTravelVector) {
+    public void travel(Vector3d pTravelVector) {
         Entity conductor = this.getControllingPassenger();
         if (this.isVehicle() && conductor instanceof LivingEntity livingEntity) {
             this.yRotO = this.getYRot();
@@ -172,7 +172,7 @@ public class SummonedPolarBear extends PolarBear implements MagicSummon {
             float f1 = livingEntity.zza;
             if (this.isControlledByLocalInstance()) {
                 this.setSpeed((float) this.getAttributeValue(Attributes.MOVEMENT_SPEED) * .55f);
-                super.travel(new Vec3((double) f, pTravelVector.y, (double) f1));
+                super.travel(new Vector3d((double) f, pTravelVector.y, (double) f1));
             }
         } else {
             super.travel(pTravelVector);

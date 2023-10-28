@@ -3,19 +3,19 @@ package io.redspace.ironsspellbooks.entity.spells;
 import io.redspace.ironsspellbooks.api.magic.MagicData;
 import io.redspace.ironsspellbooks.entity.mobs.AntiMagicSusceptible;
 import io.redspace.ironsspellbooks.registries.EntityRegistry;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
-import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializers;
-import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.phys.shapes.Shapes;
-import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.IPacket;
+import net.minecraft.network.play.server.SSpawnObjectPacket;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.util.DamageSource;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.world.World;
+import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.shapes.VoxelShapes;
+import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraftforge.entity.PartEntity;
 
 import javax.annotation.Nullable;
@@ -23,11 +23,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class AbstractShieldEntity extends Entity implements AntiMagicSusceptible {
-    private static final EntityDataAccessor<Float> DATA_HEALTH_ID = SynchedEntityData.defineId(AbstractShieldEntity.class, EntityDataSerializers.FLOAT);
+    private static final DataParameter<Float> DATA_HEALTH_ID = EntityDataManager.defineId(AbstractShieldEntity.class, DataSerializers.FLOAT);
 
     public boolean hurtThisTick;
 
-    public AbstractShieldEntity(EntityType<?> pEntityType, Level pLevel) {
+    public AbstractShieldEntity(EntityType<?> pEntityType, World pLevel) {
         super(pEntityType, pLevel);
 //        width = 3;
 //        height = 3;
@@ -41,7 +41,7 @@ public abstract class AbstractShieldEntity extends Entity implements AntiMagicSu
 
     }
 
-    public AbstractShieldEntity(Level level, float health) {
+    public AbstractShieldEntity(World level, float health) {
         this(EntityRegistry.SHIELD_ENTITY.get(), level);
         this.setHealth(health);
     }
@@ -55,13 +55,13 @@ public abstract class AbstractShieldEntity extends Entity implements AntiMagicSu
 //        this.yRotO = y;
 //    }
 
-    public abstract void takeDamage(DamageSource source, float amount, @Nullable Vec3 location);
+    public abstract void takeDamage(DamageSource source, float amount, @Nullable Vector3d location);
 
     @Override
     public void tick() {
         hurtThisTick = false;
         for (PartEntity<?> subEntity : getParts()) {
-            Vec3 pos = subEntity.position();
+            Vector3d pos = subEntity.position();
             subEntity.setPos(pos);
             subEntity.xo = pos.x;
             subEntity.yo = pos.y;
@@ -116,28 +116,28 @@ public abstract class AbstractShieldEntity extends Entity implements AntiMagicSu
     }
 
     @Override
-    protected void readAdditionalSaveData(CompoundTag pCompound) {
+    protected void readAdditionalSaveData(CompoundNBT pCompound) {
         if (pCompound.contains("Health", 99)) {
             this.setHealth(pCompound.getFloat("Health"));
         }
     }
 
     @Override
-    protected void addAdditionalSaveData(CompoundTag pCompound) {
+    protected void addAdditionalSaveData(CompoundNBT pCompound) {
         pCompound.putFloat("Health", this.getHealth());
 
     }
 
     @Override
-    public Packet<?> getAddEntityPacket() {
+    public IPacket<?> getAddEntityPacket() {
         //TODO: fill this out with real info
-        return new ClientboundAddEntityPacket(this);
+        return new SSpawnObjectPacket(this);
     }
 
     public List<VoxelShape> getVoxels() {
         List<VoxelShape> voxels = new ArrayList<>();
         for (PartEntity<?> shieldPart : getParts())
-            voxels.add(Shapes.create(shieldPart.getBoundingBox()));
+            voxels.add(VoxelShapes.create(shieldPart.getBoundingBox()));
         return voxels;
     }
 

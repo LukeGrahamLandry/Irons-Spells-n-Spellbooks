@@ -2,12 +2,12 @@ package io.redspace.ironsspellbooks.capabilities.magic;
 
 import com.google.common.collect.ImmutableMap;
 import io.redspace.ironsspellbooks.item.armor.UpgradeType;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.INBT;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.item.ItemStack;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,12 +17,12 @@ public class UpgradeData {
     public static final String Upgrade_Key = "id";
     public static final String Slot_Key = "slot";
     public static final String Upgrade_Count = "upgrades";
-    public static final UpgradeData NONE = new UpgradeData(Map.of(), EquipmentSlot.MAINHAND);
+    public static final UpgradeData NONE = new UpgradeData(Map.of(), EquipmentSlotType.MAINHAND);
 
     private final Map<UpgradeType, Integer> upgrades;
-    private EquipmentSlot upgradedSlot;
+    private EquipmentSlotType upgradedSlot;
 
-    protected UpgradeData(Map<UpgradeType, Integer> upgrades, EquipmentSlot slot) {
+    protected UpgradeData(Map<UpgradeType, Integer> upgrades, EquipmentSlotType slot) {
         this.upgrades = upgrades;
         this.upgradedSlot = slot;
     }
@@ -30,14 +30,14 @@ public class UpgradeData {
     public static UpgradeData getUpgradeData(ItemStack itemStack) {
         if (!UpgradeData.hasUpgradeData(itemStack))
             return NONE;
-        ListTag upgrades = itemStack.getOrCreateTag().getList(Upgrades, 10);
+        ListNBT upgrades = itemStack.getOrCreateTag().getList(Upgrades, 10);
         //String attributeName = Registry.ATTRIBUTE.getKey(attribute).toString();
         Map<UpgradeType, Integer> map = new HashMap<>();
-        EquipmentSlot upgradedSlot = null;
-        for (Tag tag : upgrades) {
-            if (tag instanceof CompoundTag compoundTag) {
+        EquipmentSlotType upgradedSlot = null;
+        for (INBT tag : upgrades) {
+            if (tag instanceof CompoundNBT compoundTag) {
                 if (upgradedSlot == null) {
-                    upgradedSlot = EquipmentSlot.byName(compoundTag.getString(Slot_Key));
+                    upgradedSlot = EquipmentSlotType.byName(compoundTag.getString(Slot_Key));
                 }
                 var upgradeKey = new ResourceLocation(compoundTag.getString(Upgrade_Key));
                 UpgradeType.getUpgrade(upgradeKey).ifPresent((upgrade) -> map.put(upgrade, compoundTag.getInt(Upgrade_Count)));
@@ -60,10 +60,10 @@ public class UpgradeData {
             }
             return;
         }
-        ListTag upgrades = new ListTag();
+        ListNBT upgrades = new ListNBT();
 
         for (ImmutableMap.Entry<UpgradeType, Integer> upgradeInstance : upgradeData.upgrades.entrySet()) {
-            CompoundTag upgradeTag = new CompoundTag();
+            CompoundNBT upgradeTag = new CompoundNBT();
             upgradeTag.putString(Upgrade_Key, upgradeInstance.getKey().getId().toString());
             upgradeTag.putString(Slot_Key, upgradeData.upgradedSlot.getName());
             upgradeTag.putInt(Upgrade_Count, upgradeInstance.getValue());
@@ -77,7 +77,7 @@ public class UpgradeData {
         setUpgradeData(itemStack, NONE);
     }
 
-    public UpgradeData addUpgrade(ItemStack stack, UpgradeType upgradeType, EquipmentSlot slot) {
+    public UpgradeData addUpgrade(ItemStack stack, UpgradeType upgradeType, EquipmentSlotType slot) {
         if (this == NONE) {
             Map<UpgradeType, Integer> map = new HashMap<>();
             map.put(upgradeType, 1);
@@ -103,7 +103,7 @@ public class UpgradeData {
         return count;
     }
 
-    public EquipmentSlot getUpgradedSlot() {
+    public EquipmentSlotType getUpgradedSlot() {
         return this.upgradedSlot;
     }
 

@@ -1,9 +1,9 @@
 package io.redspace.ironsspellbooks.capabilities.magic;
 
 import io.redspace.ironsspellbooks.api.spells.ICastData;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.util.math.vector.Vector3d;
 
 import javax.annotation.Nullable;
 import java.util.UUID;
@@ -24,12 +24,12 @@ public class CastTargetingData implements ICastData {
     }
 
     @Nullable
-    public LivingEntity getTarget(ServerLevel level) {
+    public LivingEntity getTarget(ServerWorld level) {
         return (LivingEntity) level.getEntity(targetUUID);
     }
 
     @Nullable
-    public Vec3 getTargetPosition(ServerLevel level) {
+    public Vector3d getTargetPosition(ServerWorld level) {
         return getTarget(level) == null ? null : getTarget(level).position();
     }
 }

@@ -10,29 +10,29 @@ import io.redspace.ironsspellbooks.api.registry.SpellRegistry;
 import io.redspace.ironsspellbooks.capabilities.spell.SpellData;
 //import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandBuildContext;
-import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.commands.Commands;
-import net.minecraft.commands.SharedSuggestionProvider;
-import net.minecraft.commands.arguments.item.ItemArgument;
-import net.minecraft.commands.arguments.item.ItemInput;
-import net.minecraft.core.Registry;
-import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.SwordItem;
+import net.minecraft.command.CommandSource;
+import net.minecraft.command.Commands;
+import net.minecraft.command.ISuggestionProvider;
+import net.minecraft.command.arguments.ItemArgument;
+import net.minecraft.command.arguments.ItemInput;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.SwordItem;
 
 import java.util.stream.Collectors;
 
 public class CreateImbuedSwordCommand {
 
-    private static final SimpleCommandExceptionType ERROR_FAILED = new SimpleCommandExceptionType(Component.translatable("commands.irons_spellbooks.create_imbued_sword.failed"));
+    private static final SimpleCommandExceptionType ERROR_FAILED = new SimpleCommandExceptionType(ITextComponent.translatable("commands.irons_spellbooks.create_imbued_sword.failed"));
 
-    private static final SuggestionProvider<CommandSourceStack> SWORD_SUGGESTIONS = (p_180253_, p_180254_) -> {
+    private static final SuggestionProvider<CommandSource> SWORD_SUGGESTIONS = (p_180253_, p_180254_) -> {
         var resources = Registry.ITEM.stream().filter((k) -> k instanceof SwordItem).map(Registry.ITEM::getKey).collect(Collectors.toSet());
-        return SharedSuggestionProvider.suggestResource(resources, p_180254_);
+        return ISuggestionProvider.suggestResource(resources, p_180254_);
     };
 
-    public static void register(CommandDispatcher<CommandSourceStack> pDispatcher, CommandBuildContext context) {
+    public static void register(CommandDispatcher<CommandSource> pDispatcher, CommandBuildContext context) {
 
         pDispatcher.register(Commands.literal("createImbuedSword").requires((commandSourceStack) -> {
             return commandSourceStack.hasPermission(2);
@@ -43,7 +43,7 @@ public class CreateImbuedSwordCommand {
                         })))));
     }
 
-    private static int createImbuedSword(CommandSourceStack source, ItemInput itemInput, String spell, int spellLevel) throws CommandSyntaxException {
+    private static int createImbuedSword(CommandSource source, ItemInput itemInput, String spell, int spellLevel) throws CommandSyntaxException {
         if (!spell.contains(":")) {
             spell = IronsSpellbooks.MODID + ":" + spell;
         }
@@ -51,7 +51,7 @@ public class CreateImbuedSwordCommand {
         var abstractSpell = SpellRegistry.REGISTRY.get().getValue(new ResourceLocation(spell));
 
         if (spellLevel > abstractSpell.getMaxLevel()) {
-            throw new SimpleCommandExceptionType(Component.translatable("commands.irons_spellbooks.create_spell.failed_max_level", abstractSpell.getSpellName(), abstractSpell.getMaxLevel())).create();
+            throw new SimpleCommandExceptionType(ITextComponent.translatable("commands.irons_spellbooks.create_spell.failed_max_level", abstractSpell.getSpellName(), abstractSpell.getMaxLevel())).create();
         }
 
         var serverPlayer = source.getPlayer();

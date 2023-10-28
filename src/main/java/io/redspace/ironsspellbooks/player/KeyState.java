@@ -1,13 +1,13 @@
 package io.redspace.ironsspellbooks.player;
 
-import net.minecraft.client.KeyMapping;
+import net.minecraft.client.settings.KeyBinding;
 
 public class KeyState {
     private boolean isHeld;
-    private final KeyMapping key;
+    private final KeyBinding key;
     private int heldTicks;
 
-    public KeyState(KeyMapping key) {
+    public KeyState(KeyBinding key) {
         this.key = key;
     }
 

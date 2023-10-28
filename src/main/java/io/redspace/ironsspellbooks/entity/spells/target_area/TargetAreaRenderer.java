@@ -1,21 +1,21 @@
 package io.redspace.ironsspellbooks.entity.spells.target_area;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Matrix3f;
-import com.mojang.math.Matrix4f;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
+import net.minecraft.util.math.vector.Matrix3f;
+import net.minecraft.util.math.vector.Matrix4f;
 import com.mojang.math.Vector3f;
 import io.redspace.ironsspellbooks.api.util.Utils;
 import io.redspace.ironsspellbooks.render.SpellRenderingHelper;
 import io.redspace.ironsspellbooks.render.SpellTargetingLayer;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
 
 public class TargetAreaRenderer extends EntityRenderer<TargetedAreaEntity> {
     public TargetAreaRenderer(EntityRendererProvider.Context pContext) {
@@ -28,27 +28,27 @@ public class TargetAreaRenderer extends EntityRenderer<TargetedAreaEntity> {
     }
 
     @Override
-    public void render(TargetedAreaEntity entity, float pEntityYaw, float pPartialTick, PoseStack poseStack, MultiBufferSource bufferSource, int light) {
+    public void render(TargetedAreaEntity entity, float pEntityYaw, float pPartialTick, MatrixStack poseStack, IRenderTypeBuffer bufferSource, int light) {
 
-        VertexConsumer consumer = bufferSource.getBuffer(RenderType.energySwirl(SpellRenderingHelper.SOLID, 0, 0));
+        IVertexBuilder consumer = bufferSource.getBuffer(RenderType.energySwirl(SpellRenderingHelper.SOLID, 0, 0));
         var color = entity.getColor();
         poseStack.pushPose();
-        PoseStack.Pose pose = poseStack.last();
+        MatrixStack.Entry pose = poseStack.last();
         Matrix4f poseMatrix = pose.pose();
         Matrix3f normalMatrix = pose.normal();
 
         float radius = entity.getRadius();
         int segments = (int) (5 * radius + 9);
-        float angle = 2 * Mth.PI / segments;
-        float entityY = (float) Mth.lerp(pPartialTick, entity.yOld, entity.getY());
+        float angle = 2 * MathHelper.PI / segments;
+        float entityY = (float) MathHelper.lerp(pPartialTick, entity.yOld, entity.getY());
 
         for (int i = 0; i < segments; i++) {
             float theta = angle * i;
             float theta2 = angle * (i + 1);
-            float x1 = radius * Mth.cos(theta);
-            float x2 = radius * Mth.cos(theta2);
-            float z1 = radius * Mth.sin(theta);
-            float z2 = radius * Mth.sin(theta2);
+            float x1 = radius * MathHelper.cos(theta);
+            float x2 = radius * MathHelper.cos(theta2);
+            float z1 = radius * MathHelper.sin(theta);
+            float z2 = radius * MathHelper.sin(theta2);
 
             float y1 = Utils.findRelativeGroundLevel(entity.level, entity.position().add(x1, entity.getBbHeight(), z1), (int) (entity.getBbHeight() * 2.5)) - entityY;
             float y2 = Utils.findRelativeGroundLevel(entity.level, entity.position().add(x2, entity.getBbHeight(), z2), (int) (entity.getBbHeight() * 2.5)) - entityY;

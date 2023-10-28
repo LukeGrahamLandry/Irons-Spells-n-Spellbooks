@@ -1,8 +1,8 @@
 package io.redspace.ironsspellbooks.item.armor;
 
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.entity.ai.attributes.Attribute;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
 
 import java.util.HashMap;
 import java.util.Map;

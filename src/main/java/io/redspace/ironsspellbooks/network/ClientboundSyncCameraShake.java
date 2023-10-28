@@ -6,7 +6,7 @@ import io.redspace.ironsspellbooks.api.util.CameraShakeData;
 import io.redspace.ironsspellbooks.api.util.CameraShakeManager;
 import io.redspace.ironsspellbooks.capabilities.magic.SyncedSpellData;
 import io.redspace.ironsspellbooks.player.ClientMagicData;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.ArrayList;
@@ -20,7 +20,7 @@ public class ClientboundSyncCameraShake {
         this.cameraShakeData = cameraShakeData;
     }
 
-    public ClientboundSyncCameraShake(FriendlyByteBuf buf) {
+    public ClientboundSyncCameraShake(PacketBuffer buf) {
         cameraShakeData = new ArrayList<>();
         int i = buf.readInt();
         IronsSpellbooks.LOGGER.debug("ClientboundSyncCameraShake construct from buf: {}", i);
@@ -29,7 +29,7 @@ public class ClientboundSyncCameraShake {
         }
     }
 
-    public void toBytes(FriendlyByteBuf buf) {
+    public void toBytes(PacketBuffer buf) {
         buf.writeInt(cameraShakeData.size());
         IronsSpellbooks.LOGGER.debug("ClientboundSyncCameraShake.toBytes: {}", cameraShakeData.size());
 

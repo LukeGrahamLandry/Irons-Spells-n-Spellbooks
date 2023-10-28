@@ -10,30 +10,30 @@ import io.redspace.ironsspellbooks.registries.MobEffectRegistry;
 import io.redspace.ironsspellbooks.registries.SoundRegistry;
 import io.redspace.ironsspellbooks.api.spells.SchoolType;
 import io.redspace.ironsspellbooks.util.ParticleHelper;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.potion.Effects;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.world.World;
+import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.EntityRayTraceResult;
 
 import java.util.Optional;
 
 public class GuidingBoltProjectile extends AbstractMagicProjectile {
-    public GuidingBoltProjectile(EntityType<? extends GuidingBoltProjectile> entityType, Level level) {
+    public GuidingBoltProjectile(EntityType<? extends GuidingBoltProjectile> entityType, World level) {
         super(entityType, level);
         this.setNoGravity(true);
     }
 
-    public GuidingBoltProjectile(EntityType<? extends GuidingBoltProjectile> entityType, Level levelIn, LivingEntity shooter) {
+    public GuidingBoltProjectile(EntityType<? extends GuidingBoltProjectile> entityType, World levelIn, LivingEntity shooter) {
         super(entityType, levelIn);
         setOwner(shooter);
     }
 
-    public GuidingBoltProjectile(Level levelIn, LivingEntity shooter) {
+    public GuidingBoltProjectile(World levelIn, LivingEntity shooter) {
         this(EntityRegistry.GUIDING_BOLT.get(), levelIn, shooter);
     }
 
@@ -54,11 +54,11 @@ public class GuidingBoltProjectile extends AbstractMagicProjectile {
 
     @Override
     protected void doImpactSound(SoundEvent sound) {
-        level.playSound(null, getX(), getY(), getZ(), sound, SoundSource.NEUTRAL, 2, 0.9f + Utils.random.nextFloat() * .4f);
+        level.playSound(null, getX(), getY(), getZ(), sound, SoundCategory.NEUTRAL, 2, 0.9f + Utils.random.nextFloat() * .4f);
     }
 
     @Override
-    protected void onHitBlock(BlockHitResult blockHitResult) {
+    protected void onHitBlock(BlockRayTraceResult blockHitResult) {
         super.onHitBlock(blockHitResult);
         //irons_spellbooks.LOGGER.debug("MagicMissileProjectile.onHitBlock");
         discard();
@@ -66,14 +66,14 @@ public class GuidingBoltProjectile extends AbstractMagicProjectile {
     }
 
     @Override
-    protected void onHitEntity(EntityHitResult entityHitResult) {
+    protected void onHitEntity(EntityRayTraceResult entityHitResult) {
         super.onHitEntity(entityHitResult);
         //irons_spellbooks.LOGGER.debug("MagicMissileProjectile.onHitEntity");
 
         if (DamageSources.applyDamage(entityHitResult.getEntity(), damage, SpellRegistry.GUIDING_BOLT_SPELL.get().getDamageSource(this, getOwner()), SpellRegistry.GUIDING_BOLT_SPELL.get().getSchoolType())) {
             if (entityHitResult.getEntity() instanceof LivingEntity livingEntity) {
-                livingEntity.addEffect(new MobEffectInstance(MobEffectRegistry.GUIDING_BOLT.get(), 15 * 20));
-                livingEntity.addEffect(new MobEffectInstance(MobEffects.GLOWING, 15 * 20, 0, false, false, false));
+                livingEntity.addEffect(new EffectInstance(MobEffectRegistry.GUIDING_BOLT.get(), 15 * 20));
+                livingEntity.addEffect(new EffectInstance(Effects.GLOWING, 15 * 20, 0, false, false, false));
 
             }
         }

@@ -28,28 +28,28 @@ import io.redspace.ironsspellbooks.api.spells.CastType;
 import io.redspace.ironsspellbooks.util.ModTags;
 import io.redspace.ironsspellbooks.util.UpgradeUtils;
 import io.redspace.ironsspellbooks.api.util.Utils;
-import net.minecraft.core.BlockPos;
-import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
-import net.minecraft.network.protocol.game.ClientboundUpdateMobEffectPacket;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.damagesource.IndirectEntityDamageSource;
-import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.Entity;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.network.play.server.SEntityMetadataPacket;
+import net.minecraft.network.play.server.SPlayEntityEffectPacket;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.util.SoundEvents;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.IndirectEntityDamageSource;
+import net.minecraft.potion.Effects;
+import net.minecraft.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.monster.Creeper;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.ItemUtils;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.monster.CreeperEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.DrinkHelper;
+import net.minecraft.item.Items;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
-import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraftforge.event.ItemAttributeModifierEvent;
 import net.minecraftforge.event.entity.EntityMountEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
@@ -92,7 +92,7 @@ public class ServerPlayerEvents {
             return;
         }
 
-        if (event.getEntity() instanceof ServerPlayer serverPlayer) {
+        if (event.getEntity() instanceof ServerPlayerEntity serverPlayer) {
             var playerMagicData = MagicData.getPlayerMagicData(serverPlayer);
             if (playerMagicData.isCasting()
                     && (event.getSlot().getIndex() == 0 || event.getSlot().getIndex() == 1)
@@ -109,7 +109,7 @@ public class ServerPlayerEvents {
         }
         //Ironsspellbooks.logger.debug("onPlayerOpenContainer {} {}", event.getEntity().getName().getString(), event.getContainer().getType());
 
-        if (event.getEntity() instanceof ServerPlayer serverPlayer) {
+        if (event.getEntity() instanceof ServerPlayerEntity serverPlayer) {
             var playerMagicData = MagicData.getPlayerMagicData(serverPlayer);
             if (playerMagicData.isCasting()) {
                 Utils.serverSideCancelCast(serverPlayer);
@@ -144,14 +144,14 @@ public class ServerPlayerEvents {
 
     @SubscribeEvent
     public static void onStartTracking(final PlayerEvent.StartTracking event) {
-        if (event.getEntity() instanceof ServerPlayer serverPlayer && event.getTarget() instanceof ServerPlayer targetPlayer) {
+        if (event.getEntity() instanceof ServerPlayerEntity serverPlayer && event.getTarget() instanceof ServerPlayerEntity targetPlayer) {
             MagicData.getPlayerMagicData(serverPlayer).getSyncedData().syncToPlayer(targetPlayer);
         }
     }
 
     @SubscribeEvent
     public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
-        if (event.getEntity() instanceof ServerPlayer serverPlayer) {
+        if (event.getEntity() instanceof ServerPlayerEntity serverPlayer) {
             var playerMagicData = MagicData.getPlayerMagicData(serverPlayer);
             playerMagicData.getPlayerCooldowns().syncToPlayer(serverPlayer);
             playerMagicData.getSyncedData().syncToPlayer(serverPlayer);
@@ -161,7 +161,7 @@ public class ServerPlayerEvents {
 
     @SubscribeEvent
     public static void onLivingDeathEvent(LivingDeathEvent event) {
-        if (event.getEntity() instanceof ServerPlayer serverPlayer) {
+        if (event.getEntity() instanceof ServerPlayerEntity serverPlayer) {
             Utils.serverSideCancelCast(serverPlayer);
         }
     }
@@ -169,7 +169,7 @@ public class ServerPlayerEvents {
     @SubscribeEvent
     public static void onPlayerCloned(PlayerEvent.Clone event) {
         if (event.isWasDeath()) {
-            if (event.getEntity() instanceof ServerPlayer newServerPlayer) {
+            if (event.getEntity() instanceof ServerPlayerEntity newServerPlayer) {
                 //Persist summon timers across death
                 event.getOriginal().getActiveEffects().forEach((effect -> {
                     //IronsSpellbooks.LOGGER.debug("{}", effect.getEffect().getDisplayName().getString());
@@ -184,7 +184,7 @@ public class ServerPlayerEvents {
     @SubscribeEvent
     public static void onPlayerChangedDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
         //Ironsspellbooks.logger.debug("PlayerChangedDimension: {}", event.getEntity().getName().getString());
-        if (event.getEntity() instanceof ServerPlayer serverPlayer) {
+        if (event.getEntity() instanceof ServerPlayerEntity serverPlayer) {
             //Ironsspellbooks.logger.debug("onPlayerLoggedIn syncing cooldowns to {}", serverPlayer.getName().getString());
             Utils.serverSideCancelCast(serverPlayer);
         }
@@ -192,12 +192,12 @@ public class ServerPlayerEvents {
 
     @SubscribeEvent
     public static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event) {
-        if (event.getEntity() instanceof ServerPlayer serverPlayer) {
+        if (event.getEntity() instanceof ServerPlayerEntity serverPlayer) {
 
             //Clear fire and frozen
             serverPlayer.clearFire();
             serverPlayer.setTicksFrozen(0);
-            serverPlayer.connection.send(new ClientboundSetEntityDataPacket(serverPlayer.getId(), serverPlayer.getEntityData(), true));
+            serverPlayer.connection.send(new SEntityMetadataPacket(serverPlayer.getId(), serverPlayer.getEntityData(), true));
 
             //Cancel casting
             Utils.serverSideCancelCast(serverPlayer);
@@ -205,7 +205,7 @@ public class ServerPlayerEvents {
             //Sync effects
             serverPlayer.getActiveEffects().forEach((effect -> {
                 if (effect.getEffect() instanceof SummonTimer) {
-                    serverPlayer.connection.send(new ClientboundUpdateMobEffectPacket(serverPlayer.getId(), effect));
+                    serverPlayer.connection.send(new SPlayEntityEffectPacket(serverPlayer.getId(), effect));
                 }
             }));
 
@@ -219,7 +219,7 @@ public class ServerPlayerEvents {
         var livingEntity = event.getEntity();
         //irons_spellbooks.LOGGER.debug("onLivingAttack.1: {}", livingEntity);
 
-        if ((livingEntity instanceof ServerPlayer) || (livingEntity instanceof AbstractSpellCastingMob)) {
+        if ((livingEntity instanceof ServerPlayerEntity) || (livingEntity instanceof AbstractSpellCastingMob)) {
             var playerMagicData = MagicData.getPlayerMagicData(livingEntity);
             if (playerMagicData.getSyncedData().hasEffect(SyncedSpellData.EVASION)) {
                 if (EvasionEffect.doEffect(livingEntity, event.getSource())) {
@@ -268,9 +268,9 @@ public class ServerPlayerEvents {
 
     @SubscribeEvent
     public static void testManaEvent(ChangeManaEvent event) {
-        if (event.getEntity().hasEffect(MobEffects.REGENERATION))
+        if (event.getEntity().hasEffect(Effects.REGENERATION))
             event.setCanceled(true);
-        else if (event.getEntity().hasEffect(MobEffects.POISON) ){
+        else if (event.getEntity().hasEffect(Effects.POISON) ){
             var diff = event.getNewMana() - event.getOldMana();
             if (diff < 0) {
                 diff *= 2;
@@ -292,7 +292,7 @@ public class ServerPlayerEvents {
              * Spider aspect handling
              */
             if (livingAttacker.hasEffect(MobEffectRegistry.SPIDER_ASPECT.get())) {
-                if (event.getEntity().hasEffect(MobEffects.POISON)) {
+                if (event.getEntity().hasEffect(Effects.POISON)) {
                     int lvl = livingAttacker.getEffect(MobEffectRegistry.SPIDER_ASPECT.get()).getAmplifier() + 1;
                     float before = event.getAmount();
                     float multiplier = 1 + SpiderAspectEffect.DAMAGE_PER_LEVEL * lvl;
@@ -305,7 +305,7 @@ public class ServerPlayerEvents {
              * Lurker Ring handling
              */
             if (livingAttacker.isInvisible() && ItemRegistry.LURKER_RING.get().isEquippedBy(livingAttacker)) {
-                if (livingAttacker instanceof Player player && !player.getCooldowns().isOnCooldown(ItemRegistry.LURKER_RING.get())) {
+                if (livingAttacker instanceof PlayerEntity player && !player.getCooldowns().isOnCooldown(ItemRegistry.LURKER_RING.get())) {
                     event.setAmount(event.getAmount() * LurkerRing.MULTIPLIER);
                     player.getCooldowns().addCooldown(ItemRegistry.LURKER_RING.get(), LurkerRing.COOLDOWN_IN_TICKS);
                 }
@@ -322,7 +322,7 @@ public class ServerPlayerEvents {
             return;
         }
 
-        if (event.getEntity() instanceof ServerPlayer serverPlayer) {
+        if (event.getEntity() instanceof ServerPlayerEntity serverPlayer) {
             if (playerMagicData.isCasting() &&
                     playerMagicData.getCastingSpell().getSpell().getCastType() == CastType.LONG &&
                     !ItemRegistry.CONCENTRATION_AMULET.get().isEquippedBy(serverPlayer) &&
@@ -342,7 +342,7 @@ public class ServerPlayerEvents {
             return;
         }
 
-        if (event.getEntity() instanceof ServerPlayer serverPlayer) {
+        if (event.getEntity() instanceof ServerPlayerEntity serverPlayer) {
             var playerMagicData = MagicData.getPlayerMagicData(serverPlayer);
             if (playerMagicData.isCasting()) {
                 Utils.serverSideCancelCast(serverPlayer);
@@ -359,9 +359,9 @@ public class ServerPlayerEvents {
 
     @SubscribeEvent
     public static void onProjectileImpact(ProjectileImpactEvent event) {
-        if (event.getRayTraceResult() instanceof EntityHitResult entityHitResult) {
+        if (event.getRayTraceResult() instanceof EntityRayTraceResult entityHitResult) {
             var victim = entityHitResult.getEntity();
-            if (victim instanceof AbstractSpellCastingMob || victim instanceof Player) {
+            if (victim instanceof AbstractSpellCastingMob || victim instanceof PlayerEntity) {
                 var livingEntity = (LivingEntity) victim;
                 MagicData playerMagicData = MagicData.getPlayerMagicData(livingEntity);
                 if (playerMagicData.getSyncedData().hasEffect(SyncedSpellData.EVASION)) {
@@ -379,14 +379,14 @@ public class ServerPlayerEvents {
 
     @SubscribeEvent
     public static void useOnEntityEvent(PlayerInteractEvent.EntityInteractSpecific event) {
-        if (event.getTarget() instanceof Creeper creeper) {
+        if (event.getTarget() instanceof CreeperEntity creeper) {
             var player = event.getEntity();
             var useItem = player.getItemInHand(event.getHand());
             if (useItem.is(Items.GLASS_BOTTLE) && creeper.isPowered()) {
                 creeper.hurt(DamageSource.GENERIC.bypassMagic(), 5);
-                player.level.playSound((Player) null, player.getX(), player.getY(), player.getZ(), SoundEvents.BOTTLE_FILL_DRAGONBREATH, SoundSource.NEUTRAL, 1.0F, 1.0F);
+                player.level.playSound((PlayerEntity) null, player.getX(), player.getY(), player.getZ(), SoundEvents.BOTTLE_FILL_DRAGONBREATH, SoundCategory.NEUTRAL, 1.0F, 1.0F);
                 player.swing(event.getHand());
-                event.setCancellationResult(InteractionResultHolder.sidedSuccess(ItemUtils.createFilledResult(useItem, player, new ItemStack(ItemRegistry.LIGHTNING_BOTTLE.get())), player.getLevel().isClientSide).getResult());
+                event.setCancellationResult(ActionResult.sidedSuccess(DrinkHelper.createFilledResult(useItem, player, new ItemStack(ItemRegistry.LIGHTNING_BOTTLE.get())), player.getLevel().isClientSide).getResult());
             }
         }
     }

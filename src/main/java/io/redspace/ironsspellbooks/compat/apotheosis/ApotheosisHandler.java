@@ -1,15 +1,15 @@
 package io.redspace.ironsspellbooks.compat.apotheosis;
 
 import io.redspace.ironsspellbooks.item.SpellBook;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.item.ItemStack;
 import shadows.apotheosis.adventure.loot.LootCategory;
 
 public class ApotheosisHandler {
 
-    public static final LootCategory SPELLBOOK = LootCategory.register(LootCategory.SWORD, "spellbook", s-> s.getItem() instanceof SpellBook, arr(EquipmentSlot.MAINHAND));
+    public static final LootCategory SPELLBOOK = LootCategory.register(LootCategory.SWORD, "spellbook", s-> s.getItem() instanceof SpellBook, arr(EquipmentSlotType.MAINHAND));
 
-    private static EquipmentSlot[] arr(EquipmentSlot... s) {
+    private static EquipmentSlotType[] arr(EquipmentSlotType... s) {
         return s;
     }
 

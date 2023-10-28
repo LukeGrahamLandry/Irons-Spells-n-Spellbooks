@@ -1,11 +1,11 @@
 package io.redspace.ironsspellbooks.damage;
 
 import io.redspace.ironsspellbooks.api.spells.AbstractSpell;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.damagesource.EntityDamageSource;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.EntityDamageSource;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 
 public class SpellDamageSource extends EntityDamageSource implements ISpellDamageSource {
@@ -20,10 +20,10 @@ public class SpellDamageSource extends EntityDamageSource implements ISpellDamag
     }
 
     @Override
-    public @NotNull Component getLocalizedDeathMessage(@NotNull LivingEntity pLivingEntity) {
+    public @NotNull ITextComponent getLocalizedDeathMessage(@NotNull LivingEntity pLivingEntity) {
         String s = "death.attack." + spell.getDeathMessageId();
-        Component component = this.entity.getDisplayName();
-        return Component.translatable(s, pLivingEntity.getDisplayName(), component);
+        ITextComponent component = this.entity.getDisplayName();
+        return ITextComponent.translatable(s, pLivingEntity.getDisplayName(), component);
     }
 
     public SpellDamageSource setLifestealPercent(float lifesteal) {

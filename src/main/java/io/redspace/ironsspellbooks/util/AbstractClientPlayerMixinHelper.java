@@ -5,14 +5,14 @@ import dev.kosmx.playerAnim.api.layered.ModifierLayer;
 import dev.kosmx.playerAnim.api.layered.modifier.AdjustmentModifier;
 import dev.kosmx.playerAnim.api.layered.modifier.MirrorModifier;
 import dev.kosmx.playerAnim.core.util.Vec3f;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.util.Hand;
+import net.minecraft.entity.player.PlayerEntity;
 
 import java.util.Optional;
 
 public class AbstractClientPlayerMixinHelper {
 
-    public static ModifierLayer<IAnimation> playerMixinInit(Player player) {
+    public static ModifierLayer<IAnimation> playerMixinInit(PlayerEntity player) {
         var animation = new ModifierLayer<>();
 
         if (animation != null) {
@@ -41,7 +41,7 @@ public class AbstractClientPlayerMixinHelper {
             animation.addModifierLast(new MirrorModifier() {
                 @Override
                 public boolean isEnabled() {
-                    return player.getUsedItemHand() == InteractionHand.OFF_HAND;
+                    return player.getUsedItemHand() == Hand.OFF_HAND;
                 }
             });
         }

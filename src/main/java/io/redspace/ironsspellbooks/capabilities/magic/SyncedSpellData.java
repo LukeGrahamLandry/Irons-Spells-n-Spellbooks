@@ -5,11 +5,11 @@ import io.redspace.ironsspellbooks.network.ClientboundSyncEntityData;
 import io.redspace.ironsspellbooks.network.ClientboundSyncPlayerData;
 import io.redspace.ironsspellbooks.player.SpinAttackType;
 import io.redspace.ironsspellbooks.setup.Messages;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.syncher.EntityDataSerializer;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.datasync.IDataSerializer;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.LivingEntity;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.BitSet;
@@ -60,8 +60,8 @@ public class SyncedSpellData {
         this.livingEntity = livingEntity;
     }
 
-    public static final EntityDataSerializer<SyncedSpellData> SYNCED_SPELL_DATA = new EntityDataSerializer.ForValueType<SyncedSpellData>() {
-        public void write(FriendlyByteBuf buffer, SyncedSpellData data) {
+    public static final IDataSerializer<SyncedSpellData> SYNCED_SPELL_DATA = new IDataSerializer.ForValueType<SyncedSpellData>() {
+        public void write(PacketBuffer buffer, SyncedSpellData data) {
             buffer.writeInt(data.serverPlayerId);
             buffer.writeBoolean(data.isCasting);
             buffer.writeUtf(data.castingSpellId);
@@ -72,7 +72,7 @@ public class SyncedSpellData {
             buffer.writeEnum(data.spinAttackType);
         }
 
-        public SyncedSpellData read(FriendlyByteBuf buffer) {
+        public SyncedSpellData read(PacketBuffer buffer) {
             var data = new SyncedSpellData(buffer.readInt());
             data.isCasting = buffer.readBoolean();
             data.castingSpellId = buffer.readUtf();
@@ -85,7 +85,7 @@ public class SyncedSpellData {
         }
     };
 
-    public void saveNBTData(CompoundTag compound) {
+    public void saveNBTData(CompoundNBT compound) {
         compound.putBoolean("isCasting", this.isCasting);
         compound.putString("castingSpellId", this.castingSpellId);
         compound.putInt("castingSpellLevel", this.castingSpellLevel);
@@ -95,7 +95,7 @@ public class SyncedSpellData {
         //SpinAttack not saved
     }
 
-    public void loadNBTData(CompoundTag compound) {
+    public void loadNBTData(CompoundNBT compound) {
         this.isCasting = compound.getBoolean("isCasting");
         this.castingSpellId = compound.getString("castingSpellId");
         this.castingSpellLevel = compound.getInt("castingSpellLevel");
@@ -178,7 +178,7 @@ public class SyncedSpellData {
     }
 
     public void doSync() {
-        if (livingEntity instanceof ServerPlayer serverPlayer) {
+        if (livingEntity instanceof ServerPlayerEntity serverPlayer) {
             Messages.sendToPlayer(new ClientboundSyncPlayerData(this), serverPlayer);
             Messages.sendToPlayersTrackingEntity(new ClientboundSyncPlayerData(this), serverPlayer);
         } else if (livingEntity instanceof AbstractSpellCastingMob abstractSpellCastingMob) {
@@ -186,7 +186,7 @@ public class SyncedSpellData {
         }
     }
 
-    public void syncToPlayer(ServerPlayer serverPlayer) {
+    public void syncToPlayer(ServerPlayerEntity serverPlayer) {
         Messages.sendToPlayer(new ClientboundSyncPlayerData(this), serverPlayer);
     }
 

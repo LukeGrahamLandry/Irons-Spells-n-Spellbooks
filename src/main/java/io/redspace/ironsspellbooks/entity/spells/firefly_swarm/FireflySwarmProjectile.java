@@ -9,28 +9,33 @@ import io.redspace.ironsspellbooks.entity.mobs.AntiMagicSusceptible;
 import io.redspace.ironsspellbooks.registries.EntityRegistry;
 import io.redspace.ironsspellbooks.registries.SoundRegistry;
 import io.redspace.ironsspellbooks.util.ParticleHelper;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.Mth;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.entity.*;
-import net.minecraft.world.entity.ai.control.FlyingMoveControl;
-import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
-import net.minecraft.world.entity.ai.navigation.PathNavigation;
-import net.minecraft.world.level.Level;
+import net.minecraft.entity.ai.controller.FlyingMovementController;
+import net.minecraft.pathfinding.FlyingPathNavigator;
+import net.minecraft.pathfinding.PathNavigator;
+import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 import java.util.UUID;
 
-public class FireflySwarmProjectile extends PathfinderMob implements AntiMagicSusceptible/*, NoKnockbackProjectile*/ {
+import net.minecraft.entity.CreatureEntity;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
 
-    public FireflySwarmProjectile(EntityType<? extends PathfinderMob> pEntityType, Level pLevel) {
+public class FireflySwarmProjectile extends CreatureEntity implements AntiMagicSusceptible/*, NoKnockbackProjectile*/ {
+
+    public FireflySwarmProjectile(EntityType<? extends CreatureEntity> pEntityType, World pLevel) {
         super(pEntityType, pLevel);
-        this.moveControl = new FlyingMoveControl(this, 15, true);
+        this.moveControl = new FlyingMovementController(this, 15, true);
         this.noPhysics = true;
         this.setNoGravity(true);
     }
 
-    public FireflySwarmProjectile(Level level, @Nullable Entity owner, @Nullable Entity target, float damage) {
+    public FireflySwarmProjectile(World level, @Nullable Entity owner, @Nullable Entity target, float damage) {
         this(EntityRegistry.FIREFLY_SWARM.get(), level);
         setOwner(owner);
         setTarget(target);
@@ -53,8 +58,8 @@ public class FireflySwarmProjectile extends PathfinderMob implements AntiMagicSu
     }
 
     @Override
-    protected PathNavigation createNavigation(Level pLevel) {
-        return new FlyingPathNavigation(this, pLevel);
+    protected PathNavigator createNavigation(World pLevel) {
+        return new FlyingPathNavigator(this, pLevel);
     }
 
     @Override
@@ -92,7 +97,7 @@ public class FireflySwarmProjectile extends PathfinderMob implements AntiMagicSu
             this.setDeltaMovement(this.getDeltaMovement().multiply(.95f, 1, .95f));
         }
         if ((this.tickCount & 7) == 0) {
-            float fade = 1 - Mth.clamp((tickCount - maxLife + 40) / (float) (maxLife), 0, 1f);
+            float fade = 1 - MathHelper.clamp((tickCount - maxLife + 40) / (float) (maxLife), 0, 1f);
             this.playSound(SoundRegistry.FIREFLY_SWARM_IDLE.get(), .25f * fade, .95f + Utils.random.nextFloat() * .1f);
         }
         if (this.tickCount % 15 == 0) {
@@ -143,8 +148,8 @@ public class FireflySwarmProjectile extends PathfinderMob implements AntiMagicSu
     public Entity getOwner() {
         if (this.cachedOwner != null && !this.cachedOwner.isRemoved()) {
             return this.cachedOwner;
-        } else if (this.ownerUUID != null && this.level instanceof ServerLevel) {
-            this.cachedOwner = ((ServerLevel) this.level).getEntity(this.ownerUUID);
+        } else if (this.ownerUUID != null && this.level instanceof ServerWorld) {
+            this.cachedOwner = ((ServerWorld) this.level).getEntity(this.ownerUUID);
             return this.cachedOwner;
         } else {
             return null;
@@ -168,8 +173,8 @@ public class FireflySwarmProjectile extends PathfinderMob implements AntiMagicSu
     public Entity getFireflyTarget() {
         if (this.cachedTarget != null && !this.cachedTarget.isRemoved()) {
             return this.cachedTarget;
-        } else if (this.targetUUID != null && this.level instanceof ServerLevel) {
-            this.cachedTarget = ((ServerLevel) this.level).getEntity(this.targetUUID);
+        } else if (this.targetUUID != null && this.level instanceof ServerWorld) {
+            this.cachedTarget = ((ServerWorld) this.level).getEntity(this.targetUUID);
             return this.cachedTarget;
         } else {
             return null;
@@ -177,7 +182,7 @@ public class FireflySwarmProjectile extends PathfinderMob implements AntiMagicSu
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag pCompound) {
+    public void addAdditionalSaveData(CompoundNBT pCompound) {
         super.addAdditionalSaveData(pCompound);
         if (this.targetUUID != null) {
             pCompound.putUUID("Target", this.targetUUID);
@@ -189,7 +194,7 @@ public class FireflySwarmProjectile extends PathfinderMob implements AntiMagicSu
         pCompound.putFloat("Damage", this.damage);
     }
 
-    public void readAdditionalSaveData(CompoundTag pCompound) {
+    public void readAdditionalSaveData(CompoundNBT pCompound) {
         if (pCompound.hasUUID("Target")) {
             this.targetUUID = pCompound.getUUID("Target");
         }

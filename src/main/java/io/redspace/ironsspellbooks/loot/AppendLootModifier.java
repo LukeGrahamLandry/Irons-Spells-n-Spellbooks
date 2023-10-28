@@ -7,10 +7,10 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.storage.loot.LootContext;
-import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.item.ItemStack;
+import net.minecraft.loot.LootContext;
+import net.minecraft.loot.conditions.ILootCondition;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootModifier;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +23,7 @@ public class AppendLootModifier<V> extends LootModifier {
             .fieldOf("key").forGetter(m -> m.resourceLocationKey)).apply(inst, AppendLootModifier::new)));
     private final String resourceLocationKey;
 
-    protected AppendLootModifier(LootItemCondition[] conditionsIn, String resourceLocationKey) {
+    protected AppendLootModifier(ILootCondition[] conditionsIn, String resourceLocationKey) {
         super(conditionsIn);
         this.resourceLocationKey = resourceLocationKey;
     }

@@ -9,17 +9,17 @@ import io.redspace.ironsspellbooks.registries.EntityRegistry;
 import io.redspace.ironsspellbooks.registries.SoundRegistry;
 import io.redspace.ironsspellbooks.util.ParticleHelper;
 import io.redspace.ironsspellbooks.api.util.Utils;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
+import net.minecraft.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.IPacket;
+import net.minecraft.network.play.server.SSpawnObjectPacket;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraft.util.DamageSource;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.potion.Effects;
 import net.minecraft.world.entity.*;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
 import software.bernie.geckolib3.core.AnimationState;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
@@ -35,6 +35,12 @@ import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.UUID;
 
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.util.HandSide;
+
 public class VoidTentacle extends LivingEntity implements IAnimatable, AntiMagicSusceptible {
     //private static final EntityDataAccessor<Integer> DATA_DELAY = SynchedEntityData.defineId(VoidTentacle.class, EntityDataSerializers.INT);
 
@@ -45,12 +51,12 @@ public class VoidTentacle extends LivingEntity implements IAnimatable, AntiMagic
     private float damage;
     private int age;
 
-    public VoidTentacle(EntityType<? extends VoidTentacle> pEntityType, Level pLevel) {
+    public VoidTentacle(EntityType<? extends VoidTentacle> pEntityType, World pLevel) {
         super(pEntityType, pLevel);
 
     }
 
-    public VoidTentacle(Level level, LivingEntity owner, float damage) {
+    public VoidTentacle(World level, LivingEntity owner, float damage) {
         this(EntityRegistry.VOID_TENTACLE.get(), level);
         setOwner(owner);
         setDamage(damage);
@@ -98,14 +104,14 @@ public class VoidTentacle extends LivingEntity implements IAnimatable, AntiMagic
     }
 
     @Override
-    public HumanoidArm getMainArm() {
-        return HumanoidArm.RIGHT;
+    public HandSide getMainArm() {
+        return HandSide.RIGHT;
     }
 
     public boolean dealDamage(LivingEntity target) {
         if (target != getOwner())
             if (DamageSources.applyDamage(target, damage, SpellRegistry.VOID_TENTACLES_SPELL.get().getDamageSource(this, getOwner()), SpellRegistry.VOID_TENTACLES_SPELL.get().getSchoolType())) {
-                target.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 100));
+                target.addEffect(new EffectInstance(Effects.BLINDNESS, 100));
                 return true;
             }
         return false;
@@ -135,8 +141,8 @@ public class VoidTentacle extends LivingEntity implements IAnimatable, AntiMagic
 
     @Nullable
     public LivingEntity getOwner() {
-        if (this.owner == null && this.ownerUUID != null && this.level instanceof ServerLevel) {
-            Entity entity = ((ServerLevel) this.level).getEntity(this.ownerUUID);
+        if (this.owner == null && this.ownerUUID != null && this.level instanceof ServerWorld) {
+            Entity entity = ((ServerWorld) this.level).getEntity(this.ownerUUID);
             if (entity instanceof LivingEntity) {
                 this.owner = (LivingEntity) entity;
             }
@@ -153,7 +159,7 @@ public class VoidTentacle extends LivingEntity implements IAnimatable, AntiMagic
     /**
      * (abstract) Protected helper method to read subclass entity data from NBT.
      */
-    public void readAdditionalSaveData(CompoundTag pCompound) {
+    public void readAdditionalSaveData(CompoundNBT pCompound) {
         super.readAdditionalSaveData(pCompound);
         this.age = pCompound.getInt("Age");
         if (pCompound.hasUUID("Owner")) {
@@ -167,16 +173,16 @@ public class VoidTentacle extends LivingEntity implements IAnimatable, AntiMagic
     }
 
     @Override
-    public ItemStack getItemBySlot(EquipmentSlot pSlot) {
+    public ItemStack getItemBySlot(EquipmentSlotType pSlot) {
         return ItemStack.EMPTY;
     }
 
     @Override
-    public void setItemSlot(EquipmentSlot pSlot, ItemStack pStack) {
+    public void setItemSlot(EquipmentSlotType pSlot, ItemStack pStack) {
 
     }
 
-    public void addAdditionalSaveData(CompoundTag pCompound) {
+    public void addAdditionalSaveData(CompoundNBT pCompound) {
         super.addAdditionalSaveData(pCompound);
         pCompound.putInt("Age", this.age);
         if (this.ownerUUID != null) {
@@ -185,8 +191,8 @@ public class VoidTentacle extends LivingEntity implements IAnimatable, AntiMagic
     }
 
     @Override
-    public Packet<?> getAddEntityPacket() {
-        return new ClientboundAddEntityPacket(this);
+    public IPacket<?> getAddEntityPacket() {
+        return new SSpawnObjectPacket(this);
     }
 
     @Override

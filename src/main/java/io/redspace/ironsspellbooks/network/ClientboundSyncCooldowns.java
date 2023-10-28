@@ -2,7 +2,7 @@ package io.redspace.ironsspellbooks.network;
 
 import io.redspace.ironsspellbooks.capabilities.magic.CooldownInstance;
 import io.redspace.ironsspellbooks.player.ClientMagicData;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.Map;
@@ -11,21 +11,21 @@ import java.util.function.Supplier;
 public class ClientboundSyncCooldowns {
     private final Map<String, CooldownInstance> spellCooldowns;
 
-    public static String readSpellID(FriendlyByteBuf buffer) {
+    public static String readSpellID(PacketBuffer buffer) {
         return buffer.readUtf();
     }
 
-    public static CooldownInstance readCoolDownInstance(FriendlyByteBuf buffer) {
+    public static CooldownInstance readCoolDownInstance(PacketBuffer buffer) {
         int spellCooldown = buffer.readInt();
         int spellCooldownRemaining = buffer.readInt();
         return new CooldownInstance(spellCooldown, spellCooldownRemaining);
     }
 
-    public static void writeSpellId(FriendlyByteBuf buf, String spellId) {
+    public static void writeSpellId(PacketBuffer buf, String spellId) {
         buf.writeUtf(spellId);
     }
 
-    public static void writeCoolDownInstance(FriendlyByteBuf buf, CooldownInstance cooldownInstance) {
+    public static void writeCoolDownInstance(PacketBuffer buf, CooldownInstance cooldownInstance) {
         buf.writeInt(cooldownInstance.getSpellCooldown());
         buf.writeInt(cooldownInstance.getCooldownRemaining());
     }
@@ -34,11 +34,11 @@ public class ClientboundSyncCooldowns {
         this.spellCooldowns = spellCooldowns;
     }
 
-    public ClientboundSyncCooldowns(FriendlyByteBuf buf) {
+    public ClientboundSyncCooldowns(PacketBuffer buf) {
         this.spellCooldowns = buf.readMap(ClientboundSyncCooldowns::readSpellID, ClientboundSyncCooldowns::readCoolDownInstance);
     }
 
-    public void toBytes(FriendlyByteBuf buf) {
+    public void toBytes(PacketBuffer buf) {
         buf.writeMap(spellCooldowns, ClientboundSyncCooldowns::writeSpellId, ClientboundSyncCooldowns::writeCoolDownInstance);
     }
 

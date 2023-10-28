@@ -2,8 +2,8 @@ package io.redspace.ironsspellbooks.api.item.curios;
 
 import io.redspace.ironsspellbooks.api.spells.AbstractSpell;
 import io.redspace.ironsspellbooks.api.registry.SpellRegistry;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.item.ItemStack;
 
 public class RingData {
     public static final String ISB_ENHANCE = "ISBEnhance";
@@ -35,6 +35,6 @@ public class RingData {
     }
 
     public String getNameForItem(){
-        return getSpell() == SpellRegistry.none() ? Component.translatable("tooltip.irons_spellbooks.no_affinity").getString() : getSpell().getSchoolType().getDisplayName().getString();
+        return getSpell() == SpellRegistry.none() ? ITextComponent.translatable("tooltip.irons_spellbooks.no_affinity").getString() : getSpell().getSchoolType().getDisplayName().getString();
     }
 }

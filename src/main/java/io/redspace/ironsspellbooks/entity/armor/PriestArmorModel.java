@@ -2,7 +2,7 @@ package io.redspace.ironsspellbooks.entity.armor;
 
 import io.redspace.ironsspellbooks.IronsSpellbooks;
 import io.redspace.ironsspellbooks.item.armor.PriestArmorItem;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.ResourceLocation;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 
 public class PriestArmorModel extends AnimatedGeoModel<PriestArmorItem> {

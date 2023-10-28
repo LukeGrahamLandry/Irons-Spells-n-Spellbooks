@@ -10,16 +10,16 @@ import io.redspace.ironsspellbooks.entity.spells.root.RootEntity;
 import io.redspace.ironsspellbooks.util.Log;
 import io.redspace.ironsspellbooks.util.ModTags;
 import io.redspace.ironsspellbooks.api.util.Utils;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.SoundEvents;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.world.World;
+import net.minecraft.util.math.EntityRayTraceResult;
+import net.minecraft.util.math.vector.Vector3d;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -30,9 +30,9 @@ public class RootSpell extends AbstractSpell {
     private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "root");
 
     @Override
-    public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
+    public List<IFormattableTextComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
-                Component.translatable("ui.irons_spellbooks.effect_length", Utils.timeFromTicks(getDuration(spellLevel, caster), 1))
+                ITextComponent.translatable("ui.irons_spellbooks.effect_length", Utils.timeFromTicks(getDuration(spellLevel, caster), 1))
         );
     }
 
@@ -77,12 +77,12 @@ public class RootSpell extends AbstractSpell {
     }
 
     @Override
-    public boolean checkPreCastConditions(Level level, LivingEntity entity, MagicData playerMagicData) {
+    public boolean checkPreCastConditions(World level, LivingEntity entity, MagicData playerMagicData) {
         return Utils.preCastTargetHelper(level, entity, playerMagicData, this, 32, .35f);
     }
 
     @Override
-    public void onCast(Level level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
+    public void onCast(World level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
 //        if (playerMagicData.getAdditionalCastData() instanceof CastTargetingData targetData) {
 //            var targetEntity = targetData.getTarget((ServerLevel) level);
 //            if (targetEntity != null) {
@@ -99,7 +99,7 @@ public class RootSpell extends AbstractSpell {
 //        }
 
         if (playerMagicData.getAdditionalCastData() instanceof CastTargetingData castTargetingData) {
-            LivingEntity target = castTargetingData.getTarget((ServerLevel) level);
+            LivingEntity target = castTargetingData.getTarget((ServerWorld) level);
 
             if (Log.SPELL_DEBUG) {
                 IronsSpellbooks.LOGGER.debug("RootSpell.onCast.1 targetEntity:{}", target);
@@ -109,7 +109,7 @@ public class RootSpell extends AbstractSpell {
                 if (Log.SPELL_DEBUG) {
                     IronsSpellbooks.LOGGER.debug("RootSpell.onCast.2 targetEntity:{}", target);
                 }
-                Vec3 spawn = target.position();
+                Vector3d spawn = target.position();
                 RootEntity rootEntity = new RootEntity(level, entity);
                 rootEntity.setDuration(getDuration(spellLevel, entity));
                 rootEntity.setTarget(target);
@@ -126,7 +126,7 @@ public class RootSpell extends AbstractSpell {
     @Nullable
     private LivingEntity findTarget(LivingEntity caster) {
         var target = Utils.raycastForEntity(caster.level, caster, 32, true, 0.35f);
-        if (target instanceof EntityHitResult entityHit && entityHit.getEntity() instanceof LivingEntity livingTarget) {
+        if (target instanceof EntityRayTraceResult entityHit && entityHit.getEntity() instanceof LivingEntity livingTarget) {
             return livingTarget;
         } else {
             return null;

@@ -1,14 +1,14 @@
 package io.redspace.ironsspellbooks.effect;
 
 import io.redspace.ironsspellbooks.registries.MobEffectRegistry;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.effect.MobEffectCategory;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.util.SoundEvents;
+import net.minecraft.util.DamageSource;
+import net.minecraft.potion.Effect;
+import net.minecraft.potion.EffectType;
+import net.minecraft.entity.LivingEntity;
 
-public class AirborneEffect extends MobEffect {
-    public AirborneEffect(MobEffectCategory pCategory, int pColor) {
+public class AirborneEffect extends Effect {
+    public AirborneEffect(EffectType pCategory, int pColor) {
         super(pCategory, pColor);
     }
 

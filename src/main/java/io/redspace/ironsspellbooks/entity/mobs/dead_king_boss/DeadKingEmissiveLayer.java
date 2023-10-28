@@ -1,13 +1,13 @@
 package io.redspace.ironsspellbooks.entity.mobs.dead_king_boss;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
 import io.redspace.ironsspellbooks.IronsSpellbooks;
 import io.redspace.ironsspellbooks.entity.mobs.abstract_spell_casting_mob.AbstractSpellCastingMob;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.ResourceLocation;
 import software.bernie.geckolib3.renderers.geo.GeoEntityRenderer;
 import software.bernie.geckolib3.renderers.geo.GeoLayerRenderer;
 
@@ -33,7 +33,7 @@ public class DeadKingEmissiveLayer extends GeoLayerRenderer<AbstractSpellCasting
 
 
     @Override
-    public void render(PoseStack matrixStackIn, MultiBufferSource bufferIn, int packedLightIn, AbstractSpellCastingMob entityLivingBaseIn, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
+    public void render(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn, AbstractSpellCastingMob entityLivingBaseIn, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
         if (entityLivingBaseIn instanceof DeadKingCorpseEntity || entityLivingBaseIn.isInvisible())
             return;
         var model = getEntityModel().getModel(currentModel(entityLivingBaseIn));
@@ -42,7 +42,7 @@ public class DeadKingEmissiveLayer extends GeoLayerRenderer<AbstractSpellCasting
         float scale = 1 / (1.3f);
         matrixStackIn.scale(scale, scale, scale);
         var renderType = renderType(currentTexture(entityLivingBaseIn));
-        VertexConsumer vertexconsumer = bufferIn.getBuffer(renderType);
+        IVertexBuilder vertexconsumer = bufferIn.getBuffer(renderType);
         this.getRenderer().render(
                 model,
                 entityLivingBaseIn, partialTicks, renderType, matrixStackIn, bufferIn,

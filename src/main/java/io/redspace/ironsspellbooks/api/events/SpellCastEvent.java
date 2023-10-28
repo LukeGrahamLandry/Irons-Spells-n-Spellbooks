@@ -3,7 +3,7 @@ package io.redspace.ironsspellbooks.api.events;
 
 import io.redspace.ironsspellbooks.api.spells.CastSource;
 import io.redspace.ironsspellbooks.api.spells.SchoolType;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.Cancelable;
@@ -23,7 +23,7 @@ public class SpellCastEvent extends PlayerEvent {
     private final SchoolType schoolType;
     private final CastSource castSource;
     private final int spellLevel;
-    public SpellCastEvent(Player player, String spellId, int spellLevel, SchoolType schoolType, CastSource castSource)
+    public SpellCastEvent(PlayerEntity player, String spellId, int spellLevel, SchoolType schoolType, CastSource castSource)
     {
         super(player);
         this.spellId = spellId;

@@ -11,18 +11,18 @@ import io.redspace.ironsspellbooks.entity.VisualFallingBlockEntity;
 import io.redspace.ironsspellbooks.entity.mobs.AntiMagicSusceptible;
 import io.redspace.ironsspellbooks.registries.EntityRegistry;
 import io.redspace.ironsspellbooks.registries.SoundRegistry;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.particles.IParticleData;
+import net.minecraft.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.Mth;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.potion.Effects;
 import net.minecraft.world.entity.*;
-import net.minecraft.world.entity.projectile.Projectile;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.entity.projectile.ProjectileEntity;
+import net.minecraft.world.World;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ViewportEvent;
@@ -33,17 +33,23 @@ import net.minecraftforge.network.NetworkEvent;
 
 import java.util.*;
 
+import net.minecraft.entity.EntitySize;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.Pose;
+import net.minecraft.world.entity.Entity.RemovalReason;
+
 @Mod.EventBusSubscriber(Dist.CLIENT)
 public class EarthquakeAoe extends AoeEntity implements AntiMagicSusceptible {
     public static Map<UUID, EarthquakeAoe> clientEarthquakeOrigins = new HashMap<>();
 
-    public EarthquakeAoe(EntityType<? extends Projectile> pEntityType, Level pLevel) {
+    public EarthquakeAoe(EntityType<? extends ProjectileEntity> pEntityType, World pLevel) {
         super(pEntityType, pLevel);
         this.reapplicationDelay = 25;
         this.setCircular();
     }
 
-    public EarthquakeAoe(Level level) {
+    public EarthquakeAoe(World level) {
         this(EntityRegistry.EARTHQUAKE_AOE.get(), level);
     }
 
@@ -52,7 +58,7 @@ public class EarthquakeAoe extends AoeEntity implements AntiMagicSusceptible {
         var damageSource = SpellRegistry.EARTHQUAKE_SPELL.get().getDamageSource(this, getOwner());
         DamageSources.ignoreNextKnockback(target);
         if (target.hurt(damageSource, getDamage())) {
-            target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 120, slownessAmplifier));
+            target.addEffect(new EffectInstance(Effects.MOVEMENT_SLOWDOWN, 120, slownessAmplifier));
             target.setDeltaMovement(target.getDeltaMovement().add(0, .5, 0));
             target.hurtMarked = true;
         }
@@ -100,7 +106,7 @@ public class EarthquakeAoe extends AoeEntity implements AntiMagicSusceptible {
             var level = this.level;
             int intensity = (int) (radius * radius * .09f);
             for (int i = 0; i < intensity; i++) {
-                Vec3 vec3 = this.position().add(uniformlyDistributedPointInRadius(radius));
+                Vector3d vec3 = this.position().add(uniformlyDistributedPointInRadius(radius));
                 BlockPos blockPos = new BlockPos(Utils.moveToRelativeGroundLevel(level, vec3, 4)).below();
                 createTremorBlock(blockPos, .1f + random.nextFloat() * .2f);
             }
@@ -109,10 +115,10 @@ public class EarthquakeAoe extends AoeEntity implements AntiMagicSusceptible {
                 int blocks = (int) circumference;
                 float anglePerBlock = 360f / blocks;
                 for (int i = 0; i < blocks; i++) {
-                    Vec3 vec3 = new Vec3(
-                            waveAnim * Mth.cos(anglePerBlock * i),
+                    Vector3d vec3 = new Vector3d(
+                            waveAnim * MathHelper.cos(anglePerBlock * i),
                             0,
-                            waveAnim * Mth.sin(anglePerBlock * i)
+                            waveAnim * MathHelper.sin(anglePerBlock * i)
                     );
                     BlockPos blockPos = new BlockPos(Utils.moveToRelativeGroundLevel(level, position().add(vec3), 4)).below();
                     createTremorBlock(blockPos, .1f + random.nextFloat() * .2f);
@@ -134,8 +140,8 @@ public class EarthquakeAoe extends AoeEntity implements AntiMagicSusceptible {
     }
 
     @Override
-    protected Vec3 getInflation() {
-        return new Vec3(0, 5, 0);
+    protected Vector3d getInflation() {
+        return new Vector3d(0, 5, 0);
     }
 
     protected void createTremorBlock(BlockPos blockPos, float impulseStrength) {
@@ -154,13 +160,13 @@ public class EarthquakeAoe extends AoeEntity implements AntiMagicSusceptible {
         }
     }
 
-    protected Vec3 uniformlyDistributedPointInRadius(float r) {
+    protected Vector3d uniformlyDistributedPointInRadius(float r) {
         var distance = r * (1 - this.random.nextFloat() * this.random.nextFloat());
         var theta = this.random.nextFloat() * 6.282f; // two pi :nerd:
-        return new Vec3(
-                distance * Mth.cos(theta),
+        return new Vector3d(
+                distance * MathHelper.cos(theta),
                 .2f,
-                distance * Mth.sin(theta)
+                distance * MathHelper.sin(theta)
         );
     }
 
@@ -173,12 +179,12 @@ public class EarthquakeAoe extends AoeEntity implements AntiMagicSusceptible {
     }
 
     @Override
-    public EntityDimensions getDimensions(Pose pPose) {
-        return EntityDimensions.scalable(this.getRadius() * 2.0F, 3F);
+    public EntitySize getDimensions(Pose pPose) {
+        return EntitySize.scalable(this.getRadius() * 2.0F, 3F);
     }
 
     @Override
-    public ParticleOptions getParticle() {
+    public IParticleData getParticle() {
         return ParticleTypes.ENTITY_EFFECT;
     }
 
@@ -188,13 +194,13 @@ public class EarthquakeAoe extends AoeEntity implements AntiMagicSusceptible {
     }
 
     @Override
-    protected void addAdditionalSaveData(CompoundTag pCompound) {
+    protected void addAdditionalSaveData(CompoundNBT pCompound) {
         super.addAdditionalSaveData(pCompound);
         pCompound.putInt("Slowness", slownessAmplifier);
     }
 
     @Override
-    protected void readAdditionalSaveData(CompoundTag pCompound) {
+    protected void readAdditionalSaveData(CompoundNBT pCompound) {
         super.readAdditionalSaveData(pCompound);
         this.slownessAmplifier = pCompound.getInt("Slowness");
         IronsSpellbooks.LOGGER.debug("EarthquakeAoe readAdditionalSaveData");

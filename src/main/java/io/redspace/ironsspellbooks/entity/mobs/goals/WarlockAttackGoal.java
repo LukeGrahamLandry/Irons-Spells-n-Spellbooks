@@ -2,7 +2,7 @@ package io.redspace.ironsspellbooks.entity.mobs.goals;
 
 import io.redspace.ironsspellbooks.api.spells.AbstractSpell;
 import io.redspace.ironsspellbooks.entity.mobs.abstract_spell_casting_mob.AbstractSpellCastingMob;
-import net.minecraft.world.InteractionHand;
+import net.minecraft.util.Hand;
 
 import java.util.List;
 
@@ -70,7 +70,7 @@ public class WarlockAttackGoal extends WizardAttackGoal {
         if (!wantsToMelee || distanceSquared > meleeRange * meleeRange || mob.isCasting()) {
             super.handleAttackLogic(distanceSquared);
         } else if (--this.attackTime == 0) {
-            this.mob.swing(InteractionHand.MAIN_HAND);
+            this.mob.swing(Hand.MAIN_HAND);
             doMeleeAction();
         }
 

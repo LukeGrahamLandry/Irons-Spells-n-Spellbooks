@@ -1,6 +1,6 @@
 package io.redspace.ironsspellbooks.capabilities.magic;
 
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.entity.LivingEntity;
 
 import java.util.UUID;
 

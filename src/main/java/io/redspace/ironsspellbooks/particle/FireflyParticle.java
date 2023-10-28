@@ -1,20 +1,20 @@
 package io.redspace.ironsspellbooks.particle;
 
-import com.mojang.math.Vector3f;
+import net.minecraft.util.math.vector.Vector3f;
 import io.redspace.ironsspellbooks.IronsSpellbooks;
 import io.redspace.ironsspellbooks.api.util.Utils;
-import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.client.particle.*;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.core.particles.SimpleParticleType;
-import net.minecraft.util.Mth;
+import net.minecraft.particles.BasicParticleType;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-public class FireflyParticle extends TextureSheetParticle {
-    private final SpriteSet sprites;
+public class FireflyParticle extends SpriteTexturedParticle {
+    private final IAnimatedSprite sprites;
     private boolean lit;
     private float litTween;
     private int litTimer;
@@ -25,7 +25,7 @@ public class FireflyParticle extends TextureSheetParticle {
     //private static final Vector3f unlitColor = new Vector3f(45 / 255f, 41 / 255f, 36 / 255f);
     private static final Vector3f unlitColor = new Vector3f(22 / 255f, 20 / 255f, 18 / 255f);
 
-    public FireflyParticle(ClientLevel level, double xCoord, double yCoord, double zCoord, SpriteSet spriteSet, double xd, double yd, double zd) {
+    public FireflyParticle(ClientWorld level, double xCoord, double yCoord, double zCoord, IAnimatedSprite spriteSet, double xd, double yd, double zd) {
 
         super(level, xCoord, yCoord, zCoord, xd, yd, zd);
 
@@ -70,13 +70,13 @@ public class FireflyParticle extends TextureSheetParticle {
             //this.setSprite(sprites.get(lit ? 0 : 1, 1));
         }
         if (lit) {
-            litTween = Mth.lerp(flickerIntensity, litTween, 1);
+            litTween = MathHelper.lerp(flickerIntensity, litTween, 1);
         } else {
-            litTween = Mth.lerp(flickerIntensity, litTween, 0);
+            litTween = MathHelper.lerp(flickerIntensity, litTween, 0);
         }
-        this.rCol = Mth.lerp(litTween, unlitColor.x(), litColor.x());
-        this.gCol = Mth.lerp(litTween, unlitColor.y(), litColor.y());
-        this.bCol = Mth.lerp(litTween, unlitColor.z(), litColor.z());
+        this.rCol = MathHelper.lerp(litTween, unlitColor.x(), litColor.x());
+        this.gCol = MathHelper.lerp(litTween, unlitColor.y(), litColor.y());
+        this.bCol = MathHelper.lerp(litTween, unlitColor.z(), litColor.z());
         if (age >= lifetime - 1 && litTween >.1f) {
             //they are only allowed to die if they have faded out
             lifetime++;
@@ -85,8 +85,8 @@ public class FireflyParticle extends TextureSheetParticle {
     }
 
     @Override
-    public ParticleRenderType getRenderType() {
-        return ParticleRenderType.PARTICLE_SHEET_OPAQUE;
+    public IParticleRenderType getRenderType() {
+        return IParticleRenderType.PARTICLE_SHEET_OPAQUE;
     }
 
     @Override
@@ -100,14 +100,14 @@ public class FireflyParticle extends TextureSheetParticle {
     }
 
     @OnlyIn(Dist.CLIENT)
-    public static class Provider implements ParticleProvider<SimpleParticleType> {
+    public static class Provider implements IParticleFactory<BasicParticleType> {
 
-        private final SpriteSet sprites;
+        private final IAnimatedSprite sprites;
 
-        public Provider(SpriteSet spriteSet) {
+        public Provider(IAnimatedSprite spriteSet) {
             this.sprites = spriteSet;
         }
-        public Particle createParticle(SimpleParticleType particleType, ClientLevel level,
+        public Particle createParticle(BasicParticleType particleType, ClientWorld level,
                                        double x, double y, double z,
                                        double dx, double dy, double dz) {
             return new FireflyParticle(level, x, y, z, this.sprites, dx, dy, dz);

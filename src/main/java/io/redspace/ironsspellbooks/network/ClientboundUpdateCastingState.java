@@ -2,7 +2,7 @@ package io.redspace.ironsspellbooks.network;
 
 import io.redspace.ironsspellbooks.player.ClientMagicData;
 import io.redspace.ironsspellbooks.api.spells.CastSource;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
@@ -21,14 +21,14 @@ public class ClientboundUpdateCastingState {
         this.castSource = castSource;
     }
 
-    public ClientboundUpdateCastingState(FriendlyByteBuf buf) {
+    public ClientboundUpdateCastingState(PacketBuffer buf) {
         this.spellId = buf.readUtf();
         this.spellLevel = buf.readInt();
         this.castTime = buf.readInt();
         this.castSource = buf.readEnum(CastSource.class);
     }
 
-    public void toBytes(FriendlyByteBuf buf) {
+    public void toBytes(PacketBuffer buf) {
         buf.writeUtf(this.spellId);
         buf.writeInt(this.spellLevel);
         buf.writeInt(this.castTime);

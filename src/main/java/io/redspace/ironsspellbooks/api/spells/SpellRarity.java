@@ -4,9 +4,9 @@ import com.google.common.util.concurrent.AtomicDouble;
 import io.redspace.ironsspellbooks.IronsSpellbooks;
 import io.redspace.ironsspellbooks.api.registry.SpellRegistry;
 import io.redspace.ironsspellbooks.config.ServerConfigs;
-import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraftforge.common.util.LazyOptional;
 
 import java.util.ArrayList;
@@ -32,7 +32,7 @@ public enum SpellRarity {
         return this.value;
     }
 
-    public MutableComponent getDisplayName() {
+    public IFormattableTextComponent getDisplayName() {
         return DISPLAYS[getValue()];
     }
 
@@ -104,23 +104,23 @@ public enum SpellRarity {
         //Ironsspellbooks.logger.debug(sb.toString());
     }
 
-    public ChatFormatting getChatFormatting() {
+    public TextFormatting getChatFormatting() {
         return switch (this) {
-            case COMMON -> ChatFormatting.GRAY;
-            case UNCOMMON -> ChatFormatting.GREEN;
-            case RARE -> ChatFormatting.AQUA;
-            case EPIC -> ChatFormatting.LIGHT_PURPLE;
-            case LEGENDARY -> ChatFormatting.GOLD;
+            case COMMON -> TextFormatting.GRAY;
+            case UNCOMMON -> TextFormatting.GREEN;
+            case RARE -> TextFormatting.AQUA;
+            case EPIC -> TextFormatting.LIGHT_PURPLE;
+            case LEGENDARY -> TextFormatting.GOLD;
         };
     }
 
-    private final MutableComponent[] DISPLAYS = {
-            Component.translatable("rarity.irons_spellbooks.common").withStyle(ChatFormatting.GRAY),
-            Component.translatable("rarity.irons_spellbooks.uncommon").withStyle(ChatFormatting.GREEN),
-            Component.translatable("rarity.irons_spellbooks.rare").withStyle(ChatFormatting.AQUA),
-            Component.translatable("rarity.irons_spellbooks.epic").withStyle(ChatFormatting.LIGHT_PURPLE),
-            Component.translatable("rarity.irons_spellbooks.legendary").withStyle(ChatFormatting.GOLD),
-            Component.translatable("rarity.irons_spellbooks.mythic").withStyle(ChatFormatting.GOLD),
-            Component.translatable("rarity.irons_spellbooks.ancient").withStyle(ChatFormatting.GOLD),
+    private final IFormattableTextComponent[] DISPLAYS = {
+            ITextComponent.translatable("rarity.irons_spellbooks.common").withStyle(TextFormatting.GRAY),
+            ITextComponent.translatable("rarity.irons_spellbooks.uncommon").withStyle(TextFormatting.GREEN),
+            ITextComponent.translatable("rarity.irons_spellbooks.rare").withStyle(TextFormatting.AQUA),
+            ITextComponent.translatable("rarity.irons_spellbooks.epic").withStyle(TextFormatting.LIGHT_PURPLE),
+            ITextComponent.translatable("rarity.irons_spellbooks.legendary").withStyle(TextFormatting.GOLD),
+            ITextComponent.translatable("rarity.irons_spellbooks.mythic").withStyle(TextFormatting.GOLD),
+            ITextComponent.translatable("rarity.irons_spellbooks.ancient").withStyle(TextFormatting.GOLD),
     };
 }

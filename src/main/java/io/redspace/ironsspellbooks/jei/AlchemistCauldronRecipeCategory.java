@@ -1,6 +1,6 @@
 package io.redspace.ironsspellbooks.jei;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import io.redspace.ironsspellbooks.IronsSpellbooks;
 import io.redspace.ironsspellbooks.config.ServerConfigs;
 import io.redspace.ironsspellbooks.registries.BlockRegistry;
@@ -15,10 +15,10 @@ import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
-import net.minecraft.ChatFormatting;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -47,7 +47,7 @@ public class AlchemistCauldronRecipeCategory implements IRecipeCategory<Alchemis
     }
 
     @Override
-    public Component getTitle() {
+    public ITextComponent getTitle() {
         return BlockRegistry.ALCHEMIST_CAULDRON.get().getName();
     }
 
@@ -92,7 +92,7 @@ public class AlchemistCauldronRecipeCategory implements IRecipeCategory<Alchemis
 
 
     @Override
-    public void draw(@NotNull AlchemistCauldronJeiRecipe recipe, IRecipeSlotsView recipeSlotsView, @NotNull PoseStack poseStack, double mouseX, double mouseY) {
+    public void draw(@NotNull AlchemistCauldronJeiRecipe recipe, IRecipeSlotsView recipeSlotsView, @NotNull MatrixStack poseStack, double mouseX, double mouseY) {
         Optional<ItemStack> leftStack = recipeSlotsView.findSlotByName(inputSlotName)
                 .flatMap(IRecipeSlotView::getDisplayedItemStack);
 
@@ -116,7 +116,7 @@ public class AlchemistCauldronRecipeCategory implements IRecipeCategory<Alchemis
             var font = Minecraft.getInstance().font;
             int y = (getHeight() / 2) - 14;
             int x = (getWidth() - font.width(inputText)) / 2;
-            font.drawShadow(poseStack, inputText, x, y, ChatFormatting.RED.getColor());
+            font.drawShadow(poseStack, inputText, x, y, TextFormatting.RED.getColor());
         }
     }
 }

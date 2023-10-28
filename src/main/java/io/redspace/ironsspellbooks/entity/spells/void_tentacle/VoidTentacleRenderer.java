@@ -1,8 +1,8 @@
 package io.redspace.ironsspellbooks.entity.spells.void_tentacle;
 
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.renderer.MultiBufferSource;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import software.bernie.geckolib3.renderers.geo.GeoEntityRenderer;
 
@@ -21,7 +21,7 @@ public class VoidTentacleRenderer extends GeoEntityRenderer<VoidTentacle> {
 
 
     @Override
-    public void render(VoidTentacle animatable, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
+    public void render(VoidTentacle animatable, float entityYaw, float partialTick, MatrixStack poseStack, IRenderTypeBuffer bufferSource, int packedLight) {
         super.render(animatable, entityYaw, partialTick, poseStack, bufferSource, packedLight);
     }
 }

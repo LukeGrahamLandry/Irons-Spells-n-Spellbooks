@@ -1,15 +1,15 @@
 package io.redspace.ironsspellbooks.entity.mobs.goals;
 
 import io.redspace.ironsspellbooks.entity.mobs.MagicSummon;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.PathfinderMob;
-import net.minecraft.world.entity.ai.goal.target.TargetGoal;
-import net.minecraft.world.entity.ai.memory.MemoryModuleType;
+import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.CreatureEntity;
+import net.minecraft.entity.ai.goal.TargetGoal;
+import net.minecraft.entity.ai.brain.memory.MemoryModuleType;
 
 public class GenericCopyOwnerTargetGoal extends TargetGoal {
     private final OwnerGetter ownerGetter;
 
-    public GenericCopyOwnerTargetGoal(PathfinderMob pMob, OwnerGetter ownerGetter) {
+    public GenericCopyOwnerTargetGoal(CreatureEntity pMob, OwnerGetter ownerGetter) {
         super(pMob, false);
         this.ownerGetter = ownerGetter;
 
@@ -20,14 +20,14 @@ public class GenericCopyOwnerTargetGoal extends TargetGoal {
      * method as well.
      */
     public boolean canUse() {
-        return ownerGetter.get() instanceof Mob owner && owner.getTarget() != null && !(owner.getTarget() instanceof MagicSummon summon && summon.getSummoner() == owner);
+        return ownerGetter.get() instanceof MobEntity owner && owner.getTarget() != null && !(owner.getTarget() instanceof MagicSummon summon && summon.getSummoner() == owner);
     }
 
     /**
      * Execute a one shot task or start executing a continuous task
      */
     public void start() {
-        var target = ((Mob) ownerGetter.get()).getTarget();
+        var target = ((MobEntity) ownerGetter.get()).getTarget();
         mob.setTarget(target);
         this.mob.getBrain().setMemoryWithExpiry(MemoryModuleType.ATTACK_TARGET, target, 200L);
 

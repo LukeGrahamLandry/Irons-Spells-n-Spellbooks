@@ -22,11 +22,11 @@ import io.redspace.ironsspellbooks.entity.spells.void_tentacle.VoidTentacle;
 import io.redspace.ironsspellbooks.entity.spells.wisp.WispEntity;
 import io.redspace.ironsspellbooks.registries.EntityRegistry;
 import io.redspace.ironsspellbooks.api.util.Utils;
-import net.minecraft.world.entity.SpawnPlacements;
-import net.minecraft.world.entity.animal.PolarBear;
-import net.minecraft.world.entity.monster.Vindicator;
-import net.minecraft.world.entity.monster.Zombie;
-import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.entity.EntitySpawnPlacementRegistry;
+import net.minecraft.entity.passive.PolarBearEntity;
+import net.minecraft.entity.monster.VindicatorEntity;
+import net.minecraft.entity.monster.ZombieEntity;
+import net.minecraft.world.gen.Heightmap;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.entity.SpawnPlacementRegisterEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -64,11 +64,11 @@ public class CommonSetup {
         event.put(EntityRegistry.SUMMONED_ZOMBIE.get(), SummonedZombie.createAttributes().build());
         event.put(EntityRegistry.SUMMONED_SKELETON.get(), SummonedSkeleton.createAttributes().build());
         event.put(EntityRegistry.FROZEN_HUMANOID.get(), FrozenHumanoid.prepareAttributes().build());
-        event.put(EntityRegistry.SUMMONED_POLAR_BEAR.get(), PolarBear.createAttributes().build());
+        event.put(EntityRegistry.SUMMONED_POLAR_BEAR.get(), PolarBearEntity.createAttributes().build());
         event.put(EntityRegistry.DEAD_KING.get(), DeadKingBoss.prepareAttributes().build());
         event.put(EntityRegistry.DEAD_KING_CORPSE.get(), DeadKingBoss.prepareAttributes().build());
-        event.put(EntityRegistry.CATACOMBS_ZOMBIE.get(), Zombie.createAttributes().build());
-        event.put(EntityRegistry.MAGEHUNTER_VINDICATOR.get(), Vindicator.createAttributes().build());
+        event.put(EntityRegistry.CATACOMBS_ZOMBIE.get(), ZombieEntity.createAttributes().build());
+        event.put(EntityRegistry.MAGEHUNTER_VINDICATOR.get(), VindicatorEntity.createAttributes().build());
         event.put(EntityRegistry.ARCHEVOKER.get(), ArchevokerEntity.prepareAttributes().build());
         event.put(EntityRegistry.PRIEST.get(), PriestEntity.prepareAttributes().build());
         event.put(EntityRegistry.KEEPER.get(), KeeperEntity.prepareAttributes().build());
@@ -82,7 +82,7 @@ public class CommonSetup {
 
     @SubscribeEvent
     public static void spawnPlacements(SpawnPlacementRegisterEvent event) {
-        event.register(EntityRegistry.NECROMANCER.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, (type, serverLevelAccessor, spawnType, blockPos, random) -> Utils.checkMonsterSpawnRules(serverLevelAccessor, spawnType, blockPos, random), SpawnPlacementRegisterEvent.Operation.OR);
+        event.register(EntityRegistry.NECROMANCER.get(), EntitySpawnPlacementRegistry.PlacementType.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, (type, serverLevelAccessor, spawnType, blockPos, random) -> Utils.checkMonsterSpawnRules(serverLevelAccessor, spawnType, blockPos, random), SpawnPlacementRegisterEvent.Operation.OR);
     }
 
 

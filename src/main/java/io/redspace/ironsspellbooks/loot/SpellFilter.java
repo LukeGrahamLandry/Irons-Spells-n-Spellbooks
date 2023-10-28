@@ -7,8 +7,8 @@ import io.redspace.ironsspellbooks.api.registry.SchoolRegistry;
 import io.redspace.ironsspellbooks.api.spells.AbstractSpell;
 import io.redspace.ironsspellbooks.api.registry.SpellRegistry;
 import io.redspace.ironsspellbooks.api.spells.SchoolType;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.GsonHelper;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.JSONUtils;
 import net.minecraft.util.RandomSource;
 
 import java.util.ArrayList;
@@ -50,11 +50,11 @@ public class SpellFilter {
     }
 
     public static SpellFilter deserializeSpellFilter(JsonObject json) {
-        if (GsonHelper.isValidNode(json, "school")) {
-            var schoolType = GsonHelper.getAsString(json, "school");
+        if (JSONUtils.isValidNode(json, "school")) {
+            var schoolType = JSONUtils.getAsString(json, "school");
             return new SpellFilter(SchoolRegistry.getSchool(new ResourceLocation(schoolType)));
-        } else if (GsonHelper.isArrayNode(json, "spells")) {
-            var spellsFromJson = GsonHelper.getAsJsonArray(json, "spells");
+        } else if (JSONUtils.isArrayNode(json, "spells")) {
+            var spellsFromJson = JSONUtils.getAsJsonArray(json, "spells");
             List<AbstractSpell> applicableSpellList = new ArrayList<>();
             for (JsonElement element : spellsFromJson) {
                 String spellId = element.getAsString();

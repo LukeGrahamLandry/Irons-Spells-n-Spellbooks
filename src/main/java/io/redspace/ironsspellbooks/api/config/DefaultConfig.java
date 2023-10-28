@@ -1,7 +1,7 @@
 package io.redspace.ironsspellbooks.api.config;
 
 import io.redspace.ironsspellbooks.api.spells.SpellRarity;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.ResourceLocation;
 
 import java.util.function.Consumer;
 

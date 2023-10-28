@@ -7,16 +7,16 @@ import io.redspace.ironsspellbooks.api.registry.SchoolRegistry;
 import io.redspace.ironsspellbooks.api.spells.*;
 import io.redspace.ironsspellbooks.entity.spells.spectral_hammer.SpectralHammer;
 import io.redspace.ironsspellbooks.api.util.Utils;
-import net.minecraft.core.Direction;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.ClipContext;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.util.Direction;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.util.math.RayTraceContext;
+import net.minecraft.world.World;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.vector.Vector3d;
 
 import java.util.List;
 import java.util.Optional;
@@ -28,10 +28,10 @@ public class SpectralHammerSpell extends AbstractSpell {
     private static final int distance = 12;
 
     @Override
-    public List<MutableComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
+    public List<IFormattableTextComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
-                Component.translatable("ui.irons_spellbooks.dimensions", 1 + getRadius(spellLevel, caster) * 2, 1 + getRadius(spellLevel, caster) * 2, getDepth(spellLevel, caster) + 1),
-                Component.translatable("ui.irons_spellbooks.distance", distance)
+                ITextComponent.translatable("ui.irons_spellbooks.dimensions", 1 + getRadius(spellLevel, caster) * 2, 1 + getRadius(spellLevel, caster) * 2, getDepth(spellLevel, caster) + 1),
+                ITextComponent.translatable("ui.irons_spellbooks.distance", distance)
         );
     }
 
@@ -76,20 +76,20 @@ public class SpectralHammerSpell extends AbstractSpell {
     }
 
     @Override
-    public boolean checkPreCastConditions(Level level, LivingEntity entity, MagicData playerMagicData) {
-        return Utils.getTargetBlock(level, entity, ClipContext.Fluid.NONE, distance).getType() == HitResult.Type.BLOCK;
+    public boolean checkPreCastConditions(World level, LivingEntity entity, MagicData playerMagicData) {
+        return Utils.getTargetBlock(level, entity, RayTraceContext.FluidMode.NONE, distance).getType() == RayTraceResult.Type.BLOCK;
     }
 
     @Override
-    public void onCast(Level world, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
-        var blockPosition = Utils.getTargetBlock(world, entity, ClipContext.Fluid.NONE, distance);
+    public void onCast(World world, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
+        var blockPosition = Utils.getTargetBlock(world, entity, RayTraceContext.FluidMode.NONE, distance);
         var face = blockPosition.getDirection();
 
         int radius = getRadius(spellLevel, entity);
         int depth = getDepth(spellLevel, entity);
 
         var spectralHammer = new SpectralHammer(world, entity, blockPosition, depth, radius);
-        Vec3 position = Vec3.atCenterOf(blockPosition.getBlockPos());
+        Vector3d position = Vector3d.atCenterOf(blockPosition.getBlockPos());
 
         if (!face.getAxis().isVertical()) {
             position = position.subtract(0, 2, 0).subtract(entity.getForward().normalize().scale(1.5));

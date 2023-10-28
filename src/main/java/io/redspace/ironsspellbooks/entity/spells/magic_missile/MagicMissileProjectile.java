@@ -8,12 +8,12 @@ import io.redspace.ironsspellbooks.entity.spells.AbstractMagicProjectile;
 import io.redspace.ironsspellbooks.registries.EntityRegistry;
 import io.redspace.ironsspellbooks.api.spells.SchoolType;
 import io.redspace.ironsspellbooks.util.ParticleHelper;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.world.World;
+import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.EntityRayTraceResult;
 
 import java.util.Optional;
 
@@ -23,17 +23,17 @@ import java.util.Optional;
 //https://github.com/maximumpower55/Aura
 
 public class MagicMissileProjectile extends AbstractMagicProjectile {
-    public MagicMissileProjectile(EntityType<? extends MagicMissileProjectile> entityType, Level level) {
+    public MagicMissileProjectile(EntityType<? extends MagicMissileProjectile> entityType, World level) {
         super(entityType, level);
         this.setNoGravity(true);
     }
 
-    public MagicMissileProjectile(EntityType<? extends MagicMissileProjectile> entityType, Level levelIn, LivingEntity shooter) {
+    public MagicMissileProjectile(EntityType<? extends MagicMissileProjectile> entityType, World levelIn, LivingEntity shooter) {
         super(entityType, levelIn);
         setOwner(shooter);
     }
 
-    public MagicMissileProjectile(Level levelIn, LivingEntity shooter) {
+    public MagicMissileProjectile(World levelIn, LivingEntity shooter) {
         this(EntityRegistry.MAGIC_MISSILE_PROJECTILE.get(), levelIn, shooter);
     }
 
@@ -53,7 +53,7 @@ public class MagicMissileProjectile extends AbstractMagicProjectile {
     }
 
     @Override
-    protected void onHitBlock(BlockHitResult blockHitResult) {
+    protected void onHitBlock(BlockRayTraceResult blockHitResult) {
         super.onHitBlock(blockHitResult);
         //irons_spellbooks.LOGGER.debug("MagicMissileProjectile.onHitBlock");
         discard();
@@ -62,7 +62,7 @@ public class MagicMissileProjectile extends AbstractMagicProjectile {
     }
 
     @Override
-    protected void onHitEntity(EntityHitResult entityHitResult) {
+    protected void onHitEntity(EntityRayTraceResult entityHitResult) {
         super.onHitEntity(entityHitResult);
         //irons_spellbooks.LOGGER.debug("MagicMissileProjectile.onHitEntity");
 

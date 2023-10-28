@@ -6,8 +6,8 @@ import io.redspace.ironsspellbooks.network.ClientboundSyncCameraShake;
 import io.redspace.ironsspellbooks.setup.Messages;
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.Mth;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ViewportEvent;
@@ -60,7 +60,7 @@ public class CameraShakeManager {
         Messages.sendToAllPlayers(new ClientboundSyncCameraShake(cameraShakeData));
     }
 
-    public static void doSync(ServerPlayer player) {
+    public static void doSync(ServerPlayerEntity player) {
         Messages.sendToPlayer(new ClientboundSyncCameraShake(cameraShakeData), player);
     }
 
@@ -75,11 +75,11 @@ public class CameraShakeManager {
         List<CameraShakeData> closestPositions = clientCameraShakeData.stream().sorted((o1, o2) -> (int) (o1.origin.distanceToSqr(player.position()) - o2.origin.distanceToSqr(player.position()))).toList();
         var closestPos = closestPositions.get(0).origin;
         //.0039f is 1/15^2
-        float intensity = (float) Mth.clampedLerp(1, 0, closestPos.distanceToSqr(player.position()) * 0.0039f);
+        float intensity = (float) MathHelper.clampedLerp(1, 0, closestPos.distanceToSqr(player.position()) * 0.0039f);
         float f = (float) (player.tickCount + event.getPartialTick());
-        float yaw = Mth.cos(f * 1.5f) * intensity * .35f;
-        float pitch = Mth.cos(f * 2f) * intensity * .35f;
-        float roll = Mth.sin(f * 2.2f) * intensity * .35f;
+        float yaw = MathHelper.cos(f * 1.5f) * intensity * .35f;
+        float pitch = MathHelper.cos(f * 2f) * intensity * .35f;
+        float roll = MathHelper.sin(f * 2.2f) * intensity * .35f;
         event.setYaw(event.getYaw() + yaw);
         event.setRoll(event.getRoll() + roll);
         event.setPitch(event.getPitch() + pitch);

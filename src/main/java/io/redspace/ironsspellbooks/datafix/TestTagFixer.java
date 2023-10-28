@@ -1,7 +1,7 @@
 package io.redspace.ironsspellbooks.datafix;
 
 import io.redspace.ironsspellbooks.IronsSpellbooks;
-import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.StringNBT;
 import net.minecraft.nbt.StringTagVisitor;
 
 public class TestTagFixer extends StringTagVisitor {
@@ -13,7 +13,7 @@ public class TestTagFixer extends StringTagVisitor {
     }
 
     @Override
-    public void visitString(StringTag pTag) {
+    public void visitString(StringNBT pTag) {
         super.visitString(pTag);
         if (pTag.getAsString().equals(query))
             IronsSpellbooks.LOGGER.debug("TestTagFixer found: {}", query);

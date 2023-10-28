@@ -8,21 +8,21 @@ import io.redspace.ironsspellbooks.registries.EntityRegistry;
 import io.redspace.ironsspellbooks.api.spells.SchoolType;
 import io.redspace.ironsspellbooks.spells.holy.WispSpell;
 import io.redspace.ironsspellbooks.util.ParticleHelper;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.particles.ParticleTypes;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraft.util.SoundEvents;
+import net.minecraft.util.DamageSource;
 import net.minecraft.world.entity.*;
-import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.control.FlyingMoveControl;
-import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
-import net.minecraft.world.entity.ai.navigation.PathNavigation;
-import net.minecraft.world.entity.monster.Enemy;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.entity.ai.attributes.AttributeModifierMap;
+import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.entity.ai.controller.FlyingMovementController;
+import net.minecraft.pathfinding.FlyingPathNavigator;
+import net.minecraft.pathfinding.PathNavigator;
+import net.minecraft.entity.monster.IMob;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
+import net.minecraft.util.math.vector.Vector3d;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
@@ -36,7 +36,17 @@ import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.UUID;
 
-public class WispEntity extends PathfinderMob implements IAnimatable {
+import net.minecraft.entity.CreatureEntity;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntitySize;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.MoverType;
+import net.minecraft.entity.Pose;
+import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.util.HandSide;
+
+public class WispEntity extends CreatureEntity implements IAnimatable {
 
     @Nullable
     private UUID ownerUUID;
@@ -50,18 +60,18 @@ public class WispEntity extends PathfinderMob implements IAnimatable {
     @SuppressWarnings("removal")
     private final AnimationBuilder animationBuilder = new AnimationBuilder().addAnimation("animation.wisp.flying", true);
 
-    private Vec3 targetSearchStart;
-    private Vec3 lastTickPos;
+    private Vector3d targetSearchStart;
+    private Vector3d lastTickPos;
     private float damageAmount;
 
-    public WispEntity(EntityType<? extends WispEntity> entityType, Level level) {
+    public WispEntity(EntityType<? extends WispEntity> entityType, World level) {
         super(entityType, level);
         this.setNoGravity(true);
     }
 
-    public WispEntity(Level levelIn, LivingEntity owner, float damageAmount) {
+    public WispEntity(World levelIn, LivingEntity owner, float damageAmount) {
         this(EntityRegistry.WISP.get(), levelIn);
-        this.moveControl = new FlyingMoveControl(this, 20, true);
+        this.moveControl = new FlyingMovementController(this, 20, true);
         //this.targetSearchStart = targetSearchStart;
         this.damageAmount = damageAmount;
 
@@ -98,7 +108,7 @@ public class WispEntity extends PathfinderMob implements IAnimatable {
     public static boolean isValidTarget(@Nullable Entity entity) {
         if (entity instanceof LivingEntity livingEntity &&
                 livingEntity.isAlive() &&
-                livingEntity instanceof Enemy) {
+                livingEntity instanceof IMob) {
             return true;
         }
         return false;
@@ -140,8 +150,8 @@ public class WispEntity extends PathfinderMob implements IAnimatable {
     }
 
     @Override
-    protected @NotNull PathNavigation createNavigation(Level pLevel) {
-        FlyingPathNavigation flyingpathnavigation = new FlyingPathNavigation(this, pLevel) {
+    protected @NotNull PathNavigator createNavigation(World pLevel) {
+        FlyingPathNavigator flyingpathnavigation = new FlyingPathNavigator(this, pLevel) {
             public boolean isStableDestination(BlockPos blockPos) {
                 return !this.level.getBlockState(blockPos.below()).isAir();
             }
@@ -156,12 +166,12 @@ public class WispEntity extends PathfinderMob implements IAnimatable {
         return flyingpathnavigation;
     }
 
-    protected float getStandingEyeHeight(Pose pPose, EntityDimensions pDimensions) {
+    protected float getStandingEyeHeight(Pose pPose, EntitySize pDimensions) {
         return pDimensions.height * 0.6F;
     }
 
     @Override
-    public void travel(Vec3 pTravelVector) {
+    public void travel(Vector3d pTravelVector) {
         if (this.isEffectiveAi() || this.isControlledByLocalInstance()) {
             if (this.isInWater()) {
                 this.moveRelative(0.02F, pTravelVector);
@@ -215,7 +225,7 @@ public class WispEntity extends PathfinderMob implements IAnimatable {
         return factory;
     }
 
-    public static AttributeSupplier.Builder prepareAttributes() {
+    public static AttributeModifierMap.MutableAttribute prepareAttributes() {
         return LivingEntity.createLivingAttributes()
                 .add(Attributes.ATTACK_DAMAGE, 3.0)
                 .add(Attributes.MAX_HEALTH, 20.0)
@@ -231,19 +241,19 @@ public class WispEntity extends PathfinderMob implements IAnimatable {
     }
 
     @Override
-    public ItemStack getItemBySlot(EquipmentSlot pSlot) {
+    public ItemStack getItemBySlot(EquipmentSlotType pSlot) {
         return ItemStack.EMPTY;
     }
 
     @Override
-    public void setItemSlot(EquipmentSlot pSlot, ItemStack pStack) {
+    public void setItemSlot(EquipmentSlotType pSlot, ItemStack pStack) {
 
     }
 
     public boolean hurt(DamageSource pSource, float pAmount) {
         if (!this.level.isClientSide) {
             this.playSound(SoundEvents.SHULKER_BULLET_HURT, 1.0F, 1.0F);
-            ((ServerLevel)this.level).sendParticles(ParticleTypes.CRIT, this.getX(), this.getY(), this.getZ(), 15, 0.2D, 0.2D, 0.2D, 0.0D);
+            ((ServerWorld)this.level).sendParticles(ParticleTypes.CRIT, this.getX(), this.getY(), this.getZ(), 15, 0.2D, 0.2D, 0.2D, 0.0D);
             this.discard();
         }
 
@@ -251,8 +261,8 @@ public class WispEntity extends PathfinderMob implements IAnimatable {
     }
 
     @Override
-    public HumanoidArm getMainArm() {
-        return HumanoidArm.LEFT;
+    public HandSide getMainArm() {
+        return HandSide.LEFT;
     }
 
     //https://forge.gemwire.uk/wiki/Particles

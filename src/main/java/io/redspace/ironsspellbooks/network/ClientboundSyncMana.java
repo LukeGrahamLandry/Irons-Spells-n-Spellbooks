@@ -2,7 +2,7 @@ package io.redspace.ironsspellbooks.network;
 
 import io.redspace.ironsspellbooks.api.magic.MagicData;
 import io.redspace.ironsspellbooks.player.ClientMagicData;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
@@ -18,7 +18,7 @@ public class ClientboundSyncMana {
         this.playerMagicData = playerMagicData;
     }
 
-    public ClientboundSyncMana(FriendlyByteBuf buf) {
+    public ClientboundSyncMana(PacketBuffer buf) {
         playerMana = buf.readInt();
 //        int numCooldowns = buf.readInt();
 //        for (int i = 0; i < numCooldowns; i++) {
@@ -29,7 +29,7 @@ public class ClientboundSyncMana {
 //        }
     }
 
-    public void toBytes(FriendlyByteBuf buf) {
+    public void toBytes(PacketBuffer buf) {
         buf.writeInt(playerMagicData.getMana());
 //        if (playerMagicData != null) {
 //            var cooldowns = playerMagicData.getPlayerCooldowns().getSpellCooldowns();

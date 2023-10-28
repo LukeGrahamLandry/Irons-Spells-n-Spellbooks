@@ -1,11 +1,11 @@
 package io.redspace.ironsspellbooks.entity.mobs.goals;
 
-import net.minecraft.world.entity.PathfinderMob;
-import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.entity.CreatureEntity;
+import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
+import net.minecraft.util.math.vector.Vector3d;
 import org.jetbrains.annotations.Nullable;
 
-public class ReturnToHomeAtNightGoal<T extends PathfinderMob & HomeOwner> extends WaterAvoidingRandomStrollGoal {
+public class ReturnToHomeAtNightGoal<T extends CreatureEntity & HomeOwner> extends WaterAvoidingRandomWalkingGoal {
 
     T homeOwnerMob;
 
@@ -21,7 +21,7 @@ public class ReturnToHomeAtNightGoal<T extends PathfinderMob & HomeOwner> extend
 
     @Nullable
     @Override
-    protected Vec3 getPosition() {
-        return homeOwnerMob.getHome() == null ? super.getPosition() : Vec3.atBottomCenterOf(homeOwnerMob.getHome());
+    protected Vector3d getPosition() {
+        return homeOwnerMob.getHome() == null ? super.getPosition() : Vector3d.atBottomCenterOf(homeOwnerMob.getHome());
     }
 }

@@ -1,19 +1,19 @@
 package io.redspace.ironsspellbooks.entity;
 
 import io.redspace.ironsspellbooks.registries.EntityRegistry;
-import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.MoverType;
-import net.minecraft.world.entity.item.FallingBlockEntity;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.DamageSource;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.MoverType;
+import net.minecraft.entity.item.FallingBlockEntity;
+import net.minecraft.world.World;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.world.phys.Vec3;
 
 public class VisualFallingBlockEntity extends FallingBlockEntity {
-    public VisualFallingBlockEntity(EntityType<? extends VisualFallingBlockEntity> pEntityType, Level pLevel) {
+    public VisualFallingBlockEntity(EntityType<? extends VisualFallingBlockEntity> pEntityType, World pLevel) {
         super(pEntityType, pLevel);
     }
 
@@ -32,7 +32,7 @@ public class VisualFallingBlockEntity extends FallingBlockEntity {
         return tickCount > 1 && (this.position().y <= originalY || this.getDeltaMovement().lengthSqr() < .001f);
     }
 
-    public VisualFallingBlockEntity(Level pLevel, double pX, double pY, double pZ, BlockState pState) {
+    public VisualFallingBlockEntity(World pLevel, double pX, double pY, double pZ, BlockState pState) {
         this(EntityRegistry.FALLING_BLOCK.get(), pLevel);
 
         originalX = pX;
@@ -52,7 +52,7 @@ public class VisualFallingBlockEntity extends FallingBlockEntity {
         this.cancelDrop = true;
     }
 
-    public VisualFallingBlockEntity(Level pLevel, double pX, double pY, double pZ, BlockState pState, int maxAge){
+    public VisualFallingBlockEntity(World pLevel, double pX, double pY, double pZ, BlockState pState, int maxAge){
         this(pLevel,pX,pY,pZ,pState);
         this.maxAge = maxAge;
     }
@@ -71,7 +71,7 @@ public class VisualFallingBlockEntity extends FallingBlockEntity {
     }
 
     @Override
-    protected void readAdditionalSaveData(CompoundTag pCompound) {
+    protected void readAdditionalSaveData(CompoundNBT pCompound) {
         super.readAdditionalSaveData(pCompound);
         this.dropItem = false;
         this.cancelDrop = true;

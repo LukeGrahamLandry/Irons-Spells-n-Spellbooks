@@ -1,6 +1,6 @@
 package io.redspace.ironsspellbooks.player;
 
-import com.mojang.blaze3d.platform.InputConstants;
+import net.minecraft.client.util.InputMappings;
 import io.redspace.ironsspellbooks.IronsSpellbooks;
 import io.redspace.ironsspellbooks.capabilities.spell.SpellData;
 import io.redspace.ironsspellbooks.capabilities.spellbook.SpellBookData;
@@ -9,10 +9,10 @@ import io.redspace.ironsspellbooks.gui.overlays.network.ServerboundSetSpellBookA
 import io.redspace.ironsspellbooks.item.SpellBook;
 import io.redspace.ironsspellbooks.setup.Messages;
 import io.redspace.ironsspellbooks.api.util.Utils;
-import net.minecraft.client.KeyMapping;
+import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.client.Minecraft;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.event.TickEvent;
@@ -41,7 +41,7 @@ public final class ClientInputEvents {
     @SubscribeEvent
     public static void clientTick(TickEvent.ClientTickEvent event) {
         var minecraft = Minecraft.getInstance();
-        Player player = minecraft.player;
+        PlayerEntity player = minecraft.player;
         if (player == null)
             return;
 
@@ -61,7 +61,7 @@ public final class ClientInputEvents {
     @SubscribeEvent
     public static void clientMouseScrolled(InputEvent.MouseScrollingEvent event) {
         var minecraft = Minecraft.getInstance();
-        Player player = minecraft.player;
+        PlayerEntity player = minecraft.player;
         if (player == null)
             return;
         if (Utils.isPlayerHoldingSpellBook(player) && minecraft.screen == null) {
@@ -152,12 +152,12 @@ public final class ClientInputEvents {
         }
 
         if (button == useKeyId) {
-            if (action == InputConstants.RELEASE) {
+            if (action == InputMappings.RELEASE) {
                 //IronsSpellbooks.LOGGER.debug("ClientInputEvents.handleRightClickSuppression.1");
                 ClientSpellCastHelper.setSuppressRightClicks(false);
                 isUseKeyDown = false;
                 hasReleasedSinceCasting = true;
-            } else if (action == InputConstants.PRESS) {
+            } else if (action == InputMappings.PRESS) {
                 //IronsSpellbooks.LOGGER.debug("ClientInputEvents.handleRightClickSuppression.2");
                 isUseKeyDown = true;
             }
@@ -170,13 +170,13 @@ public final class ClientInputEvents {
         }
     }
 
-    private static KeyState register(KeyMapping key) {
+    private static KeyState register(KeyBinding key) {
         var k = new KeyState(key);
         KEY_STATES.add(k);
         return k;
     }
 
-    private static List<KeyState> registerQuickCast(List<KeyMapping> mappings) {
+    private static List<KeyState> registerQuickCast(List<KeyBinding> mappings) {
         var keyStates = new ArrayList<KeyState>();
 
         mappings.forEach(keyMapping -> {

@@ -4,13 +4,13 @@ import io.redspace.ironsspellbooks.capabilities.magic.UpgradeData;
 import io.redspace.ironsspellbooks.capabilities.spell.SpellData;
 import io.redspace.ironsspellbooks.registries.ItemRegistry;
 import io.redspace.ironsspellbooks.util.UpgradeUtils;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.Container;
-import net.minecraft.world.inventory.SmithingMenu;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.UpgradeRecipe;
-import net.minecraft.world.level.Level;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.container.SmithingTableContainer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.item.crafting.SmithingRecipe;
+import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -18,25 +18,25 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 //Default priority is 1000
-@Mixin(SmithingMenu.class)
+@Mixin(SmithingTableContainer.class)
 public abstract class SmithingMenuMixin {
-    private static final UpgradeRecipe fakeRecipe = new UpgradeRecipe(new ResourceLocation(""), Ingredient.of(), Ingredient.of(), ItemStack.EMPTY) {
+    private static final SmithingRecipe fakeRecipe = new SmithingRecipe(new ResourceLocation(""), Ingredient.of(), Ingredient.of(), ItemStack.EMPTY) {
         @Override
-        public boolean matches(Container pInv, Level pLevel) {
+        public boolean matches(IInventory pInv, World pLevel) {
             return true;
         }
     };
 
     @Shadow
     private
-    UpgradeRecipe selectedRecipe;
+    SmithingRecipe selectedRecipe;
 
     /*
     Necessary to wipe nbt when using shriving stone
     */
     @Inject(method = "createResult", at = @At("HEAD"), cancellable = true)
     public void createResult(CallbackInfo ci) {
-        var menu = (SmithingMenu) (Object) this;
+        var menu = (SmithingTableContainer) (Object) this;
         var baseSlot = menu.getSlot(0);
         if (baseSlot.hasItem() && menu.getSlot(1).getItem().getItem().equals(ItemRegistry.SHRIVING_STONE.get())) {
             var resultSlot = menu.getSlot(2);

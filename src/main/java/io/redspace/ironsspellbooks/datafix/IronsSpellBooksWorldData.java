@@ -1,10 +1,10 @@
 package io.redspace.ironsspellbooks.datafix;
 
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.level.saveddata.SavedData;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.world.storage.WorldSavedData;
 import org.jetbrains.annotations.NotNull;
 
-public class IronsSpellBooksWorldData extends SavedData {
+public class IronsSpellBooksWorldData extends WorldSavedData {
     private int dataVersion;
 
     public IronsSpellBooksWorldData() {
@@ -25,13 +25,13 @@ public class IronsSpellBooksWorldData extends SavedData {
     }
 
     @Override
-    public @NotNull CompoundTag save(@NotNull CompoundTag pCompoundTag) {
-        var tag = new CompoundTag();
+    public @NotNull CompoundNBT save(@NotNull CompoundNBT pCompoundTag) {
+        var tag = new CompoundNBT();
         tag.putInt("dataVersion", dataVersion);
         return tag;
     }
 
-    public static IronsSpellBooksWorldData load(CompoundTag tag) {
+    public static IronsSpellBooksWorldData load(CompoundNBT tag) {
         int dataVersion = tag.getInt("dataVersion");
         return new IronsSpellBooksWorldData(dataVersion);
     }

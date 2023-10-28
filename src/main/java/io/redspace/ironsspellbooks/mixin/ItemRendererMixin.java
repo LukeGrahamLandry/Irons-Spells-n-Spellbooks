@@ -1,8 +1,8 @@
 package io.redspace.ironsspellbooks.mixin;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.Tesselator;
+import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.Tessellator;
 import io.redspace.ironsspellbooks.api.registry.SpellRegistry;
 import io.redspace.ironsspellbooks.capabilities.spell.SpellData;
 import io.redspace.ironsspellbooks.capabilities.spellbook.SpellBookData;
@@ -10,11 +10,11 @@ import io.redspace.ironsspellbooks.item.SpellBook;
 import io.redspace.ironsspellbooks.player.ClientMagicData;
 import io.redspace.ironsspellbooks.registries.ItemRegistry;
 import io.redspace.ironsspellbooks.api.spells.AbstractSpell;
-import net.minecraft.client.gui.Font;
-import net.minecraft.client.renderer.entity.ItemRenderer;
-import net.minecraft.util.Mth;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.renderer.ItemRenderer;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -28,7 +28,7 @@ public class ItemRendererMixin {
     }
 
     @Inject(method = "renderGuiItemDecorations", at = @At(value = "TAIL"))
-    public void renderSpellbookCooldown(Font font, ItemStack stack, int one, int two, CallbackInfo ci) {
+    public void renderSpellbookCooldown(FontRenderer font, ItemStack stack, int one, int two, CallbackInfo ci) {
         Item item = stack.getItem();
         if (item instanceof SpellBook) {
             AbstractSpell spell = SpellBookData.getSpellBookData(stack).getActiveSpell().getSpell();
@@ -48,9 +48,9 @@ public class ItemRendererMixin {
                 RenderSystem.disableTexture();
                 RenderSystem.enableBlend();
                 RenderSystem.defaultBlendFunc();
-                Tesselator tesselator = Tesselator.getInstance();
+                Tessellator tesselator = Tessellator.getInstance();
                 BufferBuilder bufferbuilder = tesselator.getBuilder();
-                fillRect(bufferbuilder, one, two + Mth.floor(16.0F * (1.0F - f)), 16, Mth.ceil(16.0F * f), 255, 255, 255, 127);
+                fillRect(bufferbuilder, one, two + MathHelper.floor(16.0F * (1.0F - f)), 16, MathHelper.ceil(16.0F * f), 255, 255, 255, 127);
                 RenderSystem.enableTexture();
                 RenderSystem.enableDepthTest();
             }
