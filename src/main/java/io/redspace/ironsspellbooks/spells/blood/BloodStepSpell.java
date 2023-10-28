@@ -105,15 +105,15 @@ public class BloodStepSpell extends AbstractSpell {
                 entity.stopRiding();
             }
             if (hitResult.getType() == RayTraceResult.Type.ENTITY && ((EntityRayTraceResult) hitResult).getEntity() instanceof LivingEntity target) {
-                //dest = target.position().subtract(new Vec3(0, 0, 1.5).yRot(target.getYRot()));
+                //dest = target.position().subtract(new Vec3(0, 0, 1.5).yRot(target.yRot));
                 for (int i = 0; i < 8; i++) {
-                    dest = target.position().subtract(new Vector3d(0, 0, 1.5).yRot(-(target.getYRot() + i * 45) * MathHelper.DEG_TO_RAD));
+                    dest = target.position().subtract(new Vector3d(0, 0, 1.5).yRot(-(target.yRot + i * 45) * MathHelper.DEG_TO_RAD));
                     if (level.getBlockState(new BlockPos(dest).above()).isAir())
                         break;
 
                 }
                 entity.teleportTo(dest.x, dest.y + 1f, dest.z);
-                entity.lookAt(EntityAnchorArgument.Type.EYES, target.getEyePosition().subtract(0, .15, 0));
+                entity.lookAt(EntityAnchorArgument.Type.EYES, target.getEyePosition(0).subtract(0, .15, 0));
             } else {
                 dest = TeleportSpell.findTeleportLocation(level, entity, getDistance(spellLevel, entity));
                 entity.teleportTo(dest.x, dest.y, dest.z);

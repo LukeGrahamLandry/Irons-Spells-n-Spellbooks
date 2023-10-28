@@ -81,7 +81,7 @@ public class SummonVexSpell extends AbstractSpell {
         int level = getLevel(spellLevel, entity);
         for (int i = 0; i < this.getLevel(spellLevel, entity); i++) {
             SummonedVex vex = new SummonedVex(world, entity);
-            vex.moveTo(entity.getEyePosition().add(new Vector3d(Utils.getRandomScaled(2), 1, Utils.getRandomScaled(2))));
+            vex.moveTo(entity.getEyePosition(0).add(new Vector3d(Utils.getRandomScaled(2), 1, Utils.getRandomScaled(2))));
             vex.finalizeSpawn((ServerWorld) world, world.getCurrentDifficultyAt(vex.getOnPos()), SpawnReason.MOB_SUMMONED, null, null);
             vex.addEffect(new EffectInstance(MobEffectRegistry.VEX_TIMER.get(), summonTime, 0, false, false, false));
             world.addFreshEntity(vex);

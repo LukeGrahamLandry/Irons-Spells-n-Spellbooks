@@ -23,7 +23,7 @@ public class AbstractClientPlayerMixinHelper {
                 float offsetX = 0;
                 float offsetY = 0;
                 float offsetZ = 0;
-                var pitch = player.getXRot();
+                var pitch = player.xRot;
                 var yaw = player.yHeadRot - player.yBodyRot;
                 pitch = (float) Math.toRadians(pitch);
                 yaw = (float) Math.toRadians(yaw);

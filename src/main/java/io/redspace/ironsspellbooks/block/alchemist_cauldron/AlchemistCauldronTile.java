@@ -38,7 +38,7 @@ import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.block.BlockState;
 import net.minecraftforge.common.brewing.BrewingRecipeRegistry;
-import net.minecraftforge.registries.RegistryObject;
+import net.minecraftforge.fml.RegistryObject;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;

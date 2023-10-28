@@ -66,8 +66,8 @@ public class BloodSlashProjectile extends ProjectileEntity implements AntiMagicS
     public BloodSlashProjectile(EntityType<? extends BloodSlashProjectile> entityType, World levelIn, LivingEntity shooter) {
         this(entityType, levelIn);
         setOwner(shooter);
-        setYRot(shooter.getYRot());
-        setXRot(shooter.getXRot());
+        setYRot(shooter.yRot);
+        setXRot(shooter.xRot);
     }
 
     public BloodSlashProjectile(World levelIn, LivingEntity shooter) {

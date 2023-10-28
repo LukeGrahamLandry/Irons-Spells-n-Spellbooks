@@ -83,7 +83,7 @@ public class BloodNeedlesSpell extends AbstractSpell {
             int rotation = degreesPerNeedle * i - (degreesPerNeedle / 2);
             needle.setDamage(damage);
             needle.setZRot(rotation);
-            Vector3d spawn = entity.getEyePosition().add(new Vector3d(0, 1.5, 0).zRot(rotation * MathHelper.DEG_TO_RAD).xRot(-entity.getXRot() * MathHelper.DEG_TO_RAD).yRot(-entity.getYRot() * MathHelper.DEG_TO_RAD));
+            Vector3d spawn = entity.getEyePosition(0).add(new Vector3d(0, 1.5, 0).zRot(rotation * MathHelper.DEG_TO_RAD).xRot(-entity.xRot * MathHelper.DEG_TO_RAD).yRot(-entity.yRot * MathHelper.DEG_TO_RAD));
             needle.moveTo(spawn);
             needle.shoot(raycast.getLocation().subtract(spawn).normalize());
             world.addFreshEntity(needle);

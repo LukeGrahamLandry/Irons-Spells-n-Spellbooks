@@ -76,14 +76,14 @@ public class FangStrikeSpell extends AbstractSpell {
     @Override
     public void onCast(World world, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
         Vector3d forward = entity.getForward().multiply(1, 0, 1).normalize();
-        Vector3d start = entity.getEyePosition().add(forward.scale(1.5));
+        Vector3d start = entity.getEyePosition(0).add(forward.scale(1.5));
 
         for (int i = 0; i < getCount(spellLevel, entity); i++) {
             Vector3d spawn = start.add(forward.scale(i));
             spawn = new Vector3d(spawn.x, getGroundLevel(world, spawn, 8), spawn.z);
             if (!world.getBlockState(new BlockPos(spawn).below()).isAir()) {
                 int delay = i / 3;
-                ExtendedEvokerFang fang = new ExtendedEvokerFang(world, spawn.x, spawn.y, spawn.z, (entity.getYRot() - 90) * MathHelper.DEG_TO_RAD, delay, entity, getDamage(spellLevel, entity));
+                ExtendedEvokerFang fang = new ExtendedEvokerFang(world, spawn.x, spawn.y, spawn.z, (entity.yRot - 90) * MathHelper.DEG_TO_RAD, delay, entity, getDamage(spellLevel, entity));
                 world.addFreshEntity(fang);
             }
         }

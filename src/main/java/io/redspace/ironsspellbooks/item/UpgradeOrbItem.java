@@ -12,11 +12,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-import static net.minecraft.world.item.ItemStack.ATTRIBUTE_MODIFIER_FORimport net.minecraft.item.Item.Properties;
+import static net.minecraft.item.ItemStack.ATTRIBUTE_MODIFIER_FORMAT;
 
-MAT;
 
-public classnet.minecraft.item.ItemStack private final UpgradeType upgrade;
+public class UpgradeOrbItem extends Item {
+    private final UpgradeType upgrade;
     private final static ITextComponent TOOLTIP_HEADER = ITextComponent.translatable("tooltip.irons_spellbooks.upgrade_tooltip").withStyle(TextFormatting.GRAY);
     private final ITextComponent TOOLTIP_TEXT;
 

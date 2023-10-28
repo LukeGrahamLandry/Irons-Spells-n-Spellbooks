@@ -140,7 +140,7 @@ public class GenericFollowOwnerGoal extends Goal {
         } else if (!this.canTeleportTo(new BlockPos(pX, pY, pZ))) {
             return false;
         } else {
-            this.entity.moveTo((double) pX + 0.5D, (double) pY + (canFly && !entity.isOnGround() ? 3 : 0), (double) pZ + 0.5D, this.entity.getYRot(), this.entity.getXRot());
+            this.entity.moveTo((double) pX + 0.5D, (double) pY + (canFly && !entity.isOnGround() ? 3 : 0), (double) pZ + 0.5D, this.entity.yRot, this.entity.xRot);
             this.navigation.stop();
             return true;
         }

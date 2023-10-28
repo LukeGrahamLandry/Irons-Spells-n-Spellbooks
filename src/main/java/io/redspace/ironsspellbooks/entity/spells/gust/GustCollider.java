@@ -22,7 +22,7 @@ public class GustCollider extends AbstractConeProjectile {
     public GustCollider(World level, LivingEntity owner) {
         this(EntityRegistry.GUST_COLLIDER.get(), level);
         this.setOwner(owner);
-        this.setRot(owner.getYRot(), owner.getXRot());
+        this.setRot(owner.yRot, owner.xRot);
     }
 
     public GustCollider(EntityType<GustCollider> gustColliderEntityType, World level) {

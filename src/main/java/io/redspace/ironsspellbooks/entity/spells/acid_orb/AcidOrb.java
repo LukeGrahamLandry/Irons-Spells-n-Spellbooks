@@ -80,7 +80,7 @@ public class AcidOrb extends AbstractMagicProjectile {
             var entities = level.getEntities(this, this.getBoundingBox().inflate(explosionRadius));
             for (Entity entity : entities) {
                 double distance = entity.position().distanceTo(hitresult.getLocation());
-                if (distance < explosionRadius && Utils.hasLineOfSight(level, hitresult.getLocation(), entity.getEyePosition(), true)) {
+                if (distance < explosionRadius && Utils.hasLineOfSight(level, hitresult.getLocation(), entity.getEyePosition(0), true)) {
                     if (entity instanceof LivingEntity livingEntity && livingEntity != getOwner())
                         livingEntity.addEffect(new EffectInstance(MobEffectRegistry.REND.get(), getRendDuration(), getRendLevel()));
                 }

@@ -162,9 +162,9 @@ public class Utils {
     }
 
     public static BlockRayTraceResult getTargetOld(World level, PlayerEntity player, RayTraceContext.FluidMode clipContext, double reach) {
-        float f = player.getXRot();
-        float f1 = player.getYRot();
-        Vector3d vec3 = player.getEyePosition();
+        float f = player.xRot;
+        float f1 = player.yRot;
+        Vector3d vec3 = player.getEyePosition(0);
         float f2 = MathHelper.cos(-f1 * ((float) Math.PI / 180F) - (float) Math.PI);
         float f3 = MathHelper.sin(-f1 * ((float) Math.PI / 180F) - (float) Math.PI);
         float f4 = -MathHelper.cos(-f * ((float) Math.PI / 180F));
@@ -177,14 +177,14 @@ public class Utils {
 
     public static BlockRayTraceResult getTargetBlock(World level, LivingEntity entity, RayTraceContext.FluidMode clipContext, double reach) {
         var rotation = entity.getLookAngle().normalize().scale(reach);
-        var pos = entity.getEyePosition();
+        var pos = entity.getEyePosition(0);
         var dest = rotation.add(pos);
         return level.clip(new RayTraceContext(pos, dest, RayTraceContext.BlockMode.COLLIDER, clipContext, entity));
     }
 
 //    public static Vec3 raycastForPosition(Level level, LivingEntity entity, double reach) {
 //        var rotation = entity.getLookAngle().normalize().scale(reach);
-//        var pos = entity.getEyePosition();
+//        var pos = entity.getEyePosition(0);
 //        return rotation.add(pos);
 //    }
 
@@ -226,19 +226,19 @@ public class Utils {
     }
 
     public static Vector3d getPositionFromEntityLookDirection(Entity originEntity, float distance) {
-        Vector3d start = originEntity.getEyePosition();
+        Vector3d start = originEntity.getEyePosition(0);
         return originEntity.getLookAngle().normalize().scale(distance).add(start);
     }
 
     public static RayTraceResult raycastForEntity(World level, Entity originEntity, float distance, boolean checkForBlocks) {
-        Vector3d start = originEntity.getEyePosition();
+        Vector3d start = originEntity.getEyePosition(0);
         Vector3d end = originEntity.getLookAngle().normalize().scale(distance).add(start);
 
         return raycastForEntity(level, originEntity, start, end, checkForBlocks);
     }
 
     public static RayTraceResult raycastForEntity(World level, Entity originEntity, float distance, boolean checkForBlocks, float bbInflation) {
-        Vector3d start = originEntity.getEyePosition();
+        Vector3d start = originEntity.getEyePosition(0);
         Vector3d end = originEntity.getLookAngle().normalize().scale(distance).add(start);
 
         return internalRaycastForEntity(level, originEntity, start, end, checkForBlocks, bbInflation, Utils::canHitWithRaycast);
@@ -366,7 +366,7 @@ public class Utils {
         boolean flag = DamageSources.applyDamage(target, f, damageSource);
         if (flag) {
             if (f1 > 0.0F && target instanceof LivingEntity livingTarget) {
-                ((LivingEntity) target).knockback((double) (f1 * 0.5F), (double) MathHelper.sin(attacker.getYRot() * ((float) Math.PI / 180F)), (double) (-MathHelper.cos(attacker.getYRot() * ((float) Math.PI / 180F))));
+                ((LivingEntity) target).knockback((double) (f1 * 0.5F), (double) MathHelper.sin(attacker.yRot * ((float) Math.PI / 180F)), (double) (-MathHelper.cos(attacker.yRot * ((float) Math.PI / 180F))));
                 attacker.setDeltaMovement(attacker.getDeltaMovement().multiply(0.6D, 1.0D, 0.6D));
                 livingTarget.setLastHurtByMob(attacker);
             }

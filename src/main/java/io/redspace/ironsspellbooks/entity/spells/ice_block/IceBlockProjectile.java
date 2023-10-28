@@ -139,8 +139,8 @@ public class IceBlockProjectile extends AbstractMagicProjectile implements IAnim
 //        IronsSpellbooks.LOGGER.debug("IceBlockProjectileRotation: X:{} Y:{}", getXRot(), getYRot());
 //        this.setYRot((float)(Mth.atan2(getDeltaMovement().x, getDeltaMovement().z) * (double)(180F / (float)Math.PI)));
 //        this.setXRot(0);
-//        this.yRotO = this.getYRot();
-//        this.xRotO = this.getXRot();
+//        this.yRotO = this.yRot;
+//        this.xRotO = this.xRot;
         baseTick();
         xOld = getX();
         yOld = getY();

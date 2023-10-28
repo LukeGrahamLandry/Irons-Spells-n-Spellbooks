@@ -48,8 +48,8 @@ public class ElectrocuteRenderer extends EntityRenderer<ElectrocuteProjectile> {
 
         //VertexConsumer consumer = bufferSource.getBuffer(RenderType.lightning());
         poseStack.translate(0, entity.getEyeHeight() * .5f, 0);
-        poseStack.mulPose(Vector3f.YP.rotationDegrees(-entity.getOwner().getYRot()));
-        poseStack.mulPose(Vector3f.XP.rotationDegrees(entity.getOwner().getXRot()));
+        poseStack.mulPose(Vector3f.YP.rotationDegrees(-entity.getOwner().yRot));
+        poseStack.mulPose(Vector3f.XP.rotationDegrees(entity.getOwner().xRot));
 
         if (entity.getAge() % 2 == 0 && !Minecraft.getInstance().isPaused())
             entity.generateLightningBeams();
@@ -59,7 +59,7 @@ public class ElectrocuteRenderer extends EntityRenderer<ElectrocuteProjectile> {
         IVertexBuilder consumer = bufferSource.getBuffer(RenderType.entityTranslucentEmissive(getTextureLocation(entity)));
         float width = .25f;
         float height = width;
-        Vector3d start = Vector3d.ZERO;//entity.getOwner().getEyePosition().add(entity.getForward().normalize().scale(.15f));
+        Vector3d start = Vector3d.ZERO;//entity.getOwner().getEyePosition(0).add(entity.getForward().normalize().scale(.15f));
         for (int i = 0; i < segments.size() - 1; i += 2) {
             var from = segments.get(i).add(start);
             var to = segments.get(i + 1).add(start);

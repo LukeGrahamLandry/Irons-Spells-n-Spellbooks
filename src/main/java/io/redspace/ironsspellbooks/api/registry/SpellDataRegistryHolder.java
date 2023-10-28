@@ -2,7 +2,7 @@ package io.redspace.ironsspellbooks.api.registry;
 
 import io.redspace.ironsspellbooks.api.spells.AbstractSpell;
 import io.redspace.ironsspellbooks.capabilities.spell.SpellData;
-import net.minecraftforge.registries.RegistryObject;
+import net.minecraftforge.fml.RegistryObject;
 
 public class SpellDataRegistryHolder {
 

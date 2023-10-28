@@ -57,8 +57,8 @@ public class RayOfFrostRenderer extends EntityRenderer<RayOfFrostVisualEntity> {
         float length = 32 * scalar * scalar;
         float f = entity.tickCount + partialTicks;
         poseStack.translate(0, entity.getBoundingBox().getYsize() * .5f, 0);
-        poseStack.mulPose(Vector3f.YP.rotationDegrees(-entity.getYRot() - 180.0F));
-        poseStack.mulPose(Vector3f.XP.rotationDegrees(-entity.getXRot() - 90));
+        poseStack.mulPose(Vector3f.YP.rotationDegrees(-entity.yRot - 180.0F));
+        poseStack.mulPose(Vector3f.XP.rotationDegrees(-entity.xRot - 90));
         poseStack.scale(scalar, scalar, scalar);
 
         //float scale = Mth.lerp(Mth.clamp(f / 6f, 0, 1), 1, 2.3f);

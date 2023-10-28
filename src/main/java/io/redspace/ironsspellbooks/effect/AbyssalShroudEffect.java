@@ -45,7 +45,7 @@ public class AbyssalShroudEffect extends Effect {
 
 
         Vector3d sideStep = new Vector3d(random.nextBoolean() ? 1 : -1, 0, -.25);
-        sideStep.yRot(livingEntity.getYRot());
+        sideStep.yRot(livingEntity.yRot);
 
         particleCloud(livingEntity);
 
@@ -60,7 +60,7 @@ public class AbyssalShroudEffect extends Effect {
             particleCloud(livingEntity);
         }
         if (damageSource.getEntity() != null) {
-            livingEntity.lookAt(EntityAnchorArgument.Type.EYES, damageSource.getEntity().getEyePosition().subtract(0, .15, 0));
+            livingEntity.lookAt(EntityAnchorArgument.Type.EYES, damageSource.getEntity().getEyePosition(0).subtract(0, .15, 0));
         }
         level.playSound(null, livingEntity.getX(), livingEntity.getY(), livingEntity.getZ(), SoundRegistry.ABYSSAL_TELEPORT.get(), SoundCategory.AMBIENT, 1.0F, .9F + random.nextFloat() * .2f);
         return true;

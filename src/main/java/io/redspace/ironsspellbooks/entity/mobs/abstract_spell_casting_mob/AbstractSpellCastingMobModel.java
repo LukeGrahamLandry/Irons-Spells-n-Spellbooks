@@ -48,7 +48,7 @@ public abstract class AbstractSpellCastingMobModel extends AnimatedGeoModel<Abst
             head.setRotationY(MathHelper.lerp(partialTick,
                     MathHelper.wrapDegrees(-entity.yHeadRotO + entity.yBodyRotO) * MathHelper.DEG_TO_RAD,
                     MathHelper.wrapDegrees(-entity.yHeadRot + entity.yBodyRot) * MathHelper.DEG_TO_RAD));
-            head.setRotationX(MathHelper.lerp(partialTick, -entity.xRotO, -entity.getXRot()) * MathHelper.DEG_TO_RAD);
+            head.setRotationX(MathHelper.lerp(partialTick, -entity.xRotO, -entity.xRot) * MathHelper.DEG_TO_RAD);
         }
         /*
             Crazy Vanilla Magic Calculations (LivingEntityRenderer:116 & HumanoidModel#setupAnim
@@ -108,8 +108,8 @@ public abstract class AbstractSpellCastingMobModel extends AnimatedGeoModel<Abst
                 addRotationY(entity.isLeftHanded() ? leftArm : rightArm, (entity.isLeftHanded() ? -25 : 25) * MathHelper.DEG_TO_RAD);
             }
         } else if (entity.shouldPointArmsWhileCasting()) {
-            addRotationX(rightArm, -entity.getXRot() * MathHelper.DEG_TO_RAD);
-            addRotationX(leftArm, -entity.getXRot() * MathHelper.DEG_TO_RAD);
+            addRotationX(rightArm, -entity.xRot * MathHelper.DEG_TO_RAD);
+            addRotationX(leftArm, -entity.xRot * MathHelper.DEG_TO_RAD);
         }
 
 //        rightArm.setRotationX(Mth.cos(pLimbSwing * 0.6662F + (float) Math.PI) * 2.0F * pLimbSwingAmount * 0.5F / f);

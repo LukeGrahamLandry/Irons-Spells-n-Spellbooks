@@ -75,7 +75,7 @@ public class ShieldSpell extends AbstractSpell {
         ShieldEntity shield = new ShieldEntity(level, getShieldHP(spellLevel, entity));
         Vector3d spawn = Utils.raycastForEntity(level, entity, 5, true).getLocation();
         shield.setPos(spawn);
-        shield.setRotation(entity.getXRot(), entity.getYRot());
+        shield.setRotation(entity.xRot, entity.yRot);
         level.addFreshEntity(shield);
         super.onCast(level, spellLevel, entity, playerMagicData);
     }

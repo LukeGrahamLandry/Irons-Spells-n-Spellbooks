@@ -11,7 +11,7 @@ import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.RegistryObject;
+import net.minecraftforge.fml.RegistryObject;
 import top.theillusivec4.caelus.api.CaelusApi;
 
 public class MobEffectRegistry {

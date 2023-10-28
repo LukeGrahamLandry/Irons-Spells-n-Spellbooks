@@ -69,11 +69,11 @@ public class FrozenHumanoid extends LivingEntity {
         this(EntityRegistry.FROZEN_HUMANOID.get(), level);
         //this.swingingArm = entityToCopy.swingingArm;
         //this.swinging = entityToCopy.swinging;
-        //this.setRot(entityToCopy.getXRot(),entityToCopy.getYRot());
-        this.moveTo(entityToCopy.getX(), entityToCopy.getY(), entityToCopy.getZ(), entityToCopy.getYRot(), entityToCopy.getXRot());
-        //irons_spellbooks.LOGGER.debug("yRot: {}", entityToCopy.getYRot());
+        //this.setRot(entityToCopy.xRot,entityToCopy.yRot);
+        this.moveTo(entityToCopy.getX(), entityToCopy.getY(), entityToCopy.getZ(), entityToCopy.yRot, entityToCopy.xRot);
+        //irons_spellbooks.LOGGER.debug("yRot: {}", entityToCopy.yRot);
         //irons_spellbooks.LOGGER.debug("yBodyRot: {}", entityToCopy.yBodyRot);
-//        var y = entityToCopy.getYRot();
+//        var y = entityToCopy.yRot;
 //        this.setYRot(y);
 //        this.setYBodyRot(y);
 //        this.setOldPosAndRot();
@@ -104,7 +104,7 @@ public class FrozenHumanoid extends LivingEntity {
         this.entityData.set(DATA_LIMB_SWING_AMOUNT, limbSwingAmount);
 
 
-        //this.setYBodyRot(entityToCopy.yBodyRot-entityToCopy.getYRot());
+        //this.setYBodyRot(entityToCopy.yBodyRot-entityToCopy.yRot);
         //this.attackAnim = entityToCopy.attackAnim;
         this.entityData.set(DATA_ATTACK_TIME, entityToCopy.attackAnim);
         this.setPose(entityToCopy.getPose());
@@ -212,7 +212,7 @@ public class FrozenHumanoid extends LivingEntity {
         if (level.isClientSide || this.isInvulnerableTo(pSource))
             return false;
 
-        spawnIcicleShards(this.getEyePosition(), this.shatterProjectileDamage);
+        spawnIcicleShards(this.getEyePosition(0), this.shatterProjectileDamage);
         this.playHurtSound(pSource);
         this.discard();
         return true;

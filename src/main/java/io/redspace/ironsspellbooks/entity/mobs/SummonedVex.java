@@ -162,7 +162,7 @@ public class SummonedVex extends VexEntity implements MagicSummon {
         public void start() {
             LivingEntity livingentity = SummonedVex.this.getTarget();
             if (livingentity != null) {
-                Vector3d vec3 = livingentity.getEyePosition();
+                Vector3d vec3 = livingentity.getEyePosition(0);
                 SummonedVex.this.moveControl.setWantedPosition(vec3.x, vec3.y, vec3.z, 1.0D);
             }
 
@@ -193,7 +193,7 @@ public class SummonedVex extends VexEntity implements MagicSummon {
                 } else {
                     double d0 = SummonedVex.this.distanceToSqr(livingentity);
                     if (d0 < 9.0D) {
-                        Vector3d vec3 = livingentity.getEyePosition();
+                        Vector3d vec3 = livingentity.getEyePosition(0);
                         SummonedVex.this.moveControl.setWantedPosition(vec3.x, vec3.y, vec3.z, 1.0D);
                     }
                 }

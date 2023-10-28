@@ -39,9 +39,9 @@ public class FireBreathProjectile extends AbstractConeProjectile {
                     float range = 15 * MathHelper.DEG_TO_RAD;
                     for (int i = 0; i < 3; i++) {
                         Vector3d cast = getOwner().getLookAngle().normalize().xRot(Utils.random.nextFloat() * range * 2 - range).yRot(Utils.random.nextFloat() * range * 2 - range);
-                        RayTraceResult hitResult = level.clip(new RayTraceContext(getOwner().getEyePosition(), getOwner().getEyePosition().add(cast.scale(10)), RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, this));
+                        RayTraceResult hitResult = level.clip(new RayTraceContext(getOwner().getEyePosition(0), getOwner().getEyePosition(0).add(cast.scale(10)), RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, this));
                         if (hitResult.getType() == RayTraceResult.Type.BLOCK) {
-                            RayTraceResult shieldResult = Utils.raycastForEntityOfClass(level, this, getOwner().getEyePosition(), hitResult.getLocation(), false, AbstractShieldEntity.class);
+                            RayTraceResult shieldResult = Utils.raycastForEntityOfClass(level, this, getOwner().getEyePosition(0), hitResult.getLocation(), false, AbstractShieldEntity.class);
                             if (shieldResult.getType() == RayTraceResult.Type.MISS) {
                                 Vector3d pos = hitResult.getLocation().subtract(cast.scale(.5));
                                 BlockPos blockPos = new BlockPos(pos.x, pos.y, pos.z);

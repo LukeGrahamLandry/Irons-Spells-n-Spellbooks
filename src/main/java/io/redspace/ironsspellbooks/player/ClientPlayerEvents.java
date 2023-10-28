@@ -108,7 +108,7 @@ public class ClientPlayerEvents {
         if (livingEntity instanceof PlayerEntity) {
             var syncedData = ClientMagicData.getSyncedSpellData(livingEntity);
             if (syncedData.isCasting()) {
-                SpellRenderingHelper.renderSpellHelper(syncedData, livingEntity, event.getPoseStack(), event.getMultiBufferSource(), event.getPartialTick());
+                SpellRenderingHelper.renderSpellHelper(syncedData, livingEntity, event.getMatrixStack(), event.getBuffers(), event.getPartialRenderTick());
             }
         }
     }

@@ -78,7 +78,7 @@ public class SpectralHammer extends LivingEntity implements IAnimatable {
         this.radius = radius;
 
         var xRot = blockHitResult.getDirection().getAxis().isVertical() ? 90 : 0;
-        var yRot = owner.getYRot();
+        var yRot = owner.yRot;
         var yHeadRot = owner.getYHeadRot();
 
         this.setYRot(yRot);
@@ -87,7 +87,7 @@ public class SpectralHammer extends LivingEntity implements IAnimatable {
         this.setYHeadRot(yHeadRot);
 
 //        IronsSpellbooks.LOGGER.debug("SpectralHammer: owner - xRot:{}, yRot:{}, yHeadRot:{}", xRot, yRot, yHeadRot);
-//        IronsSpellbooks.LOGGER.debug("SpectralHammer: this - xRot:{}, yRot:{}, look:{}", this.getXRot(), this.getYRot(), this.getLookAngle());
+//        IronsSpellbooks.LOGGER.debug("SpectralHammer: this - xRot:{}, yRot:{}, look:{}", this.xRot, this.yRot, this.getLookAngle());
 //        IronsSpellbooks.LOGGER.debug("SpectralHammer: blockHitResult.dir:{}, damageAmount:{}", blockHitResult.getDirection(), damageAmount);
     }
 

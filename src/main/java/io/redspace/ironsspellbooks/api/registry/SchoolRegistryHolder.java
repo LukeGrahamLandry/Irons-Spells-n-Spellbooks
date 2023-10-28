@@ -1,7 +1,7 @@
 package io.redspace.ironsspellbooks.api.registry;
 
 import io.redspace.ironsspellbooks.api.spells.SchoolType;
-import net.minecraftforge.registries.RegistryObject;
+import net.minecraftforge.fml.RegistryObject;
 
 public class SchoolRegistryHolder {
 

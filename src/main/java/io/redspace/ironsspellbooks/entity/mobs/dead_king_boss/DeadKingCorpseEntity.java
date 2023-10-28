@@ -73,7 +73,7 @@ public class DeadKingCorpseEntity extends AbstractSpellCastingMob {
                 if (currentAnimTime > animLength) {
                     DeadKingBoss boss = new DeadKingBoss(level);
                     boss.moveTo(this.position().add(0, 1, 0));
-                    boss.setYRot(this.getYRot());
+                    boss.setYRot(this.yRot);
                     boss.finalizeSpawn((ServerWorld) level, level.getCurrentDifficultyAt(boss.getOnPos()), SpawnReason.TRIGGERED, null, null);
                     int playerCount = Math.max(level.getEntitiesOfClass(PlayerEntity.class, boss.getBoundingBox().inflate(32)).size(), 1);
                     boss.getAttributes().getInstance(Attributes.MAX_HEALTH).addPermanentModifier(new AttributeModifier("Gank Health Bonus", (playerCount - 1) * .5, AttributeModifier.Operation.MULTIPLY_BASE));

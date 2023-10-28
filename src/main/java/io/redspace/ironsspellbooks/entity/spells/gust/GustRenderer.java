@@ -43,8 +43,8 @@ public class GustRenderer extends EntityRenderer<GustCollider> {
     public void render(GustCollider entity, float yaw, float partialTicks, MatrixStack poseStack, IRenderTypeBuffer bufferSource, int light) {
         poseStack.pushPose();
         poseStack.translate(0, entity.getBoundingBox().getYsize() * .5f, 0);
-        poseStack.mulPose(Vector3f.YP.rotationDegrees(-entity.getYRot() - 180.0F));
-        poseStack.mulPose(Vector3f.XP.rotationDegrees(-entity.getXRot() - 90));
+        poseStack.mulPose(Vector3f.YP.rotationDegrees(-entity.yRot - 180.0F));
+        poseStack.mulPose(Vector3f.XP.rotationDegrees(-entity.xRot - 90));
         poseStack.scale(.25f, .25f, .25f);
 
         float f = entity.tickCount + partialTicks;

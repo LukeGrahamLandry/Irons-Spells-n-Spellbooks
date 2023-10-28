@@ -29,10 +29,10 @@ public class DevourJawRenderer extends EntityRenderer<DevourJaw> {
             return;
         float f = entity.tickCount + partialTicks;
         poseStack.pushPose();
-        poseStack.mulPose(Vector3f.YP.rotationDegrees(-entity.getYRot()));
+        poseStack.mulPose(Vector3f.YP.rotationDegrees(-entity.yRot));
         poseStack.scale(-1, -1, 1);
         poseStack.scale(1.85f, 1.85f, 1.85f);
-        this.model.setupAnim(entity, f, 0.0F, 0.0F, entity.getYRot(), entity.getXRot());
+        this.model.setupAnim(entity, f, 0.0F, 0.0F, entity.yRot, entity.xRot);
         IVertexBuilder vertexconsumer = multiBufferSource.getBuffer(RenderType.entityCutoutNoCull(getTextureLocation(entity)));
         this.model.renderToBuffer(poseStack, vertexconsumer, light, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
         poseStack.popPose();

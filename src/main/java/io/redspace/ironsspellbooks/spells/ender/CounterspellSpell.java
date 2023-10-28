@@ -89,14 +89,14 @@ public class CounterspellSpell extends AbstractSpell {
 
     @Override
     public void onCast(World world, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
-        Vector3d start = entity.getEyePosition();
+        Vector3d start = entity.getEyePosition(0);
         Vector3d end = start.add(entity.getForward().normalize().scale(80));
         RayTraceResult hitResult = Utils.raycastForEntity(entity.level, entity, start, end, true, 0.35f, Utils::validAntiMagicTarget);
         Vector3d forward = entity.getForward().normalize();
         if (hitResult instanceof EntityRayTraceResult entityHitResult) {
             double distance = entity.distanceTo(entityHitResult.getEntity());
             for (float i = 1; i < distance; i += .5f) {
-                Vector3d pos = entity.getEyePosition().add(forward.scale(i));
+                Vector3d pos = entity.getEyePosition(0).add(forward.scale(i));
                 MagicManager.spawnParticles(world, ParticleTypes.ENCHANT, pos.x, pos.y, pos.z, 1, 0, 0, 0, 0, false);
             }
             if (entityHitResult.getEntity() instanceof AntiMagicSusceptible antiMagicSusceptible && !(antiMagicSusceptible instanceof MagicSummon summon && summon.getSummoner() == entity))
@@ -111,7 +111,7 @@ public class CounterspellSpell extends AbstractSpell {
                     livingEntity.removeEffect(mobEffect);
         } else {
             for (float i = 1; i < 40; i += .5f) {
-                Vector3d pos = entity.getEyePosition().add(forward.scale(i));
+                Vector3d pos = entity.getEyePosition(0).add(forward.scale(i));
                 MagicManager.spawnParticles(world, ParticleTypes.ENCHANT, pos.x, pos.y, pos.z, 1, 0, 0, 0, 0, false);
                 if (!world.getBlockState(new BlockPos(pos)).isAir())
                     break;

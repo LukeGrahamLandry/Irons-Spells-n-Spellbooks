@@ -86,8 +86,8 @@ public abstract class AbstractConeProjectile extends ProjectileEntity implements
     }
 
     protected static Vector3d rayTrace(Entity owner) {
-        float f = owner.getXRot();
-        float f1 = owner.getYRot();
+        float f = owner.xRot;
+        float f1 = owner.yRot;
         float f2 = MathHelper.cos(-f1 * ((float) Math.PI / 180F) - (float) Math.PI);
         float f3 = MathHelper.sin(-f1 * ((float) Math.PI / 180F) - (float) Math.PI);
         float f4 = -MathHelper.cos(-f * ((float) Math.PI / 180F));
@@ -118,8 +118,8 @@ public abstract class AbstractConeProjectile extends ProjectileEntity implements
             var rayTraceVector = rayTrace(owner);
             var ownerEyePos = owner.getEyePosition(1.0f).subtract(0, .8, 0);
             this.setPos(ownerEyePos);
-            this.setXRot(owner.getXRot());
-            this.setYRot(owner.getYRot());
+            this.setXRot(owner.xRot);
+            this.setYRot(owner.yRot);
             this.yRotO = getYRot();
             this.xRotO = getXRot();
             //setDeltaMovement(ownerEyePos);

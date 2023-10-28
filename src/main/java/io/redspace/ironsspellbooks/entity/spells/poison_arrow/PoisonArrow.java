@@ -123,7 +123,7 @@ public class PoisonArrow extends AbstractMagicProjectile {
             this.discard();
         } else {
             this.setDeltaMovement(this.getDeltaMovement().scale(-0.1D));
-            this.setYRot(this.getYRot() + 180.0F);
+            this.setYRot(this.yRot + 180.0F);
             this.yRotO += 180.0F;
         }
 

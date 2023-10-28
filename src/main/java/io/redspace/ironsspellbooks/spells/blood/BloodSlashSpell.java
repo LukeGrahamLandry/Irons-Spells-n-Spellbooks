@@ -73,7 +73,7 @@ public class BloodSlashSpell extends AbstractSpell {
     @Override
     public void onCast(World world, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
         BloodSlashProjectile bloodSlash = new BloodSlashProjectile(world, entity);
-        bloodSlash.setPos(entity.getEyePosition());
+        bloodSlash.setPos(entity.getEyePosition(0));
         bloodSlash.shoot(entity.getLookAngle());
         bloodSlash.setDamage(getSpellPower(spellLevel, entity));
         world.addFreshEntity(bloodSlash);

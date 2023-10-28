@@ -67,7 +67,7 @@ public class FrozenHumanoidRenderer extends LivingRenderer<FrozenHumanoid, Biped
             f2 = yHeadRot - bodyYRot;
         }
 
-        float f6 = MathHelper.lerp(pPartialTicks, iceMan.xRotO, iceMan.getXRot());
+        float f6 = MathHelper.lerp(pPartialTicks, iceMan.xRotO, iceMan.xRot);
         if (isEntityUpsideDown(iceMan)) {
             f6 *= -1.0F;
             f2 *= -1.0F;

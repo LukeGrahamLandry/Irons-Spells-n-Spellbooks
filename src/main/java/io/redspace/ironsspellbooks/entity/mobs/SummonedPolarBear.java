@@ -81,8 +81,8 @@ public class SummonedPolarBear extends PolarBearEntity implements MagicSummon {
     protected void doPlayerRide(PlayerEntity pPlayer) {
         this.setStanding(false);
         if (!this.level.isClientSide) {
-            pPlayer.setYRot(this.getYRot());
-            pPlayer.setXRot(this.getXRot());
+            pPlayer.setYRot(this.yRot);
+            pPlayer.setXRot(this.xRot);
             pPlayer.startRiding(this);
         }
 
@@ -162,12 +162,12 @@ public class SummonedPolarBear extends PolarBearEntity implements MagicSummon {
     public void travel(Vector3d pTravelVector) {
         Entity conductor = this.getControllingPassenger();
         if (this.isVehicle() && conductor instanceof LivingEntity livingEntity) {
-            this.yRotO = this.getYRot();
-            this.setYRot(livingEntity.getYRot());
-            this.setXRot(livingEntity.getXRot());
-            this.setRot(this.getYRot(), this.getXRot());
+            this.yRotO = this.yRot;
+            this.setYRot(livingEntity.yRot);
+            this.setXRot(livingEntity.xRot);
+            this.setRot(this.yRot, this.xRot);
             this.yBodyRot = this.yRotO;
-            this.yHeadRot = this.getYRot();
+            this.yHeadRot = this.yRot;
             float f = livingEntity.xxa * 0.5F;
             float f1 = livingEntity.zza;
             if (this.isControlledByLocalInstance()) {

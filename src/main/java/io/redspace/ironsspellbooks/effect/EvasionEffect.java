@@ -94,7 +94,7 @@ public class EvasionEffect extends CustomDescriptionMobEffect {
 
             if (livingEntity.randomTeleport(x, y, z, true)) {
                 if (damageSource.getEntity() != null) {
-                    livingEntity.lookAt(EntityAnchorArgument.Type.EYES, damageSource.getEntity().getEyePosition());
+                    livingEntity.lookAt(EntityAnchorArgument.Type.EYES, damageSource.getEntity().getEyePosition(0));
                 }
                 level.playSound((PlayerEntity) null, d0, d1, d2, SoundEvents.ENDERMAN_TELEPORT, SoundCategory.PLAYERS, 1.0F, 1.0F);
                 livingEntity.playSound(SoundEvents.ENDERMAN_TELEPORT, 2.0F, 1.0F);

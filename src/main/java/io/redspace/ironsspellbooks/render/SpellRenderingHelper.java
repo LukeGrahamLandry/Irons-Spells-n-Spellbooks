@@ -39,17 +39,17 @@ public class SpellRenderingHelper {
         poseStack.pushPose();
         poseStack.translate(0, entity.getEyeHeight() * .8f, 0);
         if (entity instanceof AbstractSpellCastingMob mob/* && mob.getTarget() != null*/) {
-            //Vec3 dir = mob.getEyePosition().subtract(mob.getTarget().position().add(0, mob.getTarget().getEyeHeight() * .7f, 0));
+            //Vec3 dir = mob.getEyePosition(0).subtract(mob.getTarget().position().add(0, mob.getTarget().getEyeHeight() * .7f, 0));
             Vector3d dir = entity.getLookAngle().normalize();
             var pitch = Math.asin(dir.y);
             var yaw = Math.atan2(dir.x, dir.z);
 
             poseStack.mulPose(Vector3f.YP.rotationDegrees(90));
-            poseStack.mulPose(Vector3f.XP.rotationDegrees((float) -pitch * MathHelper.RAD_TO_DEG));
+            poseStack.mulPose(Vector3f.XP.rotationDegrees((float) ((float) -pitch * 180.0 / Math.PI)));
 
         } else {
-            float f = MathHelper.rotlerp(entity.yRotO, entity.getYRot(), partialTicks);
-            float f1 = MathHelper.lerp(partialTicks, entity.xRotO, entity.getXRot());
+            float f = MathHelper.rotlerp(entity.yRotO, entity.yRot, partialTicks);
+            float f1 = MathHelper.lerp(partialTicks, entity.xRotO, entity.xRot);
             poseStack.mulPose(Vector3f.YP.rotationDegrees(-f));
             poseStack.mulPose(Vector3f.XP.rotationDegrees(f1));
         }
@@ -60,7 +60,7 @@ public class SpellRenderingHelper {
         Vector3d end;
         //TODO: too expensive?
         Vector3d impact = Utils.raycastForEntity(entity.level, entity, RayOfSiphoningSpell.getRange(0), true).getLocation();
-        float distance = (float) entity.getEyePosition().distanceTo(impact);
+        float distance = (float) entity.getEyePosition(0).distanceTo(impact);
         float radius = .12f;
         int r = (int) (255 * .7f);
         int g = (int) (255 * 0f);

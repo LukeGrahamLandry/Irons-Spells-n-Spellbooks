@@ -282,7 +282,7 @@ public class SummonedFrog extends Frog implements MagicSummon {
             } else if (!this.canTeleportTo(new BlockPos(pX, pY, pZ))) {
                 return false;
             } else {
-                this.entity.moveTo((double) pX + 0.5D, pY, (double) pZ + 0.5D, this.entity.getYRot(), this.entity.getXRot());
+                this.entity.moveTo((double) pX + 0.5D, pY, (double) pZ + 0.5D, this.entity.yRot, this.entity.xRot);
                 this.navigation.stop();
                 return true;
             }

@@ -77,8 +77,8 @@ public class WispEntity extends CreatureEntity implements IAnimatable {
 
         setOwner(owner);
 
-        var xRot = owner.getXRot();
-        var yRot = owner.getYRot();
+        var xRot = owner.xRot;
+        var yRot = owner.yRot;
         var yHeadRot = owner.getYHeadRot();
 
         this.setYRot(yRot);
@@ -88,7 +88,7 @@ public class WispEntity extends CreatureEntity implements IAnimatable {
         this.lastTickPos = this.position();
 
  //Ironsspellbooks.logger.debug("WispEntity: Owner - xRot:{}, yRot:{}, yHeadRot:{}", xRot, yRot, yHeadRot);
- //Ironsspellbooks.logger.debug("WispEntity: Wisp - xRot:{}, yRot:{}, look:{}", this.getXRot(), this.getYRot(), this.getLookAngle());
+ //Ironsspellbooks.logger.debug("WispEntity: Wisp - xRot:{}, yRot:{}, look:{}", this.xRot, this.yRot, this.getLookAngle());
     }
 
     @Override
@@ -133,7 +133,7 @@ public class WispEntity extends CreatureEntity implements IAnimatable {
                    // IronsSpellbooks.LOGGER.debug("WispEntity.tick applyDamage: {}", damageAmount);
                     DamageSources.applyDamage(target, damageAmount, SpellRegistry.WISP_SPELL.get().getDamageSource(this,cachedOwner), SpellRegistry.WISP_SPELL.get().getSchoolType());
                     this.playSound(WispSpell.getImpactSound(), 1.0f, 1.0f);
-                    var p = target.getEyePosition();
+                    var p = target.getEyePosition(0);
                     MagicManager.spawnParticles(level, ParticleHelper.WISP, p.x, p.y, p.z, 25, 0, 0, 0, .18, true);
                     discard();
                 }

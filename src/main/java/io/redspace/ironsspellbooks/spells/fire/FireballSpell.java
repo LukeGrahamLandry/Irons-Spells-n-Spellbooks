@@ -73,7 +73,7 @@ public class FireballSpell extends AbstractSpell {
 
     @Override
     public void onCast(World world, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
-        Vector3d origin = entity.getEyePosition();
+        Vector3d origin = entity.getEyePosition(0);
 
         MagicFireball fireball = new MagicFireball(world, entity);
 

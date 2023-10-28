@@ -72,8 +72,8 @@ public class WitherSkullSpell extends AbstractSpell {
         float speed = (8 + getLevel(spellLevel, entity)) * .01f;
         float damage = getDamage(spellLevel, entity);
         ExtendedWitherSkull skull = new ExtendedWitherSkull(entity, level, speed, damage);
-        Vector3d spawn = entity.getEyePosition().add(entity.getForward());
-        skull.moveTo(spawn.x, spawn.y - skull.getBoundingBox().getYsize() / 2, spawn.z, entity.getYRot() + 180, entity.getXRot());
+        Vector3d spawn = entity.getEyePosition(0).add(entity.getForward());
+        skull.moveTo(spawn.x, spawn.y - skull.getBoundingBox().getYsize() / 2, spawn.z, entity.yRot + 180, entity.xRot);
         level.addFreshEntity(skull);
         super.onCast(level, spellLevel, entity, playerMagicData);
     }

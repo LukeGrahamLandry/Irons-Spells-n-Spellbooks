@@ -139,7 +139,7 @@ public abstract class AbstractMagicProjectile extends ProjectileEntity implement
     protected void onHitEntity(EntityRayTraceResult pResult) {
         super.onHitEntity(pResult);
         if (!shouldPierceShields() && (pResult.getEntity() instanceof ShieldPart || pResult.getEntity() instanceof AbstractShieldEntity))
-            this.onHitBlock(new BlockRayTraceResult(pResult.getEntity().position(), Direction.fromYRot(this.getYRot()), pResult.getEntity().blockPosition(), false));
+            this.onHitBlock(new BlockRayTraceResult(pResult.getEntity().position(), Direction.fromYRot(this.yRot), pResult.getEntity().blockPosition(), false));
     }
 
     @Override

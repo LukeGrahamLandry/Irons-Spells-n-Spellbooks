@@ -103,7 +103,7 @@ public class CreeperHeadProjectile extends WitherSkullEntity implements AntiMagi
                     DamageSources.applyDamage(entity, damage, SpellRegistry.LOB_CREEPER_SPELL.get().getDamageSource(this, getOwner()), SpellRegistry.LOB_CREEPER_SPELL.get().getSchoolType());
                     entity.invulnerableTime = 0;
                     if (chainOnKill && entity instanceof LivingEntity livingEntity && livingEntity.isDeadOrDying())
-                        ChainCreeperSpell.summonCreeperRing(this.level, this.getOwner() instanceof LivingEntity livingOwner ? livingOwner : null, livingEntity.getEyePosition(), this.damage * .85f, 3);
+                        ChainCreeperSpell.summonCreeperRing(this.level, this.getOwner() instanceof LivingEntity livingOwner ? livingOwner : null, livingEntity.getEyePosition(0), this.damage * .85f, 3);
                 }
             }
 

@@ -7,7 +7,7 @@ import net.minecraft.data.BuiltinRegistries;
 import net.minecraft.world.gen.feature.template.IStructureProcessorType;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.RegistryObject;
+import net.minecraftforge.fml.RegistryObject;
 
 public class StructureProcessorRegistry {
 

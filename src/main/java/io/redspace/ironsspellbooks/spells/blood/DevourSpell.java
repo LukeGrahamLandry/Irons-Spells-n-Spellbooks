@@ -87,7 +87,7 @@ public class DevourSpell extends AbstractSpell {
             if (targetEntity != null) {
                 DevourJaw devour = new DevourJaw(world, entity, targetEntity);
                 devour.setPos(targetEntity.position());
-                devour.setYRot(entity.getYRot());
+                devour.setYRot(entity.yRot);
                 devour.setDamage(getDamage(spellLevel, entity));
                 devour.vigorLevel = (getHpBonus(spellLevel, entity) / 2) - 1;
                 world.addFreshEntity(devour);

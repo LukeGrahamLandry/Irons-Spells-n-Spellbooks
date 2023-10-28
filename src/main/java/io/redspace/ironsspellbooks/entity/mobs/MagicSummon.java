@@ -11,7 +11,6 @@ import net.minecraft.util.EntityDamageSource;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import aqt;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 
