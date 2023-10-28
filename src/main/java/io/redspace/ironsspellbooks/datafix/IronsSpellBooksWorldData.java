@@ -26,7 +26,7 @@ public class IronsSpellBooksWorldData extends WorldSavedData {
 
     @Override
     public @NotNull CompoundNBT save(@NotNull CompoundNBT pCompoundTag) {
-        var tag = new CompoundNBT();
+        CompoundNBT tag = new CompoundNBT();
         tag.putInt("dataVersion", dataVersion);
         return tag;
     }

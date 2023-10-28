@@ -50,10 +50,13 @@ public class TargetedAreaEntity extends Entity {
     public Entity getOwner() {
         if (cachedOwner != null && cachedOwner.isAlive()) {
             return cachedOwner;
-        } else if (ownerUUID != null && level instanceof ServerWorld serverLevel) {
+        } else if (ownerUUID != null && level instanceof ServerWorld) {
+            ServerWorld serverLevel = (ServerWorld) level;
             cachedOwner = serverLevel.getEntity(ownerUUID);
-            if (serverLevel.getEntity(ownerUUID) instanceof LivingEntity livingEntity)
+            if (serverLevel.getEntity(ownerUUID) instanceof LivingEntity) {
+                LivingEntity livingEntity = (LivingEntity) serverLevel.getEntity(ownerUUID);
                 cachedOwner = livingEntity;
+            }
             return cachedOwner;
         } else {
             return null;
@@ -76,7 +79,7 @@ public class TargetedAreaEntity extends Entity {
 
     @Override
     public void tick() {
-        var owner = getOwner();
+        Entity owner = getOwner();
         xOld = getX();
         yOld = getY();
         zOld = getZ();

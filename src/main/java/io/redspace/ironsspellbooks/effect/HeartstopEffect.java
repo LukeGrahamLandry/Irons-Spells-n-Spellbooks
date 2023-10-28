@@ -30,7 +30,7 @@ public class HeartstopEffect extends Effect {
     @Override
     public void removeAttributeModifiers(@NotNull LivingEntity pLivingEntity, @NotNull AttributeModifierManager pAttributeMap, int pAmplifier) {
         super.removeAttributeModifiers(pLivingEntity, pAttributeMap, pAmplifier);
-        var playerMagicData = MagicData.getPlayerMagicData(pLivingEntity);
+        MagicData playerMagicData = MagicData.getPlayerMagicData(pLivingEntity);
         playerMagicData.getSyncedData().removeEffects(SyncedSpellData.HEARTSTOP);
 
         //Whether or not player has spawn immunity (we want to damage them regardless)
@@ -56,7 +56,8 @@ public class HeartstopEffect extends Effect {
 
         //Heart beats once every 2 seconds at 0% damage, and 2 times per second at 100% damage (relative to health)
         if (pLivingEntity.level.isClientSide) {
-            if (pLivingEntity instanceof PlayerEntity player) {
+            if (pLivingEntity instanceof PlayerEntity) {
+                PlayerEntity player = (PlayerEntity) pLivingEntity;
                 float damage = ClientMagicData.getSyncedSpellData(player).getHeartstopAccumulatedDamage();
                 float f = 1 - MathHelper.clamp(damage / player.getHealth(), 0, 1);
                 int i = (int) (10 + (40 - 10) * f);

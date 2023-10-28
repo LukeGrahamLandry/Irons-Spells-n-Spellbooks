@@ -40,7 +40,7 @@ public final class ClientInputEvents {
 
     @SubscribeEvent
     public static void clientTick(TickEvent.ClientTickEvent event) {
-        var minecraft = Minecraft.getInstance();
+        Minecraft minecraft = Minecraft.getInstance();
         PlayerEntity player = minecraft.player;
         if (player == null)
             return;
@@ -60,14 +60,14 @@ public final class ClientInputEvents {
 
     @SubscribeEvent
     public static void clientMouseScrolled(InputEvent.MouseScrollingEvent event) {
-        var minecraft = Minecraft.getInstance();
+        Minecraft minecraft = Minecraft.getInstance();
         PlayerEntity player = minecraft.player;
         if (player == null)
             return;
         if (Utils.isPlayerHoldingSpellBook(player) && minecraft.screen == null) {
             if (SPELLBAR_MODIFIER_STATE.isHeld()) {
                 ItemStack spellBookStack = player.getMainHandItem().getItem() instanceof SpellBook ? player.getMainHandItem() : player.getOffhandItem();
-                var spellBookData = SpellBookData.getSpellBookData(spellBookStack);
+                SpellBookData spellBookData = SpellBookData.getSpellBookData(spellBookStack);
                 if (spellBookData.getSpellCount() > 0) {
                     int direction = (int) event.getScrollDelta();
 //                    irons_spellbooks.LOGGER.debug("original index: {}", spellBookData.getActiveSpellIndex());
@@ -171,16 +171,16 @@ public final class ClientInputEvents {
     }
 
     private static KeyState register(KeyBinding key) {
-        var k = new KeyState(key);
+        KeyState k = new KeyState(key);
         KEY_STATES.add(k);
         return k;
     }
 
     private static List<KeyState> registerQuickCast(List<KeyBinding> mappings) {
-        var keyStates = new ArrayList<KeyState>();
+        ArrayList<KeyState> keyStates = new ArrayList<KeyState>();
 
         mappings.forEach(keyMapping -> {
-            var k = new KeyState(keyMapping);
+            KeyState k = new KeyState(keyMapping);
             KEY_STATES.add(k);
             keyStates.add(k);
         });

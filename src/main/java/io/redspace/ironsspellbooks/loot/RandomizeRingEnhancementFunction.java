@@ -41,7 +41,7 @@ public class RandomizeRingEnhancementFunction extends LootFunction {
         }
 
         public RandomizeRingEnhancementFunction deserialize(JsonObject json, JsonDeserializationContext jsonDeserializationContext, ILootCondition[] lootConditions) {
-            var applicableSpells = SpellFilter.deserializeSpellFilter(json);
+            SpellFilter applicableSpells = SpellFilter.deserializeSpellFilter(json);
             return new RandomizeRingEnhancementFunction(lootConditions, applicableSpells);
         }
     }

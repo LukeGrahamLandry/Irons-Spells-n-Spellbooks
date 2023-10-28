@@ -93,22 +93,29 @@ public class CounterspellSpell extends AbstractSpell {
         Vector3d end = start.add(entity.getForward().normalize().scale(80));
         RayTraceResult hitResult = Utils.raycastForEntity(entity.level, entity, start, end, true, 0.35f, Utils::validAntiMagicTarget);
         Vector3d forward = entity.getForward().normalize();
-        if (hitResult instanceof EntityRayTraceResult entityHitResult) {
+        if (hitResult instanceof EntityRayTraceResult) {
+            EntityRayTraceResult entityHitResult = (EntityRayTraceResult) hitResult;
             double distance = entity.distanceTo(entityHitResult.getEntity());
             for (float i = 1; i < distance; i += .5f) {
                 Vector3d pos = entity.getEyePosition(0).add(forward.scale(i));
                 MagicManager.spawnParticles(world, ParticleTypes.ENCHANT, pos.x, pos.y, pos.z, 1, 0, 0, 0, 0, false);
             }
-            if (entityHitResult.getEntity() instanceof AntiMagicSusceptible antiMagicSusceptible && !(antiMagicSusceptible instanceof MagicSummon summon && summon.getSummoner() == entity))
+            if (entityHitResult.getEntity() instanceof AntiMagicSusceptible && !((AntiMagicSusceptible) entityHitResult.getEntity() instanceof MagicSummon && ((MagicSummon) (AntiMagicSusceptible) entityHitResult.getEntity()).getSummoner() == entity)) {
+                AntiMagicSusceptible antiMagicSusceptible = (AntiMagicSusceptible) entityHitResult.getEntity();
                 antiMagicSusceptible.onAntiMagic(playerMagicData);
-            else if (entityHitResult.getEntity() instanceof ServerPlayerEntity serverPlayer)
+            } else if (entityHitResult.getEntity() instanceof ServerPlayerEntity) {
+                ServerPlayerEntity serverPlayer = (ServerPlayerEntity) entityHitResult.getEntity();
                 Utils.serverSideCancelCast(serverPlayer, true);
-            else if (entityHitResult.getEntity() instanceof AbstractSpellCastingMob abstractSpellCastingMob)
+            } else if (entityHitResult.getEntity() instanceof AbstractSpellCastingMob) {
+                AbstractSpellCastingMob abstractSpellCastingMob = (AbstractSpellCastingMob) entityHitResult.getEntity();
                 abstractSpellCastingMob.cancelCast();
+            }
 
-            if (entityHitResult.getEntity() instanceof LivingEntity livingEntity)
+            if (entityHitResult.getEntity() instanceof LivingEntity) {
+                LivingEntity livingEntity = (LivingEntity) entityHitResult.getEntity();
                 for (Effect mobEffect : LAZY_MAGICAL_EFFECTS.resolve().get())
                     livingEntity.removeEffect(mobEffect);
+            }
         } else {
             for (float i = 1; i < 40; i += .5f) {
                 Vector3d pos = entity.getEyePosition(0).add(forward.scale(i));

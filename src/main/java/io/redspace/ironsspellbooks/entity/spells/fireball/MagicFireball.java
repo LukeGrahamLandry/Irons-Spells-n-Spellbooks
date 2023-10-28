@@ -21,6 +21,7 @@ import net.minecraft.world.World;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
 
+import java.util.List;
 import java.util.Optional;
 
 public class MagicFireball extends AbstractMagicProjectile implements IRendersAsItem {
@@ -65,7 +66,7 @@ public class MagicFireball extends AbstractMagicProjectile implements IRendersAs
         if (!this.level.isClientSide) {
             impactParticles(xOld, yOld, zOld);
             float explosionRadius = getExplosionRadius();
-            var entities = level.getEntities(this, this.getBoundingBox().inflate(explosionRadius));
+            List<Entity> entities = level.getEntities(this, this.getBoundingBox().inflate(explosionRadius));
             for (Entity entity : entities) {
                 double distance = entity.distanceToSqr(hitResult.getLocation());
                 if (distance < explosionRadius * explosionRadius && canHitEntity(entity)) {

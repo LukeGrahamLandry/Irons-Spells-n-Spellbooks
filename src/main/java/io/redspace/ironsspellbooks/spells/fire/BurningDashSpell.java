@@ -69,7 +69,8 @@ public class BurningDashSpell extends AbstractSpell {
 
     @Override
     public void onClientCast(World level, int spellLevel, LivingEntity entity, ICastData castData) {
-        if (castData instanceof ImpulseCastData bdcd) {
+        if (castData instanceof ImpulseCastData) {
+            ImpulseCastData bdcd = (ImpulseCastData) castData;
             entity.hasImpulse = bdcd.hasImpulse;
             entity.setDeltaMovement(entity.getDeltaMovement().add(bdcd.x, bdcd.y, bdcd.z));
         }
@@ -108,7 +109,7 @@ public class BurningDashSpell extends AbstractSpell {
         }
 
         //Create Dashing Movement Impulse
-        var vec = forward.multiply(3, 1, 3).normalize().add(0, .25, 0).scale(multiplier);
+        Vector3d vec = forward.multiply(3, 1, 3).normalize().add(0, .25, 0).scale(multiplier);
         playerMagicData.setAdditionalCastData(new ImpulseCastData((float) vec.x, (float) vec.y, (float) vec.z, true));
         entity.setDeltaMovement(entity.getDeltaMovement().add(vec));
 
@@ -139,10 +140,13 @@ public class BurningDashSpell extends AbstractSpell {
     }
 
     private void startSpinAttack(LivingEntity entity, int durationInTicks) {
-        if (entity instanceof PlayerEntity player)
+        if (entity instanceof PlayerEntity) {
+            PlayerEntity player = (PlayerEntity) entity;
             player.startAutoSpinAttack(durationInTicks);
-        else if (entity instanceof AbstractSpellCastingMob mob)
+        } else if (entity instanceof AbstractSpellCastingMob) {
+            AbstractSpellCastingMob mob = (AbstractSpellCastingMob) entity;
             mob.startAutoSpinAttack(durationInTicks);
+        }
     }
 
     public static class BurningDashDirectionOverrideCastData implements ICastData {

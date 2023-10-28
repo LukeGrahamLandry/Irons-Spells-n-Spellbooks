@@ -1,5 +1,6 @@
 package io.redspace.ironsspellbooks.spells.holy;
 
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Vector3f;
 import io.redspace.ironsspellbooks.IronsSpellbooks;
 import io.redspace.ironsspellbooks.api.config.DefaultConfig;
@@ -84,8 +85,9 @@ public class BlessingOfLifeSpell extends AbstractSpell {
 
     @Override
     public void onCast(World world, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
-        if (playerMagicData.getAdditionalCastData() instanceof CastTargetingData healTargetingData) {
-            var targetEntity = healTargetingData.getTarget((ServerWorld) world);
+        if (playerMagicData.getAdditionalCastData() instanceof CastTargetingData) {
+            CastTargetingData healTargetingData = (CastTargetingData) playerMagicData.getAdditionalCastData();
+            LivingEntity targetEntity = healTargetingData.getTarget((ServerWorld) world);
             if (targetEntity != null) {
                 float healAmount = getSpellPower(spellLevel, entity);
                 MinecraftForge.EVENT_BUS.post(new SpellHealEvent(entity, targetEntity, healAmount, getSchoolType()));
@@ -99,8 +101,10 @@ public class BlessingOfLifeSpell extends AbstractSpell {
 
     @Nullable
     private LivingEntity findTarget(LivingEntity caster) {
-        var target = Utils.raycastForEntity(caster.level, caster, 32, true, 0.35f);
-        if (target instanceof EntityRayTraceResult entityHit && entityHit.getEntity() instanceof LivingEntity livingTarget) {
+        RayTraceResult target = Utils.raycastForEntity(caster.level, caster, 32, true, 0.35f);
+        if (target instanceof EntityRayTraceResult && ((EntityRayTraceResult) target).getEntity() instanceof LivingEntity) {
+            EntityRayTraceResult entityHit = (EntityRayTraceResult) target;
+            LivingEntity livingTarget = (LivingEntity) entityHit.getEntity();
             return livingTarget;
         } else {
             return null;

@@ -36,7 +36,7 @@ public class UpgradeUtils {
     }
 
     public static void handleAttributeEvent(ItemAttributeModifierEvent event, UpgradeData upgradeData){
-        var upgrades = upgradeData.getUpgrades();
+        Map<UpgradeType, Integer> upgrades = upgradeData.getUpgrades();
         for (Map.Entry<UpgradeType, Integer> entry : upgrades.entrySet()) {
             UpgradeType upgradeType = entry.getKey();
             int count = entry.getValue();

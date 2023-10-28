@@ -18,6 +18,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 import software.bernie.geckolib3.renderers.geo.GeoLayerRenderer;
 import software.bernie.geckolib3.renderers.geo.IGeoRenderer;
@@ -76,11 +77,11 @@ public class EnergySwirlLayer {
         public void render(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn, AbstractSpellCastingMob entityLivingBaseIn, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
             if (EnergySwirlLayer.shouldRender(entityLivingBaseIn, shouldRenderFlag)) {
                 float f = (float) entityLivingBaseIn.tickCount + partialTicks;
-                var renderType = EnergySwirlLayer.getRenderType(TEXTURE, f);
+                RenderType renderType = EnergySwirlLayer.getRenderType(TEXTURE, f);
                 IVertexBuilder vertexconsumer = bufferIn.getBuffer(renderType);
                 matrixStackIn.pushPose();
 //            this.getRenderer().setCurrentRTB(bufferIn);
-                var model = ((AnimatedGeoModel) this.getEntityModel()).getModel(AbstractSpellCastingMob.modelResource);
+                GeoModel model = ((AnimatedGeoModel) this.getEntityModel()).getModel(AbstractSpellCastingMob.modelResource);
                 model.getBone("body").ifPresent((rootBone) -> {
                     rootBone.childBones.forEach(bone -> {
                         bone.setScale(1.1f, 1.1f, 1.1f);

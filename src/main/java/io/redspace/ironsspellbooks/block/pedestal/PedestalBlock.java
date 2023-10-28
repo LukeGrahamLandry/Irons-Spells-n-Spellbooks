@@ -58,7 +58,8 @@ public class PedestalBlock extends ContainerBlock {
         if (!pLevel.isClientSide()) {
             TileEntity entity = pLevel.getBlockEntity(pos);
  //Ironsspellbooks.logger.debug("PedestalBlock.use");
-            if (entity instanceof PedestalTile pedestalTile) {
+            if (entity instanceof PedestalTile) {
+                PedestalTile pedestalTile = (PedestalTile) entity;
 
                 ItemStack currentPedestalItem = pedestalTile.getHeldItem();
                 ItemStack handItem = player.getItemInHand(hand);
@@ -104,7 +105,8 @@ public class PedestalBlock extends ContainerBlock {
     }
 
     private void dropItem(ItemStack itemstack, PlayerEntity owner) {
-        if (owner instanceof ServerPlayerEntity serverplayer) {
+        if (owner instanceof ServerPlayerEntity) {
+            ServerPlayerEntity serverplayer = (ServerPlayerEntity) owner;
             ItemEntity itementity = serverplayer.drop(itemstack, false);
             if (itementity != null) {
                 itementity.setNoPickUpDelay();

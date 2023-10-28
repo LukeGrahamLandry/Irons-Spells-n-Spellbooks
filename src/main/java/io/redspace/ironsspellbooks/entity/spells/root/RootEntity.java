@@ -326,7 +326,7 @@ public class RootEntity extends LivingEntity implements IAnimatable, PreventDism
     private boolean played = false;
 
     private PlayState animationPredicate(AnimationEvent event) {
-        var controller = event.getController();
+        AnimationController controller = event.getController();
 
         if (!played && controller.getAnimationState() == AnimationState.Stopped) {
             controller.markNeedsReload();

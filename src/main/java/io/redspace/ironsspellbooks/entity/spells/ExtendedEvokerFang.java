@@ -2,6 +2,7 @@ package io.redspace.ironsspellbooks.entity.spells;
 
 import io.redspace.ironsspellbooks.api.magic.MagicData;
 import io.redspace.ironsspellbooks.api.registry.SpellRegistry;
+import io.redspace.ironsspellbooks.api.spells.AbstractSpell;
 import io.redspace.ironsspellbooks.damage.DamageSources;
 import io.redspace.ironsspellbooks.entity.mobs.AntiMagicSusceptible;
 import io.redspace.ironsspellbooks.api.spells.SchoolType;
@@ -63,7 +64,7 @@ public class ExtendedEvokerFang extends EvokerFangsEntity implements AntiMagicSu
     private void dealDamageTo(LivingEntity pTarget) {
         LivingEntity livingentity = this.getOwner();
         if (pTarget.isAlive() && !pTarget.isInvulnerable() && pTarget != livingentity) {
-            var spell = SpellRegistry.FANG_STRIKE_SPELL.get();
+            AbstractSpell spell = SpellRegistry.FANG_STRIKE_SPELL.get();
             DamageSources.applyDamage(pTarget, damage, spell.getDamageSource(this, getOwner()), spell.getSchoolType());
         }
     }

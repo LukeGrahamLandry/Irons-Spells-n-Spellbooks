@@ -83,7 +83,8 @@ public class AscensionSpell extends AbstractSpell {
 
     @Override
     public void onClientCast(World level, int spellLevel, LivingEntity entity, ICastData castData) {
-        if (castData instanceof ImpulseCastData data) {
+        if (castData instanceof ImpulseCastData) {
+            ImpulseCastData data = (ImpulseCastData) castData;
             entity.hasImpulse = data.hasImpulse;
             double y = Math.max(entity.getDeltaMovement().y, data.y);
             entity.setDeltaMovement(data.x, y, data.z);
@@ -117,8 +118,10 @@ public class AscensionSpell extends AbstractSpell {
             if (distance < radius * radius) {
                 float finalDamage = (float) (getDamage(spellLevel, entity) * (1 - distance / (radius * radius)));
                 DamageSources.applyDamage(target, finalDamage, getDamageSource(lightningBolt, entity), getSchoolType());
-                if (target instanceof CreeperEntity creeper)
+                if (target instanceof CreeperEntity) {
+                    CreeperEntity creeper = (CreeperEntity) target;
                     creeper.thunderHit((ServerWorld) level, lightningBolt);
+                }
             }
         });
 

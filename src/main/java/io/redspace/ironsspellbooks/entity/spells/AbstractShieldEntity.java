@@ -87,7 +87,7 @@ public abstract class AbstractShieldEntity extends Entity implements AntiMagicSu
     @Override
     public void setId(int id) {
         super.setId(id);
-        var subEntities = getParts();
+        PartEntity<?>[] subEntities = getParts();
         for (int i = 0; i < subEntities.length; i++) // Forge: Fix MC-158205: Set part ids to successors of parent mob id
             subEntities[i].setId(id + i + 1);
     }

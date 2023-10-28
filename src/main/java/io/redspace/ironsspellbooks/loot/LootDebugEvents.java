@@ -1,6 +1,7 @@
 package io.redspace.ironsspellbooks.loot;
 
 import io.redspace.ironsspellbooks.IronsSpellbooks;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
@@ -18,11 +19,14 @@ public class LootDebugEvents {
     public static void alertLootTable(PlayerInteractEvent.RightClickBlock event) {
         if(debugLootTables){
             var blockEntity = event.getLevel().getBlockEntity(event.getHitVec().getBlockPos());
-            if (blockEntity instanceof LockableLootTileEntity chest) {
-                var lootTable = chest.lootTable;
+            if (blockEntity instanceof LockableLootTileEntity) {
+                LockableLootTileEntity chest = (LockableLootTileEntity) blockEntity;
+                ResourceLocation lootTable = chest.lootTable;
                 if (lootTable != null) {
-                    if (event.getEntity() instanceof ServerPlayerEntity serverPlayer)
+                    if (event.getEntity() instanceof ServerPlayerEntity) {
+                        ServerPlayerEntity serverPlayer = (ServerPlayerEntity) event.getEntity();
                         serverPlayer.sendSystemMessage(ITextComponent.literal(chest.lootTable.toString()).withStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, lootTable.toString()))));
+                    }
                     IronsSpellbooks.LOGGER.info("{}", chest.lootTable);
                 }
             }

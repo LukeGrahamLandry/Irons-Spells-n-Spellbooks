@@ -262,7 +262,7 @@ public class ZapParticle extends SpriteTexturedParticle {
         }
 
         public Particle createParticle(@NotNull ZapParticleOption options, @NotNull ClientWorld pLevel, double pX, double pY, double pZ, double pXSpeed, double pYSpeed, double pZSpeed) {
-            var particle = new ZapParticle(pLevel, pX, pY, pZ, pXSpeed, pYSpeed, pZSpeed, options);
+            ZapParticle particle = new ZapParticle(pLevel, pX, pY, pZ, pXSpeed, pYSpeed, pZSpeed, options);
             particle.pickSprite(this.sprite);
             particle.setAlpha(1.0F);
             return particle;

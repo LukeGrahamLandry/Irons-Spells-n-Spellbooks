@@ -7,6 +7,7 @@ import io.redspace.ironsspellbooks.entity.spells.AbstractConeProjectile;
 import io.redspace.ironsspellbooks.registries.EntityRegistry;
 import io.redspace.ironsspellbooks.api.spells.SchoolType;
 import io.redspace.ironsspellbooks.util.ParticleHelper;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.world.World;
@@ -119,7 +120,7 @@ public class ElectrocuteProjectile extends AbstractConeProjectile {
 
     @Override
     protected void onHitEntity(EntityRayTraceResult entityHitResult) {
-        var entity = entityHitResult.getEntity();
+        Entity entity = entityHitResult.getEntity();
         DamageSources.applyDamage(entity, damage, SpellRegistry.ELECTROCUTE_SPELL.get().getDamageSource(this, getOwner()), SpellRegistry.ELECTROCUTE_SPELL.get().getSchoolType());
 
         MagicManager.spawnParticles(level, ParticleHelper.ELECTRICITY, entity.getX(), entity.getY() + entity.getBbHeight() / 2, entity.getZ(), 10, entity.getBbWidth() / 3, entity.getBbHeight() / 3, entity.getBbWidth() / 3, 0.1, false);

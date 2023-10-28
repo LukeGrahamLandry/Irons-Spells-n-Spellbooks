@@ -8,6 +8,7 @@ import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.util.ResourceLocation;
+import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.renderers.geo.GeoEntityRenderer;
 import software.bernie.geckolib3.renderers.geo.GeoLayerRenderer;
 
@@ -20,7 +21,7 @@ public class DeadKingEmissiveLayer extends GeoLayerRenderer<AbstractSpellCasting
     }
 
     public static ResourceLocation currentTexture(AbstractSpellCastingMob entity) {
-        return entity instanceof DeadKingBoss boss && boss.isPhase(DeadKingBoss.Phases.FinalPhase) ? TEXTURE_ENRAGED : TEXTURE_NORMAL;
+        return entity instanceof DeadKingBoss && ((DeadKingBoss) entity).isPhase(DeadKingBoss.Phases.FinalPhase) ? TEXTURE_ENRAGED : TEXTURE_NORMAL;
     }
 
     public static ResourceLocation currentModel(AbstractSpellCastingMob deadKingBoss) {
@@ -36,12 +37,12 @@ public class DeadKingEmissiveLayer extends GeoLayerRenderer<AbstractSpellCasting
     public void render(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn, AbstractSpellCastingMob entityLivingBaseIn, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
         if (entityLivingBaseIn instanceof DeadKingCorpseEntity || entityLivingBaseIn.isInvisible())
             return;
-        var model = getEntityModel().getModel(currentModel(entityLivingBaseIn));
+        GeoModel model = getEntityModel().getModel(currentModel(entityLivingBaseIn));
 
         matrixStackIn.pushPose();
         float scale = 1 / (1.3f);
         matrixStackIn.scale(scale, scale, scale);
-        var renderType = renderType(currentTexture(entityLivingBaseIn));
+        RenderType renderType = renderType(currentTexture(entityLivingBaseIn));
         IVertexBuilder vertexconsumer = bufferIn.getBuffer(renderType);
         this.getRenderer().render(
                 model,

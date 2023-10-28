@@ -37,16 +37,18 @@ public interface MagicSummon extends AntiMagicSusceptible {
         if (getSummoner() == null)
             return false;
         boolean isFellowSummon = entity == getSummoner() || entity.isAlliedTo(getSummoner());
-        boolean hasCommonOwner = entity instanceof aqt ownableEntity && ownableEntity.getOwner() == getSummoner();
+        boolean hasCommonOwner = entity instanceof aqt && ((aqt) entity).getOwner() == getSummoner();
         return isFellowSummon || hasCommonOwner;
     }
 
     default void onDeathHelper() {
-        if (this instanceof LivingEntity entity) {
+        if (this instanceof LivingEntity) {
+            LivingEntity entity = (LivingEntity) this;
             World level = entity.level;
-            var deathMessage = entity.getCombatTracker().getDeathMessage();
+            ITextComponent deathMessage = entity.getCombatTracker().getDeathMessage();
 
-            if (!level.isClientSide && level.getGameRules().getBoolean(GameRules.RULE_SHOWDEATHMESSAGES) && getSummoner() instanceof ServerPlayerEntity player) {
+            if (!level.isClientSide && level.getGameRules().getBoolean(GameRules.RULE_SHOWDEATHMESSAGES) && getSummoner() instanceof ServerPlayerEntity) {
+                ServerPlayerEntity player = (ServerPlayerEntity) getSummoner();
                 player.sendSystemMessage(deathMessage);
             }
         }
@@ -57,11 +59,12 @@ public interface MagicSummon extends AntiMagicSusceptible {
         Decreases player's summon timer amplifier to keep track of how many of their summons remain.
         */
         var reason = entity.getRemovalReason();
-        if (reason != null && getSummoner() instanceof ServerPlayerEntity player && reason.shouldDestroy()) {
+        if (reason != null && getSummoner() instanceof ServerPlayerEntity && reason.shouldDestroy()) {
+            ServerPlayerEntity player = (ServerPlayerEntity) getSummoner();
 
-            var effect = player.getEffect(timer);
+            EffectInstance effect = player.getEffect(timer);
             if (effect != null) {
-                var decrement = new EffectInstance(timer, effect.getDuration(), effect.getAmplifier() - 1, false, false, true);
+                EffectInstance decrement = new EffectInstance(timer, effect.getDuration(), effect.getAmplifier() - 1, false, false, true);
                 if (decrement.getAmplifier() >= 0) {
                     player.getActiveEffectsMap().put(timer, decrement);
                     player.connection.send(new SPlayEntityEffectPacket(player.getId(), decrement));

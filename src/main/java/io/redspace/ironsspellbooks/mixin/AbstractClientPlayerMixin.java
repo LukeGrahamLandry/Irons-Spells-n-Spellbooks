@@ -22,18 +22,20 @@ public class AbstractClientPlayerMixin {
 
     @Inject(method = "getCloakTextureLocation", at = @At(value = "HEAD"), cancellable = true)
     public void getCloakTextureLocation(CallbackInfoReturnable<ResourceLocation> cir) {
-        var player = (PlayerEntity) (Object) this;
+        PlayerEntity player = (PlayerEntity) (Object) this;
         ItemStack itemstack = player.getItemBySlot(EquipmentSlotType.CHEST);
-        if (itemstack.getItem() instanceof ArmorCapeProvider capeProvider && !player.hasEffect(MobEffectRegistry.ANGEL_WINGS.get())) {
+        if (itemstack.getItem() instanceof ArmorCapeProvider && !player.hasEffect(MobEffectRegistry.ANGEL_WINGS.get())) {
+            ArmorCapeProvider capeProvider = (ArmorCapeProvider) itemstack.getItem();
             cir.setReturnValue(capeProvider.getCapeResourceLocation());
         }
     }
 
     @Inject(method = "isCapeLoaded", at = @At(value = "HEAD"), cancellable = true)
     public void isCapeLoaded(CallbackInfoReturnable<Boolean> cir) {
-        var player = (PlayerEntity) (Object) this;
+        PlayerEntity player = (PlayerEntity) (Object) this;
         ItemStack itemstack = player.getItemBySlot(EquipmentSlotType.CHEST);
-        if (itemstack.getItem() instanceof ArmorCapeProvider capeProvider) {
+        if (itemstack.getItem() instanceof ArmorCapeProvider) {
+            ArmorCapeProvider capeProvider = (ArmorCapeProvider) itemstack.getItem();
             cir.setReturnValue(true);
         }
     }

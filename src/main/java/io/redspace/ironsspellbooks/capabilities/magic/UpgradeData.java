@@ -35,11 +35,12 @@ public class UpgradeData {
         Map<UpgradeType, Integer> map = new HashMap<>();
         EquipmentSlotType upgradedSlot = null;
         for (INBT tag : upgrades) {
-            if (tag instanceof CompoundNBT compoundTag) {
+            if (tag instanceof CompoundNBT) {
+                CompoundNBT compoundTag = (CompoundNBT) tag;
                 if (upgradedSlot == null) {
                     upgradedSlot = EquipmentSlotType.byName(compoundTag.getString(Slot_Key));
                 }
-                var upgradeKey = new ResourceLocation(compoundTag.getString(Upgrade_Key));
+                ResourceLocation upgradeKey = new ResourceLocation(compoundTag.getString(Upgrade_Key));
                 UpgradeType.getUpgrade(upgradeKey).ifPresent((upgrade) -> map.put(upgrade, compoundTag.getInt(Upgrade_Count)));
             }
             //Optional<Attribute> optional = Registry.ATTRIBUTE.getOptional(ResourceLocation.tryParse(attributeName));
@@ -81,7 +82,7 @@ public class UpgradeData {
         if (this == NONE) {
             Map<UpgradeType, Integer> map = new HashMap<>();
             map.put(upgradeType, 1);
-            var upgrade = new UpgradeData(map, slot);
+            UpgradeData upgrade = new UpgradeData(map, slot);
             UpgradeData.setUpgradeData(stack, upgrade);
             return upgrade;
         } else {

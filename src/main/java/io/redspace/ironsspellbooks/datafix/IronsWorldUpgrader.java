@@ -128,8 +128,8 @@ public class IronsWorldUpgrader {
             if (files != null) {
                 Arrays.stream(files).toList().forEach(file -> {
                     try {
-                        var compoundTag = CompressedStreamTools.readCompressed(file);
-                        var ironsTraverser = new IronsTagTraverser();
+                        CompoundNBT compoundTag = CompressedStreamTools.readCompressed(file);
+                        IronsTagTraverser ironsTraverser = new IronsTagTraverser();
                         ironsTraverser.visit(compoundTag);
 
                         if (ironsTraverser.changesMade()) {
@@ -146,8 +146,8 @@ public class IronsWorldUpgrader {
     }
 
     private boolean preScanChunkUpdateNeeded(ChunkLoader chunkStorage, ChunkPos chunkPos) throws Exception {
-        var regionFile = chunkStorage.worker.storage.getRegionFile(chunkPos);
-        var dataInputStream = regionFile.getChunkDataInputStream(chunkPos);
+        RegionFile regionFile = chunkStorage.worker.storage.getRegionFile(chunkPos);
+        DataInputStream dataInputStream = regionFile.getChunkDataInputStream(chunkPos);
 
         try (dataInputStream) {
             if (dataInputStream == null) {
@@ -160,7 +160,7 @@ public class IronsWorldUpgrader {
                 return true;
             }
 
-            var inhabitedTime = dataInputStream.readLong();
+            long inhabitedTime = dataInputStream.readLong();
             return inhabitedTime != 0;
 
         } catch (Exception ignored) {
@@ -219,7 +219,7 @@ public class IronsWorldUpgrader {
                                         blockEntitiesTag.add(chunkDataTag);
                                     }
 
-                                    var ironsTagTraverser = new IronsTagTraverser();
+                                    IronsTagTraverser ironsTagTraverser = new IronsTagTraverser();
                                     ironsTagTraverser.visit(blockEntitiesTag);
 
                                     if (ironsTagTraverser.changesMade()) {

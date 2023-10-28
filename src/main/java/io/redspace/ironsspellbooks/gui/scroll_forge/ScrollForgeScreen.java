@@ -65,7 +65,7 @@ public class ScrollForgeScreen extends ContainerScreen<ScrollForgeMenu> {
     }
 
     private void resetList() {
-        if (!(!menu.getInkSlot().getItem().isEmpty() && (menu.getInkSlot().getItem().getItem() instanceof InkItem inkItem && inkItem.getRarity().compareRarity(ServerConfigs.getSpellConfig(selectedSpell).minRarity()) >= 0)))
+        if (!(!menu.getInkSlot().getItem().isEmpty() && (menu.getInkSlot().getItem().getItem() instanceof InkItem && ((InkItem) menu.getInkSlot().getItem().getItem()).getRarity().compareRarity(ServerConfigs.getSpellConfig(selectedSpell).minRarity()) >= 0)))
             setSelectedSpell(SpellRegistry.none());
         //TODO: reorder setting old focus to test if we actually need to reset the spell... or just give ink its own path since we dont even need to regenerate the list anyways
         //TODO: update: what the fuck does that mean
@@ -163,7 +163,7 @@ public class ScrollForgeScreen extends ContainerScreen<ScrollForgeMenu> {
         if (!focusStack.isEmpty() && focusStack.is(ModTags.SCHOOL_FOCUS)) {
             SchoolType school = SchoolRegistry.getSchoolFromFocus(focusStack);
             //irons_spellbooks.LOGGER.info("ScrollForgeMenu.generateSpellSlots.school: {}", school.toString());
-            var spells = SpellRegistry.getSpellsForSchool(school);
+            List<AbstractSpell> spells = SpellRegistry.getSpellsForSchool(school);
             for (int i = 0; i < spells.size(); i++) {
                 //int id = spells[i].getValue();
                 int tempIndex = i;
@@ -184,7 +184,8 @@ public class ScrollForgeScreen extends ContainerScreen<ScrollForgeMenu> {
     }
 
     private SpellRarity getRarityFromInk(Item ink) {
-        if (ink instanceof InkItem inkItem) {
+        if (ink instanceof InkItem) {
+            InkItem inkItem = (InkItem) ink;
             return inkItem.getRarity();
         } else {
             return null;
@@ -232,7 +233,7 @@ public class ScrollForgeScreen extends ContainerScreen<ScrollForgeMenu> {
             screen.blit(poseStack, x + 108 - 18, y + 1, 0, 0, 16, 16, 16, 16);
 
             int maxWidth = 108 - 20;
-            var text = trimText(font, getDisplayName().withStyle(this.button.active ? Style.EMPTY : Style.EMPTY.withFont(RUNIC_FONT)), maxWidth);
+            ITextProperties text = trimText(font, getDisplayName().withStyle(this.button.active ? Style.EMPTY : Style.EMPTY.withFont(RUNIC_FONT)), maxWidth);
             int textX = x + 2;
             int textY = y + 3;
             font.drawWordWrap(text, textX, textY, maxWidth, 0xFFFFFF);
@@ -240,7 +241,7 @@ public class ScrollForgeScreen extends ContainerScreen<ScrollForgeMenu> {
 
         @Nullable
         List<IReorderingProcessor> getTooltip(int x, int y, int mouseX, int mouseY) {
-            var text = getDisplayName();
+            IFormattableTextComponent text = getDisplayName();
             int textX = x + 2;
             int textY = y + 3;
             if (mouseX >= textX && mouseY >= textY && mouseX < textX + font.width(text) && mouseY < textY + font.lineHeight) {
@@ -259,7 +260,7 @@ public class ScrollForgeScreen extends ContainerScreen<ScrollForgeMenu> {
         }
 
         private ITextProperties trimText(FontRenderer font, ITextComponent component, int maxWidth) {
-            var text = font.getSplitter().splitLines(component, maxWidth, component.getStyle()).get(0);
+            ITextProperties text = font.getSplitter().splitLines(component, maxWidth, component.getStyle()).get(0);
             if (text.getString().length() < component.getString().length())
                 text = ITextProperties.composite(text, ITextProperties.of("..."));
             return text;

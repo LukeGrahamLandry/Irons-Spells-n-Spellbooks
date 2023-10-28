@@ -81,7 +81,8 @@ public class SummonEnderChestSpell extends AbstractSpell {
 
     @Override
     public void onCast(World world, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
-        if (entity instanceof PlayerEntity player) {
+        if (entity instanceof PlayerEntity) {
+            PlayerEntity player = (PlayerEntity) entity;
             EnderChestInventory playerenderchestcontainer = player.getEnderChestInventory();
             player.openMenu(new SimpleNamedContainerProvider((p_53124_, p_53125_, p_53126_) -> {
                 return ChestContainer.threeRows(p_53124_, p_53125_, playerenderchestcontainer);

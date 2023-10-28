@@ -21,7 +21,7 @@ public class DeadKingRenderer extends AbstractSpellCastingMobRenderer {
 
     @Override
     public void render(GeoModel model, AbstractSpellCastingMob animatable, float partialTick, RenderType type, MatrixStack poseStack, IRenderTypeBuffer bufferSource, IVertexBuilder buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-        if (animatable instanceof DeadKingBoss king && king.isPhase(DeadKingBoss.Phases.FinalPhase)) {
+        if (animatable instanceof DeadKingBoss && ((DeadKingBoss) animatable).isPhase(DeadKingBoss.Phases.FinalPhase)) {
             model.getBone(PartNames.LEFT_LEG).ifPresent((bone) -> bone.setHidden(true));
             model.getBone(PartNames.RIGHT_LEG).ifPresent((bone) -> bone.setHidden(true));
         } else {

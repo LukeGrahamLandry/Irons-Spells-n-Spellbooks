@@ -148,7 +148,7 @@ public class ServerConfigs {
     }
 
     private static String createSpellConfigTitle(String str) {
-        var words = str.split("[_| ]");
+        String[] words = str.split("[_| ]");
         for (int i = 0; i < words.length; i++) {
             words[i] = words[i].substring(0, 1).toUpperCase() + words[i].substring(1);
         }
@@ -190,7 +190,7 @@ public class ServerConfigs {
             this.CS = CS;
             this.ACTUAL_SCHOOL = LazyOptional.of(() -> {
                 if (ResourceLocation.isValidResourceLocation(SCHOOL.get())) {
-                    var school = SchoolRegistry.getSchool(new ResourceLocation(SCHOOL.get()));
+                    SchoolType school = SchoolRegistry.getSchool(new ResourceLocation(SCHOOL.get()));
                     if (school != null) {
                         return school;
                     }

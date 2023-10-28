@@ -16,7 +16,10 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.LazyOptional;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Optional;
 
 public class MagicData {
 
@@ -205,18 +208,20 @@ public class MagicData {
     /********* SYSTEM *******************************************************/
 
     public static MagicData getPlayerMagicData(LivingEntity livingEntity) {
-        if (livingEntity instanceof IMagicEntity magicEntity) {
+        if (livingEntity instanceof IMagicEntity) {
+            IMagicEntity magicEntity = (IMagicEntity) livingEntity;
             return magicEntity.getMagicData();
-        } else if (livingEntity instanceof ServerPlayerEntity serverPlayer) {
+        } else if (livingEntity instanceof ServerPlayerEntity) {
+            ServerPlayerEntity serverPlayer = (ServerPlayerEntity) livingEntity;
 
-            var capContainer = serverPlayer.getCapability(PlayerMagicProvider.PLAYER_MAGIC);
+            LazyOptional<MagicData> capContainer = serverPlayer.getCapability(PlayerMagicProvider.PLAYER_MAGIC);
             if (capContainer.isPresent()) {
-                var opt = capContainer.resolve();
+                Optional<MagicData> opt = capContainer.resolve();
                 if (opt.isEmpty()) {
                     return new MagicData(serverPlayer);
                 }
 
-                var pmd = opt.get();
+                MagicData pmd = opt.get();
                 pmd.setServerPlayer(serverPlayer);
                 return pmd;
             }

@@ -43,7 +43,7 @@ public class RoamVillageGoal extends PatrolNearLocationGoal {
         }
         //TODO: distance check too?
 
-        var canUse = (this.mob.level.isDay() || isDuringRaid()) && villagePoi != null && super.canUse();
+        boolean canUse = (this.mob.level.isDay() || isDuringRaid()) && villagePoi != null && super.canUse();
         //IronsSpellbooks.LOGGER.debug("RoamVillageGoal.canuse: {}", canUse);
 
         return canUse;
@@ -55,7 +55,8 @@ public class RoamVillageGoal extends PatrolNearLocationGoal {
     }
 
     protected void findVillagePoi() {
-        if (mob.level instanceof ServerWorld serverLevel) {
+        if (mob.level instanceof ServerWorld) {
+            ServerWorld serverLevel = (ServerWorld) mob.level;
 //            MinecraftServer minecraftserver = serverLevel.getServer();
 //            ServerLevel serverlevel = minecraftserver.getLevel(serverLevel.dimension());
             Optional<BlockPos> optional1 = serverLevel.getPoiManager().find((poiTypeHolder) -> poiTypeHolder.is(PoiTypes.MEETING),

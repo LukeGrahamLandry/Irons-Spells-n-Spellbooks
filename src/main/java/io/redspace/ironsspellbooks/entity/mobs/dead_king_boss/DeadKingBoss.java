@@ -187,7 +187,7 @@ public class DeadKingBoss extends AbstractSpellCastingMob implements IMob {
 
     @Override
     public boolean isAlliedTo(Entity pEntity) {
-        return super.isAlliedTo(pEntity) || (pEntity instanceof MagicSummon summon && summon.getSummoner() == this);
+        return super.isAlliedTo(pEntity) || (pEntity instanceof MagicSummon && ((MagicSummon) pEntity).getSummoner() == this);
     }
 
     @Override
@@ -250,7 +250,7 @@ public class DeadKingBoss extends AbstractSpellCastingMob implements IMob {
                 this.bossEvent.setProgress((this.getHealth() - halfHealth) / (this.getMaxHealth() - halfHealth));
                 if (this.getHealth() <= halfHealth) {
                     setPhase(Phases.Transitioning);
-                    var player = level.getNearestPlayer(this, 16);
+                    PlayerEntity player = level.getNearestPlayer(this, 16);
                     if (player != null) {
                         lookAt(player, 360, 360);
                     }
@@ -400,7 +400,7 @@ public class DeadKingBoss extends AbstractSpellCastingMob implements IMob {
     private final AnimationController idleController = new AnimationController(this, "dead_king_idle", 0, this::idlePredicate);
 
     private PlayState predicate(AnimationEvent animationEvent) {
-        var controller = animationEvent.getController();
+        AnimationController controller = animationEvent.getController();
 //        if (isPhaseTransitioning() && controller.getAnimationState() == AnimationState.Stopped) {
 //            controller.markNeedsReload();
 //            controller.setAnimation(phase_transition_animation);
@@ -420,7 +420,7 @@ public class DeadKingBoss extends AbstractSpellCastingMob implements IMob {
     }
 
     private PlayState transitionPredicate(AnimationEvent animationEvent) {
-        var controller = animationEvent.getController();
+        AnimationController controller = animationEvent.getController();
         if (isPhaseTransitioning()) {
             controller.setAnimation(phase_transition_animation);
         }

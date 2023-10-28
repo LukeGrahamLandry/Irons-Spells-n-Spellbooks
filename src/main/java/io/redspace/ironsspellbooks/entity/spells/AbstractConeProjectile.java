@@ -113,10 +113,10 @@ public abstract class AbstractConeProjectile extends ProjectileEntity implements
         Take that vector, multiply by 0.5 (or 0.2 or whatever), add their current position, and voila. You have the spot a half-block in front of them.
         */
 
-        var owner = this.getOwner();
+        Entity owner = this.getOwner();
         if (owner != null) {
-            var rayTraceVector = rayTrace(owner);
-            var ownerEyePos = owner.getEyePosition(1.0f).subtract(0, .8, 0);
+            Vector3d rayTraceVector = rayTrace(owner);
+            Vector3d ownerEyePos = owner.getEyePosition(1.0f).subtract(0, .8, 0);
             this.setPos(ownerEyePos);
             this.setXRot(owner.xRot);
             this.setYRot(owner.yRot);
@@ -127,13 +127,13 @@ public abstract class AbstractConeProjectile extends ProjectileEntity implements
             double scale = 1;
 
             for (int i = 0; i < subEntities.length; i++) {
-                var subEntity = subEntities[i];
+                ConePart subEntity = subEntities[i];
 
                 double distance = 1 + (i * scale * subEntity.getDimensions(null).width / 2);
                 Vector3d newVector = ownerEyePos.add(rayTraceVector.multiply(distance, distance, distance));
                 subEntity.setPos(newVector);
                 subEntity.setDeltaMovement(newVector);
-                var vec3 = new Vector3d(subEntity.getX(), subEntity.getY(), subEntity.getZ());
+                Vector3d vec3 = new Vector3d(subEntity.getX(), subEntity.getY(), subEntity.getZ());
                 subEntity.xo = vec3.x;
                 subEntity.yo = vec3.y;
                 subEntity.zo = vec3.z;

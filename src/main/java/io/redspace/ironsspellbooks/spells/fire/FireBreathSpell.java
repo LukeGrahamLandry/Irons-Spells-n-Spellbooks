@@ -77,8 +77,10 @@ public class FireBreathSpell extends AbstractSpell {
     @Override
     public void onCast(World world, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
         if (playerMagicData.isCasting() && playerMagicData.getCastingSpellId().equals(this.getSpellId())
-                && playerMagicData.getAdditionalCastData() instanceof EntityCastData entityCastData
-                && entityCastData.getCastingEntity() instanceof AbstractConeProjectile cone) {
+                && playerMagicData.getAdditionalCastData() instanceof EntityCastData
+                && ((EntityCastData) playerMagicData.getAdditionalCastData()).getCastingEntity() instanceof AbstractConeProjectile) {
+            EntityCastData entityCastData = (EntityCastData) playerMagicData.getAdditionalCastData();
+            AbstractConeProjectile cone = (AbstractConeProjectile) entityCastData.getCastingEntity();
             cone.setDealDamageActive();
         } else {
             FireBreathProjectile fireBreathProjectile = new FireBreathProjectile(world, entity);

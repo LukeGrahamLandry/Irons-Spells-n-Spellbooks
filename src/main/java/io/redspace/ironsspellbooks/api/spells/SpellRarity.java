@@ -44,16 +44,16 @@ public enum SpellRarity {
     }
 
     private static List<Double> getRawRarityConfigInternal() {
-        var fromConfig = (List<Double>) ServerConfigs.RARITY_CONFIG.get();
+        List<Double> fromConfig = (List<Double>) ServerConfigs.RARITY_CONFIG.get();
 
         if (fromConfig.size() != 5) {
-            var configDefault = (List<Double>) ServerConfigs.RARITY_CONFIG.getDefault();
+            List<Double> configDefault = (List<Double>) ServerConfigs.RARITY_CONFIG.getDefault();
             IronsSpellbooks.LOGGER.info("INVALID RARITY CONFIG FOUND (Size != 5): {} FALLING BACK TO DEFAULT: {}", fromConfig, configDefault);
             return configDefault;
         }
 
         if (fromConfig.stream().mapToDouble(a -> a).sum() != 1) {
-            var configDefault = (List<Double>) ServerConfigs.RARITY_CONFIG.getDefault();
+            List<Double> configDefault = (List<Double>) ServerConfigs.RARITY_CONFIG.getDefault();
             IronsSpellbooks.LOGGER.info("INVALID RARITY CONFIG FOUND (Values must add up to 1): {} FALLING BACK TO DEFAULT: {}", fromConfig, configDefault);
             return configDefault;
         }
@@ -63,7 +63,7 @@ public enum SpellRarity {
 
     public static List<Double> getRarityConfig() {
         if (rarityConfig == null) {
-            var counter = new AtomicDouble();
+            AtomicDouble counter = new AtomicDouble();
             rarityConfig = new ArrayList<>();
             getRawRarityConfig().forEach(item -> {
                 rarityConfig.add(counter.addAndGet(item));
@@ -82,7 +82,7 @@ public enum SpellRarity {
     }
 
     public static void rarityTest() {
-        var sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
         SpellRegistry.REGISTRY.get().getValues().forEach(s -> {
             sb.append(String.format("\nSpellType:%s\n", s));
             sb.append(String.format("\tMinRarity:%s, MaxRarity:%s\n", s.getMinRarity(), s.getMaxRarity()));
@@ -105,13 +105,20 @@ public enum SpellRarity {
     }
 
     public TextFormatting getChatFormatting() {
-        return switch (this) {
-            case COMMON -> TextFormatting.GRAY;
-            case UNCOMMON -> TextFormatting.GREEN;
-            case RARE -> TextFormatting.AQUA;
-            case EPIC -> TextFormatting.LIGHT_PURPLE;
-            case LEGENDARY -> TextFormatting.GOLD;
-        };
+        switch (this) {
+            case COMMON:
+                return TextFormatting.GRAY;
+            case UNCOMMON:
+                return TextFormatting.GREEN;
+            case RARE:
+                return TextFormatting.AQUA;
+            case EPIC:
+                return TextFormatting.LIGHT_PURPLE;
+            case LEGENDARY:
+                return TextFormatting.GOLD;
+            default:
+                throw new IllegalArgumentException();
+        }
     }
 
     private final IFormattableTextComponent[] DISPLAYS = {

@@ -8,6 +8,7 @@ import io.redspace.ironsspellbooks.registries.EntityRegistry;
 import io.redspace.ironsspellbooks.api.spells.SchoolType;
 import io.redspace.ironsspellbooks.util.ParticleHelper;
 import io.redspace.ironsspellbooks.api.util.Utils;
+import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.entity.EntityType;
@@ -60,12 +61,12 @@ public class FireBreathProjectile extends AbstractConeProjectile {
 
     @Override
     public void spawnParticles() {
-        var owner = getOwner();
+        Entity owner = getOwner();
         if (!level.isClientSide || owner == null) {
             return;
         }
         Vector3d rotation = owner.getLookAngle().normalize();
-        var pos = owner.position().add(rotation.scale(1.6));
+        Vector3d pos = owner.position().add(rotation.scale(1.6));
 
         double x = pos.x;
         double y = pos.y + owner.getEyeHeight() * .9f;
@@ -87,7 +88,7 @@ public class FireBreathProjectile extends AbstractConeProjectile {
 
     @Override
     protected void onHitEntity(EntityRayTraceResult entityHitResult) {
-        var entity = entityHitResult.getEntity();
+        Entity entity = entityHitResult.getEntity();
         DamageSources.applyDamage(entity, damage, SpellRegistry.FIRE_BREATH_SPELL.get().getDamageSource(this, getOwner()));
     }
 }

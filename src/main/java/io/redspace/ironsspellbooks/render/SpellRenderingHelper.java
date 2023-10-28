@@ -38,11 +38,11 @@ public class SpellRenderingHelper {
 
         poseStack.pushPose();
         poseStack.translate(0, entity.getEyeHeight() * .8f, 0);
-        if (entity instanceof AbstractSpellCastingMob mob/* && mob.getTarget() != null*/) {
+        if (entity instanceof AbstractSpellCastingMob/* && mob.getTarget() != null*/) {
             //Vec3 dir = mob.getEyePosition(0).subtract(mob.getTarget().position().add(0, mob.getTarget().getEyeHeight() * .7f, 0));
             Vector3d dir = entity.getLookAngle().normalize();
-            var pitch = Math.asin(dir.y);
-            var yaw = Math.atan2(dir.x, dir.z);
+            double pitch = Math.asin(dir.y);
+            double yaw = Math.atan2(dir.x, dir.z);
 
             poseStack.mulPose(Vector3f.YP.rotationDegrees(90));
             poseStack.mulPose(Vector3f.XP.rotationDegrees((float) ((float) -pitch * 180.0 / Math.PI)));
@@ -55,7 +55,7 @@ public class SpellRenderingHelper {
         }
 
 
-        var pose = poseStack.last();
+        MatrixStack.Entry pose = poseStack.last();
         Vector3d start = Vector3d.ZERO;//caster.getEyePosition(partialTicks);
         Vector3d end;
         //TODO: too expensive?

@@ -40,7 +40,7 @@ public class CastBarOverlay extends AbstractGui {
         gui.blit(poseStack, barX, barY, 0, IMAGE_HEIGHT * 3, (int) (COMPLETION_BAR_WIDTH * castCompletionPercent + (IMAGE_WIDTH - COMPLETION_BAR_WIDTH) / 2), IMAGE_HEIGHT);
 
         int textX, textY;
-        var textColor = TextFormatting.WHITE;
+        TextFormatting textColor = TextFormatting.WHITE;
         var font = gui.getFont();
 
 

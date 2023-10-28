@@ -1,6 +1,7 @@
 package io.redspace.ironsspellbooks.entity.mobs.goals;
 
 import io.redspace.ironsspellbooks.api.registry.SpellRegistry;
+import io.redspace.ironsspellbooks.api.spells.AbstractSpell;
 import io.redspace.ironsspellbooks.entity.mobs.abstract_spell_casting_mob.AbstractSpellCastingMob;
 import io.redspace.ironsspellbooks.entity.mobs.wizards.priest.PriestEntity;
 import net.minecraft.entity.EntityType;
@@ -32,8 +33,8 @@ public class GustDefenseGoal extends Goal {
             //IronsSpellbooks.LOGGER.debug("shouldAreaAttack: already casting");
             return false;
         }
-        var d = livingEntity.distanceToSqr(mob);
-        var inRange = d < 5 * 5;
+        double d = livingEntity.distanceToSqr(mob);
+        boolean inRange = d < 5 * 5;
         if (!inRange)
             return false;
         //IronsSpellbooks.LOGGER.debug("shouldAreaAttack: in range");
@@ -61,7 +62,7 @@ public class GustDefenseGoal extends Goal {
     public void start() {
         this.attackCooldown = 40 + mob.getRandom().nextInt(30);
         int spellLevel = (int) (SpellRegistry.GUST_SPELL.get().getMaxLevel() * .5f);
-        var spellType = SpellRegistry.GUST_SPELL.get();
+        AbstractSpell spellType = SpellRegistry.GUST_SPELL.get();
         mob.initiateCastSpell(spellType, spellLevel);
     }
 }

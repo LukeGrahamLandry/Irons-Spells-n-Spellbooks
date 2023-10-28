@@ -6,6 +6,7 @@ import io.redspace.ironsspellbooks.registries.SoundRegistry;
 import io.redspace.ironsspellbooks.util.ModTags;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.Direction;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.SoundCategory;
@@ -77,9 +78,9 @@ public class SpectralHammer extends LivingEntity implements IAnimatable {
         this.depth = depth;
         this.radius = radius;
 
-        var xRot = blockHitResult.getDirection().getAxis().isVertical() ? 90 : 0;
-        var yRot = owner.yRot;
-        var yHeadRot = owner.getYHeadRot();
+        int xRot = blockHitResult.getDirection().getAxis().isVertical() ? 90 : 0;
+        float yRot = owner.yRot;
+        float yHeadRot = owner.getYHeadRot();
 
         this.setYRot(yRot);
         this.setXRot(xRot);
@@ -110,7 +111,7 @@ public class SpectralHammer extends LivingEntity implements IAnimatable {
         }
 
         if (ticksAlive == doDamageTick - 2 && !didDamage) {
-            var location = this.position();
+            Vector3d location = this.position();
             level.playSound(null, location.x, location.y, location.z, SoundRegistry.FORCE_IMPACT.get(), SoundCategory.NEUTRAL, 2f, random.nextIntBetweenInclusive(6, 8) * .1f);
             level.playSound(null, location.x, location.y, location.z, SoundEvents.ZOMBIE_ATTACK_IRON_DOOR, SoundCategory.NEUTRAL, 1f, random.nextIntBetweenInclusive(6, 8) * .1f);
 
@@ -118,21 +119,21 @@ public class SpectralHammer extends LivingEntity implements IAnimatable {
 
         if (ticksAlive >= doDamageTick && !didDamage) {
             if (blockHitResult != null && blockHitResult.getType() != RayTraceResult.Type.MISS) {
-                var blockPos = blockHitResult.getBlockPos();
-                var blockState = level.getBlockState(blockPos);
+                BlockPos blockPos = blockHitResult.getBlockPos();
+                BlockState blockState = level.getBlockState(blockPos);
 
                 if (blockState.is(ModTags.SPECTRAL_HAMMER_MINEABLE)) {
-                    var blockCollector = getBlockCollector(blockPos, blockHitResult.getDirection(), radius, depth, new HashSet<>(), new HashSet<>());
+                    BlockCollectorHelper blockCollector = getBlockCollector(blockPos, blockHitResult.getDirection(), radius, depth, new HashSet<>(), new HashSet<>());
                     collectBlocks(blockPos, blockCollector);
 
                     if (!blockCollector.blocksToRemove.isEmpty()) {
                         //IronsSpellbooks.LOGGER.debug("SpectralHammer.tick: origin:{}", blockCollector.origin);
-                        var random = Utils.random;
+                        RandomSource random = Utils.random;
                         AtomicInteger count = new AtomicInteger();
                         int maxPossibleStacks = (this.radius * 2) * (1 + this.radius * 2) * (this.depth + 1);
                         Inventory drops = new Inventory(maxPossibleStacks);
                         blockCollector.blocksToRemove.forEach(pos -> {
-                            var distance = blockCollector.origin.distManhattan(pos);
+                            int distance = blockCollector.origin.distManhattan(pos);
                             var missChance = random.nextFloat() * 40;
                             float pct = (distance * distance) / (100.0f * this.radius);
 
@@ -140,7 +141,7 @@ public class SpectralHammer extends LivingEntity implements IAnimatable {
                                 //IronsSpellbooks.LOGGER.debug("SpectralHammer.tick: missed pos:{}, dist:{}, missChance:{}, pct:{}", pos, distance, missChance, pct);
                                 missedBlocks.add(pos);
                             } else {
-                                var blockstate = level.getBlockState(pos);
+                                BlockState blockstate = level.getBlockState(pos);
 
                                 if (count.incrementAndGet() % 5 == 0) {
                                     level.destroyBlock(pos, false);
@@ -202,59 +203,176 @@ public class SpectralHammer extends LivingEntity implements IAnimatable {
         int maxZ = origin.getZ() + radius;
 
         switch (direction) {
-            case WEST -> {
+            case WEST:
                 minX = origin.getX();
                 maxX = origin.getX() + depth;
-            }
-            case EAST -> {
+                break;
+            case EAST:
                 minX = origin.getX() - depth;
                 maxX = origin.getX();
-            }
-            case SOUTH -> {
+                break;
+            case SOUTH:
                 minZ = origin.getZ() - depth;
                 maxZ = origin.getZ();
-            }
-            case NORTH -> {
+                break;
+            case NORTH:
                 minZ = origin.getZ();
                 maxZ = origin.getZ() + depth;
-            }
-            case UP -> {
+                break;
+            case UP:
                 minY = origin.getY() - depth;
                 maxY = origin.getY();
-            }
-            case DOWN -> {
+                break;
+            case DOWN:
                 minY = origin.getY();
                 maxY = origin.getY() + depth;
-            }
+                break;
         }
 
         return new BlockCollectorHelper(origin, direction, radius, depth, minX, maxX, minY, maxY, minZ, maxZ, blocksToRemove, blocksChecked);
     }
 
-    private record BlockCollectorHelper(
-            BlockPos origin,
-            Direction originVector,
-            int radius,
-            int depth,
-            int minX,
-            int maxX,
-            int minY,
-            int maxY,
-            int minZ,
-            int maxZ,
-            Set<BlockPos> blocksToRemove,
-            Set<BlockPos> blocksChecked) {
+    private static final class BlockCollectorHelper {
+        private final BlockPos origin;
+        private final Direction originVector;
+        private final int radius;
+        private final int depth;
+        private final int minX;
+        private final int maxX;
+        private final int minY;
+        private final int maxY;
+        private final int minZ;
+        private final int maxZ;
+        private final Set<BlockPos> blocksToRemove;
+        private final Set<BlockPos> blocksChecked;
 
-        public boolean isValidBlockToCollect(World level, BlockPos bp) {
-            return level.getBlockState(bp).is(ModTags.SPECTRAL_HAMMER_MINEABLE)
-                    && bp.getX() >= minX
-                    && bp.getX() <= maxX
-                    && bp.getY() >= minY
-                    && bp.getY() <= maxY
-                    && bp.getZ() >= minZ
-                    && bp.getZ() <= maxZ;
+        private BlockCollectorHelper(
+                BlockPos origin,
+                Direction originVector,
+                int radius,
+                int depth,
+                int minX,
+                int maxX,
+                int minY,
+                int maxY,
+                int minZ,
+                int maxZ,
+                Set<BlockPos> blocksToRemove,
+                Set<BlockPos> blocksChecked) {
+            this.origin = origin;
+            this.originVector = originVector;
+            this.radius = radius;
+            this.depth = depth;
+            this.minX = minX;
+            this.maxX = maxX;
+            this.minY = minY;
+            this.maxY = maxY;
+            this.minZ = minZ;
+            this.maxZ = maxZ;
+            this.blocksToRemove = blocksToRemove;
+            this.blocksChecked = blocksChecked;
         }
-    }
+
+            public boolean isValidBlockToCollect(World level, BlockPos bp) {
+                return level.getBlockState(bp).is(ModTags.SPECTRAL_HAMMER_MINEABLE)
+                        && bp.getX() >= minX
+                        && bp.getX() <= maxX
+                        && bp.getY() >= minY
+                        && bp.getY() <= maxY
+                        && bp.getZ() >= minZ
+                        && bp.getZ() <= maxZ;
+            }
+
+        public BlockPos origin() {
+            return origin;
+        }
+
+        public Direction originVector() {
+            return originVector;
+        }
+
+        public int radius() {
+            return radius;
+        }
+
+        public int depth() {
+            return depth;
+        }
+
+        public int minX() {
+            return minX;
+        }
+
+        public int maxX() {
+            return maxX;
+        }
+
+        public int minY() {
+            return minY;
+        }
+
+        public int maxY() {
+            return maxY;
+        }
+
+        public int minZ() {
+            return minZ;
+        }
+
+        public int maxZ() {
+            return maxZ;
+        }
+
+        public Set<BlockPos> blocksToRemove() {
+            return blocksToRemove;
+        }
+
+        public Set<BlockPos> blocksChecked() {
+            return blocksChecked;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == this) return true;
+            if (obj == null || obj.getClass() != this.getClass()) return false;
+            var that = (BlockCollectorHelper) obj;
+            return Objects.equals(this.origin, that.origin) &&
+                    Objects.equals(this.originVector, that.originVector) &&
+                    this.radius == that.radius &&
+                    this.depth == that.depth &&
+                    this.minX == that.minX &&
+                    this.maxX == that.maxX &&
+                    this.minY == that.minY &&
+                    this.maxY == that.maxY &&
+                    this.minZ == that.minZ &&
+                    this.maxZ == that.maxZ &&
+                    Objects.equals(this.blocksToRemove, that.blocksToRemove) &&
+                    Objects.equals(this.blocksChecked, that.blocksChecked);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(origin, originVector, radius, depth, minX, maxX, minY, maxY, minZ, maxZ, blocksToRemove, blocksChecked);
+        }
+
+        @Override
+        public String toString() {
+            return "BlockCollectorHelper[" +
+                    "origin=" + origin + ", " +
+                    "originVector=" + originVector + ", " +
+                    "radius=" + radius + ", " +
+                    "depth=" + depth + ", " +
+                    "minX=" + minX + ", " +
+                    "maxX=" + maxX + ", " +
+                    "minY=" + minY + ", " +
+                    "maxY=" + maxY + ", " +
+                    "minZ=" + minZ + ", " +
+                    "maxZ=" + maxZ + ", " +
+                    "blocksToRemove=" + blocksToRemove + ", " +
+                    "blocksChecked=" + blocksChecked + ']';
+        }
+
+        }
 
     @Override
     public boolean isPushable() {

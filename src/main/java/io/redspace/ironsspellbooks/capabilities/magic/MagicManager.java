@@ -29,14 +29,14 @@ public class MagicManager implements IMagicManager {
      */
     @Deprecated
     public void setPlayerCurrentMana(ServerPlayerEntity serverPlayer, int newManaValue) {
-        var playerMagicData = MagicData.getPlayerMagicData(serverPlayer);
+        MagicData playerMagicData = MagicData.getPlayerMagicData(serverPlayer);
         playerMagicData.setMana(newManaValue);
     }
 
     public void regenPlayerMana(ServerPlayerEntity serverPlayer, MagicData playerMagicData) {
         int playerMaxMana = (int) serverPlayer.getAttributeValue(MAX_MANA.get());
         float playerManaRegenMultiplier = (float) serverPlayer.getAttributeValue(MANA_REGEN.get());
-        var increment = Math.max(playerMaxMana * playerManaRegenMultiplier * .01f, 1);
+        float increment = Math.max(playerMaxMana * playerManaRegenMultiplier * .01f, 1);
 
         if (playerMagicData.getMana() != playerMaxMana) {
             if (playerMagicData.getMana() + increment < playerMaxMana) {
@@ -52,13 +52,14 @@ public class MagicManager implements IMagicManager {
         //IronsSpellbooks.LOGGER.debug("MagicManager.tick: {}, {}, {}, {}, {}", this.hashCode(), level.hashCode(), level.getServer().getTickCount(), level.players().size(), doManaRegen);
 
         level.players().forEach(player -> {
-            if (player instanceof ServerPlayerEntity serverPlayer) {
+            if (player instanceof ServerPlayerEntity) {
+                ServerPlayerEntity serverPlayer = (ServerPlayerEntity) player;
                 MagicData playerMagicData = MagicData.getPlayerMagicData(serverPlayer);
                 playerMagicData.getPlayerCooldowns().tick(1);
 
                 if (playerMagicData.isCasting()) {
                     playerMagicData.handleCastDuration();
-                    var spell = SpellRegistry.getSpell(playerMagicData.getCastingSpellId());
+                    AbstractSpell spell = SpellRegistry.getSpell(playerMagicData.getCastingSpellId());
                     if (spell.getCastType() == CastType.LONG && !serverPlayer.isUsingItem()) {
                         if (playerMagicData.getCastDurationRemaining() <= 0) {
                             spell.castSpell(serverPlayer.level, playerMagicData.getCastingSpellLevel(), serverPlayer, playerMagicData.getCastSource(), true);

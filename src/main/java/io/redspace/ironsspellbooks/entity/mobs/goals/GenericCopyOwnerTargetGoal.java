@@ -1,6 +1,7 @@
 package io.redspace.ironsspellbooks.entity.mobs.goals;
 
 import io.redspace.ironsspellbooks.entity.mobs.MagicSummon;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.ai.goal.TargetGoal;
@@ -20,14 +21,14 @@ public class GenericCopyOwnerTargetGoal extends TargetGoal {
      * method as well.
      */
     public boolean canUse() {
-        return ownerGetter.get() instanceof MobEntity owner && owner.getTarget() != null && !(owner.getTarget() instanceof MagicSummon summon && summon.getSummoner() == owner);
+        return ownerGetter.get() instanceof MobEntity && ((MobEntity) ownerGetter.get()).getTarget() != null && !(((MobEntity) ownerGetter.get()).getTarget() instanceof MagicSummon && ((MagicSummon) ((MobEntity) ownerGetter.get()).getTarget()).getSummoner() == (MobEntity) ownerGetter.get());
     }
 
     /**
      * Execute a one shot task or start executing a continuous task
      */
     public void start() {
-        var target = ((MobEntity) ownerGetter.get()).getTarget();
+        LivingEntity target = ((MobEntity) ownerGetter.get()).getTarget();
         mob.setTarget(target);
         this.mob.getBrain().setMemoryWithExpiry(MemoryModuleType.ATTACK_TARGET, target, 200L);
 

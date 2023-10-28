@@ -92,12 +92,16 @@ public class InscriptionTableBlock extends HorizontalBlock /*implements EntityBl
     @SuppressWarnings("deprecation")
     public VoxelShape getShape(BlockState pState, IBlockReader pLevel, BlockPos pPos, ISelectionContext pContext) {
         Direction direction = pState.getValue(PART).equals(ChestType.RIGHT) ? pState.getValue(FACING) : pState.getValue(FACING).getOpposite();
-        return switch (direction) {
-            case NORTH -> SHAPE_LEGS_WEST;
-            case SOUTH -> SHAPE_LEGS_EAST;
-            case WEST -> SHAPE_LEGS_NORTH;
-            default -> SHAPE_LEGS_SOUTH;
-        };
+        switch (direction) {
+            case NORTH:
+                return SHAPE_LEGS_WEST;
+            case SOUTH:
+                return SHAPE_LEGS_EAST;
+            case WEST:
+                return SHAPE_LEGS_NORTH;
+            default:
+                return SHAPE_LEGS_SOUTH;
+        }
     }
 
     public BlockState updateShape(BlockState pState, Direction pFacing, BlockState pFacingState, IWorld pLevel, BlockPos pCurrentPos, BlockPos pFacingPos) {

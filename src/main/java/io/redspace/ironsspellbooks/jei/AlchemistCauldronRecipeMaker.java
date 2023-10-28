@@ -1,9 +1,11 @@
 package io.redspace.ironsspellbooks.jei;
 
+import com.google.common.collect.ImmutableList;
 import io.redspace.ironsspellbooks.IronsSpellbooks;
 import io.redspace.ironsspellbooks.api.registry.SpellRegistry;
 import io.redspace.ironsspellbooks.api.spells.AbstractSpell;
 import io.redspace.ironsspellbooks.api.spells.SpellRarity;
+import io.redspace.ironsspellbooks.block.alchemist_cauldron.AlchemistCauldronRecipe;
 import io.redspace.ironsspellbooks.block.alchemist_cauldron.AlchemistCauldronRecipeRegistry;
 import io.redspace.ironsspellbooks.block.alchemist_cauldron.AlchemistCauldronTile;
 import io.redspace.ironsspellbooks.capabilities.spell.SpellData;
@@ -42,7 +44,7 @@ public final class AlchemistCauldronRecipeMaker {
     }
 
     private static Stream<AlchemistCauldronJeiRecipe> getCustomRecipes(IVanillaRecipeFactory vanillaRecipeFactory, IIngredientManager ingredientManager) {
-        var recipes = AlchemistCauldronRecipeRegistry.getRecipes();
+        ImmutableList<AlchemistCauldronRecipe> recipes = AlchemistCauldronRecipeRegistry.getRecipes();
         List<ItemStack> reagents = ingredientManager.getAllItemStacks().stream()
                 .filter(AlchemistCauldronRecipeRegistry::isValidIngredient)
                 .toList();
@@ -128,9 +130,9 @@ public final class AlchemistCauldronRecipeMaker {
     }
 
     private static List<ItemStack> enumerateScrollLevels(AbstractSpell spell) {
-        var scrollStack = new ItemStack(ItemRegistry.SCROLL.get());
+        ItemStack scrollStack = new ItemStack(ItemRegistry.SCROLL.get());
 
-        var scrolls = new ArrayList<ItemStack>();
+        ArrayList<ItemStack> scrolls = new ArrayList<ItemStack>();
 
         IntStream.rangeClosed(spell.getMinLevel(), spell.getMaxLevel())
                 .forEach((spellLevel) -> {
@@ -142,10 +144,10 @@ public final class AlchemistCauldronRecipeMaker {
 
     private static AlchemistCauldronJeiRecipe enumerateSpellsForRarity(SpellRarity spellRarity) {
 
-        var inputs = new ArrayList<ItemStack>();
-        var catalysts = new ArrayList<ItemStack>();
-        var outputs = new ArrayList<ItemStack>();
-        var scrollStack = new ItemStack(ItemRegistry.SCROLL.get());
+        ArrayList<ItemStack> inputs = new ArrayList<ItemStack>();
+        ArrayList<ItemStack> catalysts = new ArrayList<ItemStack>();
+        ArrayList<ItemStack> outputs = new ArrayList<ItemStack>();
+        ItemStack scrollStack = new ItemStack(ItemRegistry.SCROLL.get());
 
         SpellRegistry.getEnabledSpells().forEach(spell -> {
             IntStream.rangeClosed(spell.getMinLevel(), spell.getMaxLevel())
@@ -164,7 +166,7 @@ public final class AlchemistCauldronRecipeMaker {
     }
 
     private static ItemStack getScrollStack(ItemStack stack, AbstractSpell spell, int spellLevel) {
-        var scrollStack = stack.copy();
+        ItemStack scrollStack = stack.copy();
         SpellData.setSpellData(scrollStack, spell, spellLevel);
         return scrollStack;
     }

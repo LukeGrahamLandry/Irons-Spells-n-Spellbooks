@@ -13,7 +13,7 @@ import java.util.Optional;
 public class AbstractClientPlayerMixinHelper {
 
     public static ModifierLayer<IAnimation> playerMixinInit(PlayerEntity player) {
-        var animation = new ModifierLayer<>();
+        ModifierLayer<IAnimation> animation = new ModifierLayer<>();
 
         if (animation != null) {
             animation.addModifierLast(new AdjustmentModifier((partName) -> {
@@ -23,18 +23,18 @@ public class AbstractClientPlayerMixinHelper {
                 float offsetX = 0;
                 float offsetY = 0;
                 float offsetZ = 0;
-                var pitch = player.xRot;
-                var yaw = player.yHeadRot - player.yBodyRot;
+                float pitch = player.xRot;
+                float yaw = player.yHeadRot - player.yBodyRot;
                 pitch = (float) Math.toRadians(pitch);
                 yaw = (float) Math.toRadians(yaw);
                 switch (partName) {
-                    case "rightArm", "leftArm" -> {
+                    case "rightArm":
+                    case "leftArm":
                         rotationX = pitch;
                         rotationY = yaw;
-                    }
-                    default -> {
+                        break;
+                    default:
                         return Optional.empty();
-                    }
                 }
                 return Optional.of(new AdjustmentModifier.PartModifier(new Vec3f(rotationX, rotationY, rotationZ), new Vec3f(offsetX, offsetY, offsetZ)));
             }));

@@ -15,6 +15,7 @@ import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.text.ITextComponent;
@@ -111,9 +112,9 @@ public class AlchemistCauldronRecipeCategory implements IRecipeCategory<Alchemis
         poseStack.popPose();
 
         if (leftStack.isPresent() && leftStack.get().is(ItemRegistry.SCROLL.get())) {
-            var inputText = String.format("%s%%", (int) (ServerConfigs.SCROLL_RECYCLE_CHANCE.get() * 100));
+            String inputText = String.format("%s%%", (int) (ServerConfigs.SCROLL_RECYCLE_CHANCE.get() * 100));
 
-            var font = Minecraft.getInstance().font;
+            FontRenderer font = Minecraft.getInstance().font;
             int y = (getHeight() / 2) - 14;
             int x = (getWidth() - font.width(inputText)) / 2;
             font.drawShadow(poseStack, inputText, x, y, TextFormatting.RED.getColor());

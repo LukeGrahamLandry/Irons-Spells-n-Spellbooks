@@ -80,8 +80,9 @@ public class ChainLightningSpell extends AbstractSpell {
 
     @Override
     public void onCast(World world, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
-        if (playerMagicData.getAdditionalCastData() instanceof CastTargetingData targetData) {
-            var targetEntity = targetData.getTarget((ServerWorld) world);
+        if (playerMagicData.getAdditionalCastData() instanceof CastTargetingData) {
+            CastTargetingData targetData = (CastTargetingData) playerMagicData.getAdditionalCastData();
+            LivingEntity targetEntity = targetData.getTarget((ServerWorld) world);
             if (targetEntity != null) {
                 ChainLightning chainLightning = new ChainLightning(world, entity, targetEntity);
                 chainLightning.setDamage(getDamage(spellLevel, entity));

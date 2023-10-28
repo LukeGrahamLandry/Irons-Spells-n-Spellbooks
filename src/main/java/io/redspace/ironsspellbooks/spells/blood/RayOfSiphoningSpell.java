@@ -78,7 +78,7 @@ public class RayOfSiphoningSpell extends AbstractSpell {
 
     @Override
     public void onCast(World level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
-        var hitResult = Utils.raycastForEntity(level, entity, getRange(0), true, .15f);
+        RayTraceResult hitResult = Utils.raycastForEntity(level, entity, getRange(0), true, .15f);
         if (hitResult.getType() == RayTraceResult.Type.ENTITY) {
             Entity target = ((EntityRayTraceResult) hitResult).getEntity();
             if (target instanceof LivingEntity) {

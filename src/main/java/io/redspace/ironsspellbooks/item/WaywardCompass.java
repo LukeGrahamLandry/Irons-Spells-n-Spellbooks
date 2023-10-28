@@ -42,7 +42,7 @@ public class WaywardCompass extends Item {
     @Override
     public void inventoryTick(ItemStack itemStack, World level, Entity pEntity, int pSlotId, boolean pIsSelected) {
         if (!level.isClientSide) {
-            var tag = itemStack.getOrCreateTag();
+            CompoundNBT tag = itemStack.getOrCreateTag();
             if (!tag.contains("isInInventory")) {
                 tag.putBoolean("isInInventory", true);
             }
@@ -55,10 +55,11 @@ public class WaywardCompass extends Item {
     }
 
     private static void findCatacombs(ItemStack pStack, World pLevel, PlayerEntity pPlayer) {
-        if (pLevel instanceof ServerWorld serverlevel) {
+        if (pLevel instanceof ServerWorld) {
+            ServerWorld serverlevel = (ServerWorld) pLevel;
             BlockPos blockpos = serverlevel.findNearestMapStructure(ModTags.WAYWARD_COMPASS_LOCATOR, pPlayer.blockPosition(), 100, false);
             if (blockpos != null) {
-                var tag = pStack.getOrCreateTag();
+                CompoundNBT tag = pStack.getOrCreateTag();
                 tag.put("CatacombsPos", NBTUtil.writeBlockPos(blockpos));
             }
         }

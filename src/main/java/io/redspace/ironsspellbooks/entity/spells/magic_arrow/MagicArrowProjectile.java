@@ -80,7 +80,7 @@ public class MagicArrowProjectile extends AbstractMagicProjectile {
         //IronsSpellbooks.LOGGER.debug("onHit ({})", result.getType());
 
         if (!level.isClientSide) {
-            var blockPos = new BlockPos(result.getLocation());
+            BlockPos blockPos = new BlockPos(result.getLocation());
             if (result.getType() == RayTraceResult.Type.BLOCK && !blockPos.equals(lastHitBlock)) {
                 penetration++;
                 lastHitBlock = blockPos;

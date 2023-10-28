@@ -44,7 +44,8 @@ public class SimpleElixir extends DrinkableItem {
     }
 
     private static void applyEffect(ItemStack itemStack, LivingEntity livingEntity) {
-        if (itemStack.getItem() instanceof SimpleElixir elixir && elixir.potionEffect.get() != null) {
+        if (itemStack.getItem() instanceof SimpleElixir && ((SimpleElixir) itemStack.getItem()).potionEffect.get() != null) {
+            SimpleElixir elixir = (SimpleElixir) itemStack.getItem();
             livingEntity.addEffect(elixir.potionEffect.get());
         }
     }
@@ -57,7 +58,8 @@ public class SimpleElixir extends DrinkableItem {
     @Override
     public void appendHoverText(ItemStack pStack, @Nullable World pLevel, List<ITextComponent> pTooltipComponents, ITooltipFlag pIsAdvanced) {
         addPotionTooltip(this.potionEffect.get(), pTooltipComponents, 1f);
-        if (this.potionEffect.get().getEffect() instanceof CustomDescriptionMobEffect customDescriptionMobEffect) {
+        if (this.potionEffect.get().getEffect() instanceof CustomDescriptionMobEffect) {
+            CustomDescriptionMobEffect customDescriptionMobEffect = (CustomDescriptionMobEffect) this.potionEffect.get().getEffect();
             CustomDescriptionMobEffect.handleCustomPotionTooltip(pStack, pTooltipComponents, false, this.potionEffect.get(), customDescriptionMobEffect);
         }
     }

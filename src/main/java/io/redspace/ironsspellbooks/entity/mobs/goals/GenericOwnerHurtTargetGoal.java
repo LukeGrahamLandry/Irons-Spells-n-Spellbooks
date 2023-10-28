@@ -39,7 +39,7 @@ public class GenericOwnerHurtTargetGoal extends TargetGoal {
             int i = owner.getLastHurtMobTimestamp();
 
 
-            return i != this.timestamp && this.canAttack(this.ownerLastHurt, EntityPredicate.DEFAULT) && !(this.ownerLastHurt instanceof MagicSummon summon && summon.getSummoner() == owner);
+            return i != this.timestamp && this.canAttack(this.ownerLastHurt, EntityPredicate.DEFAULT) && !(this.ownerLastHurt instanceof MagicSummon && ((MagicSummon) this.ownerLastHurt).getSummoner() == owner);
         }
     }
 

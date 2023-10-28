@@ -91,8 +91,8 @@ public class InscriptionTableMenu extends Container {
             @Override
             public void onTake(PlayerEntity player, ItemStack stack) {
                 //Ironsspellbooks.logger.debug("InscriptionTableMenu.take spell!");
-                var spellBookStack = spellBookSlot.getItem();
-                var spellBookData = SpellBookData.getSpellBookData(spellBookStack);
+                ItemStack spellBookStack = spellBookSlot.getItem();
+                SpellBookData spellBookData = SpellBookData.getSpellBookData(spellBookStack);
                 spellBookData.removeSpell(selectedSpellIndex, spellBookStack);
                 super.onTake(player, spellBookStack);
             }
@@ -138,9 +138,11 @@ public class InscriptionTableMenu extends Container {
         ItemStack spellBookItemStack = getSpellBookSlot().getItem();
         ItemStack scrollItemStack = getScrollSlot().getItem();
 
-        if (spellBookItemStack.getItem() instanceof SpellBook spellBook && scrollItemStack.getItem() instanceof Scroll scroll) {
-            var spellBookData = SpellBookData.getSpellBookData(spellBookItemStack);
-            var scrollData = SpellData.getSpellData(scrollItemStack);
+        if (spellBookItemStack.getItem() instanceof SpellBook && scrollItemStack.getItem() instanceof Scroll) {
+            SpellBook spellBook = (SpellBook) spellBookItemStack.getItem();
+            Scroll scroll = (Scroll) scrollItemStack.getItem();
+            SpellBookData spellBookData = SpellBookData.getSpellBookData(spellBookItemStack);
+            SpellData scrollData = SpellData.getSpellData(scrollItemStack);
             if (spellBookData.addSpell(scrollData.getSpell(), scrollData.getLevel(), selectedIndex, spellBookItemStack))
                 getScrollSlot().remove(1);
         }
@@ -169,13 +171,14 @@ public class InscriptionTableMenu extends Container {
         ItemStack resultStack = ItemStack.EMPTY;
         ItemStack spellBookStack = spellBookSlot.getItem();
 
-        if (spellBookStack.getItem() instanceof SpellBook spellBook) {
+        if (spellBookStack.getItem() instanceof SpellBook) {
+            SpellBook spellBook = (SpellBook) spellBookStack.getItem();
             if (!spellBook.isUnique()) {
-                var spellBookData = SpellBookData.getSpellBookData(spellBookStack);
+                SpellBookData spellBookData = SpellBookData.getSpellBookData(spellBookStack);
                 if (selectedSpellIndex >= 0 && spellBookData.getSpell(selectedSpellIndex) != null) {
                     resultStack = new ItemStack(ItemRegistry.SCROLL.get());
                     resultStack.setCount(1);
-                    var spellData = spellBookData.getSpell(selectedSpellIndex);
+                    SpellData spellData = spellBookData.getSpell(selectedSpellIndex);
                     SpellData.setSpellData(resultStack, spellData);
                 }
             }

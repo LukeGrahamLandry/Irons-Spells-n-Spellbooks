@@ -82,7 +82,8 @@ public class BlackHoleSpell extends AbstractSpell {
 
         RayTraceResult raycast = Utils.raycastForEntity(level, entity, 16 + radius * 1.5f, true);
         Vector3d center = raycast.getLocation();
-        if (raycast instanceof BlockRayTraceResult blockHitResult) {
+        if (raycast instanceof BlockRayTraceResult) {
+            BlockRayTraceResult blockHitResult = (BlockRayTraceResult) raycast;
             if (blockHitResult.getDirection().getAxis().isHorizontal())
                 center = center.subtract(0, radius, 0);
             else if (blockHitResult.getDirection() == Direction.DOWN)

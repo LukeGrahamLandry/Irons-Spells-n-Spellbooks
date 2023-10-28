@@ -86,8 +86,9 @@ public class EarthquakeSpell extends AbstractSpell {
     @Override
     public void onCast(World world, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
         Vector3d spawn = null;
-        if (playerMagicData.getAdditionalCastData() instanceof CastTargetingData castTargetingData) {
-            var target = castTargetingData.getTarget((ServerWorld) world);
+        if (playerMagicData.getAdditionalCastData() instanceof CastTargetingData) {
+            CastTargetingData castTargetingData = (CastTargetingData) playerMagicData.getAdditionalCastData();
+            LivingEntity target = castTargetingData.getTarget((ServerWorld) world);
             if (target != null)
                 spawn = target.position();
         }

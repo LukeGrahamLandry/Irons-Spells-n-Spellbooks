@@ -7,6 +7,7 @@ import io.redspace.ironsspellbooks.entity.mobs.abstract_spell_casting_mob.Abstra
 import io.redspace.ironsspellbooks.player.ClientMagicData;
 import io.redspace.ironsspellbooks.util.Log;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.entity.Entity;
 import net.minecraftforge.network.NetworkEvent;
@@ -36,12 +37,13 @@ public class ClientboundSyncAnimation<T extends Entity & AnimatedAttacker> {
         NetworkEvent.Context ctx = supplier.get();
 
         ctx.enqueueWork(() -> {
-            var level = Minecraft.getInstance().level;
+            ClientWorld level = Minecraft.getInstance().level;
             if (level == null) {
                 return;
             }
-            var entity = level.getEntity(entityId);
-            if (entity instanceof AnimatedAttacker animatedAttacker) {
+            Entity entity = level.getEntity(entityId);
+            if (entity instanceof AnimatedAttacker) {
+                AnimatedAttacker animatedAttacker = (AnimatedAttacker) entity;
                 animatedAttacker.playAnimation(animationId);
             }
         });

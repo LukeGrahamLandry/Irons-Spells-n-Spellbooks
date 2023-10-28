@@ -70,8 +70,8 @@ public class ChainLightning extends AbstractMagicProjectile {
                 AtomicInteger zapsThisWave = new AtomicInteger();
                 //cannot be enhanced for
                 for (int i = 0; i < j; i++) {
-                    var entity = lastVictims.get(i);
-                    var entities = level.getEntities(entity, entity.getBoundingBox().inflate(range), this::canHitEntity);
+                    Entity entity = lastVictims.get(i);
+                    List<Entity> entities = level.getEntities(entity, entity.getBoundingBox().inflate(range), this::canHitEntity);
                     entities.sort((o1, o2) -> (int) (o1.distanceToSqr(entity) - o2.distanceToSqr(entity)));
                     entities.forEach((victim) -> {
                         if (zapsThisWave.get() < maxConnectionsPerWave && hits < maxConnections && victim.distanceToSqr(entity) < range * range && Utils.hasLineOfSight(level, entity.getEyePosition(0), victim.getEyePosition(0), true)) {

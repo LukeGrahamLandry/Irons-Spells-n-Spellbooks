@@ -83,8 +83,9 @@ public class BlightSpell extends AbstractSpell {
 
     @Override
     public void onCast(World world, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
-        if (playerMagicData.getAdditionalCastData() instanceof CastTargetingData targetData) {
-            var targetEntity = targetData.getTarget((ServerWorld) world);
+        if (playerMagicData.getAdditionalCastData() instanceof CastTargetingData) {
+            CastTargetingData targetData = (CastTargetingData) playerMagicData.getAdditionalCastData();
+            LivingEntity targetEntity = targetData.getTarget((ServerWorld) world);
             if (targetEntity != null) {
                 targetEntity.addEffect(new EffectInstance(MobEffectRegistry.BLIGHT.get(), getDuration(spellLevel, entity), getAmplifier(spellLevel, entity)));
             }

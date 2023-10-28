@@ -25,7 +25,8 @@ public class BloodSlashBlock extends Block {
 
     @Override
     public void stepOn(@NotNull World level, @NotNull BlockPos blockPos, @NotNull BlockState blockState, @NotNull Entity entity) {
-        if (entity instanceof PlayerEntity player) {
+        if (entity instanceof PlayerEntity) {
+            PlayerEntity player = (PlayerEntity) entity;
             int duration = 200;
             int amplifier = 2;
             //player.addEffect(new MobEffectInstance(MobEffectRegistry.BLOOD_SLASHED.get(), duration, amplifier));

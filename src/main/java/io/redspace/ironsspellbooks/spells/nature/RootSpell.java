@@ -10,6 +10,7 @@ import io.redspace.ironsspellbooks.entity.spells.root.RootEntity;
 import io.redspace.ironsspellbooks.util.Log;
 import io.redspace.ironsspellbooks.util.ModTags;
 import io.redspace.ironsspellbooks.api.util.Utils;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.ResourceLocation;
@@ -98,7 +99,8 @@ public class RootSpell extends AbstractSpell {
 //
 //        }
 
-        if (playerMagicData.getAdditionalCastData() instanceof CastTargetingData castTargetingData) {
+        if (playerMagicData.getAdditionalCastData() instanceof CastTargetingData) {
+            CastTargetingData castTargetingData = (CastTargetingData) playerMagicData.getAdditionalCastData();
             LivingEntity target = castTargetingData.getTarget((ServerWorld) level);
 
             if (Log.SPELL_DEBUG) {
@@ -125,8 +127,10 @@ public class RootSpell extends AbstractSpell {
 
     @Nullable
     private LivingEntity findTarget(LivingEntity caster) {
-        var target = Utils.raycastForEntity(caster.level, caster, 32, true, 0.35f);
-        if (target instanceof EntityRayTraceResult entityHit && entityHit.getEntity() instanceof LivingEntity livingTarget) {
+        RayTraceResult target = Utils.raycastForEntity(caster.level, caster, 32, true, 0.35f);
+        if (target instanceof EntityRayTraceResult && ((EntityRayTraceResult) target).getEntity() instanceof LivingEntity) {
+            EntityRayTraceResult entityHit = (EntityRayTraceResult) target;
+            LivingEntity livingTarget = (LivingEntity) entityHit.getEntity();
             return livingTarget;
         } else {
             return null;

@@ -116,9 +116,11 @@ public class PoisonArrow extends AbstractMagicProjectile {
             if (!ignore) {
                 if (!level.isClientSide && !hasEmittedPoison)
                     createPoisonCloud(entity.position());
-                if (entity instanceof LivingEntity livingEntity)
+                if (entity instanceof LivingEntity) {
+                    LivingEntity livingEntity = (LivingEntity) entity;
                     livingEntity.setArrowCount(livingEntity.getArrowCount() + 1);
-                var spawn = entityHitResult.getLocation();
+                }
+                Vector3d spawn = entityHitResult.getLocation();
             }
             this.discard();
         } else {

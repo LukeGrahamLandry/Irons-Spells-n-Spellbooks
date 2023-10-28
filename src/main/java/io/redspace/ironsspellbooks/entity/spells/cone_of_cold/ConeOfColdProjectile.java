@@ -6,6 +6,7 @@ import io.redspace.ironsspellbooks.entity.spells.AbstractConeProjectile;
 import io.redspace.ironsspellbooks.registries.EntityRegistry;
 import io.redspace.ironsspellbooks.api.spells.SchoolType;
 import io.redspace.ironsspellbooks.util.ParticleHelper;
+import net.minecraft.entity.Entity;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -25,12 +26,12 @@ public class ConeOfColdProjectile extends AbstractConeProjectile {
 
     @Override
     public void spawnParticles() {
-        var owner = getOwner();
+        Entity owner = getOwner();
         if (!level.isClientSide || owner == null) {
             return;
         }
         Vector3d rotation = owner.getLookAngle().normalize();
-        var pos = owner.position().add(rotation.scale(1.6));
+        Vector3d pos = owner.position().add(rotation.scale(1.6));
 
         double x = pos.x;
         double y = pos.y + owner.getEyeHeight() * .9f;
@@ -55,7 +56,7 @@ public class ConeOfColdProjectile extends AbstractConeProjectile {
     @Override
     protected void onHitEntity(EntityRayTraceResult entityHitResult) {
         //irons_spellbooks.LOGGER.debug("ConeOfColdProjectile.onHitEntity: {}", entityHitResult.getEntity().getName().getString());
-        var entity = entityHitResult.getEntity();
+        Entity entity = entityHitResult.getEntity();
         DamageSources.applyDamage(entity, damage, SpellRegistry.CONE_OF_COLD_SPELL.get().getDamageSource(this, getOwner()));
     }
 

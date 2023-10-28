@@ -82,7 +82,8 @@ public class AlchemistCauldronBlock extends ContainerBlock {
 
     @Override
     public ActionResultType use(BlockState blockState, World level, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult blockHit) {
-        if (level.getBlockEntity(pos) instanceof AlchemistCauldronTile tile) {
+        if (level.getBlockEntity(pos) instanceof AlchemistCauldronTile) {
+            AlchemistCauldronTile tile = (AlchemistCauldronTile) level.getBlockEntity(pos);
             return tile.handleUse(blockState, level, pos, player, hand);
         }
         return super.use(blockState, level, pos, player, hand, blockHit);
@@ -92,9 +93,11 @@ public class AlchemistCauldronBlock extends ContainerBlock {
     public void entityInside(BlockState blockState, World level, BlockPos pos, Entity entity) {
         if (entity.tickCount % 20 == 0) {
             if (isBoiling(blockState)) {
-                if (entity instanceof LivingEntity livingEntity && livingEntity.hurt(DamageSources.CAULDRON, 2)) {
+                if (entity instanceof LivingEntity && ((LivingEntity) entity).hurt(DamageSources.CAULDRON, 2)) {
+                    LivingEntity livingEntity = (LivingEntity) entity;
                     MagicManager.spawnParticles(level, ParticleHelper.BLOOD, entity.getX(), entity.getY() + entity.getBbHeight() / 2, entity.getZ(), 20, .05, .05, .05, .1, false);
-                    if (level.getBlockEntity(pos) instanceof AlchemistCauldronTile cauldronTile) {
+                    if (level.getBlockEntity(pos) instanceof AlchemistCauldronTile) {
+                        AlchemistCauldronTile cauldronTile = (AlchemistCauldronTile) level.getBlockEntity(pos);
                         AlchemistCauldronTile.appendItem(cauldronTile.resultItems, new ItemStack(ItemRegistry.BLOOD_VIAL.get()));
                         cauldronTile.setChanged();
                     }
@@ -133,7 +136,8 @@ public class AlchemistCauldronBlock extends ContainerBlock {
     public void onRemove(BlockState pState, World pLevel, BlockPos pPos, BlockState pNewState, boolean pIsMoving) {
         if (pState.getBlock() != pNewState.getBlock()) {
             TileEntity blockEntity = pLevel.getBlockEntity(pPos);
-            if (blockEntity instanceof AlchemistCauldronTile cauldronTile) {
+            if (blockEntity instanceof AlchemistCauldronTile) {
+                AlchemistCauldronTile cauldronTile = (AlchemistCauldronTile) blockEntity;
                 cauldronTile.drops();
             }
         }

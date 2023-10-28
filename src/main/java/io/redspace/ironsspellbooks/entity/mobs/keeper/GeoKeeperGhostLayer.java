@@ -11,6 +11,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.renderers.geo.GeoLayerRenderer;
 import software.bernie.geckolib3.renderers.geo.IGeoRenderer;
 
@@ -28,11 +29,11 @@ public class GeoKeeperGhostLayer extends GeoLayerRenderer<AbstractSpellCastingMo
         if (hurtTime > 0) {
             float alpha = (float) hurtTime / entityLivingBaseIn.hurtDuration;
             float f = (float) (entityLivingBaseIn.tickCount + partialTicks) * .6f;
-            var renderType = RenderType.energySwirl(TEXTURE, f * 0.02F % 1.0F, f * 0.01F % 1.0F);
+            RenderType renderType = RenderType.energySwirl(TEXTURE, f * 0.02F % 1.0F, f * 0.01F % 1.0F);
             //renderType = RenderType.endGateway();
             IVertexBuilder vertexconsumer = bufferIn.getBuffer(renderType);
             matrixStackIn.pushPose();
-            var model = getEntityModel().getModel(KeeperModel.modelResource);
+            GeoModel model = getEntityModel().getModel(KeeperModel.modelResource);
 //        var bone = model.getBone("head");
 //        bone.ifPresent((b) -> b.setHidden(true));
             float scale = 1 / (1.3f);

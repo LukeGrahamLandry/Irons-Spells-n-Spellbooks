@@ -225,7 +225,9 @@ public class Messages {
 
     public static <MSG> void sendToPlayersTrackingEntity(MSG message, Entity entity, boolean sendToSource) {
         INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> entity), message);
-        if (sendToSource && entity instanceof ServerPlayerEntity serverPlayer)
+        if (sendToSource && entity instanceof ServerPlayerEntity) {
+            ServerPlayerEntity serverPlayer = (ServerPlayerEntity) entity;
             sendToPlayer(message, serverPlayer);
+        }
     }
 }

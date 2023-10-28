@@ -11,6 +11,7 @@ import io.redspace.ironsspellbooks.entity.VisualFallingBlockEntity;
 import io.redspace.ironsspellbooks.entity.mobs.AntiMagicSusceptible;
 import io.redspace.ironsspellbooks.registries.EntityRegistry;
 import io.redspace.ironsspellbooks.registries.SoundRegistry;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.particles.IParticleData;
 import net.minecraft.particles.ParticleTypes;
@@ -55,7 +56,7 @@ public class EarthquakeAoe extends AoeEntity implements AntiMagicSusceptible {
 
     @Override
     public void applyEffect(LivingEntity target) {
-        var damageSource = SpellRegistry.EARTHQUAKE_SPELL.get().getDamageSource(this, getOwner());
+        DamageSource damageSource = SpellRegistry.EARTHQUAKE_SPELL.get().getDamageSource(this, getOwner());
         DamageSources.ignoreNextKnockback(target);
         if (target.hurt(damageSource, getDamage())) {
             target.addEffect(new EffectInstance(Effects.MOVEMENT_SLOWDOWN, 120, slownessAmplifier));
@@ -102,8 +103,8 @@ public class EarthquakeAoe extends AoeEntity implements AntiMagicSusceptible {
             this.playSound(SoundRegistry.EARTHQUAKE_IMPACT.get(), 1.5f, .9f + random.nextFloat() * .2f);
         }
         if (!level.isClientSide) {
-            var radius = this.getRadius();
-            var level = this.level;
+            float radius = this.getRadius();
+            World level = this.level;
             int intensity = (int) (radius * radius * .09f);
             for (int i = 0; i < intensity; i++) {
                 Vector3d vec3 = this.position().add(uniformlyDistributedPointInRadius(radius));
@@ -111,7 +112,7 @@ public class EarthquakeAoe extends AoeEntity implements AntiMagicSusceptible {
                 createTremorBlock(blockPos, .1f + random.nextFloat() * .2f);
             }
             if (waveAnim >= 0) {
-                var circumference = waveAnim * 2 * 3.14f;
+                float circumference = waveAnim * 2 * 3.14f;
                 int blocks = (int) circumference;
                 float anglePerBlock = 360f / blocks;
                 for (int i = 0; i < blocks; i++) {
@@ -145,7 +146,7 @@ public class EarthquakeAoe extends AoeEntity implements AntiMagicSusceptible {
     }
 
     protected void createTremorBlock(BlockPos blockPos, float impulseStrength) {
-        var fallingblockentity = new VisualFallingBlockEntity(level, blockPos.getX(), blockPos.getY(), blockPos.getZ(), level.getBlockState(blockPos), 20);
+        VisualFallingBlockEntity fallingblockentity = new VisualFallingBlockEntity(level, blockPos.getX(), blockPos.getY(), blockPos.getZ(), level.getBlockState(blockPos), 20);
         fallingblockentity.setDeltaMovement(0, impulseStrength, 0);
         level.addFreshEntity(fallingblockentity);
         if (!level.getBlockState(blockPos.above()).isAir()) {
@@ -161,8 +162,8 @@ public class EarthquakeAoe extends AoeEntity implements AntiMagicSusceptible {
     }
 
     protected Vector3d uniformlyDistributedPointInRadius(float r) {
-        var distance = r * (1 - this.random.nextFloat() * this.random.nextFloat());
-        var theta = this.random.nextFloat() * 6.282f; // two pi :nerd:
+        float distance = r * (1 - this.random.nextFloat() * this.random.nextFloat());
+        float theta = this.random.nextFloat() * 6.282f; // two pi :nerd:
         return new Vector3d(
                 distance * MathHelper.cos(theta),
                 .2f,

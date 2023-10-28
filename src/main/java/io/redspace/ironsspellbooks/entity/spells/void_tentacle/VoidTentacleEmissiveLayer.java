@@ -11,6 +11,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.renderers.geo.GeoLayerRenderer;
 import software.bernie.geckolib3.renderers.geo.IGeoRenderer;
 
@@ -24,13 +25,13 @@ public class VoidTentacleEmissiveLayer extends GeoLayerRenderer<VoidTentacle> {
 
     @Override
     public void render(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn, VoidTentacle entityLivingBaseIn, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
-        var renderType = RenderType.eyes(TEXTURE);
+        RenderType renderType = RenderType.eyes(TEXTURE);
         //renderType = RenderType.endGateway();
         IVertexBuilder vertexconsumer = bufferIn.getBuffer(renderType);
         matrixStackIn.pushPose();
         float f = MathHelper.sin((float) ((entityLivingBaseIn.tickCount + partialTicks + ((entityLivingBaseIn.getX() + entityLivingBaseIn.getZ()) * 500)) * .15f)) * .5f + .5f;
         //IronsSpellbooks.LOGGER.debug("{}", f);
-        var model = this.getEntityModel().getModel(VoidTentacleModel.modelResource);
+        GeoModel model = this.getEntityModel().getModel(VoidTentacleModel.modelResource);
         this.getRenderer().render(
                 model,
                 entityLivingBaseIn, partialTicks, renderType, matrixStackIn, bufferIn,

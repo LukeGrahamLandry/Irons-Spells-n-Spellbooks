@@ -10,6 +10,8 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifierManager;
 import net.minecraft.util.math.vector.Vector3d;
 
+import java.util.Random;
+
 public class AscensionEffect extends Effect {
 
     public AscensionEffect(EffectType mobEffectCategory, int color) {
@@ -36,7 +38,7 @@ public class AscensionEffect extends Effect {
     }
 
     public static void ambientParticles(ClientWorld level, LivingEntity entity) {
-        var random = entity.getRandom();
+        Random random = entity.getRandom();
         for (int i = 0; i < 2; i++) {
             Vector3d motion = new Vector3d(
                     random.nextFloat() * 2 - 1,

@@ -19,7 +19,7 @@ public interface HomeOwner {
 
     default void deserializeHome(HomeOwner self, CompoundNBT tag) {
         if (tag.contains("HomePos")) {
-            var home = tag.getIntArray("HomePos");
+            int[] home = tag.getIntArray("HomePos");
             self.setHome(new BlockPos(home[0], home[1], home[2]));
         }
     }

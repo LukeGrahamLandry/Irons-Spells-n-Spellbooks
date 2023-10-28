@@ -8,6 +8,7 @@ import dev.kosmx.playerAnim.minecraftApi.PlayerAnimationAccess;
 import dev.kosmx.playerAnim.minecraftApi.PlayerAnimationRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -31,12 +32,12 @@ public class PlayerAnimationTrigger {
 
 
             //Get the player from Minecraft, using the chat profile ID. From network packets, you'll receive entity IDs instead of UUIDs
-            var player = Minecraft.getInstance().level.getPlayerByUUID(event.getMessageSigner().profileId());
+            PlayerEntity player = Minecraft.getInstance().level.getPlayerByUUID(event.getMessageSigner().profileId());
 
             if (player == null) return; //The player can be null because it was a system message or because it is not loaded by this player.
 
             //Get the animation for that player
-            var animation = (ModifierLayer<IAnimation>) PlayerAnimationAccess.getPlayerAssociatedData((AbstractClientPlayerEntity) player).get(new ResourceLocation(IronsSpellbooks.MODID, "animation"));
+            ModifierLayer<IAnimation> animation = (ModifierLayer<IAnimation>) PlayerAnimationAccess.getPlayerAssociatedData((AbstractClientPlayerEntity) player).get(new ResourceLocation(IronsSpellbooks.MODID, "animation"));
             if (animation != null) {
                 //You can set an animation from anywhere ON THE CLIENT
                 //Do not attempt to do this on a server, that will only fail

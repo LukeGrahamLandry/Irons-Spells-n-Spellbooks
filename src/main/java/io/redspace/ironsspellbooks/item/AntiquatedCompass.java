@@ -36,10 +36,11 @@ public class AntiquatedCompass extends Item {
 
     @Override
     public void onCraftedBy(ItemStack pStack, World pLevel, PlayerEntity pPlayer) {
-        if (pLevel instanceof ServerWorld serverlevel) {
+        if (pLevel instanceof ServerWorld) {
+            ServerWorld serverlevel = (ServerWorld) pLevel;
             BlockPos blockpos = serverlevel.findNearestMapStructure(ModTags.ANTIQUATED_COMPASS_LOCATOR, pPlayer.blockPosition(), 100, false);
             if (blockpos != null) {
-                var tag = pStack.getOrCreateTag();
+                CompoundNBT tag = pStack.getOrCreateTag();
                 tag.put("CitadelPos", NBTUtil.writeBlockPos(blockpos));
             }
         }

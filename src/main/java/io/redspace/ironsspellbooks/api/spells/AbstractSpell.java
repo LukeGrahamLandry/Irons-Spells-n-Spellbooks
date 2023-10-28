@@ -1,6 +1,7 @@
 package io.redspace.ironsspellbooks.api.spells;
 
 import com.google.common.util.concurrent.AtomicDouble;
+import io.redspace.ironsspellbooks.api.magic.IMagicManager;
 import net.minecraft.util.math.vector.Vector3f;
 import io.redspace.ironsspellbooks.IronsSpellbooks;
 import io.redspace.ironsspellbooks.api.events.SpellCastEvent;
@@ -72,7 +73,7 @@ public abstract class AbstractSpell {
 
     public final String getSpellName() {
         if (spellName == null) {
-            var resourceLocation = Objects.requireNonNull(getSpellResource());
+            ResourceLocation resourceLocation = Objects.requireNonNull(getSpellResource());
             spellName = resourceLocation.getPath().intern();
         }
 
@@ -83,7 +84,7 @@ public abstract class AbstractSpell {
 
     public final String getSpellId() {
         if (spellID == null) {
-            var resourceLocation = Objects.requireNonNull(getSpellResource());
+            ResourceLocation resourceLocation = Objects.requireNonNull(getSpellResource());
             spellID = resourceLocation.toString().intern();
         }
 
@@ -164,22 +165,28 @@ public abstract class AbstractSpell {
      * Default Animations Based on Cast Type. Override for specific spell-based animations
      */
     public AnimationHolder getCastStartAnimation() {
-        return switch (getCastType()) {
-            case INSTANT -> ANIMATION_INSTANT_CAST;
-            case CONTINUOUS -> ANIMATION_CONTINUOUS_CAST;
-            case LONG -> ANIMATION_LONG_CAST;
-            default -> AnimationHolder.none();
-        };
+        switch (getCastType()) {
+            case INSTANT:
+                return ANIMATION_INSTANT_CAST;
+            case CONTINUOUS:
+                return ANIMATION_CONTINUOUS_CAST;
+            case LONG:
+                return ANIMATION_LONG_CAST;
+            default:
+                return AnimationHolder.none();
+        }
     }
 
     /**
      * Default Animations Based on Cast Type. Override for specific spell-based animations
      */
     public AnimationHolder getCastFinishAnimation() {
-        return switch (getCastType()) {
-            case LONG -> ANIMATION_LONG_CAST_FINISH;
-            default -> AnimationHolder.none();
-        };
+        switch (getCastType()) {
+            case LONG:
+                return ANIMATION_LONG_CAST_FINISH;
+            default:
+                return AnimationHolder.none();
+        }
     }
 
     public float getSpellPower(int spellLevel, @Nullable Entity sourceEntity) {
@@ -189,7 +196,8 @@ public abstract class AbstractSpell {
 
         float configPowerModifier = (float) ServerConfigs.getSpellConfig(this).powerMultiplier();
         int level = getLevel(spellLevel, null);
-        if (sourceEntity instanceof LivingEntity livingEntity) {
+        if (sourceEntity instanceof LivingEntity) {
+            LivingEntity livingEntity = (LivingEntity) sourceEntity;
             level = getLevel(spellLevel, livingEntity);
             entitySpellPowerModifier = (float) livingEntity.getAttributeValue(AttributeRegistry.SPELL_POWER.get());
             entitySchoolPowerModifier = this.getSchoolType().getPowerFor(livingEntity);
@@ -203,8 +211,8 @@ public abstract class AbstractSpell {
         if (entity == null) {
             return 1f;
         }
-        var entitySpellPowerModifier = (float) entity.getAttributeValue(AttributeRegistry.SPELL_POWER.get());
-        var entitySchoolPowerModifier = this.getSchoolType().getPowerFor(entity);
+        float entitySpellPowerModifier = (float) entity.getAttributeValue(AttributeRegistry.SPELL_POWER.get());
+        double entitySchoolPowerModifier = this.getSchoolType().getPowerFor(entity);
         return (float) (entitySpellPowerModifier * entitySchoolPowerModifier);
     }
 
@@ -235,8 +243,8 @@ public abstract class AbstractSpell {
             return false;
         }
 
-        var serverPlayer = (ServerPlayerEntity) player;
-        var playerMagicData = MagicData.getPlayerMagicData(serverPlayer);
+        ServerPlayerEntity serverPlayer = (ServerPlayerEntity) player;
+        MagicData playerMagicData = MagicData.getPlayerMagicData(serverPlayer);
 
         if (!playerMagicData.isCasting()) {
             int playerMana = playerMagicData.getMana();
@@ -261,7 +269,7 @@ public abstract class AbstractSpell {
                 return false;
 
 
-            var castType = getCastType();
+            CastType castType = getCastType();
             if (castType == CastType.INSTANT) {
                 /*
                  * Immediately cast spell
@@ -291,7 +299,7 @@ public abstract class AbstractSpell {
             IronsSpellbooks.LOGGER.debug("AbstractSpell.castSpell isClient:{}, spell{}({})", world.isClientSide, getSpellId(), spellLevel);
         }
 
-        var magicManager = MagicHelper.MAGIC_MANAGER;
+        IMagicManager magicManager = MagicHelper.MAGIC_MANAGER;
         MagicData playerMagicData = MagicData.getPlayerMagicData(serverPlayer);
 
         if (castSource.consumesMana()) {
@@ -371,7 +379,8 @@ public abstract class AbstractSpell {
         }
 
         playerMagicData.resetCastingState();
-        if (entity instanceof ServerPlayerEntity serverPlayer) {
+        if (entity instanceof ServerPlayerEntity) {
+            ServerPlayerEntity serverPlayer = (ServerPlayerEntity) entity;
             Messages.sendToPlayersTrackingEntity(new ClientboundOnCastFinished(serverPlayer.getUUID(), getSpellId(), cancelled), serverPlayer, true);
         }
     }
@@ -425,7 +434,8 @@ public abstract class AbstractSpell {
             return true;
         }
 
-        if (obj instanceof AbstractSpell other) {
+        if (obj instanceof AbstractSpell) {
+            AbstractSpell other = (AbstractSpell) obj;
             return this.getSpellResource().equals(other.getSpellResource());
         }
 
@@ -447,11 +457,11 @@ public abstract class AbstractSpell {
                 if (minRarity != 0) {
                     //Must balance remaining weights
 
-                    var subList = rarityRawConfig.subList(minRarity, maxRarity + 1);
+                    List<Double> subList = rarityRawConfig.subList(minRarity, maxRarity + 1);
                     double subtotal = subList.stream().reduce(0d, Double::sum);
                     rarityRawWeights = subList.stream().map(item -> ((item / subtotal) * (1 - subtotal)) + item).toList();
 
-                    var counter = new AtomicDouble();
+                    AtomicDouble counter = new AtomicDouble();
                     rarityWeights = new ArrayList<>();
                     rarityRawWeights.forEach(item -> {
                         rarityWeights.add(counter.addAndGet(item));

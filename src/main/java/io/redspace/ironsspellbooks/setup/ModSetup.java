@@ -87,8 +87,9 @@ public class ModSetup {
                         ServerWorld serverlevel = blockSource.getLevel();
                         BlockPos blockpos = blockSource.getPos().relative(blockSource.getBlockState().getValue(DispenserBlock.FACING));
                         BlockState blockstate = serverlevel.getBlockState(blockpos);
-                        if (AlchemistCauldronBlock.getLevel(blockstate) > 0 && serverlevel.getBlockEntity(blockpos) instanceof AlchemistCauldronTile cauldron) {
-                            var resultStack = cauldron.interactions.get(itemStack.getItem()).interact(blockstate, serverlevel, blockpos, AlchemistCauldronBlock.getLevel(blockstate), itemStack);
+                        if (AlchemistCauldronBlock.getLevel(blockstate) > 0 && serverlevel.getBlockEntity(blockpos) instanceof AlchemistCauldronTile) {
+                            AlchemistCauldronTile cauldron = (AlchemistCauldronTile) serverlevel.getBlockEntity(blockpos);
+                            ItemStack resultStack = cauldron.interactions.get(itemStack.getItem()).interact(blockstate, serverlevel, blockpos, AlchemistCauldronBlock.getLevel(blockstate), itemStack);
                             if (resultStack != null) {
                                 this.setSuccess(true);
                                 cauldron.setChanged();

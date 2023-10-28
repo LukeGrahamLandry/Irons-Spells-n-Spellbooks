@@ -16,6 +16,8 @@ import io.redspace.ironsspellbooks.spells.blood.RayOfSiphoningSpell;
 import io.redspace.ironsspellbooks.util.ParticleHelper;
 import io.redspace.ironsspellbooks.util.TooltipsUtils;
 import io.redspace.ironsspellbooks.api.util.Utils;
+import net.minecraft.client.entity.player.ClientPlayerEntity;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.model.EntityModel;
@@ -45,7 +47,7 @@ public class ClientPlayerEvents {
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
         if (event.side.isClient() && event.phase == TickEvent.Phase.END && event.player == Minecraft.getInstance().player) {
-            var level = Minecraft.getInstance().level;
+            ClientWorld level = Minecraft.getInstance().level;
 
             ClientMagicData.getCooldowns().tick(1);
             if (ClientMagicData.getCastDuration() > 0) {
@@ -56,7 +58,7 @@ public class ClientPlayerEvents {
                 List<Entity> spellcasters = level.getEntities((Entity) null, event.player.getBoundingBox().inflate(64), (mob) -> mob instanceof PlayerEntity || mob instanceof AbstractSpellCastingMob);
                 spellcasters.forEach((entity) -> {
                     LivingEntity livingEntity = (LivingEntity) entity;
-                    var spellData = ClientMagicData.getSyncedSpellData(livingEntity);
+                    SyncedSpellData spellData = ClientMagicData.getSyncedSpellData(livingEntity);
                     /*
                     Status Effect Visuals
                      */
@@ -88,14 +90,14 @@ public class ClientPlayerEvents {
 
     @SubscribeEvent
     public static void beforeLivingRender(RenderLivingEvent.Pre<? extends LivingEntity, ? extends EntityModel<? extends LivingEntity>> event) {
-        var player = Minecraft.getInstance().player;
+        ClientPlayerEntity player = Minecraft.getInstance().player;
         if (player == null)
             return;
 
-        var livingEntity = event.getEntity();
+        LivingEntity livingEntity = event.getEntity();
         if (livingEntity instanceof PlayerEntity || livingEntity instanceof AbstractSpellCastingMob) {
 
-            var syncedData = ClientMagicData.getSyncedSpellData(livingEntity);
+            SyncedSpellData syncedData = ClientMagicData.getSyncedSpellData(livingEntity);
             if (syncedData.hasEffect(SyncedSpellData.TRUE_INVIS) && livingEntity.isInvisibleTo(player)) {
                 event.setCanceled(true);
             }
@@ -104,9 +106,9 @@ public class ClientPlayerEvents {
 
     @SubscribeEvent
     public static void afterLivingRender(RenderLivingEvent.Post<? extends LivingEntity, ? extends EntityModel<? extends LivingEntity>> event) {
-        var livingEntity = event.getEntity();
+        LivingEntity livingEntity = event.getEntity();
         if (livingEntity instanceof PlayerEntity) {
-            var syncedData = ClientMagicData.getSyncedSpellData(livingEntity);
+            SyncedSpellData syncedData = ClientMagicData.getSyncedSpellData(livingEntity);
             if (syncedData.isCasting()) {
                 SpellRenderingHelper.renderSpellHelper(syncedData, livingEntity, event.getMatrixStack(), event.getBuffers(), event.getPartialRenderTick());
             }
@@ -130,12 +132,12 @@ public class ClientPlayerEvents {
          */
 
         if (SpellData.getSpellData(stack) != SpellData.EMPTY) {
-            var player = Minecraft.getInstance().player;
+            ClientPlayerEntity player = Minecraft.getInstance().player;
             if (player == null)
                 return;
             //Scrolls take care of themselves
             if (!(stack.getItem() instanceof Scroll)) {
-                var additionalLines = TooltipsUtils.formatActiveSpellTooltip(stack, CastSource.SWORD, player);
+                List<ITextComponent> additionalLines = TooltipsUtils.formatActiveSpellTooltip(stack, CastSource.SWORD, player);
                 //Add header to sword tooltip
                 additionalLines.add(1, ITextComponent.translatable("tooltip.irons_spellbooks.imbued_tooltip").withStyle(TextFormatting.GRAY));
                 //Indent the title because we have an additional header
@@ -154,10 +156,11 @@ public class ClientPlayerEvents {
     @SubscribeEvent
     public static void customPotionTooltips(ItemTooltipEvent event) {
         ItemStack stack = event.getItemStack();
-        var mobEffects = PotionUtils.getMobEffects(stack);
+        List<EffectInstance> mobEffects = PotionUtils.getMobEffects(stack);
         if (mobEffects.size() > 0) {
             for (EffectInstance mobEffectInstance : mobEffects) {
-                if (mobEffectInstance.getEffect() instanceof CustomDescriptionMobEffect customDescriptionMobEffect) {
+                if (mobEffectInstance.getEffect() instanceof CustomDescriptionMobEffect) {
+                    CustomDescriptionMobEffect customDescriptionMobEffect = (CustomDescriptionMobEffect) mobEffectInstance.getEffect();
                     CustomDescriptionMobEffect.handleCustomPotionTooltip(stack, event.getToolTip(), event.getFlags().isAdvanced(), mobEffectInstance, customDescriptionMobEffect);
                 }
             }

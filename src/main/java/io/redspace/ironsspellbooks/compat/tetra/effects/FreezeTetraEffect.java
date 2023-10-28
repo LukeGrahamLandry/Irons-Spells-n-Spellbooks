@@ -37,9 +37,11 @@ public class FreezeTetraEffect {
         LivingEntity attackedEntity = event.getEntity();
         DamageSource source = event.getSource();
         Entity attacker = source.getEntity();
-        if (attacker instanceof LivingEntity livingAttacker) {
+        if (attacker instanceof LivingEntity) {
+            LivingEntity livingAttacker = (LivingEntity) attacker;
             ItemStack heldStack = livingAttacker.getMainHandItem();
-            if (heldStack.getItem() instanceof ModularItem item) {
+            if (heldStack.getItem() instanceof ModularItem) {
+                ModularItem item = (ModularItem) heldStack.getItem();
 
                 int level = item.getEffectLevel(heldStack, freezeOnHit);
                 if (level > 0) {

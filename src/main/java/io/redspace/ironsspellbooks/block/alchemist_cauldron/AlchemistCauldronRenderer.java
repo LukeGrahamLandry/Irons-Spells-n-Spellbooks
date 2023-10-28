@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import com.mojang.blaze3d.vertex.VertexFormat;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.Util;
@@ -43,9 +44,9 @@ public class AlchemistCauldronRenderer implements TileEntityRenderer<AlchemistCa
             renderWater(cauldron, poseStack, bufferSource, packedLight, waterOffset);
         }
 
-        var floatingItems = cauldron.inputItems;
+        NonNullList<ItemStack> floatingItems = cauldron.inputItems;
         for (int i = 0; i < floatingItems.size(); i++) {
-            var itemStack = floatingItems.get(i);
+            ItemStack itemStack = floatingItems.get(i);
             if (!itemStack.isEmpty()) {
                 float f = waterLevel > 0 ? cauldron.getLevel().getGameTime() + partialTick : 15;
                 Vector2f floatOffset = getFloatingItemOffset(f, i * 587);
@@ -83,7 +84,7 @@ public class AlchemistCauldronRenderer implements TileEntityRenderer<AlchemistCa
     private void renderWater(AlchemistCauldronTile cauldron, MatrixStack poseStack, IRenderTypeBuffer bufferSource, int packedLight, float waterOffset) {
         IVertexBuilder consumer = bufferSource.getBuffer(RenderType.beaconBeam(new ResourceLocation("textures/block/water_still.png"), true));
         long color = cauldron.getAverageWaterColor();
-        var rgb = colorFromLong(color);
+        Vector3f rgb = colorFromLong(color);
 
         Matrix4f pose = poseStack.last().pose();
         int frames = 32;

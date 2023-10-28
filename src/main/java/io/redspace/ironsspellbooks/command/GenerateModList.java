@@ -32,7 +32,7 @@ public class GenerateModList {
     }
 
     private static int generateModList(CommandSource source) throws CommandSyntaxException {
-        var sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
 
         sb.append("mod_id");
         sb.append(",");
@@ -67,8 +67,8 @@ public class GenerateModList {
         });
 
         try {
-            var file = new File("modlist.txt");
-            var writer = new BufferedWriter(new FileWriter(file));
+            File file = new File("modlist.txt");
+            BufferedWriter writer = new BufferedWriter(new FileWriter(file));
             writer.write(sb.toString());
             writer.close();
 

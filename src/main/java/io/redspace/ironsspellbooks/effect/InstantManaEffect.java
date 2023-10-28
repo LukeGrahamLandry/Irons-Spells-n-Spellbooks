@@ -45,7 +45,8 @@ public class InstantManaEffect extends CustomDescriptionMobEffect {
         MagicData pmg = MagicData.getPlayerMagicData(livingEntity);
         IronsSpellbooks.LOGGER.debug("old mana: {}", pmg.getMana());
         pmg.setMana(pmg.getMana() + manaAdd);
-        if (livingEntity instanceof ServerPlayerEntity serverPlayer) {
+        if (livingEntity instanceof ServerPlayerEntity) {
+            ServerPlayerEntity serverPlayer = (ServerPlayerEntity) livingEntity;
             Messages.sendToPlayer(new ClientboundSyncMana(pmg), serverPlayer);
         }
         IronsSpellbooks.LOGGER.debug("new mana: {}", pmg.getMana());

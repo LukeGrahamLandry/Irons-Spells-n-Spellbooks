@@ -71,8 +71,8 @@ public class SmallMagicFireball extends AbstractMagicProjectile implements IRend
     @Override
     protected void onHitEntity(EntityRayTraceResult pResult) {
         if (!this.level.isClientSide) {
-            var target = pResult.getEntity();
-            var owner = getOwner();
+            Entity target = pResult.getEntity();
+            Entity owner = getOwner();
             DamageSources.applyDamage(target, damage, SpellRegistry.BLAZE_STORM_SPELL.get().getDamageSource(this, owner));
         }
     }

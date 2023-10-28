@@ -28,7 +28,7 @@ public class CreateSpellBookCommand {
         var serverPlayer = source.getPlayer();
         if (serverPlayer != null) {
             ItemStack itemstack = new ItemStack(ItemRegistry.WIMPY_SPELL_BOOK.get());
-            var spellBookData = new SpellBookData(slots);
+            SpellBookData spellBookData = new SpellBookData(slots);
             SpellBookData.setSpellBookData(itemstack, spellBookData);
             if (serverPlayer.getInventory().add(itemstack)) {
                 return 1;

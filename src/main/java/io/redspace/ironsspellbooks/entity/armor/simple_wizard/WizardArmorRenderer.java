@@ -4,6 +4,7 @@ import io.redspace.ironsspellbooks.item.armor.WizardArmorItem;
 import net.minecraft.inventory.EquipmentSlotType;
 import software.bernie.geckolib3.core.processor.IBone;
 import software.bernie.geckolib3.geo.render.built.GeoBone;
+import software.bernie.geckolib3.model.AnimatedGeoModel;
 import software.bernie.geckolib3.renderers.geo.GeoArmorRenderer;
 import software.bernie.geckolib3.util.GeoUtils;
 
@@ -61,31 +62,32 @@ public class WizardArmorRenderer extends GeoArmorRenderer<WizardArmorItem> {
         setBoneVisibility(this.leggingTorsoLayer, false);
 
         switch (slot) {
-            case HEAD -> setBoneVisibility(this.headBone, true);
-            case CHEST -> {
+            case HEAD:
+                setBoneVisibility(this.headBone, true);
+                break;
+            case CHEST:
                 setBoneVisibility(this.bodyBone, true);
                 setBoneVisibility(this.rightArmBone, true);
                 setBoneVisibility(this.leftArmBone, true);
-            }
-            case LEGS -> {
+                break;
+            case LEGS:
                 setBoneVisibility(this.rightLegBone, true);
                 setBoneVisibility(this.leftLegBone, true);
                 setBoneVisibility(this.leggingTorsoLayer, true);
-
-            }
-            case FEET -> {
+                break;
+            case FEET:
                 setBoneVisibility(this.rightBootBone, true);
                 setBoneVisibility(this.leftBootBone, true);
-            }
-            default -> {
-            }
+                break;
+            default:
+                break;
         }
 
         return this;
     }
 
     private void ensureBone() {
-        var model = getGeoModelProvider();
+        AnimatedGeoModel<WizardArmorItem> model = getGeoModelProvider();
         if (!model.getAnimationProcessor().getModelRendererList().contains(leggingTorsoLayerBone))
             model.registerBone(leggingTorsoLayerBone);
     }

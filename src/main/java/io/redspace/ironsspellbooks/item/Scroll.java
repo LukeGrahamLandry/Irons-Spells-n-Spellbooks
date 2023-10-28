@@ -13,6 +13,7 @@ import io.redspace.ironsspellbooks.util.SpellbookModCreativeTabs;
 import io.redspace.ironsspellbooks.util.TooltipsUtils;
 import io.redspace.ironsspellbooks.api.util.Utils;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -49,7 +50,7 @@ public class Scroll extends Item implements IScroll {
                         int min = category == SpellbookModCreativeTabs.SPELL_EQUIPMENT_TAB ? spell.getMaxLevel() : spell.getMinLevel();
 
                         for (int i = min; i <= spell.getMaxLevel(); i++) {
-                            var itemstack = new ItemStack(ItemRegistry.SCROLL.get());
+                            ItemStack itemstack = new ItemStack(ItemRegistry.SCROLL.get());
                             SpellData.setSpellData(itemstack, spell, i);
                             items.add(itemstack);
                         }
@@ -65,7 +66,8 @@ public class Scroll extends Item implements IScroll {
 
     public static boolean attemptRemoveScrollAfterCast(ServerPlayerEntity serverPlayer) {
         ItemStack potentialScroll = MagicData.getPlayerMagicData(serverPlayer).getPlayerCastingItem();
-        if (potentialScroll.getItem() instanceof Scroll scroll) {
+        if (potentialScroll.getItem() instanceof Scroll) {
+            Scroll scroll = (Scroll) potentialScroll.getItem();
             scroll.removeScrollAfterCast(serverPlayer, potentialScroll);
             return true;
         } else
@@ -84,8 +86,8 @@ public class Scroll extends Item implements IScroll {
             }
         }
 
-        var spellData = SpellData.getSpellData(stack);
-        var spell = spellData.getSpell();
+        SpellData spellData = SpellData.getSpellData(stack);
+        AbstractSpell spell = spellData.getSpell();
 
         if (spell.attemptInitiateCast(stack, spellData.getLevel(), level, player, CastSource.SCROLL, false)) {
             if (spell.getCastType() == CastType.INSTANT) {
@@ -121,14 +123,14 @@ public class Scroll extends Item implements IScroll {
 
     @Override
     public @NotNull ITextComponent getName(@NotNull ItemStack itemStack) {
-        var scrollData = SpellData.getSpellData(itemStack);
+        SpellData scrollData = SpellData.getSpellData(itemStack);
         return scrollData.getDisplayName();
 
     }
 
     @Override
     public void appendHoverText(@NotNull ItemStack itemStack, @Nullable World level, List<ITextComponent> lines, @NotNull ITooltipFlag flag) {
-        var player = Minecraft.getInstance().player;
+        ClientPlayerEntity player = Minecraft.getInstance().player;
         if (player != null)
             lines.addAll(TooltipsUtils.formatScrollTooltip(itemStack, player));
         super.appendHoverText(itemStack, level, lines, flag);

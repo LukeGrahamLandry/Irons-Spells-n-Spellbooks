@@ -28,21 +28,21 @@ public class TooltipsUtils {
 
     public static List<ITextComponent> formatActiveSpellTooltip(ItemStack stack, CastSource castSource, @Nonnull ClientPlayerEntity player) {
         //var player = Minecraft.getInstance().player;
-        var spellData = stack.getItem() instanceof SpellBook ? SpellBookData.getSpellBookData(stack).getActiveSpell() : SpellData.getSpellData(stack); //Put me in utils?
-        var spell = spellData.getSpell();
+        SpellData spellData = stack.getItem() instanceof SpellBook ? SpellBookData.getSpellBookData(stack).getActiveSpell() : SpellData.getSpellData(stack); //Put me in utils?
+        AbstractSpell spell = spellData.getSpell();
 //        var title = Component.translatable("tooltip.irons_spellbooks.selected_spell",
 //                spellType.getDisplayName().withStyle(spellType.getSchoolType().getDisplayName().getStyle()),
 //                Component.literal("" + spell.getLevel()).withStyle(spellType.getRarity(spell.getLevel()).getDisplayName().getStyle()));
 //        var title = Component.translatable("tooltip.irons_spellbooks.selected_spell",
 //                spellType.getDisplayName().withStyle(spellType.getSchoolType().getDisplayName().getStyle()),
 //                Component.literal("" + spell.getLevel())).withStyle(spellType.getRarity(spell.getLevel()).getDisplayName().getStyle());
-        var levelText = getLevelComponenet(spellData, player);
+        IFormattableTextComponent levelText = getLevelComponenet(spellData, player);
 
         var title = ITextComponent.translatable("tooltip.irons_spellbooks.selected_spell",
                 spell.getDisplayName(),
                 levelText).withStyle(spell.getSchoolType().getDisplayName().getStyle());
-        var uniqueInfo = spell.getUniqueInfo(spellData.getLevel(), player);
-        var manaCost = getManaCostComponent(spell.getCastType(), spell.getManaCost(spellData.getLevel(), player)).withStyle(TextFormatting.BLUE);
+        List<IFormattableTextComponent> uniqueInfo = spell.getUniqueInfo(spellData.getLevel(), player);
+        IFormattableTextComponent manaCost = getManaCostComponent(spell.getCastType(), spell.getManaCost(spellData.getLevel(), player)).withStyle(TextFormatting.BLUE);
         var cooldownTime = ITextComponent.translatable("tooltip.irons_spellbooks.cooldown_length_seconds", Utils.timeFromTicks(MagicManager.getEffectiveSpellCooldown(spell, player, castSource), 1)).withStyle(TextFormatting.BLUE);
 
         List<ITextComponent> lines = new ArrayList<>();
@@ -60,18 +60,18 @@ public class TooltipsUtils {
     }
 
     public static List<ITextComponent> formatScrollTooltip(ItemStack stack, @Nonnull ClientPlayerEntity player) {
-        var spellData = SpellData.getSpellData(stack);
+        SpellData spellData = SpellData.getSpellData(stack);
 
         if (spellData.equals(SpellData.EMPTY)) {
             return List.of();
         }
 
-        var spell = spellData.getSpell();
-        var levelText = getLevelComponenet(spellData, player);
+        AbstractSpell spell = spellData.getSpell();
+        IFormattableTextComponent levelText = getLevelComponenet(spellData, player);
         var title = ITextComponent.translatable("tooltip.irons_spellbooks.level", levelText).append(" ").append(ITextComponent.translatable("tooltip.irons_spellbooks.rarity", spell.getRarity(spellData.getLevel()).getDisplayName()).withStyle(spell.getRarity(spellData.getLevel()).getDisplayName().getStyle())).withStyle(TextFormatting.GRAY);
-        var uniqueInfo = spell.getUniqueInfo(spellData.getLevel(), player);
+        List<IFormattableTextComponent> uniqueInfo = spell.getUniqueInfo(spellData.getLevel(), player);
         var whenInSpellBook = ITextComponent.translatable("tooltip.irons_spellbooks.scroll_tooltip").withStyle(TextFormatting.GRAY);
-        var manaCost = getManaCostComponent(spell.getCastType(), spell.getManaCost(spellData.getLevel(), player)).withStyle(TextFormatting.BLUE);
+        IFormattableTextComponent manaCost = getManaCostComponent(spell.getCastType(), spell.getManaCost(spellData.getLevel(), player)).withStyle(TextFormatting.BLUE);
         var cooldownTime = ITextComponent.translatable("tooltip.irons_spellbooks.cooldown_length_seconds", Utils.timeFromTicks(MagicManager.getEffectiveSpellCooldown(spell, player, CastSource.SCROLL), 1)).withStyle(TextFormatting.BLUE);
 
         List<ITextComponent> lines = new ArrayList<>();
@@ -100,11 +100,14 @@ public class TooltipsUtils {
     }
 
     public static IFormattableTextComponent getCastTimeComponent(CastType type, String castTime) {
-        return switch (type) {
-            case CONTINUOUS -> ITextComponent.translatable("tooltip.irons_spellbooks.cast_continuous", castTime);
-            case LONG -> ITextComponent.translatable("tooltip.irons_spellbooks.cast_long", castTime);
-            default -> ITextComponent.translatable("ui.irons_spellbooks.cast_instant");
-        };
+        switch (type) {
+            case CONTINUOUS:
+                return ITextComponent.translatable("tooltip.irons_spellbooks.cast_continuous", castTime);
+            case LONG:
+                return ITextComponent.translatable("tooltip.irons_spellbooks.cast_long", castTime);
+            default:
+                return ITextComponent.translatable("ui.irons_spellbooks.cast_instant");
+        }
     }
 
     public static IFormattableTextComponent getManaCostComponent(CastType castType, int manaCost) {
@@ -116,9 +119,9 @@ public class TooltipsUtils {
     }
 
     public static List<IReorderingProcessor> createSpellDescriptionTooltip(AbstractSpell spell, FontRenderer font) {
-        var name = spell.getDisplayName();
-        var description = font.split(ITextComponent.translatable(String.format("%s.guide", spell.getComponentId())).withStyle(TextFormatting.GRAY), 180);
-        var hoverText = new ArrayList<IReorderingProcessor>();
+        IFormattableTextComponent name = spell.getDisplayName();
+        List<IReorderingProcessor> description = font.split(ITextComponent.translatable(String.format("%s.guide", spell.getComponentId())).withStyle(TextFormatting.GRAY), 180);
+        ArrayList<IReorderingProcessor> hoverText = new ArrayList<IReorderingProcessor>();
         hoverText.add(IReorderingProcessor.forward(name.getString(), Style.EMPTY.withUnderlined(true)));
         hoverText.addAll(description);
         return hoverText;

@@ -12,6 +12,7 @@ import io.redspace.ironsspellbooks.player.ClientRenderCache;
 import io.redspace.ironsspellbooks.api.spells.AbstractSpell;
 import io.redspace.ironsspellbooks.util.TooltipsUtils;
 import io.redspace.ironsspellbooks.api.util.Utils;
+import net.minecraft.inventory.container.Slot;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -32,6 +33,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.vector.Vector2f;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class InscriptionTableScreen extends ContainerScreen<InscriptionTableMenu> {
     private static final ResourceLocation TEXTURE = new ResourceLocation(IronsSpellbooks.MODID, "textures/gui/inscription_table.png");
@@ -127,8 +129,10 @@ public class InscriptionTableScreen extends ContainerScreen<InscriptionTableMenu
     }
 
     private int getErrorCode() {
-        if (menu.getSpellBookSlot().getItem().getItem() instanceof SpellBook spellbook && menu.getScrollSlot().getItem().getItem() instanceof Scroll scroll) {
-            var spellData = SpellData.getSpellData(menu.getScrollSlot().getItem());
+        if (menu.getSpellBookSlot().getItem().getItem() instanceof SpellBook && menu.getScrollSlot().getItem().getItem() instanceof Scroll) {
+            SpellBook spellbook = (SpellBook) menu.getSpellBookSlot().getItem().getItem();
+            Scroll scroll = (Scroll) menu.getScrollSlot().getItem().getItem();
+            SpellData spellData = SpellData.getSpellData(menu.getScrollSlot().getItem());
             if (spellbook.getRarity().compareRarity(spellData.getSpell().getRarity(spellData.getLevel())) < 0)
                 return 1;
         }
@@ -150,7 +154,7 @@ public class InscriptionTableScreen extends ContainerScreen<InscriptionTableMenu
         Vector2f center = new Vector2f(SPELL_BG_X + leftPos + SPELL_BG_WIDTH / 2, SPELL_BG_Y + topPos + SPELL_BG_HEIGHT / 2);
 
         for (int i = 0; i < spellSlots.size(); i++) {
-            var spellSlot = spellSlots.get(i).button;
+            Button spellSlot = spellSlots.get(i).button;
             var pos = spellSlots.get(i).relativePosition.add(center);
             spellSlot.x = (int) pos.x;
             spellSlot.y = (int) pos.y;
@@ -205,15 +209,15 @@ public class InscriptionTableScreen extends ContainerScreen<InscriptionTableMenu
         int x = leftPos + LORE_PAGE_X;
         int y = topPos;
         int margin = 2;
-        var textColor = Style.EMPTY.withColor(0x322c2a);
+        Style textColor = Style.EMPTY.withColor(0x322c2a);
         //
         // Title
         //
         boolean spellSelected = selectedSpellIndex >= 0 && spellSlots.get(selectedSpellIndex).hasSpell();
-        var title = selectedSpellIndex < 0 ? ITextComponent.translatable("ui.irons_spellbooks.no_selection") : spellSelected ? spellSlots.get(selectedSpellIndex).spellData.getSpell().getDisplayName() : ITextComponent.translatable("ui.irons_spellbooks.empty_slot");
+        IFormattableTextComponent title = selectedSpellIndex < 0 ? ITextComponent.translatable("ui.irons_spellbooks.no_selection") : spellSelected ? spellSlots.get(selectedSpellIndex).spellData.getSpell().getDisplayName() : ITextComponent.translatable("ui.irons_spellbooks.empty_slot");
         //font.drawWordWrap(title.withStyle(ChatFormatting.UNDERLINE).withStyle(textColor), titleX, titleY, LORE_PAGE_WIDTH, 0xFFFFFF);
 
-        var titleLines = font.split(title.withStyle(TextFormatting.UNDERLINE).withStyle(textColor), LORE_PAGE_WIDTH);
+        List<IReorderingProcessor> titleLines = font.split(title.withStyle(TextFormatting.UNDERLINE).withStyle(textColor), LORE_PAGE_WIDTH);
         int titleY = topPos + 10;
 
         for (IReorderingProcessor line : titleLines) {
@@ -229,7 +233,7 @@ public class InscriptionTableScreen extends ContainerScreen<InscriptionTableMenu
             //increment y for next line
             titleY += font.lineHeight;
         }
-        var titleHeight = font.wordWrapHeight(title.withStyle(TextFormatting.UNDERLINE).withStyle(textColor), LORE_PAGE_WIDTH);
+        int titleHeight = font.wordWrapHeight(title.withStyle(TextFormatting.UNDERLINE).withStyle(textColor), LORE_PAGE_WIDTH);
         int descLine = /*y + titleHeight + font.lineHeight*/titleY + 4;
 
         if (selectedSpellIndex < 0 || !spellSlots.get(selectedSpellIndex).hasSpell()) {
@@ -239,11 +243,11 @@ public class InscriptionTableScreen extends ContainerScreen<InscriptionTableMenu
         //okay green color: 0x30bf30
         //good mana color:0x448fff)
         //var colorLevel = Style.EMPTY.withColor(ChatFormatting.LIGHT_PURPLE);
-        var colorMana = Style.EMPTY.withColor(0x0044a9);
-        var colorCast = Style.EMPTY.withColor(0x115511);
-        var colorCooldown = Style.EMPTY.withColor(0x115511);
-        var spell = spellSlots.get(selectedSpellIndex).spellData.getSpell();
-        var spellLevel = spellSlots.get(selectedSpellIndex).spellData.getLevel();
+        Style colorMana = Style.EMPTY.withColor(0x0044a9);
+        Style colorCast = Style.EMPTY.withColor(0x115511);
+        Style colorCooldown = Style.EMPTY.withColor(0x115511);
+        AbstractSpell spell = spellSlots.get(selectedSpellIndex).spellData.getSpell();
+        int spellLevel = spellSlots.get(selectedSpellIndex).spellData.getLevel();
         float textScale = 1f;
         float reverseScale = 1 / textScale;
 
@@ -326,10 +330,10 @@ public class InscriptionTableScreen extends ContainerScreen<InscriptionTableMenu
         if (!isSpellBookSlotted())
             return;
 
-        var spellBookSlot = menu.slots.get(SPELLBOOK_SLOT);
-        var spellBookItemStack = spellBookSlot.getItem();
-        var spellBookData = SpellBookData.getSpellBookData(spellBookItemStack);
-        var storedSpells = spellBookData.getInscribedSpells();
+        Slot spellBookSlot = menu.slots.get(SPELLBOOK_SLOT);
+        ItemStack spellBookItemStack = spellBookSlot.getItem();
+        SpellBookData spellBookData = SpellBookData.getSpellBookData(spellBookItemStack);
+        SpellData[] storedSpells = spellBookData.getInscribedSpells();
 
         int spellCount = spellBookData.getSpellSlots();
         if (spellCount > 15) {
@@ -382,9 +386,9 @@ public class InscriptionTableScreen extends ContainerScreen<InscriptionTableMenu
 
     private void onSpellBookSlotChanged() {
         isDirty = true;
-        var spellBookStack = menu.slots.get(SPELLBOOK_SLOT).getItem();
+        ItemStack spellBookStack = menu.slots.get(SPELLBOOK_SLOT).getItem();
         if (spellBookStack.getItem() instanceof SpellBook) {
-            var spellBookData = SpellBookData.getSpellBookData(spellBookStack);
+            SpellBookData spellBookData = SpellBookData.getSpellBookData(spellBookStack);
             if (spellBookData.getSpellSlots() <= selectedSpellIndex) {
                 resetSelectedSpell();
             }
@@ -398,14 +402,16 @@ public class InscriptionTableScreen extends ContainerScreen<InscriptionTableMenu
         //  Called when inscription button clicked
         //
 
-        if (menu.getSpellBookSlot().getItem().getItem() instanceof SpellBook spellBook && menu.getScrollSlot().getItem().getItem() instanceof Scroll scroll) {
+        if (menu.getSpellBookSlot().getItem().getItem() instanceof SpellBook && menu.getScrollSlot().getItem().getItem() instanceof Scroll) {
+            SpellBook spellBook = (SpellBook) menu.getSpellBookSlot().getItem().getItem();
+            Scroll scroll = (Scroll) menu.getScrollSlot().getItem().getItem();
 
             //  Is the spell book bricked?
             if (spellSlots.size() <= 0)
                 return;
 
             //  Is the spellbook a high enough rarity?
-            var spellData = SpellData.getSpellData(menu.getScrollSlot().getItem());
+            SpellData spellData = SpellData.getSpellData(menu.getScrollSlot().getItem());
             if (spellBook.getRarity().compareRarity(spellData.getSpell().getRarity(spellData.getLevel())) < 0)
                 return;
 

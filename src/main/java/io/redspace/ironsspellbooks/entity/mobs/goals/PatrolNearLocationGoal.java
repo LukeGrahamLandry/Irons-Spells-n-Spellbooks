@@ -21,7 +21,7 @@ public class PatrolNearLocationGoal extends WaterAvoidingRandomWalkingGoal {
     @Nullable
     @Override
     protected Vector3d getPosition() {
-        var f = super.getPosition();
+        Vector3d f = super.getPosition();
         //IronsSpellbooks.LOGGER.debug("PatrolNearLocationGoal origin: {}", origin.resolve().get());
         if (mob.position().horizontalDistanceSqr() > radiusSqr)
             f = LandRandomPos.getPosTowards(mob, 8, 4, origin.resolve().get());

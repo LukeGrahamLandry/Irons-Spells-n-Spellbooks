@@ -73,7 +73,7 @@ public class SyncedSpellData {
         }
 
         public SyncedSpellData read(PacketBuffer buffer) {
-            var data = new SyncedSpellData(buffer.readInt());
+            SyncedSpellData data = new SyncedSpellData(buffer.readInt());
             data.isCasting = buffer.readBoolean();
             data.castingSpellId = buffer.readUtf();
             data.castingSpellLevel = buffer.readInt();
@@ -178,10 +178,12 @@ public class SyncedSpellData {
     }
 
     public void doSync() {
-        if (livingEntity instanceof ServerPlayerEntity serverPlayer) {
+        if (livingEntity instanceof ServerPlayerEntity) {
+            ServerPlayerEntity serverPlayer = (ServerPlayerEntity) livingEntity;
             Messages.sendToPlayer(new ClientboundSyncPlayerData(this), serverPlayer);
             Messages.sendToPlayersTrackingEntity(new ClientboundSyncPlayerData(this), serverPlayer);
-        } else if (livingEntity instanceof AbstractSpellCastingMob abstractSpellCastingMob) {
+        } else if (livingEntity instanceof AbstractSpellCastingMob) {
+            AbstractSpellCastingMob abstractSpellCastingMob = (AbstractSpellCastingMob) livingEntity;
             Messages.sendToPlayersTrackingEntity(new ClientboundSyncEntityData(this, abstractSpellCastingMob), abstractSpellCastingMob);
         }
     }

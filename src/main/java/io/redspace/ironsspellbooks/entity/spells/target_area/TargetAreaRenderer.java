@@ -16,6 +16,7 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.vector.Vector3f;
 
 public class TargetAreaRenderer extends EntityRenderer<TargetedAreaEntity> {
     public TargetAreaRenderer(EntityRendererProvider.Context pContext) {
@@ -31,7 +32,7 @@ public class TargetAreaRenderer extends EntityRenderer<TargetedAreaEntity> {
     public void render(TargetedAreaEntity entity, float pEntityYaw, float pPartialTick, MatrixStack poseStack, IRenderTypeBuffer bufferSource, int light) {
 
         IVertexBuilder consumer = bufferSource.getBuffer(RenderType.energySwirl(SpellRenderingHelper.SOLID, 0, 0));
-        var color = entity.getColor();
+        Vector3f color = entity.getColor();
         poseStack.pushPose();
         MatrixStack.Entry pose = poseStack.last();
         Matrix4f poseMatrix = pose.pose();

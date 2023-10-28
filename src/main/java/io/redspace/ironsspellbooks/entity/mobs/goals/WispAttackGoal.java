@@ -19,7 +19,7 @@ public class WispAttackGoal extends Goal {
      * method as well.
      */
     public boolean canUse() {
-        var livingentity = this.wisp.getTarget();
+        LivingEntity livingentity = this.wisp.getTarget();
         if (livingentity != null && livingentity.isAlive()) {
             this.target = livingentity;
             //irons_spellbooks.LOGGER.debug("WizardAttackGoal.canuse: target:{}", target.getName().getString());
@@ -53,7 +53,7 @@ public class WispAttackGoal extends Goal {
     public void tick() {
         double distanceSquared = this.target.distanceToSqr(this.target.getX(), this.target.getY(), this.target.getZ());
         boolean hasLineOfSight = this.wisp.getSensing().hasLineOfSight(this.target);
-        var moveResult = this.wisp.getNavigation().moveTo(target.getX(), target.getY(), target.getZ(), this.speedModifier);
+        boolean moveResult = this.wisp.getNavigation().moveTo(target.getX(), target.getY(), target.getZ(), this.speedModifier);
 
         //irons_spellbooks.LOGGER.debug("WispAttackGoal.tick: moveResult:{}, hasLineOfSight:{}", moveResult, hasLineOfSight);
 

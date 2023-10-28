@@ -215,7 +215,7 @@ public class VoidTentacle extends LivingEntity implements IAnimatable, AntiMagic
 
     private PlayState animationPredicate(AnimationEvent event) {
         //if (age >= getDelay()) {
-        var controller = event.getController();
+        AnimationController controller = event.getController();
         //if (controller.getAnimationState() == AnimationState.Stopped) {
         //}
         //IronsSpellbooks.LOGGER.debug("TentacleAnimOffset: {}", controller.tickOffset);
@@ -226,9 +226,15 @@ public class VoidTentacle extends LivingEntity implements IAnimatable, AntiMagic
             int animation = random.nextInt(3);
             //IronsSpellbooks.LOGGER.debug("Choosing new animation ({})", animation);
             switch (animation) {
-                case 0 -> controller.setAnimation(ANIMATION_FLAIL);
-                case 1 -> controller.setAnimation(ANIMATION_FLAIL2);
-                case 2 -> controller.setAnimation(ANIMATION_FLAIL3);
+                case 0:
+                    controller.setAnimation(ANIMATION_FLAIL);
+                    break;
+                case 1:
+                    controller.setAnimation(ANIMATION_FLAIL2);
+                    break;
+                case 2:
+                    controller.setAnimation(ANIMATION_FLAIL3);
+                    break;
             }
         }
 
@@ -240,7 +246,7 @@ public class VoidTentacle extends LivingEntity implements IAnimatable, AntiMagic
 
     private PlayState risePredicate(AnimationEvent event) {
         //if (age >= getDelay()) {
-        var controller = event.getController();
+        AnimationController controller = event.getController();
         //if (controller.getAnimationState() == AnimationState.Stopped) {
         //}
         //IronsSpellbooks.LOGGER.debug("TentacleAnimOffset: {}", controller.tickOffset);

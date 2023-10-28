@@ -12,6 +12,7 @@ import io.redspace.ironsspellbooks.util.Log;
 import io.redspace.ironsspellbooks.api.util.Utils;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.particles.ParticleTypes;
+import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.ResourceLocation;
@@ -75,11 +76,11 @@ public class TeleportSpell extends AbstractSpell {
         if (Log.SPELL_DEBUG) {
             IronsSpellbooks.LOGGER.debug("TeleportSpell.onCast isClient:{}, entity:{}, pmd:{}", level.isClientSide, entity, playerMagicData);
         }
-        var teleportData = (TeleportData) playerMagicData.getAdditionalCastData();
+        TeleportData teleportData = (TeleportData) playerMagicData.getAdditionalCastData();
 
         Vector3d dest = null;
         if (teleportData != null) {
-            var potentialTarget = teleportData.getTeleportTargetPosition();
+            Vector3d potentialTarget = teleportData.getTeleportTargetPosition();
             if (potentialTarget != null) {
                 dest = potentialTarget;
             }
@@ -109,8 +110,8 @@ public class TeleportSpell extends AbstractSpell {
             IronsSpellbooks.LOGGER.debug("TeleportSpell.findTeleportLocation isClient:{}, entity:{}", level.isClientSide, entity);
         }
 
-        var blockHitResult = Utils.getTargetBlock(level, entity, RayTraceContext.FluidMode.NONE, maxDistance);
-        var pos = blockHitResult.getBlockPos();
+        BlockRayTraceResult blockHitResult = Utils.getTargetBlock(level, entity, RayTraceContext.FluidMode.NONE, maxDistance);
+        BlockPos pos = blockHitResult.getBlockPos();
 
         Vector3d bbOffset = entity.getForward().normalize().multiply(entity.getBbWidth() / 3, 0, entity.getBbHeight() / 3);
         Vector3d bbImpact = blockHitResult.getLocation().subtract(bbOffset);

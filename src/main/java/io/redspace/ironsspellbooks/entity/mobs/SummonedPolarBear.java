@@ -161,7 +161,8 @@ public class SummonedPolarBear extends PolarBearEntity implements MagicSummon {
     @Override
     public void travel(Vector3d pTravelVector) {
         Entity conductor = this.getControllingPassenger();
-        if (this.isVehicle() && conductor instanceof LivingEntity livingEntity) {
+        if (this.isVehicle() && conductor instanceof LivingEntity) {
+            LivingEntity livingEntity = (LivingEntity) conductor;
             this.yRotO = this.yRot;
             this.setYRot(livingEntity.yRot);
             this.setXRot(livingEntity.xRot);

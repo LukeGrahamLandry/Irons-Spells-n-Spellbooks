@@ -89,7 +89,7 @@ public class RaiseDeadSpell extends AbstractSpell {
         float radius = 1.5f + .185f * level;
         for (int i = 0; i < level; i++) {
             boolean isSkeleton = Utils.random.nextDouble() < .3;
-            var equipment = getEquipment(getSpellPower(spellLevel, entity), Utils.random);
+            ItemStack[] equipment = getEquipment(getSpellPower(spellLevel, entity), Utils.random);
 
             MonsterEntity undead = isSkeleton ? new SummonedSkeleton(world, entity, true) : new SummonedZombie(world, entity, true);
             undead.finalizeSpawn((ServerWorld) world, world.getCurrentDifficultyAt(undead.getOnPos()), SpawnReason.MOB_SUMMONED, null, null);

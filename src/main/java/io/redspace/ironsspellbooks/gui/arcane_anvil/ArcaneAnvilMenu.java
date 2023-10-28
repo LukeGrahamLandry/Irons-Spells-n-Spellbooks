@@ -67,8 +67,8 @@ public class ArcaneAnvilMenu extends AbstractRepairContainer {
         if (!baseItemStack.isEmpty() && !modifierItemStack.isEmpty()) {
             //Scroll Merging
             if (baseItemStack.getItem() instanceof Scroll && modifierItemStack.getItem() instanceof Scroll) {
-                var spellData1 = SpellData.getSpellData(baseItemStack);
-                var spellData2 = SpellData.getSpellData(modifierItemStack);
+                SpellData spellData1 = SpellData.getSpellData(baseItemStack);
+                SpellData spellData2 = SpellData.getSpellData(modifierItemStack);
                 if (spellData1.equals(spellData2)) {
                     if (spellData1.getLevel() < ServerConfigs.getSpellConfig(spellData1.getSpell()).maxLevel()) {
                         result = new ItemStack(ItemRegistry.SCROLL.get());
@@ -80,11 +80,12 @@ public class ArcaneAnvilMenu extends AbstractRepairContainer {
             //Weapon Imbuement
             else if (Utils.canImbue(baseItemStack) && modifierItemStack.getItem() instanceof Scroll) {
                 result = baseItemStack.copy();
-                var scrollData = SpellData.getSpellData(modifierItemStack);
+                SpellData scrollData = SpellData.getSpellData(modifierItemStack);
                 SpellData.setSpellData(result, scrollData);
             }
             //Upgrade System
-            else if (Utils.canBeUpgraded(baseItemStack) && UpgradeData.getUpgradeData(baseItemStack).getCount() < ServerConfigs.MAX_UPGRADES.get() && modifierItemStack.getItem() instanceof UpgradeOrbItem upgradeOrb) {
+            else if (Utils.canBeUpgraded(baseItemStack) && UpgradeData.getUpgradeData(baseItemStack).getCount() < ServerConfigs.MAX_UPGRADES.get() && modifierItemStack.getItem() instanceof UpgradeOrbItem) {
+                UpgradeOrbItem upgradeOrb = (UpgradeOrbItem) modifierItemStack.getItem();
                 result = baseItemStack.copy();
                 EquipmentSlotType slot = UpgradeUtils.getRelevantEquipmentSlot(result);
                 UpgradeData.getUpgradeData(result).addUpgrade(result, upgradeOrb.getUpgradeType(), slot) ;

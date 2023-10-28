@@ -80,7 +80,7 @@ public class SpellTargetingLayer {
         float height = (float) aabb.getYsize();
         float halfWidth = width * .55f;
         float magicYOffset = (float) (1.5 - height);
-        var color = getColor(ClientMagicData.getTargetingData().spellId);
+        Vector3f color = getColor(ClientMagicData.getTargetingData().spellId);
         color.mul(.4f);
         poseStack.pushPose();
         poseStack.translate(0, magicYOffset, 0);

@@ -10,6 +10,7 @@ import io.redspace.ironsspellbooks.api.spells.SpellRarity;
 import io.redspace.ironsspellbooks.util.SpellbookModCreativeTabs;
 import io.redspace.ironsspellbooks.util.TooltipsUtils;
 import io.redspace.ironsspellbooks.api.util.Utils;
+import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.text.ITextComponent;
@@ -59,7 +60,7 @@ public class SpellBook extends Item implements ISpellbook {
     @Override
     public ActionResult<ItemStack> use(World level, PlayerEntity player, Hand hand) {
         ItemStack itemStack = player.getItemInHand(hand);
-        var spellBookData = SpellBookData.getSpellBookData(itemStack);
+        SpellBookData spellBookData = SpellBookData.getSpellBookData(itemStack);
         SpellData spellData = spellBookData.getActiveSpell();
 
         if (spellData.equals(SpellData.EMPTY)) {
@@ -123,7 +124,7 @@ public class SpellBook extends Item implements ISpellbook {
         }
         lines.add(ITextComponent.translatable("tooltip.irons_spellbooks.spellbook_spell_count", this.spellSlots).withStyle(TextFormatting.GRAY));
 
-        var player = Minecraft.getInstance().player;
+        ClientPlayerEntity player = Minecraft.getInstance().player;
         if (player != null && !SpellBookData.getSpellBookData(itemStack).getActiveSpell().equals(SpellData.EMPTY)) {
             lines.addAll(TooltipsUtils.formatActiveSpellTooltip(itemStack, CastSource.SPELLBOOK, player));
         }

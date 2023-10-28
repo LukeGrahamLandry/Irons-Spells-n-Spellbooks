@@ -27,7 +27,8 @@ public class PriestModel extends AbstractSpellCastingMobModel {
     @Override
     public void setCustomAnimations(AbstractSpellCastingMob entity, int instanceId, AnimationEvent animationEvent) {
         super.setCustomAnimations(entity, instanceId, animationEvent);
-        if (entity instanceof PriestEntity priest && priest.isUnhappy()) {
+        if (entity instanceof PriestEntity && ((PriestEntity) entity).isUnhappy()) {
+            PriestEntity priest = (PriestEntity) entity;
             if (Minecraft.getInstance().isPaused() || !entity.shouldBeExtraAnimated())
                 return;
             IBone head = this.getAnimationProcessor().getBone(PartNames.HEAD);

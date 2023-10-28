@@ -86,7 +86,8 @@ public class FireflySwarmSpell extends AbstractSpell {
         Vector3d spawn = null;
         Entity target = null;
 
-        if (playerMagicData.getAdditionalCastData() instanceof CastTargetingData castTargetingData) {
+        if (playerMagicData.getAdditionalCastData() instanceof CastTargetingData) {
+            CastTargetingData castTargetingData = (CastTargetingData) playerMagicData.getAdditionalCastData();
             spawn = castTargetingData.getTargetPosition((ServerWorld) level);
             target = castTargetingData.getTarget((ServerWorld) level);
         }

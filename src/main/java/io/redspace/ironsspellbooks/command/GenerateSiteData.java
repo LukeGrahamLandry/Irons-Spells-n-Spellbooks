@@ -11,6 +11,7 @@ import io.redspace.ironsspellbooks.api.item.weapons.ExtendedSwordItem;
 import io.redspace.ironsspellbooks.registries.ItemRegistry;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -110,12 +111,12 @@ public class GenerateSiteData {
 
     private static void generateRecipeData(CommandSource source) {
         try {
-            var itemBuilder = new StringBuilder();
-            var armorBuilder = new StringBuilder();
-            var spellbookBuilder = new StringBuilder();
-            var blockBuilder = new StringBuilder();
+            StringBuilder itemBuilder = new StringBuilder();
+            StringBuilder armorBuilder = new StringBuilder();
+            StringBuilder spellbookBuilder = new StringBuilder();
+            StringBuilder blockBuilder = new StringBuilder();
 
-            var armorTypes = List.of("Archevoker", "Cryomancer", "Cultist", "Electromancer", "Priest", "Pumpkin", "Pyromancer", "Shadow-Walker", "Wandering Magician", "Ring", "Heavy Chain", "Scarecrow", "Plagued");
+            List<String> armorTypes = List.of("Archevoker", "Cryomancer", "Cultist", "Electromancer", "Priest", "Pumpkin", "Pyromancer", "Shadow-Walker", "Wandering Magician", "Ring", "Heavy Chain", "Scarecrow", "Plagued");
             Set<Item> itemsTracked = new HashSet<>();
             //This will exclude these items
             itemsTracked.add(ItemRegistry.WIMPY_SPELL_BOOK.get());
@@ -130,8 +131,8 @@ public class GenerateSiteData {
                         //IronsSpellbooks.LOGGER.debug("recipe: {}, {}, {}", recipe.getId(), recipe.getClass(), recipe.getType());
                         //IronsSpellbooks.LOGGER.debug("recipe: resultItem: {}", ForgeRegistries.ITEMS.getKey(recipe.getResultItem().getItem()));
 
-                        var resultItemResourceLocation = ForgeRegistries.ITEMS.getKey(recipe.getResultItem().getItem());
-                        var recipeData = new ArrayList<RecipeData>(10);
+                        ResourceLocation resultItemResourceLocation = ForgeRegistries.ITEMS.getKey(recipe.getResultItem().getItem());
+                        ArrayList<RecipeData> recipeData = new ArrayList<RecipeData>(10);
                         recipeData.add(new RecipeData(
                                 resultItemResourceLocation.toString(),
                                 recipe.getResultItem().getItem().getName(ItemStack.EMPTY).getString(),
@@ -145,19 +146,20 @@ public class GenerateSiteData {
                             recipe.getIngredients().forEach(ingredient -> {
                                 handleIngeredient(ingredient, recipeData, recipe);
                             });
-                        } else if (recipe instanceof SmithingRecipe upgradeRecipe) {
+                        } else if (recipe instanceof SmithingRecipe) {
+                            SmithingRecipe upgradeRecipe = (SmithingRecipe) recipe;
                             handleIngeredient(upgradeRecipe.base, recipeData, recipe);
                             handleIngeredient(upgradeRecipe.addition, recipeData, recipe);
                         }
 
-                        var name = getRecipeDataAtIndex(recipeData, 0).name;
-                        var tooltip = getTooltip(source.getPlayer(), recipe.getResultItem());
+                        String name = getRecipeDataAtIndex(recipeData, 0).name;
+                        String tooltip = getTooltip(source.getPlayer(), recipe.getResultItem());
 
                         if (getRecipeDataAtIndex(recipeData, 0).item instanceof SpellBook || getRecipeDataAtIndex(recipeData, 0).item instanceof ExtendedSwordItem) {
                             appendToBuilder(spellbookBuilder, recipe, recipeData, "", tooltip);
                         } else if (armorTypes.stream().anyMatch(item -> name.contains(item))) {
-                            var words = name.split(" ");
-                            var group = Arrays.stream(words).limit(words.length - 1).collect(Collectors.joining(" "));
+                            String[] words = name.split(" ");
+                            String group = Arrays.stream(words).limit(words.length - 1).collect(Collectors.joining(" "));
                             appendToBuilder(armorBuilder, recipe, recipeData, group, tooltip);
                         } else if (recipe.getResultItem().getItem() instanceof BlockItem) {
                             appendToBuilder(blockBuilder, recipe, recipeData, "", tooltip);
@@ -170,12 +172,12 @@ public class GenerateSiteData {
                     .stream()
                     .sorted(Comparator.comparing(Item::getDescriptionId))
                     .forEach(item -> {
-                        var itemResource = ForgeRegistries.ITEMS.getKey(item);
-                        var tooltip = getTooltip(source.getPlayer(), new ItemStack(item));
+                        ResourceLocation itemResource = ForgeRegistries.ITEMS.getKey(item);
+                        String tooltip = getTooltip(source.getPlayer(), new ItemStack(item));
 
                         if (itemResource.toString().contains("irons_spellbooks") && !itemsTracked.contains(item)) {
                             //Non craftable items
-                            var name = item.getName(ItemStack.EMPTY).getString();
+                            String name = item.getName(ItemStack.EMPTY).getString();
                             if (item.getDescriptionId().contains("spawn_egg") || item.getDescriptionId().equals("item.irons_spellbooks.scroll")) {
                                 //Skip
                             } else if (armorTypes.stream().anyMatch(itemToMatch -> name.contains(itemToMatch))) {
@@ -194,7 +196,7 @@ public class GenerateSiteData {
                         }
                     });
 
-            var file = new BufferedWriter(new FileWriter("item_data.yml"));
+            BufferedWriter file = new BufferedWriter(new FileWriter("item_data.yml"));
             file.write(postProcess(itemBuilder));
             file.close();
 
@@ -305,8 +307,8 @@ public class GenerateSiteData {
         Arrays.stream(ingredient.getItems())
                 .findFirst()
                 .ifPresentOrElse(itemStack -> {
-                    var itemResource = ForgeRegistries.ITEMS.getKey(itemStack.getItem());
-                    var path = "";
+                    ResourceLocation itemResource = ForgeRegistries.ITEMS.getKey(itemStack.getItem());
+                    String path = "";
 
                     if (itemResource.toString().contains("irons_spellbooks")) {
                         path = String.format("/img/items/%s.png", itemResource.getPath());
@@ -333,25 +335,78 @@ public class GenerateSiteData {
         }
     }
 
-    private record RecipeData(String id, String name, String path, Item item) {
-        public static RecipeData EMPTY = new RecipeData("", "", "", null);
-    }
+    private static final class RecipeData {
+            public static RecipeData EMPTY = new RecipeData("", "", "", null);
+        private final String id;
+        private final String name;
+        private final String path;
+        private final Item item;
+
+        private RecipeData(String id, String name, String path, Item item) {
+            this.id = id;
+            this.name = name;
+            this.path = path;
+            this.item = item;
+        }
+
+        public String id() {
+            return id;
+        }
+
+        public String name() {
+            return name;
+        }
+
+        public String path() {
+            return path;
+        }
+
+        public Item item() {
+            return item;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == this) return true;
+            if (obj == null || obj.getClass() != this.getClass()) return false;
+            var that = (RecipeData) obj;
+            return Objects.equals(this.id, that.id) &&
+                    Objects.equals(this.name, that.name) &&
+                    Objects.equals(this.path, that.path) &&
+                    Objects.equals(this.item, that.item);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(id, name, path, item);
+        }
+
+        @Override
+        public String toString() {
+            return "RecipeData[" +
+                    "id=" + id + ", " +
+                    "name=" + name + ", " +
+                    "path=" + path + ", " +
+                    "item=" + item + ']';
+        }
+
+        }
 
     private static void generateSpellData() {
         try {
-            var sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
 
             SpellRegistry.REGISTRY.get().getValues().stream()
                     .filter(st -> (st.isEnabled() && st != SpellRegistry.none()))
                     .forEach(spellType -> {
-                        var spellMin = spellType.getMinLevel();
-                        var spellMax = spellType.getMaxLevel();
+                        int spellMin = spellType.getMinLevel();
+                        int spellMax = spellType.getMaxLevel();
 
-                        var uniqueInfo = spellType.getUniqueInfo(spellMin, null);
-                        var u1 = uniqueInfo.size() >= 1 ? uniqueInfo.get(0).getString() : "";
-                        var u2 = uniqueInfo.size() >= 2 ? uniqueInfo.get(1).getString() : "";
-                        var u3 = uniqueInfo.size() >= 3 ? uniqueInfo.get(2).getString() : "";
-                        var u4 = uniqueInfo.size() >= 4 ? uniqueInfo.get(3).getString() : "";
+                        List<IFormattableTextComponent> uniqueInfo = spellType.getUniqueInfo(spellMin, null);
+                        String u1 = uniqueInfo.size() >= 1 ? uniqueInfo.get(0).getString() : "";
+                        String u2 = uniqueInfo.size() >= 2 ? uniqueInfo.get(1).getString() : "";
+                        String u3 = uniqueInfo.size() >= 3 ? uniqueInfo.get(2).getString() : "";
+                        String u4 = uniqueInfo.size() >= 4 ? uniqueInfo.get(3).getString() : "";
 
                         sb.append(String.format(SPELL_DATA_TEMPLATE,
                                 handleCapitalization(spellType.getSpellName()),
@@ -373,7 +428,7 @@ public class GenerateSiteData {
                         );
                     });
 
-            var file = new BufferedWriter(new FileWriter("spell_data.yml"));
+            BufferedWriter file = new BufferedWriter(new FileWriter("spell_data.yml"));
             file.write(sb.toString());
             file.close();
         } catch (Exception e) {
@@ -387,8 +442,8 @@ public class GenerateSiteData {
                     if (word.equals("spell")) {
                         return "";
                     } else {
-                        var first = word.substring(0, 1);
-                        var rest = word.substring(1);
+                        String first = word.substring(0, 1);
+                        String rest = word.substring(1);
                         return first.toUpperCase() + rest;
                     }
                 })

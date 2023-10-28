@@ -107,19 +107,19 @@ public class ArcaneAnvilRecipeCategory implements IRecipeCategory<ArcaneAnvilRec
         if (leftStack.get().getItem() instanceof Scroll
                 && rightStack.get().getItem() instanceof Scroll
                 && outputStack.get().getItem() instanceof Scroll) {
-            var minecraft = Minecraft.getInstance();
+            Minecraft minecraft = Minecraft.getInstance();
             drawScrollInfo(minecraft, poseStack, leftStack.get(), outputStack.get());
         }
     }
 
     private void drawScrollInfo(Minecraft minecraft, MatrixStack poseStack, ItemStack leftStack, ItemStack outputStack) {
-        var inputSpellData = SpellData.getSpellData(leftStack);
-        var inputText = String.format("L%d", inputSpellData.getLevel());
-        var inputColor = inputSpellData.getSpell().getRarity(inputSpellData.getLevel()).getChatFormatting().getColor().intValue();
+        SpellData inputSpellData = SpellData.getSpellData(leftStack);
+        String inputText = String.format("L%d", inputSpellData.getLevel());
+        int inputColor = inputSpellData.getSpell().getRarity(inputSpellData.getLevel()).getChatFormatting().getColor().intValue();
 
-        var outputSpellData = SpellData.getSpellData(outputStack);
-        var outputText = String.format("L%d", outputSpellData.getLevel());
-        var outputColor = outputSpellData.getSpell().getRarity(outputSpellData.getLevel()).getChatFormatting().getColor().intValue();
+        SpellData outputSpellData = SpellData.getSpellData(outputStack);
+        String outputText = String.format("L%d", outputSpellData.getLevel());
+        int outputColor = outputSpellData.getSpell().getRarity(outputSpellData.getLevel()).getChatFormatting().getColor().intValue();
 
         int y = (getHeight() / 2) + (paddingBottom / 2) + (minecraft.font.lineHeight / 2) - 4;
 

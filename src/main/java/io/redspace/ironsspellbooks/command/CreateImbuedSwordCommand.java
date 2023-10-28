@@ -7,6 +7,7 @@ import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import io.redspace.ironsspellbooks.IronsSpellbooks;
 import io.redspace.ironsspellbooks.api.registry.SpellRegistry;
+import io.redspace.ironsspellbooks.api.spells.AbstractSpell;
 import io.redspace.ironsspellbooks.capabilities.spell.SpellData;
 //import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandBuildContext;
@@ -21,6 +22,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.SwordItem;
 
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class CreateImbuedSwordCommand {
@@ -28,7 +30,7 @@ public class CreateImbuedSwordCommand {
     private static final SimpleCommandExceptionType ERROR_FAILED = new SimpleCommandExceptionType(ITextComponent.translatable("commands.irons_spellbooks.create_imbued_sword.failed"));
 
     private static final SuggestionProvider<CommandSource> SWORD_SUGGESTIONS = (p_180253_, p_180254_) -> {
-        var resources = Registry.ITEM.stream().filter((k) -> k instanceof SwordItem).map(Registry.ITEM::getKey).collect(Collectors.toSet());
+        Set<ResourceLocation> resources = Registry.ITEM.stream().filter((k) -> k instanceof SwordItem).map(Registry.ITEM::getKey).collect(Collectors.toSet());
         return ISuggestionProvider.suggestResource(resources, p_180254_);
     };
 
@@ -48,7 +50,7 @@ public class CreateImbuedSwordCommand {
             spell = IronsSpellbooks.MODID + ":" + spell;
         }
 
-        var abstractSpell = SpellRegistry.REGISTRY.get().getValue(new ResourceLocation(spell));
+        AbstractSpell abstractSpell = SpellRegistry.REGISTRY.get().getValue(new ResourceLocation(spell));
 
         if (spellLevel > abstractSpell.getMaxLevel()) {
             throw new SimpleCommandExceptionType(ITextComponent.translatable("commands.irons_spellbooks.create_spell.failed_max_level", abstractSpell.getSpellName(), abstractSpell.getMaxLevel())).create();

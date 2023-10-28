@@ -3,6 +3,7 @@ package io.redspace.ironsspellbooks.entity.mobs.goals;
 import io.redspace.ironsspellbooks.api.magic.MagicData;
 import io.redspace.ironsspellbooks.api.registry.SpellRegistry;
 import io.redspace.ironsspellbooks.api.util.Utils;
+import io.redspace.ironsspellbooks.capabilities.spell.SpellData;
 import io.redspace.ironsspellbooks.entity.mobs.abstract_spell_casting_mob.AbstractSpellCastingMob;
 import io.redspace.ironsspellbooks.api.spells.AbstractSpell;
 import net.minecraft.commands.arguments.EntityAnchorArgument;
@@ -202,7 +203,7 @@ public class WizardAttackGoal extends Goal {
             //irons_spellbooks.LOGGER.debug("WizardAttackGoal.tick.3: attackTime.2: {}", attackTime);
         }
         if (mob.isCasting()) {
-            var spellData = MagicData.getPlayerMagicData(mob).getCastingSpell();
+            SpellData spellData = MagicData.getPlayerMagicData(mob).getCastingSpell();
             if (target.isDeadOrDying() || spellData.getSpell().shouldAIStopCasting(spellData.getLevel(), mob, target)) {
                 mob.cancelCast();
             }
@@ -279,7 +280,7 @@ public class WizardAttackGoal extends Goal {
             mob.hasUsedSingleAttack = true;
             mob.initiateCastSpell(singleUseSpell, singleUseLevel);
         } else {
-            var spell = getNextSpellType();
+            AbstractSpell spell = getNextSpellType();
             int spellLevel = (int) (spell.getMaxLevel() * MathHelper.lerp(mob.getRandom().nextFloat(), minSpellQuality, maxSpellQuality));
             spellLevel = Math.max(spellLevel, 1);
 
@@ -316,7 +317,7 @@ public class WizardAttackGoal extends Goal {
 
         if (total > 0) {
             int seed = mob.getRandom().nextInt(total);
-            var spellList = weightedSpells.higherEntry(seed).getValue();
+            ArrayList<AbstractSpell> spellList = weightedSpells.higherEntry(seed).getValue();
             lastSpellCategory = spellList;
             //IronsSpellbooks.LOGGER.debug("WizardAttackGoal.getNextSpell weights: A:{} D:{} M:{} S:{} ({}/{})", attackWeight, defenseWeight, movementWeight, supportWeight, seed, total);
             if (drinksPotions && spellList == supportSpells) {

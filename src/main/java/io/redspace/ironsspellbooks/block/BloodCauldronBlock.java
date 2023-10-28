@@ -53,8 +53,10 @@ public class BloodCauldronBlock extends LayeredCauldronBlock {
     public static void attemptCookEntity(BlockState blockState, World level, BlockPos pos, Entity entity, CookExecution execution) {
         if (!level.isClientSide) {
             if (CampfireBlock.isLitCampfire(level.getBlockState(pos.below()))) {
-                if (level.getBlockState(pos).getBlock() instanceof AbstractCauldronBlock cauldron) {
-                    if (entity instanceof LivingEntity livingEntity && livingEntity.getBoundingBox().intersects(cauldron.getInteractionShape(blockState, level, pos).bounds().move(pos))) {
+                if (level.getBlockState(pos).getBlock() instanceof AbstractCauldronBlock) {
+                    AbstractCauldronBlock cauldron = (AbstractCauldronBlock) level.getBlockState(pos).getBlock();
+                    if (entity instanceof LivingEntity && ((LivingEntity) entity).getBoundingBox().intersects(cauldron.getInteractionShape(blockState, level, pos).bounds().move(pos))) {
+                        LivingEntity livingEntity = (LivingEntity) entity;
                         if (livingEntity.hurt(DamageSources.CAULDRON, 2)) {
                             MagicManager.spawnParticles(level, ParticleHelper.BLOOD, entity.getX(), entity.getY() + entity.getBbHeight() / 2, entity.getZ(), 20, .05, .05, .05, .1, false);
                             if (Utils.random.nextDouble() <= .5 && !isCauldronFull(blockState)) {

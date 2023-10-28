@@ -2,6 +2,7 @@ package io.redspace.ironsspellbooks.effect;
 
 import io.redspace.ironsspellbooks.IronsSpellbooks;
 import io.redspace.ironsspellbooks.registries.MobEffectRegistry;
+import net.minecraft.entity.Entity;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.effect.MobEffect;
@@ -34,7 +35,7 @@ public class OakskinEffect extends CustomDescriptionMobEffect {
 
     @SubscribeEvent
     public static void reduceDamage(LivingDamageEvent event) {
-        var entity = event.getEntity();
+        Entity entity = event.getEntity();
         var effect = entity.getEffect(MobEffectRegistry.OAKSKIN.get());
         if (effect != null) {
             int lvl = effect.getAmplifier() + 1;

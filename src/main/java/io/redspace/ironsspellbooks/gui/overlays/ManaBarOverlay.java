@@ -7,6 +7,7 @@ import io.redspace.ironsspellbooks.capabilities.spell.SpellData;
 import io.redspace.ironsspellbooks.config.ClientConfigs;
 import io.redspace.ironsspellbooks.item.SpellBook;
 import io.redspace.ironsspellbooks.player.ClientMagicData;
+import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
@@ -48,7 +49,7 @@ public class ManaBarOverlay {
     static final int TEXT_COLOR = TextFormatting.AQUA.getColor();
 
     public static void render(ForgeGui gui, MatrixStack poseStack, float partialTick, int screenWidth, int screenHeight) {
-        var player = Minecraft.getInstance().player;
+        ClientPlayerEntity player = Minecraft.getInstance().player;
 
         if (!shouldShowManaBar(player))
             return;
@@ -89,7 +90,7 @@ public class ManaBarOverlay {
 
     public static boolean shouldShowManaBar(PlayerEntity player) {
         //We show mana if they are holding an item that can cast spells or if their mana is not full
-        var display = ClientConfigs.MANA_BAR_DISPLAY.get();
+        Display display = ClientConfigs.MANA_BAR_DISPLAY.get();
         return !player.isSpectator() && display != Display.Never && (display == Display.Always || player.isHolding((itemstack -> itemstack.getItem() instanceof SpellBook || SpellData.hasSpellData(itemstack))) || ClientMagicData.getPlayerMana() < player.getAttributeValue(MAX_MANA.get()));
     }
 

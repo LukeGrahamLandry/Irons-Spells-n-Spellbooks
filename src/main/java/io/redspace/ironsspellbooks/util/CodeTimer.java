@@ -23,10 +23,10 @@ public class CodeTimer {
         long totalDelta = 0;
 
         for (int i = 0; i < timing.size(); i++) {
-            var item = timing.get(i);
+            Tuple<String, Long> item = timing.get(i);
 
             if (i > 0) {
-                var lastItem = timing.get(i - 1);
+                Tuple<String, Long> lastItem = timing.get(i - 1);
                 itemDelta = item.getB() - lastItem.getB();
                 totalDelta += itemDelta;
                 sb.append(String.format("%s%s%s%s%f%s%f\n", lastItem.getA(), delimiter, item.getA(), delimiter, (itemDelta / 1000000d), delimiter, totalDelta / 1000000d));

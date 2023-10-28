@@ -20,6 +20,8 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.network.NetworkHooks;
 
+import java.util.List;
+
 public class CreeperHeadProjectile extends WitherSkullEntity implements AntiMagicSusceptible {
     public CreeperHeadProjectile(EntityType<? extends WitherSkullEntity> pEntityType, World pLevel) {
         super(pEntityType, pLevel);
@@ -92,18 +94,22 @@ public class CreeperHeadProjectile extends WitherSkullEntity implements AntiMagi
     protected void onHit(RayTraceResult hitResult) {
         if (!this.level.isClientSide) {
             float explosionRadius = 3.5f;
-            var entities = level.getEntities(this, this.getBoundingBox().inflate(explosionRadius));
+            List<Entity> entities = level.getEntities(this, this.getBoundingBox().inflate(explosionRadius));
             for (Entity entity : entities) {
                 double distance = entity.position().distanceTo(hitResult.getLocation());
                 if (distance < explosionRadius) {
                     //Prevent duplicate chains
-                    if (entity instanceof LivingEntity livingEntity && livingEntity.isDeadOrDying() && !canHitEntity(entity))
+                    if (entity instanceof LivingEntity && ((LivingEntity) entity).isDeadOrDying() && !canHitEntity(entity)) {
+                        LivingEntity livingEntity = (LivingEntity) entity;
                         break;
+                    }
                     float damage = (float) (this.damage * (1 - Math.pow(distance / (explosionRadius), 2)));
                     DamageSources.applyDamage(entity, damage, SpellRegistry.LOB_CREEPER_SPELL.get().getDamageSource(this, getOwner()), SpellRegistry.LOB_CREEPER_SPELL.get().getSchoolType());
                     entity.invulnerableTime = 0;
-                    if (chainOnKill && entity instanceof LivingEntity livingEntity && livingEntity.isDeadOrDying())
-                        ChainCreeperSpell.summonCreeperRing(this.level, this.getOwner() instanceof LivingEntity livingOwner ? livingOwner : null, livingEntity.getEyePosition(0), this.damage * .85f, 3);
+                    if (chainOnKill && entity instanceof LivingEntity && ((LivingEntity) entity).isDeadOrDying()) {
+                        LivingEntity livingEntity = (LivingEntity) entity;
+                        ChainCreeperSpell.summonCreeperRing(this.level, this.getOwner() instanceof LivingEntity ? (LivingEntity) this.getOwner() : null, livingEntity.getEyePosition(0), this.damage * .85f, 3);
+                    }
                 }
             }
 

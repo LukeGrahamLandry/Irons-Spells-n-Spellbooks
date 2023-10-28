@@ -14,6 +14,7 @@ import io.redspace.ironsspellbooks.setup.Messages;
 import io.redspace.ironsspellbooks.api.spells.AbstractSpell;
 import io.redspace.ironsspellbooks.util.TooltipsUtils;
 import io.redspace.ironsspellbooks.api.util.Utils;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
@@ -78,7 +79,7 @@ public class SpellWheelOverlay extends AbstractGui {
         if (!active)
             return;
 
-        var minecraft = Minecraft.getInstance();
+        Minecraft minecraft = Minecraft.getInstance();
 
         if ((minecraft.player == null || minecraft.screen != null || minecraft.mouseHandler.isMouseGrabbed() || !Utils.isPlayerHoldingSpellBook(minecraft.player))) {
             close();
@@ -110,7 +111,7 @@ public class SpellWheelOverlay extends AbstractGui {
         if (mousePos.distanceToSqr(screenCenter) < ringOuterEdgeMin * ringOuterEdgeMin) {
             selection = Math.max(0, spellBookData.getActiveSpellIndex());
         }
-        var currentSpell = spellData.get(selection);
+        SpellData currentSpell = spellData.get(selection);
         selectedSpellIndex = ArrayUtils.indexOf(spellBookData.getInscribedSpells(), currentSpell);
 
         fill(poseStack, 0, 0, screenWidth, screenHeight, 0);
@@ -136,14 +137,14 @@ public class SpellWheelOverlay extends AbstractGui {
         RenderSystem.enableTexture();
 
         //Text
-        var selectedSpell = spellData.get(selection);
+        SpellData selectedSpell = spellData.get(selection);
         if (selectedSpell != null) {
             var font = gui.getFont();
-            var info = selectedSpell.getSpell().getUniqueInfo(selectedSpell.getLevel(), minecraft.player);
+            List<IFormattableTextComponent> info = selectedSpell.getSpell().getUniqueInfo(selectedSpell.getLevel(), minecraft.player);
             int textHeight = Math.max(2, info.size()) * font.lineHeight + 5;
             int textCenterMargin = 5;
             int textTitleMargin = 5;
-            var title = currentSpell.getSpell().getDisplayName().withStyle(Style.EMPTY.withUnderlined(true));
+            IFormattableTextComponent title = currentSpell.getSpell().getDisplayName().withStyle(Style.EMPTY.withUnderlined(true));
             var level = ITextComponent.translatable("ui.irons_spellbooks.level", TooltipsUtils.getLevelComponenet(selectedSpell, player).withStyle(selectedSpell.getSpell().getRarity(selectedSpell.getLevel()).getDisplayName().getStyle()));
             var mana = ITextComponent.translatable("ui.irons_spellbooks.mana_cost", selectedSpell.getSpell().getManaCost(selectedSpell.getLevel(), null)).withStyle(TextFormatting.AQUA);
 //            selectedSpell.getUniqueInfo(minecraft.player).forEach((line) -> lines.add(line.withStyle(ChatFormatting.DARK_GREEN)));
@@ -155,7 +156,7 @@ public class SpellWheelOverlay extends AbstractGui {
             font.drawShadow(poseStack, mana, (float) (centerX - font.width(mana) - textCenterMargin), (float) (centerY - (ringOuterEdge + textHeight) + font.lineHeight * 2 + textTitleMargin), 0xFFFFFF);
 
             for (int i = 0; i < info.size(); i++) {
-                var line = info.get(i);
+                IFormattableTextComponent line = info.get(i);
                 font.drawShadow(poseStack, line, (float) (centerX + textCenterMargin), (float) (centerY - (ringOuterEdgeMax + textHeight) + font.lineHeight * (i + 1) + textTitleMargin), 0x3be33b);
             }
         }
@@ -168,7 +169,7 @@ public class SpellWheelOverlay extends AbstractGui {
             locations[i] = new Vector2f((float) (Math.sin(radiansPerSpell * i) * radius), (float) (-Math.cos(radiansPerSpell * i) * radius));
         }
         for (int i = 0; i < locations.length; i++) {
-            var spell = spellData.get(i);
+            SpellData spell = spellData.get(i);
             if (spell != null) {
                 setOpaqueTexture(spellData.get(i).getSpell().getSpellIconResource());
                 poseStack.pushPose();

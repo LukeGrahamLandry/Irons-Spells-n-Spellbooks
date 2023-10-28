@@ -36,7 +36,7 @@ public class GenericOwnerHurtByTargetGoal extends TargetGoal {
             if (ownerLastHurtBy == null || ownerLastHurtBy.isAlliedTo(mob))
                 return false;
             int i = owner.getLastHurtByMobTimestamp();
-            return i != this.timestamp && this.canAttack(this.ownerLastHurtBy, EntityPredicate.DEFAULT) && !(this.ownerLastHurtBy instanceof MagicSummon summon && summon.getSummoner() == owner);
+            return i != this.timestamp && this.canAttack(this.ownerLastHurtBy, EntityPredicate.DEFAULT) && !(this.ownerLastHurtBy instanceof MagicSummon && ((MagicSummon) this.ownerLastHurtBy).getSummoner() == owner);
         }
     }
 

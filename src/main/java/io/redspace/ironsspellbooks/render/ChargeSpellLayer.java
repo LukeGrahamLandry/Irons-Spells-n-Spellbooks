@@ -1,6 +1,7 @@
 package io.redspace.ironsspellbooks.render;
 
 import io.redspace.ironsspellbooks.api.registry.SpellRegistry;
+import io.redspace.ironsspellbooks.capabilities.magic.SyncedSpellData;
 import io.redspace.ironsspellbooks.entity.mobs.abstract_spell_casting_mob.AbstractSpellCastingMob;
 import io.redspace.ironsspellbooks.entity.spells.lightning_lance.LightningLanceRenderer;
 import io.redspace.ironsspellbooks.entity.spells.magic_arrow.MagicArrowRenderer;
@@ -17,6 +18,8 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.HandSide;
 import net.minecraft.entity.LivingEntity;
 import software.bernie.example.client.DefaultBipedBoneIdents;
+import software.bernie.geckolib3.geo.render.built.GeoBone;
+import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.renderers.geo.GeoLayerRenderer;
 import software.bernie.geckolib3.renderers.geo.IGeoRenderer;
 import software.bernie.geckolib3.util.RenderUtils;
@@ -31,15 +34,15 @@ public class ChargeSpellLayer {
 
         @Override
         public void render(MatrixStack poseStack, IRenderTypeBuffer bufferSource, int pPackedLight, T entity, float pLimbSwing, float pLimbSwingAmount, float pPartialTick, float pAgeInTicks, float pNetHeadYaw, float pHeadPitch) {
-            var syncedSpellData = ClientMagicData.getSyncedSpellData(entity);
+            SyncedSpellData syncedSpellData = ClientMagicData.getSyncedSpellData(entity);
 
             if (!syncedSpellData.isCasting()) {
                 return;
             }
 
-            var spellId = syncedSpellData.getCastingSpellId();
+            String spellId = syncedSpellData.getCastingSpellId();
             poseStack.pushPose();
-            var arm = getArmFromUseHand(entity);
+            HandSide arm = getArmFromUseHand(entity);
             this.getParentModel().translateToHand(arm, poseStack);
             boolean flag = arm == HandSide.LEFT;
             if (spellId.equals(SpellRegistry.LIGHTNING_LANCE_SPELL.get().getSpellId())) {
@@ -74,19 +77,19 @@ public class ChargeSpellLayer {
 
         @Override
         public void render(MatrixStack poseStack, IRenderTypeBuffer bufferSource, int packedLight, AbstractSpellCastingMob entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
-            var syncedSpellData = ClientMagicData.getSyncedSpellData(entity);
+            SyncedSpellData syncedSpellData = ClientMagicData.getSyncedSpellData(entity);
 
             //irons_spellbooks.LOGGER.debug("GeoChargeSpellLayer.render: {}", syncedSpellData);
-            var spellId = syncedSpellData.getCastingSpellId();
+            String spellId = syncedSpellData.getCastingSpellId();
             var modelResource = entityRenderer.getGeoModelProvider().getModelResource(entity);
-            var model = entityRenderer.getGeoModelProvider().getModel(modelResource);
-            var bone = model.getBone(DefaultBipedBoneIdents.RIGHT_HAND_BONE_IDENT).get();
+            GeoModel model = entityRenderer.getGeoModelProvider().getModel(modelResource);
+            GeoBone bone = model.getBone(DefaultBipedBoneIdents.RIGHT_HAND_BONE_IDENT).get();
             poseStack.pushPose();
             RenderUtils.translateToPivotPoint(poseStack, bone);
             RenderUtils.rotateMatrixAroundBone(poseStack, model.getBone("right_arm").get());
             RenderUtils.translateAwayFromPivotPoint(poseStack, bone);
             //poseStack.translate(0,bone.getPivotY()/2/16,0);
-            var arm = getArmFromUseHand(entity);
+            HandSide arm = getArmFromUseHand(entity);
             //TODO: hold on... were still rotating around the right arm regardless...
             boolean flag = arm == HandSide.LEFT;
 

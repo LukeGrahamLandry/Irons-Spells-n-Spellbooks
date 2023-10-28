@@ -135,11 +135,11 @@ public abstract class AoeEntity extends ProjectileEntity implements NoKnockbackP
         for (int i = 0; i < f; i++) {
             if (f - i < 1 && random.nextFloat() > f - i)
                 return;
-            var r = getRadius();
+            float r = getRadius();
             Vector3d pos;
             if (isCircular()) {
-                var distance = r * (1 - this.random.nextFloat() * this.random.nextFloat());
-                var theta = this.random.nextFloat() * 6.282f; // two pi :nerd:
+                float distance = r * (1 - this.random.nextFloat() * this.random.nextFloat());
+                float theta = this.random.nextFloat() * 6.282f; // two pi :nerd:
                 pos = new Vector3d(
                         distance * MathHelper.cos(theta),
                         .2f,

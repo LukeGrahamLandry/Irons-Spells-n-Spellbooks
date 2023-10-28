@@ -23,6 +23,7 @@ import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegistryBuilder;
 
 import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -58,7 +59,7 @@ public class SpellRegistry {
 
     public static List<AbstractSpell> getSpellsForSchool(SchoolType schoolType) {
 
-        var groupedBySchool = SpellRegistry.REGISTRY.get()
+        Map<SchoolType, List<AbstractSpell>> groupedBySchool = SpellRegistry.REGISTRY.get()
                 .getValues()
                 .stream()
                 .collect(Collectors.groupingBy(AbstractSpell::getSchoolType));
@@ -67,7 +68,7 @@ public class SpellRegistry {
     }
 
     public static AbstractSpell getSpell(ResourceLocation resourceLocation) {
-        var spell = REGISTRY.get().getValue(resourceLocation);
+        AbstractSpell spell = REGISTRY.get().getValue(resourceLocation);
         if (spell == null) {
             return noneSpell;
         }

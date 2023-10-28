@@ -28,7 +28,7 @@ public class ClientboundOnClientCast {
         level = buf.readInt();
         castSource = buf.readEnum(CastSource.class);
         if (buf.readBoolean()) {
-            var tmp = SpellRegistry.getSpell(spellId).getEmptyCastData();
+            ICastDataSerializable tmp = SpellRegistry.getSpell(spellId).getEmptyCastData();
             tmp.readFromStream(buf);
             castData = tmp;
         }
@@ -38,7 +38,8 @@ public class ClientboundOnClientCast {
         buf.writeUtf(spellId);
         buf.writeInt(level);
         buf.writeEnum(castSource);
-        if (castData instanceof ICastDataSerializable castDataSerializable) {
+        if (castData instanceof ICastDataSerializable) {
+            ICastDataSerializable castDataSerializable = (ICastDataSerializable) castData;
             buf.writeBoolean(true);
             castDataSerializable.writeToStream(buf);
         } else {

@@ -5,6 +5,7 @@ import dev.kosmx.playerAnim.api.firstPerson.FirstPersonMode;
 import dev.kosmx.playerAnim.api.layered.IAnimation;
 import dev.kosmx.playerAnim.api.layered.KeyframeAnimationPlayer;
 import dev.kosmx.playerAnim.api.layered.ModifierLayer;
+import dev.kosmx.playerAnim.core.data.KeyframeAnimation;
 import dev.kosmx.playerAnim.minecraftApi.PlayerAnimationAccess;
 import dev.kosmx.playerAnim.minecraftApi.PlayerAnimationRegistry;
 import io.redspace.ironsspellbooks.api.registry.SpellRegistry;
@@ -17,7 +18,9 @@ import io.redspace.ironsspellbooks.util.ParticleHelper;
 import io.redspace.ironsspellbooks.api.util.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
+import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.particles.BlockParticleData;
+import net.minecraft.particles.IParticleData;
 import net.minecraft.particles.RedstoneParticleData;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.ResourceLocation;
@@ -28,6 +31,7 @@ import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionUtils;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.World;
 
 import java.util.UUID;
 
@@ -55,7 +59,7 @@ public class ClientSpellCastHelper {
     public static void handleClientboundBloodSiphonParticles(Vector3d pos1, Vector3d pos2) {
         if (Minecraft.getInstance().player == null)
             return;
-        var level = Minecraft.getInstance().player.level;
+        World level = Minecraft.getInstance().player.level;
         Vector3d direction = pos2.subtract(pos1).scale(.1f);
         for (int i = 0; i < 40; i++) {
             Vector3d scaledDirection = direction.scale(1 + Utils.getRandomScaled(.35));
@@ -66,10 +70,10 @@ public class ClientSpellCastHelper {
 
     public static void handleClientsideHealParticles(Vector3d pos) {
         //Copied from arrow because these particles use their motion for color??
-        var player = Minecraft.getInstance().player;
+        ClientPlayerEntity player = Minecraft.getInstance().player;
 
         if (player != null) {
-            var level = Minecraft.getInstance().player.level;
+            World level = Minecraft.getInstance().player.level;
             int i = PotionUtils.getColor(Potion.byName("healing"));
             double d0 = (double) (i >> 16 & 255) / 255.0D;
             double d1 = (double) (i >> 8 & 255) / 255.0D;
@@ -83,10 +87,10 @@ public class ClientSpellCastHelper {
 
     public static void handleClientsideAbsorptionParticles(Vector3d pos) {
         //Copied from arrow because these particles use their motion for color??
-        var player = Minecraft.getInstance().player;
+        ClientPlayerEntity player = Minecraft.getInstance().player;
 
         if (player != null) {
-            var level = Minecraft.getInstance().player.level;
+            World level = Minecraft.getInstance().player.level;
             int i = 16239960;//Copied from fortify's MobEffect registration (this is the color)
             double d0 = (double) (i >> 16 & 255) / 255.0D;
             double d1 = (double) (i >> 8 & 255) / 255.0D;
@@ -99,23 +103,23 @@ public class ClientSpellCastHelper {
     }
 
     public static void handleClientboundOakskinParticles(Vector3d pos) {
-        var player = Minecraft.getInstance().player;
+        ClientPlayerEntity player = Minecraft.getInstance().player;
 
         RandomSource randomsource = player.getRandom();
         for (int i = 0; i < 50; ++i) {
             double d0 = MathHelper.randomBetween(randomsource, -0.5F, 0.5F);
             double d1 = MathHelper.randomBetween(randomsource, 0F, 2f);
             double d2 = MathHelper.randomBetween(randomsource, -0.5F, 0.5F);
-            var particleType = randomsource.nextFloat() < .1f ? ParticleHelper.FIREFLY : new BlockParticleData(ParticleTypes.BLOCK, Blocks.OAK_WOOD.defaultBlockState());
+            IParticleData particleType = randomsource.nextFloat() < .1f ? ParticleHelper.FIREFLY : new BlockParticleData(ParticleTypes.BLOCK, Blocks.OAK_WOOD.defaultBlockState());
             player.level.addParticle(particleType, pos.x + d0, pos.y + d1, pos.z + d2, d0 * .05, 0.05, d2 * .05);
         }
     }
 
     public static void handleClientsideRegenCloudParticles(Vector3d pos) {
-        var player = Minecraft.getInstance().player;
+        ClientPlayerEntity player = Minecraft.getInstance().player;
 
         if (player != null) {
-            var level = player.level;
+            World level = player.level;
             int ySteps = 16;
             int xSteps = 48;
             float yDeg = 180f / ySteps * MathHelper.DEG_TO_RAD;
@@ -130,10 +134,10 @@ public class ClientSpellCastHelper {
     }
 
     public static void handleClientsideFortifyAreaParticles(Vector3d pos) {
-        var player = Minecraft.getInstance().player;
+        ClientPlayerEntity player = Minecraft.getInstance().player;
 
         if (player != null) {
-            var level = player.level;
+            World level = player.level;
             int ySteps = 128;
             float yDeg = 180f / ySteps * MathHelper.DEG_TO_RAD;
             for (int y = 0; y < ySteps; y++) {
@@ -156,15 +160,15 @@ public class ClientSpellCastHelper {
 
     private static void animatePlayerStart(PlayerEntity player, ResourceLocation resourceLocation) {
         //IronsSpellbooks.LOGGER.debug("animatePlayerStart {} {}", player, resourceLocation);
-        var keyframeAnimation = PlayerAnimationRegistry.getAnimation(resourceLocation);
+        KeyframeAnimation keyframeAnimation = PlayerAnimationRegistry.getAnimation(resourceLocation);
         if (keyframeAnimation != null) {
             //noinspection unchecked
-            var animation = (ModifierLayer<IAnimation>) PlayerAnimationAccess.getPlayerAssociatedData((AbstractClientPlayerEntity) player).get(SpellAnimations.ANIMATION_RESOURCE);
+            ModifierLayer<IAnimation> animation = (ModifierLayer<IAnimation>) PlayerAnimationAccess.getPlayerAssociatedData((AbstractClientPlayerEntity) player).get(SpellAnimations.ANIMATION_RESOURCE);
             if (animation != null) {
-                var castingAnimationPlayer = new KeyframeAnimationPlayer(keyframeAnimation);
+                KeyframeAnimationPlayer castingAnimationPlayer = new KeyframeAnimationPlayer(keyframeAnimation);
                 ClientMagicData.castingAnimationPlayerLookup.put(player.getUUID(), castingAnimationPlayer);
-                var armsFlag = SHOW_FIRST_PERSON_ARMS.get();
-                var itemsFlag = SHOW_FIRST_PERSON_ITEMS.get();
+                Boolean armsFlag = SHOW_FIRST_PERSON_ARMS.get();
+                Boolean itemsFlag = SHOW_FIRST_PERSON_ITEMS.get();
 
                 if (armsFlag || itemsFlag) {
                     castingAnimationPlayer.setFirstPersonMode(/*resourceLocation.getPath().equals("charge_arrow") ? FirstPersonMode.VANILLA : */FirstPersonMode.THIRD_PERSON_MODEL);
@@ -183,15 +187,15 @@ public class ClientSpellCastHelper {
      * Network Handling Wrapper
      */
     public static void handleClientboundOnClientCast(String spellId, int level, CastSource castSource, ICastData castData) {
-        var spell = SpellRegistry.getSpell(spellId);
+        AbstractSpell spell = SpellRegistry.getSpell(spellId);
         spell.onClientCast(Minecraft.getInstance().player.level, level, Minecraft.getInstance().player, castData);
     }
 
     public static void handleClientboundTeleport(Vector3d pos1, Vector3d pos2) {
-        var player = Minecraft.getInstance().player;
+        ClientPlayerEntity player = Minecraft.getInstance().player;
 
         if (player != null) {
-            var level = Minecraft.getInstance().player.level;
+            World level = Minecraft.getInstance().player.level;
             TeleportSpell.particleCloud(level, pos1);
             TeleportSpell.particleCloud(level, pos2);
         }
@@ -199,27 +203,27 @@ public class ClientSpellCastHelper {
 
 
     public static void handleClientboundFrostStep(Vector3d pos1, Vector3d pos2) {
-        var player = Minecraft.getInstance().player;
+        ClientPlayerEntity player = Minecraft.getInstance().player;
 
         if (player != null) {
-            var level = Minecraft.getInstance().player.level;
+            World level = Minecraft.getInstance().player.level;
             FrostStepSpell.particleCloud(level, pos1);
             FrostStepSpell.particleCloud(level, pos2);
         }
     }
 
     public static void handleClientBoundOnCastStarted(UUID castingEntityId, String spellId, int spellLevel) {
-        var player = Minecraft.getInstance().player.level.getPlayerByUUID(castingEntityId);
-        var spell = SpellRegistry.getSpell(spellId);
+        PlayerEntity player = Minecraft.getInstance().player.level.getPlayerByUUID(castingEntityId);
+        AbstractSpell spell = SpellRegistry.getSpell(spellId);
         spell.getCastStartAnimation().getForPlayer().ifPresent((resourceLocation -> animatePlayerStart(player, resourceLocation)));
         spell.onClientPreCast(player.level, spellLevel, player, player.getUsedItemHand(), null);
     }
 
     public static void handleClientBoundOnCastFinished(UUID castingEntityId, String spellId, boolean cancelled) {
         ClientMagicData.resetClientCastState(castingEntityId);
-        var player = Minecraft.getInstance().player.level.getPlayerByUUID(castingEntityId);
+        PlayerEntity player = Minecraft.getInstance().player.level.getPlayerByUUID(castingEntityId);
 
-        var spell = SpellRegistry.getSpell(spellId);
+        AbstractSpell spell = SpellRegistry.getSpell(spellId);
         spell.getCastFinishAnimation()
                 .getForPlayer()
                 .ifPresent((resourceLocation -> {

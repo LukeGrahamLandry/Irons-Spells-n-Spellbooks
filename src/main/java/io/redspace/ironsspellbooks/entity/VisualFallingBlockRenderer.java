@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.util.math.BlockPos;
@@ -38,7 +39,7 @@ public class VisualFallingBlockRenderer extends EntityRenderer<VisualFallingBloc
          pMatrixStack.pushPose();
          BlockPos blockpos = new BlockPos(entity.getX(), entity.getBoundingBox().maxY, entity.getZ());
          pMatrixStack.translate(-0.5D, 0.0D, -0.5D);
-         var model = this.dispatcher.getBlockModel(blockstate);
+          IBakedModel model = this.dispatcher.getBlockModel(blockstate);
          for (var renderType : model.getRenderTypes(blockstate, RandomSource.create(blockstate.getSeed(entity.getStartPos())), ModelData.EMPTY))
             this.dispatcher.getModelRenderer().tesselateBlock(level, model, blockstate, blockpos, pMatrixStack, pBuffer.getBuffer(renderType), false, RandomSource.create(), blockstate.getSeed(entity.getStartPos()), OverlayTexture.NO_OVERLAY, ModelData.EMPTY, renderType);
          pMatrixStack.popPose();

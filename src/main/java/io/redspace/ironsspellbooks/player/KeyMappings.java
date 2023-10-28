@@ -34,7 +34,7 @@ public final class KeyMappings {
     }
 
     private static List<KeyBinding> createQuickCastKeybinds() {
-        var qcm = new ArrayList<KeyBinding>();
+        ArrayList<KeyBinding> qcm = new ArrayList<KeyBinding>();
         for (int i = 1; i <= 15; i++) {
             qcm.add(new KeyBinding(getResourceName(String.format("spell_quick_cast_%d", i)), KeyConflictContext.IN_GAME, InputMappings.Type.KEYSYM, InputMappings.UNKNOWN.getValue(), KEY_BIND_QUICK_CAST_CATEGORY));
         }

@@ -17,7 +17,7 @@ public class PumpkinArmorRenderer extends GenericCustomArmorRenderer<PumpkinArmo
     public PumpkinArmorRenderer(AnimatedGeoModel model) {
         super(model);
 
-        var m = getGeoModelProvider();
+        AnimatedGeoModel<PumpkinArmorItem> m = getGeoModelProvider();
         m.registerBone(customBone(bodyHeadLayerBone));
 
     }

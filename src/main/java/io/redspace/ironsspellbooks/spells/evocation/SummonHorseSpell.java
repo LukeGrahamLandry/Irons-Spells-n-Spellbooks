@@ -19,6 +19,7 @@ import net.minecraft.entity.passive.horse.AbstractHorseEntity;
 import net.minecraft.world.World;
 import net.minecraft.util.math.vector.Vector3d;
 
+import java.util.List;
 import java.util.Optional;
 
 @AutoSpellConfig
@@ -73,7 +74,7 @@ public class SummonHorseSpell extends AbstractSpell {
         spawn.add(forward.x, 0.15f, forward.z);
 
         //Teleport pre-existing or create new horse
-        var horses = world.getEntitiesOfClass(SummonedHorse.class, entity.getBoundingBox().inflate(100), (summonedHorse) -> summonedHorse.getSummoner() == entity && !summonedHorse.isDeadOrDying());
+        List<SummonedHorse> horses = world.getEntitiesOfClass(SummonedHorse.class, entity.getBoundingBox().inflate(100), (summonedHorse) -> summonedHorse.getSummoner() == entity && !summonedHorse.isDeadOrDying());
         SummonedHorse horse = horses.size() > 0 ? horses.get(0) : new SummonedHorse(world, entity);
 
         horse.setPos(spawn);

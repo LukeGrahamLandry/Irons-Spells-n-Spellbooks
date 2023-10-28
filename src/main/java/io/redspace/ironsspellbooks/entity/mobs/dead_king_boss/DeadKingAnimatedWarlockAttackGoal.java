@@ -44,8 +44,10 @@ public class DeadKingAnimatedWarlockAttackGoal extends WarlockAttackGoal {
                         Utils.throwTarget(mob, entity, 7f, true);
                         //mob.doHurtTarget(entity);
                         //entity.push(0, 1, 0);
-                        if (entity instanceof PlayerEntity player && player.isBlocking())
+                        if (entity instanceof PlayerEntity && ((PlayerEntity) entity).isBlocking()) {
+                            PlayerEntity player = (PlayerEntity) entity;
                             player.disableShield(true);
+                        }
                     });
                 }
             } else {

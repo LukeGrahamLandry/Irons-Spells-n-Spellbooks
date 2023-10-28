@@ -2,6 +2,7 @@ package io.redspace.ironsspellbooks.gui.overlays.network;
 
 import io.redspace.ironsspellbooks.capabilities.spellbook.SpellBookData;
 import io.redspace.ironsspellbooks.item.SpellBook;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraftforge.network.NetworkEvent;
@@ -34,8 +35,8 @@ public class ServerboundSetSpellBookActiveIndex {
             ServerPlayerEntity serverPlayer = ctx.getSender();
             if (serverPlayer != null) {
                 //This could be simplified by passing in a hand too
-                var mainHandStack = serverPlayer.getMainHandItem();
-                var offHandStack = serverPlayer.getOffhandItem();
+                ItemStack mainHandStack = serverPlayer.getMainHandItem();
+                ItemStack offHandStack = serverPlayer.getOffhandItem();
 
                 if (mainHandStack.getItem() instanceof SpellBook) {
                     SpellBookData.getSpellBookData(mainHandStack).setActiveSpellIndex(selectedIndex, mainHandStack);

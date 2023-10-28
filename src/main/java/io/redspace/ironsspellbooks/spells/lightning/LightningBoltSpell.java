@@ -76,8 +76,10 @@ public class LightningBoltSpell extends AbstractSpell {
         LightningBoltEntity lightningBolt = new ExtendedLightningBolt(level, entity, getSpellPower(spellLevel, entity));
         //lightningBolt.setDamage(getSpellPower(entity));
         lightningBolt.setPos(pos);
-        if (entity instanceof ServerPlayerEntity serverPlayer)
+        if (entity instanceof ServerPlayerEntity) {
+            ServerPlayerEntity serverPlayer = (ServerPlayerEntity) entity;
             lightningBolt.setCause(serverPlayer);
+        }
         level.addFreshEntity(lightningBolt);
         super.onCast(level, spellLevel, entity, playerMagicData);
     }

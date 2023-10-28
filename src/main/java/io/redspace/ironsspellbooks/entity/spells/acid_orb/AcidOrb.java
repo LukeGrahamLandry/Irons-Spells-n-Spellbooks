@@ -18,6 +18,7 @@ import net.minecraft.world.World;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
 
+import java.util.List;
 import java.util.Optional;
 
 public class AcidOrb extends AbstractMagicProjectile {
@@ -77,12 +78,14 @@ public class AcidOrb extends AbstractMagicProjectile {
         super.onHit(hitresult);
         if (!this.level.isClientSide) {
             float explosionRadius = 3.5f;
-            var entities = level.getEntities(this, this.getBoundingBox().inflate(explosionRadius));
+            List<Entity> entities = level.getEntities(this, this.getBoundingBox().inflate(explosionRadius));
             for (Entity entity : entities) {
                 double distance = entity.position().distanceTo(hitresult.getLocation());
                 if (distance < explosionRadius && Utils.hasLineOfSight(level, hitresult.getLocation(), entity.getEyePosition(0), true)) {
-                    if (entity instanceof LivingEntity livingEntity && livingEntity != getOwner())
+                    if (entity instanceof LivingEntity && (LivingEntity) entity != getOwner()) {
+                        LivingEntity livingEntity = (LivingEntity) entity;
                         livingEntity.addEffect(new EffectInstance(MobEffectRegistry.REND.get(), getRendDuration(), getRendLevel()));
+                    }
                 }
             }
             this.discard();

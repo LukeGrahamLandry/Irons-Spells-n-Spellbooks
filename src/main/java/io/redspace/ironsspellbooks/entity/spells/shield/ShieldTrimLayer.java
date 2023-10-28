@@ -11,6 +11,7 @@ import net.minecraft.client.renderer.entity.IEntityRenderer;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.vector.Vector2f;
 
 public class ShieldTrimLayer extends LayerRenderer<ShieldEntity, ShieldModel> {
     private static final ResourceLocation TEXTURE = IronsSpellbooks.id("textures/entity/shield/shield_trim.png");
@@ -23,7 +24,7 @@ public class ShieldTrimLayer extends LayerRenderer<ShieldEntity, ShieldModel> {
 
     @Override
     public void render(MatrixStack poseStack, IRenderTypeBuffer bufferSource, int packedLight, ShieldEntity entity, float pLimbSwing, float pLimbSwingAmount, float partialTicks, float pAgeInTicks, float pNetHeadYaw, float pHeadPitch) {
-        var offset = ShieldRenderer.getEnergySwirlOffset(entity, partialTicks, 3456);
+        Vector2f offset = ShieldRenderer.getEnergySwirlOffset(entity, partialTicks, 3456);
         //VertexConsumer consumer = bufferSource.getBuffer(RenderType.energySwirl(getTextureLocation(entity), offset.x, offset.y));
         IVertexBuilder consumer = bufferSource.getBuffer(RenderType.energySwirl(TEXTURE,0,0));
         model.renderToBuffer(poseStack, consumer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, 1f, 1f, 1f, .45f);

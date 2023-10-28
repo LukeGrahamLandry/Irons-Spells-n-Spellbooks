@@ -24,7 +24,7 @@ public class GenericCustomArmorRenderer<T extends GeoArmorItem & IAnimatable> ex
         this.rightBootBone = "armorRightBoot";
         this.leftBootBone = "armorLeftBoot";
 
-        var m = getGeoModelProvider();
+        AnimatedGeoModel<T> m = getGeoModelProvider();
         m.registerBone(customBone(leggingTorsoLayerBone));
 
     }
@@ -58,24 +58,25 @@ public class GenericCustomArmorRenderer<T extends GeoArmorItem & IAnimatable> ex
         setBoneVisibility(leggingTorsoLayerBone, false);
 
         switch (slot) {
-            case HEAD -> setBoneVisibility(this.headBone, true);
-            case CHEST -> {
+            case HEAD:
+                setBoneVisibility(this.headBone, true);
+                break;
+            case CHEST:
                 setBoneVisibility(this.bodyBone, true);
                 setBoneVisibility(this.rightArmBone, true);
                 setBoneVisibility(this.leftArmBone, true);
-            }
-            case LEGS -> {
+                break;
+            case LEGS:
                 setBoneVisibility(this.rightLegBone, true);
                 setBoneVisibility(this.leftLegBone, true);
                 setBoneVisibility(leggingTorsoLayerBone, true);
-
-            }
-            case FEET -> {
+                break;
+            case FEET:
                 setBoneVisibility(this.rightBootBone, true);
                 setBoneVisibility(this.leftBootBone, true);
-            }
-            default -> {
-            }
+                break;
+            default:
+                break;
         }
 //        if (this.entityLiving instanceof IAnimatable)
 //            setBoneVisibility(leggingTorsoLayerBone, false);

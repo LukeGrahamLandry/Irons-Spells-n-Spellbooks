@@ -8,6 +8,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ViewportEvent;
@@ -73,7 +74,7 @@ public class CameraShakeManager {
 
         var player = event.getCamera().getEntity();
         List<CameraShakeData> closestPositions = clientCameraShakeData.stream().sorted((o1, o2) -> (int) (o1.origin.distanceToSqr(player.position()) - o2.origin.distanceToSqr(player.position()))).toList();
-        var closestPos = closestPositions.get(0).origin;
+        Vector3d closestPos = closestPositions.get(0).origin;
         //.0039f is 1/15^2
         float intensity = (float) MathHelper.clampedLerp(1, 0, closestPos.distanceToSqr(player.position()) * 0.0039f);
         float f = (float) (player.tickCount + event.getPartialTick());

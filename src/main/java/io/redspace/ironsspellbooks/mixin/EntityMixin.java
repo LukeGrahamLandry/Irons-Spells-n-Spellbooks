@@ -23,8 +23,10 @@ public abstract class EntityMixin {
     public void isAlliedTo(Entity entity, CallbackInfoReturnable<Boolean> cir) {
         Entity self = ((Entity) (Object) this);
         //IronsSpellbooks.LOGGER.debug("EntityMixin.isAlliedTo Check: {} allied to {}: {}", ((Entity) (Object) this).getName().getString(), entity.getName().getString(), flag);
-        if (entity instanceof MagicSummon summon && summon.getSummoner() != null)
+        if (entity instanceof MagicSummon && ((MagicSummon) entity).getSummoner() != null) {
+            MagicSummon summon = (MagicSummon) entity;
             cir.setReturnValue(self.isAlliedTo(summon.getSummoner()) || self.equals(summon.getSummoner()));
+        }
 
     }
 

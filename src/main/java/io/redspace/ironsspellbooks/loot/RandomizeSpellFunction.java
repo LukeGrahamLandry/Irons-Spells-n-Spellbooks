@@ -37,20 +37,20 @@ public class RandomizeSpellFunction extends LootFunction {
     protected ItemStack run(ItemStack itemStack, LootContext lootContext) {
         //irons_spellbooks.LOGGER.debug("RandomizeScrollFunction.run {}", itemStack.hashCode());
         if (itemStack.getItem() instanceof Scroll || Utils.canImbue(itemStack)) {
-            var applicableSpells = this.applicableSpells.getApplicableSpells();
+            List<AbstractSpell> applicableSpells = this.applicableSpells.getApplicableSpells();
             if (applicableSpells.isEmpty()) {
                 //Return empty item stack
                 itemStack.setCount(0);
                 return itemStack;
             }
-            var spellList = getWeightedSpellList(applicableSpells);
+            NavigableMap<Integer, AbstractSpell> spellList = getWeightedSpellList(applicableSpells);
             int total = spellList.floorKey(Integer.MAX_VALUE);
             AbstractSpell abstractSpell = SpellRegistry.none();
             if (!spellList.isEmpty()) {
                 abstractSpell = spellList.higherEntry(lootContext.getRandom().nextInt(total)).getValue();
             }
 
-            var spellId = abstractSpell.getSpellId();
+            String spellId = abstractSpell.getSpellId();
             int maxLevel = abstractSpell.getMaxLevel();
             float quality = qualityRange.getFloat(lootContext);
             //https://www.desmos.com/calculator/ablc1wg06w
@@ -76,13 +76,20 @@ public class RandomizeSpellFunction extends LootFunction {
     }
 
     private int getWeightFromRarity(SpellRarity rarity) {
-        return switch (rarity) {
-            case COMMON -> 40;
-            case UNCOMMON -> 30;
-            case RARE -> 15;
-            case EPIC -> 8;
-            case LEGENDARY -> 4;
-        };
+        switch (rarity) {
+            case COMMON:
+                return 40;
+            case UNCOMMON:
+                return 30;
+            case RARE:
+                return 15;
+            case EPIC:
+                return 8;
+            case LEGENDARY:
+                return 4;
+            default:
+                throw new IllegalArgumentException();
+        }
     }
 
     @Override
@@ -107,7 +114,7 @@ public class RandomizeSpellFunction extends LootFunction {
             NumberProvider numberProvider = JSONUtils.getAsObject(json, "quality", jsonDeserializationContext, NumberProvider.class);
 
             //Spell Selection
-            var applicableSpells = SpellFilter.deserializeSpellFilter(json);
+            SpellFilter applicableSpells = SpellFilter.deserializeSpellFilter(json);
 
             return new RandomizeSpellFunction(lootConditions, numberProvider, applicableSpells);
         }

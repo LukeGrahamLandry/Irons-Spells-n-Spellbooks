@@ -11,6 +11,7 @@ import net.minecraftforge.fml.RegistryObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -24,7 +25,7 @@ public class VanillaAnvilRecipeMaker {
     }
 
     public static Stream<IJeiAnvilRecipe> getItemRepairRecipes(IVanillaRecipeFactory vanillaRecipeFactory) {
-        var repairableItems = getTieredItems();
+        List<TieredItem> repairableItems = getTieredItems();
         return repairableItems.stream()
                 .mapMulti((item, consumer) -> {
                     ItemStack damagedThreeQuarters = new ItemStack(item);
@@ -44,7 +45,7 @@ public class VanillaAnvilRecipeMaker {
     }
 
     public static Stream<IJeiAnvilRecipe> getArmorRepairRecipes(IVanillaRecipeFactory vanillaRecipeFactory) {
-        var repairableItems = getArmorItems();
+        List<ArmorItem> repairableItems = getArmorItems();
         return repairableItems.stream()
                 .mapMulti((item, consumer) -> {
                     ItemStack damagedThreeQuarters = new ItemStack(item);
@@ -64,20 +65,24 @@ public class VanillaAnvilRecipeMaker {
     }
 
     public static List<TieredItem> getTieredItems() {
-        var registryItems = ItemRegistry.getIronsItems();
+        Collection<RegistryObject<Item>> registryItems = ItemRegistry.getIronsItems();
         List<TieredItem> items = new ArrayList<>();
         for (RegistryObject<Item> item : registryItems)
-            if (item.get() instanceof TieredItem tieredItem && tieredItem.getItemCategory() != null)
+            if (item.get() instanceof TieredItem && ((TieredItem) item.get()).getItemCategory() != null) {
+                TieredItem tieredItem = (TieredItem) item.get();
                 items.add(tieredItem);
+            }
         return items;
     }
 
     public static List<ArmorItem> getArmorItems() {
-        var registryItems = ItemRegistry.getIronsItems();
+        Collection<RegistryObject<Item>> registryItems = ItemRegistry.getIronsItems();
         List<ArmorItem> items = new ArrayList<>();
         for (RegistryObject<Item> item : registryItems)
-            if (item.get() instanceof ArmorItem tieredItem && tieredItem.getItemCategory() != null)
+            if (item.get() instanceof ArmorItem && ((ArmorItem) item.get()).getItemCategory() != null) {
+                ArmorItem tieredItem = (ArmorItem) item.get();
                 items.add(tieredItem);
+            }
         return items;
     }
 }

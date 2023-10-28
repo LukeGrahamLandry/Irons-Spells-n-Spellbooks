@@ -35,7 +35,8 @@ public class HealingAoe extends AoeEntity implements AntiMagicSusceptible {
     public void applyEffect(LivingEntity target) {
         //var owner = getOwner();
         //IronsSpellbooks.LOGGER.debug("HealingAoe apply effect: target: {} owner: {} should heal: {}",target.getName().getString(),owner==null?null:owner.getName().getString(),owner==null?false: Utils.shouldHealEntity((LivingEntity) owner,target));
-        if (getOwner() instanceof LivingEntity owner && Utils.shouldHealEntity(owner, target)) {
+        if (getOwner() instanceof LivingEntity && Utils.shouldHealEntity((LivingEntity) getOwner(), target)) {
+            LivingEntity owner = (LivingEntity) getOwner();
             float healAmount = getDamage();
             MinecraftForge.EVENT_BUS.post(new SpellHealEvent((LivingEntity) getOwner(), target, healAmount, SchoolRegistry.HOLY.get()));
             target.heal(healAmount);
@@ -67,7 +68,7 @@ public class HealingAoe extends AoeEntity implements AntiMagicSusceptible {
         for (int i = 0; i < f; i++) {
             if (f - i < 1 && random.nextFloat() > f - i)
                 return;
-            var r = getRadius();
+            float r = getRadius();
             Vector3d pos;
             if (isCircular()) {
                 float distance = (1 - this.random.nextFloat() * this.random.nextFloat()) * r;

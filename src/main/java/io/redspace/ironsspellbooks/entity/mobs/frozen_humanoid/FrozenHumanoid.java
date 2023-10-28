@@ -7,6 +7,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.util.math.vector.Vector2f;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
@@ -111,7 +112,8 @@ public class FrozenHumanoid extends LivingEntity {
         this.isAutoSpinAttack = entityToCopy.isAutoSpinAttack();
         this.mainArm = entityToCopy.getMainArm();
 
-        if (entityToCopy instanceof PlayerEntity player) {
+        if (entityToCopy instanceof PlayerEntity) {
+            PlayerEntity player = (PlayerEntity) entityToCopy;
             this.setCustomName(player.getDisplayName());
             this.setCustomNameVisible(true);
         } else {
@@ -132,8 +134,10 @@ public class FrozenHumanoid extends LivingEntity {
         if (this.cachedSummoner != null && this.cachedSummoner.isAlive()) {
             return this.cachedSummoner;
         } else if (this.summonerUUID != null && this.level instanceof ServerWorld) {
-            if (((ServerWorld) this.level).getEntity(this.summonerUUID) instanceof LivingEntity livingEntity)
+            if (((ServerWorld) this.level).getEntity(this.summonerUUID) instanceof LivingEntity) {
+                LivingEntity livingEntity = (LivingEntity) ((ServerWorld) this.level).getEntity(this.summonerUUID);
                 this.cachedSummoner = livingEntity;
+            }
             return this.cachedSummoner;
         } else {
             return null;
@@ -233,7 +237,7 @@ public class FrozenHumanoid extends LivingEntity {
             shard.setDeltaMovement(motion);
 
             Vector3d spawn = origin.add(motion.multiply(1, 0, 1).normalize().scale(.5f));
-            var angle = Utils.rotationFromDirection(motion);
+            Vector2f angle = Utils.rotationFromDirection(motion);
 
             shard.moveTo(spawn.x, spawn.y - shard.getBoundingBox().getYsize() / 2, spawn.z, angle.y, angle.x);
             level.addFreshEntity(shard);

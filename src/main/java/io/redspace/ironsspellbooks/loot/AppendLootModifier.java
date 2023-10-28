@@ -7,6 +7,7 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import net.minecraft.loot.LootTable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.LootContext;
@@ -31,7 +32,7 @@ public class AppendLootModifier<V> extends LootModifier {
     @Override
     protected @NotNull ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> generatedLoot, LootContext context) {
         ResourceLocation path = new ResourceLocation(resourceLocationKey);
-        var lootTable = context.getLevel().getServer().getLootTables().get(path);
+        LootTable lootTable = context.getLevel().getServer().getLootTables().get(path);
         ObjectArrayList<ItemStack> objectarraylist = new ObjectArrayList<>();
         lootTable.getRandomItems(context, objectarraylist::add);
 

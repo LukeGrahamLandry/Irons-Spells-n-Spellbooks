@@ -61,16 +61,16 @@ public class ElectrocuteRenderer extends EntityRenderer<ElectrocuteProjectile> {
         float height = width;
         Vector3d start = Vector3d.ZERO;//entity.getOwner().getEyePosition(0).add(entity.getForward().normalize().scale(.15f));
         for (int i = 0; i < segments.size() - 1; i += 2) {
-            var from = segments.get(i).add(start);
-            var to = segments.get(i + 1).add(start);
+            Vector3d from = segments.get(i).add(start);
+            Vector3d to = segments.get(i + 1).add(start);
             drawHull(from, to, width, height, pose, consumer, 0, 156, 255, 30);
             drawHull(from, to, width * .55f, height * .55f, pose, consumer, 0, 226, 255, 30);
         }
 
         consumer = bufferSource.getBuffer(RenderType.energySwirl(getTextureLocation(entity),0,0));
         for (int i = 0; i < segments.size() - 1; i += 2) {
-            var from = segments.get(i).add(start);
-            var to = segments.get(i + 1).add(start);
+            Vector3d from = segments.get(i).add(start);
+            Vector3d to = segments.get(i + 1).add(start);
             drawHull(from, to, width * .2f, height * .2f, pose, consumer, 255, 255, 255, 255);
         }
 

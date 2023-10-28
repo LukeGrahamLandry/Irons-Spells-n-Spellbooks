@@ -2,6 +2,7 @@ package io.redspace.ironsspellbooks.entity.mobs.goals;
 
 import io.redspace.ironsspellbooks.api.magic.MagicData;
 import io.redspace.ironsspellbooks.api.registry.SpellRegistry;
+import io.redspace.ironsspellbooks.capabilities.spell.SpellData;
 import io.redspace.ironsspellbooks.entity.mobs.SupportMob;
 import io.redspace.ironsspellbooks.entity.mobs.abstract_spell_casting_mob.AbstractSpellCastingMob;
 import io.redspace.ironsspellbooks.api.spells.AbstractSpell;
@@ -141,7 +142,7 @@ public class WizardSupportGoal<T extends AbstractSpellCastingMob & SupportMob> e
             //irons_spellbooks.LOGGER.debug("WizardAttackGoal.tick.2: attackTime.1: {}", attackTime);
         }
         if (mob.isCasting()) {
-            var spellData = MagicData.getPlayerMagicData(mob).getCastingSpell();
+            SpellData spellData = MagicData.getPlayerMagicData(mob).getCastingSpell();
             if (target.isDeadOrDying() || spellData.getSpell().shouldAIStopCasting(spellData.getLevel(), mob, target))
                 mob.cancelCast();
 
@@ -173,7 +174,7 @@ public class WizardSupportGoal<T extends AbstractSpellCastingMob & SupportMob> e
     protected void doSpellAction() {
         int spellLevel = (int) (getNextSpellType().getMaxLevel() * MathHelper.lerp(mob.getRandom().nextFloat(), minSpellQuality, maxSpellQuality));
         spellLevel = Math.max(spellLevel, 1);
-        var abstractSpell = getNextSpellType();
+        AbstractSpell abstractSpell = getNextSpellType();
 
         //Make sure cast is valid
         if (!abstractSpell.shouldAIStopCasting(spellLevel, mob, target))
@@ -183,7 +184,8 @@ public class WizardSupportGoal<T extends AbstractSpellCastingMob & SupportMob> e
 
     protected AbstractSpell getNextSpellType() {
         float shouldBuff = 0;
-        if (!buffSpells.isEmpty() && target instanceof MobEntity mob && mob.isAggressive()) {
+        if (!buffSpells.isEmpty() && target instanceof MobEntity && ((MobEntity) target).isAggressive()) {
+            MobEntity mob = (MobEntity) target;
             shouldBuff = target.getHealth() / target.getMaxHealth();
         }
         return getSpell(mob.getRandom().nextFloat() > shouldBuff ? healingSpells : buffSpells);

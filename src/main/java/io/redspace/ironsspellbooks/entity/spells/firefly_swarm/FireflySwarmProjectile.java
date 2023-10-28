@@ -10,6 +10,7 @@ import io.redspace.ironsspellbooks.registries.EntityRegistry;
 import io.redspace.ironsspellbooks.registries.SoundRegistry;
 import io.redspace.ironsspellbooks.util.ParticleHelper;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.entity.*;
@@ -66,8 +67,8 @@ public class FireflySwarmProjectile extends CreatureEntity implements AntiMagicS
     public void tick() {
         if (level.isClientSide) {
             for (int i = 0; i < 2; i++) {
-                var motion = Utils.getRandomVec3(.05f).add(this.getDeltaMovement());
-                var spawn = Utils.getRandomVec3(.25f);
+                Vector3d motion = Utils.getRandomVec3(.05f).add(this.getDeltaMovement());
+                Vector3d spawn = Utils.getRandomVec3(.25f);
                 level.addParticle(ParticleHelper.FIREFLY, getX() + spawn.x, getY() + this.getBbHeight() * .5f + spawn.z, getZ() + spawn.z, motion.x, motion.y, motion.z);
             }
         }
@@ -159,7 +160,7 @@ public class FireflySwarmProjectile extends CreatureEntity implements AntiMagicS
     @org.jetbrains.annotations.Nullable
     @Override
     public LivingEntity getTarget() {
-        return getFireflyTarget() instanceof LivingEntity livingEntity ? livingEntity : null;
+        return getFireflyTarget() instanceof LivingEntity ? (LivingEntity) getFireflyTarget() : null;
     }
 
     public void setTarget(@Nullable Entity target) {

@@ -2,6 +2,7 @@ package io.redspace.ironsspellbooks.network;
 
 import io.redspace.ironsspellbooks.api.magic.MagicHelper;
 import io.redspace.ironsspellbooks.api.magic.MagicData;
+import io.redspace.ironsspellbooks.capabilities.spell.SpellData;
 import io.redspace.ironsspellbooks.item.Scroll;
 import io.redspace.ironsspellbooks.api.spells.CastType;
 import net.minecraft.network.PacketBuffer;
@@ -36,9 +37,9 @@ public class ServerboundCancelCast {
 
     public static void cancelCast(ServerPlayerEntity serverPlayer, boolean triggerCooldown) {
         if (serverPlayer != null) {
-            var playerMagicData = MagicData.getPlayerMagicData(serverPlayer);
+            MagicData playerMagicData = MagicData.getPlayerMagicData(serverPlayer);
             if (playerMagicData.isCasting()) {
-                var spellData = playerMagicData.getCastingSpell();
+                SpellData spellData = playerMagicData.getCastingSpell();
 
                 if (triggerCooldown) {
                     MagicHelper.MAGIC_MANAGER.addCooldown(serverPlayer, spellData.getSpell(), playerMagicData.getCastSource());

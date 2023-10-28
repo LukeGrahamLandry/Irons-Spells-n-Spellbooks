@@ -92,9 +92,9 @@ public class BloodStepSpell extends AbstractSpell {
     @Override
     public void onCast(World level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
         Vector3d dest = null;
-        var teleportData = (TeleportSpell.TeleportData) playerMagicData.getAdditionalCastData();
+        TeleportSpell.TeleportData teleportData = (TeleportSpell.TeleportData) playerMagicData.getAdditionalCastData();
         if (teleportData != null) {
-            var potentialTarget = teleportData.getTeleportTargetPosition();
+            Vector3d potentialTarget = teleportData.getTeleportTargetPosition();
             if (potentialTarget != null) {
                 dest = potentialTarget;
                 entity.teleportTo(dest.x, dest.y, dest.z);
@@ -104,7 +104,8 @@ public class BloodStepSpell extends AbstractSpell {
             if (entity.isPassenger()) {
                 entity.stopRiding();
             }
-            if (hitResult.getType() == RayTraceResult.Type.ENTITY && ((EntityRayTraceResult) hitResult).getEntity() instanceof LivingEntity target) {
+            if (hitResult.getType() == RayTraceResult.Type.ENTITY && ((EntityRayTraceResult) hitResult).getEntity() instanceof LivingEntity) {
+                LivingEntity target = (LivingEntity) ((EntityRayTraceResult) hitResult).getEntity();
                 //dest = target.position().subtract(new Vec3(0, 0, 1.5).yRot(target.yRot));
                 for (int i = 0; i < 8; i++) {
                     dest = target.position().subtract(new Vector3d(0, 0, 1.5).yRot(-(target.yRot + i * 45) * MathHelper.DEG_TO_RAD));

@@ -7,6 +7,7 @@ import io.redspace.ironsspellbooks.entity.mobs.MagicSummon;
 import io.redspace.ironsspellbooks.api.registry.AttributeRegistry;
 import io.redspace.ironsspellbooks.api.spells.SchoolType;
 import io.redspace.ironsspellbooks.api.util.Utils;
+import net.minecraft.scoreboard.Team;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.IndirectEntityDamageSource;
@@ -42,9 +43,10 @@ public class DamageSources {
      */
     @Deprecated(forRemoval = true)
     public static boolean applyDamage(Entity target, float baseAmount, DamageSource damageSource, @Nullable SchoolType damageSchool) {
-        if (target instanceof LivingEntity livingTarget) {
+        if (target instanceof LivingEntity) {
+            LivingEntity livingTarget = (LivingEntity) target;
             float adjustedDamage = baseAmount * getResist(livingTarget, damageSchool);
-            MagicSummon fromSummon = damageSource.getDirectEntity() instanceof MagicSummon summon ? summon : damageSource.getEntity() instanceof MagicSummon summon ? summon : null;
+            MagicSummon fromSummon = damageSource.getDirectEntity() instanceof MagicSummon ? (MagicSummon) damageSource.getDirectEntity() : damageSource.getEntity() instanceof MagicSummon ? (MagicSummon) damageSource.getEntity() : null;
             if (fromSummon != null) {
                 if (fromSummon.getSummoner() != null) {
                     adjustedDamage *= (float) fromSummon.getSummoner().getAttributeValue(AttributeRegistry.SUMMON_DAMAGE.get());
@@ -52,14 +54,16 @@ public class DamageSources {
             } else if (damageSource.getDirectEntity() instanceof NoKnockbackProjectile) {
                 ignoreNextKnockback(livingTarget);
             }
-            if (damageSource.getEntity() instanceof LivingEntity livingAttacker) {
+            if (damageSource.getEntity() instanceof LivingEntity) {
+                LivingEntity livingAttacker = (LivingEntity) damageSource.getEntity();
                 if (isFriendlyFireBetween(livingAttacker, livingTarget)) {
                     return false;
                 }
                 livingAttacker.setLastHurtMob(target);
             }
-            var flag = livingTarget.hurt(damageSource, adjustedDamage);
-            if (fromSummon instanceof LivingEntity livingSummon) {
+            boolean flag = livingTarget.hurt(damageSource, adjustedDamage);
+            if (fromSummon instanceof LivingEntity) {
+                LivingEntity livingSummon = (LivingEntity) fromSummon;
                 livingTarget.setLastHurtByMob(livingSummon);
             }
             return flag;
@@ -69,14 +73,16 @@ public class DamageSources {
     }
 
     public static boolean applyDamage(Entity target, float baseAmount, DamageSource damageSource) {
-        if (target instanceof LivingEntity livingTarget && damageSource instanceof ISpellDamageSource spellDamageSource) {
-            var e = new SpellDamageEvent(livingTarget, baseAmount, spellDamageSource);
+        if (target instanceof LivingEntity && damageSource instanceof ISpellDamageSource) {
+            LivingEntity livingTarget = (LivingEntity) target;
+            ISpellDamageSource spellDamageSource = (ISpellDamageSource) damageSource;
+            SpellDamageEvent e = new SpellDamageEvent(livingTarget, baseAmount, spellDamageSource);
             if (MinecraftForge.EVENT_BUS.post(e)) {
                 return false;
             }
             baseAmount = e.getAmount();
             float adjustedDamage = baseAmount * getResist(livingTarget, spellDamageSource.schoolType());
-            MagicSummon fromSummon = damageSource.getDirectEntity() instanceof MagicSummon summon ? summon : damageSource.getEntity() instanceof MagicSummon summon ? summon : null;
+            MagicSummon fromSummon = damageSource.getDirectEntity() instanceof MagicSummon ? (MagicSummon) damageSource.getDirectEntity() : damageSource.getEntity() instanceof MagicSummon ? (MagicSummon) damageSource.getEntity() : null;
             if (fromSummon != null) {
                 if (fromSummon.getSummoner() != null) {
                     adjustedDamage *= (float) fromSummon.getSummoner().getAttributeValue(AttributeRegistry.SUMMON_DAMAGE.get());
@@ -84,14 +90,16 @@ public class DamageSources {
             } else if (damageSource.getDirectEntity() instanceof NoKnockbackProjectile) {
                 ignoreNextKnockback(livingTarget);
             }
-            if (damageSource.getEntity() instanceof LivingEntity livingAttacker) {
+            if (damageSource.getEntity() instanceof LivingEntity) {
+                LivingEntity livingAttacker = (LivingEntity) damageSource.getEntity();
                 if (isFriendlyFireBetween(livingAttacker, livingTarget)) {
                     return false;
                 }
                 livingAttacker.setLastHurtMob(target);
             }
-            var flag = livingTarget.hurt(damageSource, adjustedDamage);
-            if (fromSummon instanceof LivingEntity livingSummon) {
+            boolean flag = livingTarget.hurt(damageSource, adjustedDamage);
+            if (fromSummon instanceof LivingEntity) {
+                LivingEntity livingSummon = (LivingEntity) fromSummon;
                 livingTarget.setLastHurtByMob(livingSummon);
             }
             return flag;
@@ -112,7 +120,7 @@ public class DamageSources {
     public static void cancelKnockback(LivingKnockBackEvent event) {
         //IronsSpellbooks.LOGGER.debug("DamageSources.cancelKnockback {}", event.getEntity().getName().getString());
         if (knockbackImmunes.containsKey(event.getEntity())) {
-            var entity = event.getEntity();
+            Entity entity = event.getEntity();
             if (entity.tickCount - knockbackImmunes.get(entity) <= 1) {
                 event.setCanceled(true);
             }
@@ -122,11 +130,13 @@ public class DamageSources {
 
     @SubscribeEvent
     public static void postHitEffects(LivingDamageEvent event) {
-        if (event.getSource() instanceof ISpellDamageSource spellDamageSource && spellDamageSource.hasPostHitEffects()) {
+        if (event.getSource() instanceof ISpellDamageSource && ((ISpellDamageSource) event.getSource()).hasPostHitEffects()) {
+            ISpellDamageSource spellDamageSource = (ISpellDamageSource) event.getSource();
             float actualDamage = event.getAmount();
-            var target = event.getEntity();
-            var attacker = event.getSource().getEntity();
-            if (attacker instanceof LivingEntity livingAttacker) {
+            Entity target = event.getEntity();
+            Entity attacker = event.getSource().getEntity();
+            if (attacker instanceof LivingEntity) {
+                LivingEntity livingAttacker = (LivingEntity) attacker;
                 if (spellDamageSource.getLifestealPercent() > 0) {
                     livingAttacker.heal(spellDamageSource.getLifestealPercent() * actualDamage);
                 }
@@ -145,7 +155,7 @@ public class DamageSources {
     public static boolean isFriendlyFireBetween(Entity attacker, Entity target) {
         if (attacker == null || target == null)
             return false;
-        var team = attacker.getTeam();
+        Team team = attacker.getTeam();
         if (team != null) {
             return team.isAlliedTo(target.getTeam()) && !team.isAllowFriendlyFire();
         }

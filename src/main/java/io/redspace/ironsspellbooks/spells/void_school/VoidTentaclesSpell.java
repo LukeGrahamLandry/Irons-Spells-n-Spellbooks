@@ -81,7 +81,7 @@ public class VoidTentaclesSpell extends AbstractSpell {
         int rings = getRings(spellLevel, entity);
         int count = 2;
         Vector3d center = Utils.getTargetBlock(level, entity, RayTraceContext.FluidMode.NONE, 48).getLocation();
-        level.playSound(entity instanceof PlayerEntity player ? player : null, center.x, center.y, center.z, SoundRegistry.VOID_TENTACLES_FINISH.get(), SoundCategory.AMBIENT, 1, 1);
+        level.playSound(entity instanceof PlayerEntity ? (PlayerEntity) entity : null, center.x, center.y, center.z, SoundRegistry.VOID_TENTACLES_FINISH.get(), SoundCategory.AMBIENT, 1, 1);
 
         for (int r = 0; r < rings; r++) {
             float tentacles = count + r * 2;

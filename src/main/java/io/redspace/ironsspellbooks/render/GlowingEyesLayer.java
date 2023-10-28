@@ -16,6 +16,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.entity.LivingEntity;
+import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.renderers.geo.GeoLayerRenderer;
 import software.bernie.geckolib3.renderers.geo.IGeoRenderer;
 
@@ -36,7 +37,7 @@ public class GlowingEyesLayer {
 
         @Override
         public void render(MatrixStack poseStack, IRenderTypeBuffer multiBufferSource, int pPackedLight, T livingEntity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
-            var eye = getEyeType(livingEntity);
+            EyeType eye = getEyeType(livingEntity);
             if (eye != EyeType.None) {
                 IVertexBuilder vertexconsumer = multiBufferSource.getBuffer(this.renderType());
 
@@ -60,11 +61,11 @@ public class GlowingEyesLayer {
 
         @Override
         public void render(MatrixStack poseStack, IRenderTypeBuffer multiBufferSource, int packedLightIn, AbstractSpellCastingMob abstractSpellCastingMob, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
-            var eye = getEyeType(abstractSpellCastingMob);
+            EyeType eye = getEyeType(abstractSpellCastingMob);
             if (eye != EyeType.None) {
-                var model = entityRenderer.getGeoModelProvider().getModel(entityRenderer.getGeoModelProvider().getModelResource(abstractSpellCastingMob));
+                GeoModel model = entityRenderer.getGeoModelProvider().getModel(entityRenderer.getGeoModelProvider().getModelResource(abstractSpellCastingMob));
                 model.getBone("head").ifPresent((headBone) -> {
-                    var scale = getEyeScale(abstractSpellCastingMob);
+                    float scale = getEyeScale(abstractSpellCastingMob);
                     headBone.setScale(scale, scale, scale);
                     this.renderModel(this.getEntityModel(), EYE_TEXTURE, poseStack, multiBufferSource, packedLightIn, abstractSpellCastingMob, partialTicks, eye.r, eye.g, eye.b);
                 });

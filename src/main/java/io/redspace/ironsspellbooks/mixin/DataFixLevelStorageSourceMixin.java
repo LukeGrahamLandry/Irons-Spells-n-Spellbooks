@@ -4,6 +4,7 @@ import com.mojang.datafixers.DataFixer;
 import io.redspace.ironsspellbooks.IronsSpellbooks;
 import io.redspace.ironsspellbooks.config.ServerConfigs;
 import io.redspace.ironsspellbooks.datafix.IronsTagTraverser;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.storage.SaveFormat;
@@ -28,11 +29,11 @@ public abstract class DataFixLevelStorageSourceMixin {
             Path path = pLevelDirectory.dataFile();
             try {
                 synchronized (iron_sSpells_nSpellbooks$sync) {
-                    var compoundTag1 = CompressedStreamTools.readCompressed(path.toFile());
-                    var compoundTag2 = compoundTag1.getCompound("Data");
-                    var compoundTag3 = compoundTag2.getCompound("Player");
+                    CompoundNBT compoundTag1 = CompressedStreamTools.readCompressed(path.toFile());
+                    CompoundNBT compoundTag2 = compoundTag1.getCompound("Data");
+                    CompoundNBT compoundTag3 = compoundTag2.getCompound("Player");
 
-                    var ironsTraverser = new IronsTagTraverser();
+                    IronsTagTraverser ironsTraverser = new IronsTagTraverser();
                     ironsTraverser.visit(compoundTag3);
 
                     if (ironsTraverser.changesMade()) {

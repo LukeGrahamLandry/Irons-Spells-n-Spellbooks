@@ -76,8 +76,10 @@ public class DragonBreathSpell extends AbstractSpell {
     public void onCast(World world, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
 
         if (playerMagicData.isCasting() && playerMagicData.getCastingSpell().getSpell().equals(this)
-                && playerMagicData.getAdditionalCastData() instanceof EntityCastData entityCastData
-                && entityCastData.getCastingEntity() instanceof AbstractConeProjectile cone) {
+                && playerMagicData.getAdditionalCastData() instanceof EntityCastData
+                && ((EntityCastData) playerMagicData.getAdditionalCastData()).getCastingEntity() instanceof AbstractConeProjectile) {
+            EntityCastData entityCastData = (EntityCastData) playerMagicData.getAdditionalCastData();
+            AbstractConeProjectile cone = (AbstractConeProjectile) entityCastData.getCastingEntity();
             cone.setDealDamageActive();
         } else {
             DragonBreathProjectile dragonBreathProjectile = new DragonBreathProjectile(world, entity);

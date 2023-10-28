@@ -13,6 +13,8 @@ import io.redspace.ironsspellbooks.api.spells.CastSource;
 import io.redspace.ironsspellbooks.api.spells.CastType;
 import io.redspace.ironsspellbooks.util.Log;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.world.ClientWorld;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 
@@ -118,7 +120,7 @@ public class ClientMagicData {
             resetTargetingData();
         }
 
-        var animationPlayer = castingAnimationPlayerLookup.getOrDefault(playerUUID, null);
+        KeyframeAnimationPlayer animationPlayer = castingAnimationPlayerLookup.getOrDefault(playerUUID, null);
         if (animationPlayer != null) {
             //Ironsspellbooks.logger.debug("resetClientCastState.1.2");
             animationPlayer.stop();
@@ -134,7 +136,8 @@ public class ClientMagicData {
         if (livingEntity instanceof PlayerEntity) {
             return playerSyncedDataLookup.getOrDefault(livingEntity.getId(), emptySyncedData);
         }
-        if (livingEntity instanceof AbstractSpellCastingMob abstractSpellCastingMob) {
+        if (livingEntity instanceof AbstractSpellCastingMob) {
+            AbstractSpellCastingMob abstractSpellCastingMob = (AbstractSpellCastingMob) livingEntity;
             return abstractSpellCastingMob.getMagicData().getSyncedData();
         }
         return new SyncedSpellData(null);
@@ -146,7 +149,7 @@ public class ClientMagicData {
     }
 
     public static void handleAbstractCastingMobSyncedData(int entityId, SyncedSpellData syncedSpellData) {
-        var level = Minecraft.getInstance().level;
+        ClientWorld level = Minecraft.getInstance().level;
 
         if (Log.SPELL_DEBUG) {
             IronsSpellbooks.LOGGER.debug("handleAbstractCastingMobSyncedData {}, {}, {}", level, entityId, syncedSpellData);
@@ -156,8 +159,9 @@ public class ClientMagicData {
             return;
         }
 
-        var entity = level.getEntity(entityId);
-        if (entity instanceof AbstractSpellCastingMob abstractSpellCastingMob) {
+        Entity entity = level.getEntity(entityId);
+        if (entity instanceof AbstractSpellCastingMob) {
+            AbstractSpellCastingMob abstractSpellCastingMob = (AbstractSpellCastingMob) entity;
             abstractSpellCastingMob.setSyncedSpellData(syncedSpellData);
         }
     }

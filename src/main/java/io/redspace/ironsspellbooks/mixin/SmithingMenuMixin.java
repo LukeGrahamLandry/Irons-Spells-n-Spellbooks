@@ -4,6 +4,7 @@ import io.redspace.ironsspellbooks.capabilities.magic.UpgradeData;
 import io.redspace.ironsspellbooks.capabilities.spell.SpellData;
 import io.redspace.ironsspellbooks.registries.ItemRegistry;
 import io.redspace.ironsspellbooks.util.UpgradeUtils;
+import net.minecraft.inventory.container.Slot;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.container.SmithingTableContainer;
@@ -36,10 +37,10 @@ public abstract class SmithingMenuMixin {
     */
     @Inject(method = "createResult", at = @At("HEAD"), cancellable = true)
     public void createResult(CallbackInfo ci) {
-        var menu = (SmithingTableContainer) (Object) this;
-        var baseSlot = menu.getSlot(0);
+        SmithingTableContainer menu = (SmithingTableContainer) (Object) this;
+        Slot baseSlot = menu.getSlot(0);
         if (baseSlot.hasItem() && menu.getSlot(1).getItem().getItem().equals(ItemRegistry.SHRIVING_STONE.get())) {
-            var resultSlot = menu.getSlot(2);
+            Slot resultSlot = menu.getSlot(2);
             ItemStack result = baseSlot.getItem().copy();
             if (result.is(ItemRegistry.SCROLL.get()))
                 return;

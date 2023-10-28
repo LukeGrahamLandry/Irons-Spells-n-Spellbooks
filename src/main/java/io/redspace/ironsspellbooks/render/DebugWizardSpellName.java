@@ -23,8 +23,9 @@ public class DebugWizardSpellName extends GeoLayerRenderer<AbstractSpellCastingM
 
     @Override
     public void render(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn, AbstractSpellCastingMob abstractSpellCastingMob, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
-        if (abstractSpellCastingMob instanceof DebugWizard debugWizard) {
-            var pDisplayName = debugWizard.getSpellInfo();
+        if (abstractSpellCastingMob instanceof DebugWizard) {
+            DebugWizard debugWizard = (DebugWizard) abstractSpellCastingMob;
+            String pDisplayName = debugWizard.getSpellInfo();
             if (pDisplayName != null) {
                 boolean flag = !debugWizard.isDiscrete();
                 float f = debugWizard.getBbHeight() + 0.5F;

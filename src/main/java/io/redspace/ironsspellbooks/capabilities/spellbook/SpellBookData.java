@@ -45,7 +45,7 @@ public class SpellBookData {
             return SpellData.EMPTY;
         }
 
-        var spellData = transcribedSpells[activeSpellIndex];
+        SpellData spellData = transcribedSpells[activeSpellIndex];
 
         if (spellData == null) {
             return SpellData.EMPTY;
@@ -64,7 +64,7 @@ public class SpellBookData {
     }
 
     public SpellData[] getInscribedSpells() {
-        var result = new SpellData[this.spellSlots];
+        SpellData[] result = new SpellData[this.spellSlots];
         System.arraycopy(transcribedSpells, 0, result, 0, transcribedSpells.length);
         return result;
     }
@@ -157,7 +157,7 @@ public class SpellBookData {
 
         ListNBT listTagSpells = new ListNBT();
         for (int i = 0; i < transcribedSpells.length; i++) {
-            var spellData = transcribedSpells[i];
+            SpellData spellData = transcribedSpells[i];
             if (spellData != null) {
                 CompoundNBT ct = new CompoundNBT();
                 ct.putString(ID, spellData.getSpell().getSpellId());
@@ -205,10 +205,12 @@ public class SpellBookData {
 
         if (tag != null) {
             return new SpellBookData(stack, tag);
-        } else if (stack.getItem() instanceof SpellBook spellBook) {
-            var spellBookData = new SpellBookData(spellBook.getSpellSlots());
+        } else if (stack.getItem() instanceof SpellBook) {
+            SpellBook spellBook = (SpellBook) stack.getItem();
+            SpellBookData spellBookData = new SpellBookData(spellBook.getSpellSlots());
 
-            if (spellBook instanceof UniqueSpellBook uniqueSpellBook) {
+            if (spellBook instanceof UniqueSpellBook) {
+                UniqueSpellBook uniqueSpellBook = (UniqueSpellBook) spellBook;
                 uniqueSpellBook.getSpells().forEach(sd -> spellBookData.addSpell(sd.getSpell(), sd.getLevel(), null));
             }
 

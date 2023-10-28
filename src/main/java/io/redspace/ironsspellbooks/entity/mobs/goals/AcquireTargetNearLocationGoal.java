@@ -12,6 +12,7 @@ import net.minecraft.util.math.vector.Vector3d;
 
 import javax.annotation.Nullable;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.function.Predicate;
 
 public class AcquireTargetNearLocationGoal<T extends LivingEntity> extends TargetGoal {
@@ -55,9 +56,9 @@ public class AcquireTargetNearLocationGoal<T extends LivingEntity> extends Targe
 
     protected void findTarget() {
         if (this.targetType != PlayerEntity.class && this.targetType != ServerPlayerEntity.class) {
-            var targetSearchArea = this.getTargetSearchArea(this.getFollowDistance());
+            AxisAlignedBB targetSearchArea = this.getTargetSearchArea(this.getFollowDistance());
             //irons_spellbooks.LOGGER.debug("AcquireTargetNearLocationGoal.findTarget.1 {}", targetSearchArea);
-            var entitiesOfClass = this.mob.level.getEntitiesOfClass(this.targetType, targetSearchArea, (potentialTarget) -> {
+            List<T> entitiesOfClass = this.mob.level.getEntitiesOfClass(this.targetType, targetSearchArea, (potentialTarget) -> {
                 //irons_spellbooks.LOGGER.debug("AcquireTargetNearLocationGoal.findTarget.2 {}", potentialTarget.getName().getString());
                 return true;
             });

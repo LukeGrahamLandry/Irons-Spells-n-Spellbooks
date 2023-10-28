@@ -41,16 +41,18 @@ public class ManaSiphonTetraEffect {
     public static void handleLivingAttackEvent(LivingAttackEvent event) {
         DamageSource source = event.getSource();
         Entity attacker = source.getEntity();
-        if (attacker instanceof ServerPlayerEntity player) {
+        if (attacker instanceof ServerPlayerEntity) {
+            ServerPlayerEntity player = (ServerPlayerEntity) attacker;
             ItemStack heldStack = player.getMainHandItem();
-            if (heldStack.getItem() instanceof ModularItem item) {
+            if (heldStack.getItem() instanceof ModularItem) {
+                ModularItem item = (ModularItem) heldStack.getItem();
                 int level = item.getEffectLevel(heldStack, manaSiphon);
                 if (level > 0) {
                     level *= .01f;
                     int increment = (int) Math.min(level * event.getAmount(), 50);
                     int maxMana = (int) player.getAttributeValue(MAX_MANA.get());
-                    var playerMagicData = MagicData.getPlayerMagicData(player);
-                    var newMana = Math.min(increment + playerMagicData.getMana(), maxMana);
+                    MagicData playerMagicData = MagicData.getPlayerMagicData(player);
+                    int newMana = Math.min(increment + playerMagicData.getMana(), maxMana);
                     playerMagicData.setMana(newMana);
                     Messages.sendToPlayer(new ClientboundSyncMana(playerMagicData), player);
                 }

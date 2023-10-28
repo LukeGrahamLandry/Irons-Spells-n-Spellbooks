@@ -46,7 +46,7 @@ public class SchoolType {
     }
 
     public double getResistanceFor(LivingEntity livingEntity) {
-        var resistanceAttribute = this.resistanceAttribute.orElse(null);
+        Attribute resistanceAttribute = this.resistanceAttribute.orElse(null);
         if (resistanceAttribute != null) {
             return livingEntity.getAttributeValue(resistanceAttribute);
         } else {
@@ -55,7 +55,7 @@ public class SchoolType {
     }
 
     public double getPowerFor(LivingEntity livingEntity) {
-        var powerAttribute = this.powerAttribute.orElse(null);
+        Attribute powerAttribute = this.powerAttribute.orElse(null);
         if (powerAttribute != null) {
             return livingEntity.getAttributeValue(powerAttribute);
         } else {

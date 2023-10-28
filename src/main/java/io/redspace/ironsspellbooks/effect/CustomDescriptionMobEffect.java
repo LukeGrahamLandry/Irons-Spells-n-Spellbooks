@@ -16,10 +16,10 @@ public abstract class CustomDescriptionMobEffect extends Effect {
     }
 
     public static void handleCustomPotionTooltip(ItemStack itemStack, List<ITextComponent> tooltipLines, boolean isAdvanced, EffectInstance mobEffectInstance, CustomDescriptionMobEffect customDescriptionMobEffect) {
-        var description = customDescriptionMobEffect.getDescriptionLine(mobEffectInstance);
+        ITextComponent description = customDescriptionMobEffect.getDescriptionLine(mobEffectInstance);
 
         var header = net.minecraft.util.text.ITextComponent.translatable("potion.whenDrank").withStyle(TextFormatting.DARK_PURPLE);
-        var newLines = new ArrayList<ITextComponent>();
+        ArrayList<ITextComponent> newLines = new ArrayList<ITextComponent>();
         int i = tooltipLines.indexOf(header);
 
         if (i < 0) {

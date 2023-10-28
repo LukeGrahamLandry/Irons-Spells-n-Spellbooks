@@ -35,7 +35,7 @@ public class GustCollider extends AbstractConeProjectile {
             return;
         }
         Vector3d rotation = this.getLookAngle().normalize();
-        var pos = this.position().add(rotation.scale(1.6));
+        Vector3d pos = this.position().add(rotation.scale(1.6));
 
         double x = pos.x;
         double y = pos.y;
@@ -56,14 +56,16 @@ public class GustCollider extends AbstractConeProjectile {
 
     @Override
     protected void onHitEntity(EntityRayTraceResult entityHitResult) {
-        var entity = getOwner();
-        var resultEntity = entityHitResult.getEntity();
-        if (entity != null && resultEntity instanceof LivingEntity target && target.distanceToSqr(entity) < range * range)
+        Entity entity = getOwner();
+        Entity resultEntity = entityHitResult.getEntity();
+        if (entity != null && resultEntity instanceof LivingEntity && ((LivingEntity) resultEntity).distanceToSqr(entity) < range * range) {
+            LivingEntity target = (LivingEntity) resultEntity;
             if (!DamageSources.isFriendlyFireBetween(entity, target)) {
                 target.knockback(strength, entity.getX() - target.getX(), entity.getZ() - target.getZ());
                 target.hurtMarked = true;
                 target.addEffect(new EffectInstance(MobEffectRegistry.AIRBORNE.get(), 60, amplifier));
             }
+        }
 
     }
 

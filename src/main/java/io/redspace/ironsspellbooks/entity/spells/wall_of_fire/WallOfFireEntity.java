@@ -197,7 +197,8 @@ public class WallOfFireEntity extends AbstractShieldEntity implements IEntityAdd
         if (compoundTag.contains("Anchors", 9)) {
             ListNBT anchors = (ListNBT) compoundTag.get("Anchors");
             for (INBT tag : anchors) {
-                if (tag instanceof CompoundNBT anchor) {
+                if (tag instanceof CompoundNBT) {
+                    CompoundNBT anchor = (CompoundNBT) tag;
                     anchorPoints.add(new Vector3d(anchor.getDouble("x"), anchor.getDouble("y"), anchor.getDouble("z")));
                 }
             }

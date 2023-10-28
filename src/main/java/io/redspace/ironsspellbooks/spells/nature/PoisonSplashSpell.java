@@ -85,7 +85,8 @@ public class PoisonSplashSpell extends AbstractSpell {
     public void onCast(World level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
         Vector3d spawn = null;
 
-        if (playerMagicData.getAdditionalCastData() instanceof CastTargetingData castTargetingData) {
+        if (playerMagicData.getAdditionalCastData() instanceof CastTargetingData) {
+            CastTargetingData castTargetingData = (CastTargetingData) playerMagicData.getAdditionalCastData();
             spawn = castTargetingData.getTargetPosition((ServerWorld) level);
         }
         if (spawn == null) {

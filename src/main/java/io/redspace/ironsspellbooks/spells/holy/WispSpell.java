@@ -9,6 +9,7 @@ import io.redspace.ironsspellbooks.capabilities.magic.CastTargetingData;
 import io.redspace.ironsspellbooks.entity.spells.wisp.WispEntity;
 import io.redspace.ironsspellbooks.registries.SoundRegistry;
 import io.redspace.ironsspellbooks.api.util.Utils;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.ResourceLocation;
@@ -83,8 +84,9 @@ public class WispSpell extends AbstractSpell {
 
     @Override
     public void onCast(World world, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
-        if (playerMagicData.getAdditionalCastData() instanceof CastTargetingData targetingData) {
-            var targetEntity = targetingData.getTarget((ServerWorld) world);
+        if (playerMagicData.getAdditionalCastData() instanceof CastTargetingData) {
+            CastTargetingData targetingData = (CastTargetingData) playerMagicData.getAdditionalCastData();
+            LivingEntity targetEntity = targetingData.getTarget((ServerWorld) world);
             WispEntity wispEntity = new WispEntity(world, entity, getSpellPower(spellLevel, entity));
             wispEntity.setTarget(targetEntity);
             wispEntity.setPos(Utils.getPositionFromEntityLookDirection(entity, 2).subtract(0, .2, 0));
@@ -95,8 +97,10 @@ public class WispSpell extends AbstractSpell {
 
     @Nullable
     private LivingEntity findTarget(LivingEntity caster) {
-        var target = Utils.raycastForEntity(caster.level, caster, 64, true, 0.35f);
-        if (target instanceof EntityRayTraceResult entityHit && entityHit.getEntity() instanceof LivingEntity livingTarget) {
+        RayTraceResult target = Utils.raycastForEntity(caster.level, caster, 64, true, 0.35f);
+        if (target instanceof EntityRayTraceResult && ((EntityRayTraceResult) target).getEntity() instanceof LivingEntity) {
+            EntityRayTraceResult entityHit = (EntityRayTraceResult) target;
+            LivingEntity livingTarget = (LivingEntity) entityHit.getEntity();
             return livingTarget;
         } else {
             return null;

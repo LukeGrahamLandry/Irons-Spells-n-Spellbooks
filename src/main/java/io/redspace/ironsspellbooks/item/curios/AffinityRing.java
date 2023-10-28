@@ -2,6 +2,7 @@ package io.redspace.ironsspellbooks.item.curios;
 
 import io.redspace.ironsspellbooks.api.item.curios.RingData;
 import io.redspace.ironsspellbooks.api.registry.SpellRegistry;
+import io.redspace.ironsspellbooks.api.spells.AbstractSpell;
 import io.redspace.ironsspellbooks.render.AffinityRingRenderer;
 import io.redspace.ironsspellbooks.render.SpecialItemRenderer;
 import net.minecraft.util.text.TextFormatting;
@@ -28,7 +29,7 @@ public class AffinityRing extends SimpleDescriptiveCurio {
 
     @Override
     public void appendHoverText(ItemStack pStack, @Nullable World pLevel, List<ITextComponent> tooltip, ITooltipFlag pIsAdvanced) {
-        var spell = RingData.getRingData(pStack).getSpell();
+        AbstractSpell spell = RingData.getRingData(pStack).getSpell();
         if (!spell.equals(SpellRegistry.none())) {
             tooltip.add(ITextComponent.empty());
             tooltip.add(ITextComponent.translatable("curios.modifiers.ring").withStyle(TextFormatting.GOLD));

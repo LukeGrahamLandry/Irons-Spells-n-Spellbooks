@@ -6,6 +6,7 @@ import io.redspace.ironsspellbooks.entity.spells.AbstractConeProjectile;
 import io.redspace.ironsspellbooks.registries.EntityRegistry;
 import io.redspace.ironsspellbooks.api.spells.SchoolType;
 import io.redspace.ironsspellbooks.util.ParticleHelper;
+import net.minecraft.entity.Entity;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.entity.EntityType;
@@ -26,12 +27,12 @@ public class PoisonBreathProjectile extends AbstractConeProjectile {
 
     @Override
     public void spawnParticles() {
-        var owner = getOwner();
+        Entity owner = getOwner();
         if (!level.isClientSide || owner == null) {
             return;
         }
         Vector3d rotation = owner.getLookAngle().normalize();
-        var pos = owner.position().add(rotation.scale(1.6));
+        Vector3d pos = owner.position().add(rotation.scale(1.6));
 
         double x = pos.x;
         double y = pos.y + owner.getEyeHeight() * .9f;
@@ -56,9 +57,11 @@ public class PoisonBreathProjectile extends AbstractConeProjectile {
     @Override
     protected void onHitEntity(EntityRayTraceResult entityHitResult) {
         //irons_spellbooks.LOGGER.debug("ConeOfColdProjectile.onHitEntity: {}", entityHitResult.getEntity().getName().getString());
-        var entity = entityHitResult.getEntity();
-        if (DamageSources.applyDamage(entity, damage, SpellRegistry.POISON_BREATH_SPELL.get().getDamageSource(this, getOwner()), SpellRegistry.POISON_BREATH_SPELL.get().getSchoolType()) && entity instanceof LivingEntity livingEntity)
+        Entity entity = entityHitResult.getEntity();
+        if (DamageSources.applyDamage(entity, damage, SpellRegistry.POISON_BREATH_SPELL.get().getDamageSource(this, getOwner()), SpellRegistry.POISON_BREATH_SPELL.get().getSchoolType()) && entity instanceof LivingEntity) {
+            LivingEntity livingEntity = (LivingEntity) entity;
             livingEntity.addEffect(new EffectInstance(Effects.POISON, 100, 0));
+        }
     }
 
 }

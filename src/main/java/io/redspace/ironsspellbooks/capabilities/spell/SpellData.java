@@ -40,8 +40,9 @@ public class SpellData implements Comparable<SpellData> {
 //            }
 
             return new SpellData(SpellRegistry.getSpell(new ResourceLocation(tag.getString(SPELL_ID))), tag.getInt(SPELL_LEVEL));
-        } else if (stack.getItem() instanceof MagicSwordItem magicSwordItem) {
-            var spell = magicSwordItem.getImbuedSpell();
+        } else if (stack.getItem() instanceof MagicSwordItem) {
+            MagicSwordItem magicSwordItem = (MagicSwordItem) stack.getItem();
+            AbstractSpell spell = magicSwordItem.getImbuedSpell();
             setSpellData(stack, spell, magicSwordItem.getImbuedLevel());
             return new SpellData(spell, magicSwordItem.getImbuedLevel());
         } else {
@@ -55,7 +56,7 @@ public class SpellData implements Comparable<SpellData> {
     }
 
     public static void setSpellData(ItemStack stack, String spellId, int spellLevel) {
-        var spellTag = new CompoundNBT();
+        CompoundNBT spellTag = new CompoundNBT();
         spellTag.putString(SPELL_ID, spellId);
         spellTag.putInt(SPELL_LEVEL, spellLevel);
         stack.addTagElement(ISB_SPELL, spellTag);
@@ -93,7 +94,8 @@ public class SpellData implements Comparable<SpellData> {
             return true;
         }
 
-        if (obj instanceof SpellData other) {
+        if (obj instanceof SpellData) {
+            SpellData other = (SpellData) obj;
             return this.spell.equals(other.spell) && this.spellLevel == other.spellLevel;
         }
 

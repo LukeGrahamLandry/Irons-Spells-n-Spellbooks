@@ -71,7 +71,8 @@ public class AngelWingsModel<T extends LivingEntity> extends AgeableModel<T> {
         }
 
         this.leftWing.y = f2;
-        if (pEntity instanceof AbstractClientPlayerEntity abstractclientplayer) {
+        if (pEntity instanceof AbstractClientPlayerEntity) {
+            AbstractClientPlayerEntity abstractclientplayer = (AbstractClientPlayerEntity) pEntity;
             abstractclientplayer.elytraRotX += (f - abstractclientplayer.elytraRotX) * 0.1F;
             abstractclientplayer.elytraRotY += (f3 - abstractclientplayer.elytraRotY) * 0.1F;
             abstractclientplayer.elytraRotZ += (f1 - abstractclientplayer.elytraRotZ) * 0.1F;

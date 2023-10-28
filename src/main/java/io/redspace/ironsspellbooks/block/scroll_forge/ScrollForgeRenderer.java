@@ -5,6 +5,8 @@ import io.redspace.ironsspellbooks.item.InkItem;
 import io.redspace.ironsspellbooks.util.ModTags;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
+import net.minecraft.block.BlockState;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.vector.Matrix3f;
 import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.math.vector.Vector3f;
@@ -56,7 +58,7 @@ public class  ScrollForgeRenderer implements TileEntityRenderer<ScrollForgeTile>
             poseStack.mulPose(Vector3f.YP.rotationDegrees(85));
             poseStack.mulPose(Vector3f.XP.rotationDegrees(180));
             IVertexBuilder consumer = bufferSource.getBuffer(RenderType.entityCutout(PAPER_TEXTURE));
-            var light = WorldRenderer.getLightColor(scrollForgeTile.getLevel(), scrollForgeTile.getBlockPos());
+            int light = WorldRenderer.getLightColor(scrollForgeTile.getLevel(), scrollForgeTile.getBlockPos());
 
             drawQuad(.45f, poseStack.last(), consumer, light);
             poseStack.popPose();
@@ -119,15 +121,19 @@ public class  ScrollForgeRenderer implements TileEntityRenderer<ScrollForgeTile>
     }
 
     private int getBlockFacingDegrees(ScrollForgeTile tileEntity) {
-        var block = tileEntity.getLevel().getBlockState(tileEntity.getBlockPos());
+        BlockState block = tileEntity.getLevel().getBlockState(tileEntity.getBlockPos());
         if (block.getBlock() instanceof ScrollForgeBlock) {
-            var facing = block.getValue(BlockStateProperties.HORIZONTAL_FACING);
-            return switch (facing) {
-                case NORTH -> 180;
-                case EAST -> 90;
-                case WEST -> -90;
-                default -> 0;
-            };
+            Direction facing = block.getValue(BlockStateProperties.HORIZONTAL_FACING);
+            switch (facing) {
+                case NORTH:
+                    return 180;
+                case EAST:
+                    return 90;
+                case WEST:
+                    return -90;
+                default:
+                    return 0;
+            }
         } else
             return 0;
 

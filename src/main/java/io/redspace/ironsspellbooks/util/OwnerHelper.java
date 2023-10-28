@@ -12,9 +12,12 @@ public class OwnerHelper {
     public static LivingEntity getAndCacheOwner(World level, LivingEntity cachedOwner, UUID summonerUUID) {
         if (cachedOwner != null && cachedOwner.isAlive()) {
             return cachedOwner;
-        } else if (summonerUUID != null && level instanceof ServerWorld serverLevel) {
-            if (serverLevel.getEntity(summonerUUID) instanceof LivingEntity livingEntity)
+        } else if (summonerUUID != null && level instanceof ServerWorld) {
+            ServerWorld serverLevel = (ServerWorld) level;
+            if (serverLevel.getEntity(summonerUUID) instanceof LivingEntity) {
+                LivingEntity livingEntity = (LivingEntity) serverLevel.getEntity(summonerUUID);
                 cachedOwner = livingEntity;
+            }
             return cachedOwner;
         } else {
             return null;

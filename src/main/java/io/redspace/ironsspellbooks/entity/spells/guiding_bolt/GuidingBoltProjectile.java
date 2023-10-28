@@ -71,7 +71,8 @@ public class GuidingBoltProjectile extends AbstractMagicProjectile {
         //irons_spellbooks.LOGGER.debug("MagicMissileProjectile.onHitEntity");
 
         if (DamageSources.applyDamage(entityHitResult.getEntity(), damage, SpellRegistry.GUIDING_BOLT_SPELL.get().getDamageSource(this, getOwner()), SpellRegistry.GUIDING_BOLT_SPELL.get().getSchoolType())) {
-            if (entityHitResult.getEntity() instanceof LivingEntity livingEntity) {
+            if (entityHitResult.getEntity() instanceof LivingEntity) {
+                LivingEntity livingEntity = (LivingEntity) entityHitResult.getEntity();
                 livingEntity.addEffect(new EffectInstance(MobEffectRegistry.GUIDING_BOLT.get(), 15 * 20));
                 livingEntity.addEffect(new EffectInstance(Effects.GLOWING, 15 * 20, 0, false, false, false));
 

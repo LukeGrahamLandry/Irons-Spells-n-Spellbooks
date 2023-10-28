@@ -1,8 +1,6 @@
 package io.redspace.ironsspellbooks.util;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -14,10 +12,49 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Map;
+import java.util.Objects;
 
 public class RecipeYamlGenerator {
-    private record ItemInfo(String name, String path) {
-    }
+    private static final class ItemInfo {
+        private final String name;
+        private final String path;
+
+        private ItemInfo(String name, String path) {
+            this.name = name;
+            this.path = path;
+        }
+
+        public String name() {
+            return name;
+        }
+
+        public String path() {
+            return path;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == this) return true;
+            if (obj == null || obj.getClass() != this.getClass()) return false;
+            var that = (ItemInfo) obj;
+            return Objects.equals(this.name, that.name) &&
+                    Objects.equals(this.path, that.path);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(name, path);
+        }
+
+        @Override
+        public String toString() {
+            return "ItemInfo[" +
+                    "name=" + name + ", " +
+                    "path=" + path + ']';
+        }
+
+        }
 
     private static final String RECIPE_DATA_TEMPLATE = """
             - name: "%s"
@@ -46,10 +83,10 @@ public class RecipeYamlGenerator {
                     """;
 
     public static void main(String[] args) {
-        var baseDir = System.getProperty("user.dir");
-        var recipesDir = "src/main/resources/data/irons_spellbooks/recipes/";
+        String baseDir = System.getProperty("user.dir");
+        String recipesDir = "src/main/resources/data/irons_spellbooks/recipes/";
 
-        var sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
         Gson g = new Gson();
 
         try {
@@ -59,22 +96,22 @@ public class RecipeYamlGenerator {
                 if (path.toFile().isFile()) {
                     try {
                         JsonObject jsonObject = JsonParser.parseReader(new FileReader(path.toFile())).getAsJsonObject();
-                        var type = jsonObject.get("type").getAsString();
+                        String type = jsonObject.get("type").getAsString();
                         if (type.equals("minecraft:crafting_shaped")) {
-                            var result = jsonObject.get("result").getAsJsonObject().get("item").getAsString();
+                            String result = jsonObject.get("result").getAsJsonObject().get("item").getAsString();
                             System.out.println(result);
-                            var itemInfoArray = new ItemInfo[9];
-                            var pattern = jsonObject.get("pattern").getAsJsonArray();
-                            var keyMap = jsonObject.get("key").getAsJsonObject().asMap();
+                            ItemInfo[] itemInfoArray = new ItemInfo[9];
+                            JsonArray pattern = jsonObject.get("pattern").getAsJsonArray();
+                            Map<String, JsonElement> keyMap = jsonObject.get("key").getAsJsonObject().asMap();
 
 
                             int count = 0;
                             for (int i = 0; i < pattern.size(); i++) {
-                                var slots = pattern.get(i).getAsString();
+                                String slots = pattern.get(i).getAsString();
                                 for (int j = 0; j < slots.length(); j++) {
-                                    var key = slots.charAt(j);
+                                    char key = slots.charAt(j);
                                     if (key != ' ') {
-                                        var item = keyMap.get(String.valueOf(key)).getAsJsonObject().get("item");
+                                        JsonElement item = keyMap.get(String.valueOf(key)).getAsJsonObject().get("item");
                                         if (item == null) {
                                             item = keyMap.get(String.valueOf(key)).getAsJsonObject().get("tag");
                                         }

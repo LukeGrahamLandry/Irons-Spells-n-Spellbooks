@@ -186,7 +186,8 @@ public class KeeperEntity extends AbstractSpellCastingMob implements IMob, Anima
 
     @Override
     public boolean hurt(DamageSource pSource, float pAmount) {
-        if (pSource.getDirectEntity() instanceof ProjectileEntity projectile) {
+        if (pSource.getDirectEntity() instanceof ProjectileEntity) {
+            ProjectileEntity projectile = (ProjectileEntity) pSource.getDirectEntity();
             pAmount *= .75f;
         }
         return super.hurt(pSource, pAmount);
@@ -219,7 +220,7 @@ public class KeeperEntity extends AbstractSpellCastingMob implements IMob, Anima
     }
 
     private PlayState predicate(AnimationEvent<KeeperEntity> animationEvent) {
-        var controller = animationEvent.getController();
+        AnimationController<KeeperEntity> controller = animationEvent.getController();
 
         if (this.animationToPlay != null) {
             controller.markNeedsReload();

@@ -77,7 +77,8 @@ public class FrostbiteSpell extends AbstractSpell {
         RayTraceResult raycast = Utils.raycastForEntity(level, entity, 48, true);
         if (raycast.getType() == RayTraceResult.Type.ENTITY) {
             Entity target = ((EntityRayTraceResult) raycast).getEntity();
-            if (target instanceof LivingEntity livingTarget) {
+            if (target instanceof LivingEntity) {
+                LivingEntity livingTarget = (LivingEntity) target;
                 float threshold = getSpellPower(spellLevel, entity);
                 float hpPercent = livingTarget.getHealth() / livingTarget.getMaxHealth();
                 boolean success = false;

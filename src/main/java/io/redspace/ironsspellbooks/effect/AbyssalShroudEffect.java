@@ -16,6 +16,9 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifierManager;
 import net.minecraft.util.math.RayTraceContext;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.World;
+
+import java.util.Random;
 
 public class AbyssalShroudEffect extends Effect {
 
@@ -40,8 +43,8 @@ public class AbyssalShroudEffect extends Effect {
         if (livingEntity.level.isClientSide || EvasionEffect.excludeDamageSources.contains(damageSource) || damageSource.isFall() || damageSource.isBypassMagic() || damageSource.isBypassInvul()) {
             return false;
         }
-        var random = livingEntity.getRandom();
-        var level = livingEntity.level;
+        Random random = livingEntity.getRandom();
+        World level = livingEntity.level;
 
 
         Vector3d sideStep = new Vector3d(random.nextBoolean() ? 1 : -1, 0, -.25);
@@ -73,7 +76,7 @@ public class AbyssalShroudEffect extends Effect {
 
     public static void ambientParticles(ClientWorld level, LivingEntity entity) {
         Vector3d backwards = entity.getForward().scale(.003).reverse().add(0, 0.02, 0);
-        var random = entity.getRandom();
+        Random random = entity.getRandom();
         for (int i = 0; i < 2; i++) {
             Vector3d motion = new Vector3d(
                     random.nextFloat() * 2 - 1,

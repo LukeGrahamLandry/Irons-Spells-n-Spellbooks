@@ -14,8 +14,10 @@ public class SummonTimer extends Effect {
     @Override
     public void removeAttributeModifiers(LivingEntity pLivingEntity, AttributeModifierManager pAttributeMap, int pAmplifier) {
         //Ironsspellbooks.logger.debug("Summoner Timer Wore out on {}", pLivingEntity.getName().getString());
-        if(pLivingEntity instanceof MagicSummon summon)
+        if(pLivingEntity instanceof MagicSummon) {
+            MagicSummon summon = (MagicSummon) pLivingEntity;
             summon.onUnSummon();
+        }
     }
 
 }

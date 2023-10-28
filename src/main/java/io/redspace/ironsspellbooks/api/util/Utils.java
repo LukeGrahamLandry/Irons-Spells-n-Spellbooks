@@ -1,5 +1,6 @@
 package io.redspace.ironsspellbooks.api.util;
 
+import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.util.math.vector.Vector3f;
 import io.redspace.ironsspellbooks.api.magic.MagicData;
 import io.redspace.ironsspellbooks.api.registry.SpellRegistry;
@@ -62,6 +63,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -85,7 +87,7 @@ public class Utils {
 
     public static final RandomSource random = RandomSource.createThreadSafe();
     public static String getStackTraceAsString() {
-        var trace = Arrays.stream(Thread.currentThread().getStackTrace());
+        Stream<StackTraceElement> trace = Arrays.stream(Thread.currentThread().getStackTrace());
         StringBuffer sb = new StringBuffer();
         trace.forEach(item -> {
             sb.append(item.toString());
@@ -176,9 +178,9 @@ public class Utils {
     }
 
     public static BlockRayTraceResult getTargetBlock(World level, LivingEntity entity, RayTraceContext.FluidMode clipContext, double reach) {
-        var rotation = entity.getLookAngle().normalize().scale(reach);
-        var pos = entity.getEyePosition(0);
-        var dest = rotation.add(pos);
+        Vector3d rotation = entity.getLookAngle().normalize().scale(reach);
+        Vector3d pos = entity.getEyePosition(0);
+        Vector3d dest = rotation.add(pos);
         return level.clip(new RayTraceContext(pos, dest, RayTraceContext.BlockMode.COLLIDER, clipContext, entity));
     }
 
@@ -192,7 +194,7 @@ public class Utils {
         if (checkForShields) {
             List<ShieldEntity> shieldEntities = level.getEntitiesOfClass(ShieldEntity.class, new AxisAlignedBB(start, end));
             if (shieldEntities.size() > 0) {
-                var shieldImpact = checkEntityIntersecting(shieldEntities.get(0), start, end, 0);
+                RayTraceResult shieldImpact = checkEntityIntersecting(shieldEntities.get(0), start, end, 0);
                 if (shieldImpact.getType() != RayTraceResult.Type.MISS)
                     end = shieldImpact.getLocation();
             }
@@ -209,7 +211,7 @@ public class Utils {
         Vector3d hitPos = null;
         if (entity.isMultipartEntity()) {
             for (PartEntity p : entity.getParts()) {
-                var hit = p.getBoundingBox().inflate(bbInflation).clip(start, end).orElse(null);
+                Vector3d hit = p.getBoundingBox().inflate(bbInflation).clip(start, end).orElse(null);
                 if (hit != null) {
                     hitPos = hit;
                     break;
@@ -257,9 +259,9 @@ public class Utils {
     }
 
     public static void quickCast(int slot) {
-        var player = Minecraft.getInstance().player;
-        var hand = Hand.MAIN_HAND;
-        var itemStack = player.getItemInHand(hand);
+        ClientPlayerEntity player = Minecraft.getInstance().player;
+        Hand hand = Hand.MAIN_HAND;
+        ItemStack itemStack = player.getItemInHand(hand);
 
         if (!(itemStack.getItem() instanceof SpellBook)) {
             hand = Hand.OFF_HAND;
@@ -267,10 +269,10 @@ public class Utils {
         }
 
         if (itemStack.getItem() instanceof SpellBook) {
-            var spellBookData = SpellBookData.getSpellBookData(itemStack);
+            SpellBookData spellBookData = SpellBookData.getSpellBookData(itemStack);
 
             if (spellBookData.getSpellSlots() >= 1) {
-                var spell = spellBookData.getSpell(slot);
+                SpellData spell = spellBookData.getSpell(slot);
                 if (spell != null) {
                     Messages.sendToServer(new ServerboundQuickCast(slot, hand));
                 }
@@ -279,8 +281,9 @@ public class Utils {
     }
 
     public static void releaseUsingHelper(LivingEntity entity, ItemStack itemStack, int ticksUsed) {
-        if (entity instanceof ServerPlayerEntity serverPlayer) {
-            var pmd = MagicData.getPlayerMagicData(serverPlayer);
+        if (entity instanceof ServerPlayerEntity) {
+            ServerPlayerEntity serverPlayer = (ServerPlayerEntity) entity;
+            MagicData pmd = MagicData.getPlayerMagicData(serverPlayer);
             if (pmd.isCasting()) {
                 Utils.serverSideCancelCast(serverPlayer);
                 serverPlayer.stopUsingItem();
@@ -365,15 +368,17 @@ public class Utils {
 
         boolean flag = DamageSources.applyDamage(target, f, damageSource);
         if (flag) {
-            if (f1 > 0.0F && target instanceof LivingEntity livingTarget) {
+            if (f1 > 0.0F && target instanceof LivingEntity) {
+                LivingEntity livingTarget = (LivingEntity) target;
                 ((LivingEntity) target).knockback((double) (f1 * 0.5F), (double) MathHelper.sin(attacker.yRot * ((float) Math.PI / 180F)), (double) (-MathHelper.cos(attacker.yRot * ((float) Math.PI / 180F))));
                 attacker.setDeltaMovement(attacker.getDeltaMovement().multiply(0.6D, 1.0D, 0.6D));
                 livingTarget.setLastHurtByMob(attacker);
             }
             //disable shield
-            if (target instanceof PlayerEntity player) {
-                var pMobItemStack = attacker.getMainHandItem();
-                var pPlayerItemStack = player.isUsingItem() ? player.getUseItem() : ItemStack.EMPTY;
+            if (target instanceof PlayerEntity) {
+                PlayerEntity player = (PlayerEntity) target;
+                ItemStack pMobItemStack = attacker.getMainHandItem();
+                ItemStack pPlayerItemStack = player.isUsingItem() ? player.getUseItem() : ItemStack.EMPTY;
                 if (!pMobItemStack.isEmpty() && !pPlayerItemStack.isEmpty() && pMobItemStack.getItem() instanceof AxeItem && pPlayerItemStack.is(Items.SHIELD)) {
                     float f2 = 0.25F + (float) EnchantmentHelper.getBlockEfficiency(attacker) * 0.05F;
                     if (attacker.getRandom().nextFloat() < f2) {
@@ -427,7 +432,7 @@ public class Utils {
     }
 
     public static boolean shouldHealEntity(LivingEntity healer, LivingEntity target) {
-        if (healer instanceof IAngerable neutralMob && neutralMob.isAngryAt(target)) {
+        if (healer instanceof IAngerable && ((IAngerable) healer).isAngryAt(target)) {
             return false;
         } else if (healer == target) {
             return true;
@@ -455,15 +460,17 @@ public class Utils {
             return false;
         if (ServerConfigs.IMBUE_WHITELIST.get().contains(id))
             return true;
-        if ((itemStack.getItem() instanceof SwordItem swordItem && !(swordItem instanceof UniqueItem)))
+        if ((itemStack.getItem() instanceof SwordItem && !((SwordItem) itemStack.getItem() instanceof UniqueItem))) {
+            SwordItem swordItem = (SwordItem) itemStack.getItem();
             return true;
+        }
 
         return TetraProxy.PROXY.canImbue(itemStack);
     }
 
     public static ActionResult<ItemStack> onUseCastingHelper(@NotNull World level, PlayerEntity player, @NotNull Hand hand, ItemStack stack, SpellData spellData) {
         //irons_spellbooks.LOGGER.debug("SwordItemMixin.use.1");
-        var spell = spellData.getSpell();
+        AbstractSpell spell = spellData.getSpell();
         if (spell != SpellRegistry.none()) {
             //irons_spellbooks.LOGGER.debug("SwordItemMixin.use.2");
             if (level.isClientSide) {
@@ -494,7 +501,7 @@ public class Utils {
     }
 
     public static boolean validAntiMagicTarget(Entity entity) {
-        return entity instanceof AntiMagicSusceptible || (entity instanceof PlayerEntity player/* && PlayerMagicData.getPlayerMagicData(player).isCasting()*/) || (entity instanceof AbstractSpellCastingMob castingMob /*&& PlayerMagicData.getPlayerMagicData(castingMob).isCasting()*/);
+        return entity instanceof AntiMagicSusceptible || (entity instanceof PlayerEntity/* && PlayerMagicData.getPlayerMagicData(player).isCasting()*/) || (entity instanceof AbstractSpellCastingMob /*&& PlayerMagicData.getPlayerMagicData(castingMob).isCasting()*/);
     }
 
     /**
@@ -552,18 +559,23 @@ public class Utils {
     }
 
     public static boolean preCastTargetHelper(World level, LivingEntity caster, MagicData playerMagicData, AbstractSpell spell, int range, float aimAssist, boolean sendFailureMessage) {
-        var target = Utils.raycastForEntity(caster.level, caster, range, true, aimAssist);
-        if (target instanceof EntityRayTraceResult entityHit && entityHit.getEntity() instanceof LivingEntity livingTarget) {
+        RayTraceResult target = Utils.raycastForEntity(caster.level, caster, range, true, aimAssist);
+        if (target instanceof EntityRayTraceResult && ((EntityRayTraceResult) target).getEntity() instanceof LivingEntity) {
+            EntityRayTraceResult entityHit = (EntityRayTraceResult) target;
+            LivingEntity livingTarget = (LivingEntity) entityHit.getEntity();
             playerMagicData.setAdditionalCastData(new CastTargetingData(livingTarget));
-            if (caster instanceof ServerPlayerEntity serverPlayer) {
+            if (caster instanceof ServerPlayerEntity) {
+                ServerPlayerEntity serverPlayer = (ServerPlayerEntity) caster;
                 Messages.sendToPlayer(new ClientboundSyncTargetingData(livingTarget, spell), serverPlayer);
                 serverPlayer.connection.send(new ClientboundSetActionBarTextPacket(ITextComponent.translatable("ui.irons_spellbooks.spell_target_success", livingTarget.getDisplayName().getString(), spell.getDisplayName()).withStyle(TextFormatting.GREEN)));
             }
-            if (livingTarget instanceof ServerPlayerEntity serverPlayer) {
+            if (livingTarget instanceof ServerPlayerEntity) {
+                ServerPlayerEntity serverPlayer = (ServerPlayerEntity) livingTarget;
                 Utils.sendTargetedNotification(serverPlayer, caster, spell);
             }
             return true;
-        } else if (sendFailureMessage && caster instanceof ServerPlayerEntity serverPlayer) {
+        } else if (sendFailureMessage && caster instanceof ServerPlayerEntity) {
+            ServerPlayerEntity serverPlayer = (ServerPlayerEntity) caster;
             serverPlayer.connection.send(new ClientboundSetActionBarTextPacket(ITextComponent.translatable("ui.irons_spellbooks.cast_error_target").withStyle(TextFormatting.RED)));
         }
         return false;

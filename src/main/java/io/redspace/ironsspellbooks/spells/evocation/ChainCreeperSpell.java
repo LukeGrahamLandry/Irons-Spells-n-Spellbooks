@@ -8,6 +8,7 @@ import io.redspace.ironsspellbooks.api.spells.*;
 import io.redspace.ironsspellbooks.capabilities.magic.CastTargetingData;
 import io.redspace.ironsspellbooks.entity.spells.creeper_head.CreeperHeadProjectile;
 import io.redspace.ironsspellbooks.api.util.Utils;
+import net.minecraft.util.math.vector.Vector2f;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.ResourceLocation;
@@ -83,7 +84,8 @@ public class ChainCreeperSpell extends AbstractSpell {
     @Override
     public void onCast(World level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
         Vector3d spawn = null;
-        if (playerMagicData.getAdditionalCastData() instanceof CastTargetingData castTargetingData) {
+        if (playerMagicData.getAdditionalCastData() instanceof CastTargetingData) {
+            CastTargetingData castTargetingData = (CastTargetingData) playerMagicData.getAdditionalCastData();
             spawn = castTargetingData.getTargetPosition((ServerWorld) level);
         }
         if (spawn == null) {
@@ -112,7 +114,7 @@ public class ChainCreeperSpell extends AbstractSpell {
             head.setChainOnKill(true);
 
             Vector3d spawn = origin.add(motion.multiply(1, 0, 1).normalize().scale(.3f));
-            var angle = Utils.rotationFromDirection(motion);
+            Vector2f angle = Utils.rotationFromDirection(motion);
 
             head.moveTo(spawn.x, spawn.y - head.getBoundingBox().getYsize() / 2, spawn.z, angle.y, angle.x);
             level.addFreshEntity(head);

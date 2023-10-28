@@ -80,7 +80,7 @@ public class FrostStepSpell extends AbstractSpell {
 
     @Override
     public void onCast(World level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
-        var teleportData = (TeleportSpell.TeleportData) playerMagicData.getAdditionalCastData();
+        TeleportSpell.TeleportData teleportData = (TeleportSpell.TeleportData) playerMagicData.getAdditionalCastData();
 
         FrozenHumanoid shadow = new FrozenHumanoid(level, entity);
         shadow.setShatterDamage(getDamage(spellLevel, entity));
@@ -88,7 +88,7 @@ public class FrostStepSpell extends AbstractSpell {
         level.addFreshEntity(shadow);
         Vector3d dest = null;
         if (teleportData != null) {
-            var potentialTarget = teleportData.getTeleportTargetPosition();
+            Vector3d potentialTarget = teleportData.getTeleportTargetPosition();
             dest = potentialTarget;
         }
 

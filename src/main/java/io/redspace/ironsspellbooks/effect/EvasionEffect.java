@@ -9,6 +9,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.command.arguments.EntityAnchorArgument;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.SoundCategory;
@@ -22,6 +23,7 @@ import net.minecraft.entity.ai.attributes.AttributeModifierManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.vector.Vector3d;
 
+import java.util.Random;
 import java.util.Set;
 
 public class EvasionEffect extends CustomDescriptionMobEffect {
@@ -65,7 +67,7 @@ public class EvasionEffect extends CustomDescriptionMobEffect {
             return false;
         }
 
-        var data = MagicData.getPlayerMagicData(livingEntity).getSyncedData();
+        SyncedSpellData data = MagicData.getPlayerMagicData(livingEntity).getSyncedData();
         data.subtractEvasionHit();
         if (data.getEvasionHitsRemaining() < 0) {
             livingEntity.removeEffect(MobEffectRegistry.EVASION.get());
@@ -75,11 +77,11 @@ public class EvasionEffect extends CustomDescriptionMobEffect {
         double d1 = livingEntity.getY();
         double d2 = livingEntity.getZ();
         double maxRadius = 18d;
-        var level = livingEntity.level;
-        var random = livingEntity.getRandom();
+        World level = livingEntity.level;
+        Random random = livingEntity.getRandom();
 
         for (int i = 0; i < 16; ++i) {
-            var minRadius = maxRadius / 2;
+            double minRadius = maxRadius / 2;
             Vector3d vec = new Vector3d((double) random.nextInt((int) minRadius, (int) maxRadius), 0, 0);
             int degrees = random.nextInt(360);
             vec = vec.yRot(degrees);

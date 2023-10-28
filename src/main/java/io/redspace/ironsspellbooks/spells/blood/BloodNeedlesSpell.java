@@ -8,6 +8,7 @@ import io.redspace.ironsspellbooks.api.magic.MagicData;
 import io.redspace.ironsspellbooks.damage.ISpellDamageSource;
 import io.redspace.ironsspellbooks.entity.spells.blood_needle.BloodNeedle;
 import io.redspace.ironsspellbooks.api.util.Utils;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.ResourceLocation;
@@ -77,7 +78,7 @@ public class BloodNeedlesSpell extends AbstractSpell {
         int count = getCount(spellLevel);
         float damage = getDamage(spellLevel, entity);
         int degreesPerNeedle = 360 / count;
-        var raycast = Utils.raycastForEntity(world, entity, 32, true);
+        RayTraceResult raycast = Utils.raycastForEntity(world, entity, 32, true);
         for (int i = 0; i < count; i++) {
             BloodNeedle needle = new BloodNeedle(world, entity);
             int rotation = degreesPerNeedle * i - (degreesPerNeedle / 2);

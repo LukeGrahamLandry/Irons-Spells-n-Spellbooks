@@ -59,21 +59,28 @@ public class GeoHumanoidRenderer<T extends MobEntity & IAnimatable> extends Exte
 
     @Override
     protected ModelRenderer getArmorPartForBone(String name, BipedModel<?> armorModel) {
-        return switch (name) {
-            case DefaultBipedBoneIdents.LEFT_FOOT_ARMOR_BONE_IDENT,
-                    DefaultBipedBoneIdents.LEFT_LEG_ARMOR_BONE_IDENT,
-                    DefaultBipedBoneIdents.LEFT_FOOT_ARMOR_BONE_2_IDENT,
-                    DefaultBipedBoneIdents.LEFT_LEG_ARMOR_BONE_2_IDENT -> armorModel.leftLeg;
-            case DefaultBipedBoneIdents.RIGHT_FOOT_ARMOR_BONE_IDENT,
-                    DefaultBipedBoneIdents.RIGHT_LEG_ARMOR_BONE_IDENT,
-                    DefaultBipedBoneIdents.RIGHT_FOOT_ARMOR_BONE_2_IDENT,
-                    DefaultBipedBoneIdents.RIGHT_LEG_ARMOR_BONE_2_IDENT -> armorModel.rightLeg;
-            case DefaultBipedBoneIdents.RIGHT_ARM_ARMOR_BONE_IDENT -> armorModel.rightArm;
-            case DefaultBipedBoneIdents.LEFT_ARM_ARMOR_BONE_IDENT -> armorModel.leftArm;
-            case DefaultBipedBoneIdents.BODY_ARMOR_BONE_IDENT -> armorModel.body;
-            case DefaultBipedBoneIdents.HEAD_ARMOR_BONE_IDENT -> armorModel.head;
-            default -> null;
-        };
+        switch (name) {
+            case DefaultBipedBoneIdents.LEFT_FOOT_ARMOR_BONE_IDENT:
+            case DefaultBipedBoneIdents.LEFT_LEG_ARMOR_BONE_IDENT:
+            case DefaultBipedBoneIdents.LEFT_FOOT_ARMOR_BONE_2_IDENT:
+            case DefaultBipedBoneIdents.LEFT_LEG_ARMOR_BONE_2_IDENT:
+                return armorModel.leftLeg;
+            case DefaultBipedBoneIdents.RIGHT_FOOT_ARMOR_BONE_IDENT:
+            case DefaultBipedBoneIdents.RIGHT_LEG_ARMOR_BONE_IDENT:
+            case DefaultBipedBoneIdents.RIGHT_FOOT_ARMOR_BONE_2_IDENT:
+            case DefaultBipedBoneIdents.RIGHT_LEG_ARMOR_BONE_2_IDENT:
+                return armorModel.rightLeg;
+            case DefaultBipedBoneIdents.RIGHT_ARM_ARMOR_BONE_IDENT:
+                return armorModel.rightArm;
+            case DefaultBipedBoneIdents.LEFT_ARM_ARMOR_BONE_IDENT:
+                return armorModel.leftArm;
+            case DefaultBipedBoneIdents.BODY_ARMOR_BONE_IDENT:
+                return armorModel.body;
+            case DefaultBipedBoneIdents.HEAD_ARMOR_BONE_IDENT:
+                return armorModel.head;
+            default:
+                return null;
+        }
     }
 
     @Override
@@ -88,43 +95,52 @@ public class GeoHumanoidRenderer<T extends MobEntity & IAnimatable> extends Exte
 
     @Override
     protected EquipmentSlotType getEquipmentSlotForArmorBone(String boneName, T currentEntity) {
-        return switch (boneName) {
-            case DefaultBipedBoneIdents.LEFT_FOOT_ARMOR_BONE_IDENT,
-                    DefaultBipedBoneIdents.RIGHT_FOOT_ARMOR_BONE_IDENT,
-                    DefaultBipedBoneIdents.LEFT_FOOT_ARMOR_BONE_2_IDENT,
-                    DefaultBipedBoneIdents.RIGHT_FOOT_ARMOR_BONE_2_IDENT -> EquipmentSlotType.FEET;
-            case DefaultBipedBoneIdents.LEFT_LEG_ARMOR_BONE_IDENT,
-                    DefaultBipedBoneIdents.RIGHT_LEG_ARMOR_BONE_IDENT,
-                    DefaultBipedBoneIdents.LEFT_LEG_ARMOR_BONE_2_IDENT,
-                    DefaultBipedBoneIdents.RIGHT_LEG_ARMOR_BONE_2_IDENT -> EquipmentSlotType.LEGS;
-            case DefaultBipedBoneIdents.RIGHT_ARM_ARMOR_BONE_IDENT -> !currentEntity.isLeftHanded() ? EquipmentSlotType.MAINHAND : EquipmentSlotType.OFFHAND;
-            case DefaultBipedBoneIdents.LEFT_ARM_ARMOR_BONE_IDENT -> currentEntity.isLeftHanded() ? EquipmentSlotType.MAINHAND : EquipmentSlotType.OFFHAND;
-            case DefaultBipedBoneIdents.BODY_ARMOR_BONE_IDENT -> EquipmentSlotType.CHEST;
-            case DefaultBipedBoneIdents.HEAD_ARMOR_BONE_IDENT -> EquipmentSlotType.HEAD;
-            default -> null;
-        };
+        switch (boneName) {
+            case DefaultBipedBoneIdents.LEFT_FOOT_ARMOR_BONE_IDENT:
+            case DefaultBipedBoneIdents.RIGHT_FOOT_ARMOR_BONE_IDENT:
+            case DefaultBipedBoneIdents.LEFT_FOOT_ARMOR_BONE_2_IDENT:
+            case DefaultBipedBoneIdents.RIGHT_FOOT_ARMOR_BONE_2_IDENT:
+                return EquipmentSlotType.FEET;
+            case DefaultBipedBoneIdents.LEFT_LEG_ARMOR_BONE_IDENT:
+            case DefaultBipedBoneIdents.RIGHT_LEG_ARMOR_BONE_IDENT:
+            case DefaultBipedBoneIdents.LEFT_LEG_ARMOR_BONE_2_IDENT:
+            case DefaultBipedBoneIdents.RIGHT_LEG_ARMOR_BONE_2_IDENT:
+                return EquipmentSlotType.LEGS;
+            case DefaultBipedBoneIdents.RIGHT_ARM_ARMOR_BONE_IDENT:
+                return !currentEntity.isLeftHanded() ? EquipmentSlotType.MAINHAND : EquipmentSlotType.OFFHAND;
+            case DefaultBipedBoneIdents.LEFT_ARM_ARMOR_BONE_IDENT:
+                return currentEntity.isLeftHanded() ? EquipmentSlotType.MAINHAND : EquipmentSlotType.OFFHAND;
+            case DefaultBipedBoneIdents.BODY_ARMOR_BONE_IDENT:
+                return EquipmentSlotType.CHEST;
+            case DefaultBipedBoneIdents.HEAD_ARMOR_BONE_IDENT:
+                return EquipmentSlotType.HEAD;
+            default:
+                return null;
+        }
     }
 
     @Override
     protected ItemStack getArmorForBone(String boneName, T currentEntity) {
-        return switch (boneName) {
-            case DefaultBipedBoneIdents.LEFT_FOOT_ARMOR_BONE_IDENT,
-                    DefaultBipedBoneIdents.RIGHT_FOOT_ARMOR_BONE_IDENT,
-                    DefaultBipedBoneIdents.LEFT_FOOT_ARMOR_BONE_2_IDENT,
-                    DefaultBipedBoneIdents.RIGHT_FOOT_ARMOR_BONE_2_IDENT ->
-                    currentEntity.getItemBySlot(EquipmentSlotType.FEET);
-            case DefaultBipedBoneIdents.LEFT_LEG_ARMOR_BONE_IDENT,
-                    DefaultBipedBoneIdents.RIGHT_LEG_ARMOR_BONE_IDENT,
-                    DefaultBipedBoneIdents.LEFT_LEG_ARMOR_BONE_2_IDENT,
-                    DefaultBipedBoneIdents.RIGHT_LEG_ARMOR_BONE_2_IDENT ->
-                    currentEntity.getItemBySlot(EquipmentSlotType.LEGS);
-            case DefaultBipedBoneIdents.BODY_ARMOR_BONE_IDENT,
-                    DefaultBipedBoneIdents.RIGHT_ARM_ARMOR_BONE_IDENT,
-                    DefaultBipedBoneIdents.LEFT_ARM_ARMOR_BONE_IDENT ->
-                    currentEntity.getItemBySlot(EquipmentSlotType.CHEST);
-            case DefaultBipedBoneIdents.HEAD_ARMOR_BONE_IDENT -> currentEntity.getItemBySlot(EquipmentSlotType.HEAD);
-            default -> null;
-        };
+        switch (boneName) {
+            case DefaultBipedBoneIdents.LEFT_FOOT_ARMOR_BONE_IDENT:
+            case DefaultBipedBoneIdents.RIGHT_FOOT_ARMOR_BONE_IDENT:
+            case DefaultBipedBoneIdents.LEFT_FOOT_ARMOR_BONE_2_IDENT:
+            case DefaultBipedBoneIdents.RIGHT_FOOT_ARMOR_BONE_2_IDENT:
+                return currentEntity.getItemBySlot(EquipmentSlotType.FEET);
+            case DefaultBipedBoneIdents.LEFT_LEG_ARMOR_BONE_IDENT:
+            case DefaultBipedBoneIdents.RIGHT_LEG_ARMOR_BONE_IDENT:
+            case DefaultBipedBoneIdents.LEFT_LEG_ARMOR_BONE_2_IDENT:
+            case DefaultBipedBoneIdents.RIGHT_LEG_ARMOR_BONE_2_IDENT:
+                return currentEntity.getItemBySlot(EquipmentSlotType.LEGS);
+            case DefaultBipedBoneIdents.BODY_ARMOR_BONE_IDENT:
+            case DefaultBipedBoneIdents.RIGHT_ARM_ARMOR_BONE_IDENT:
+            case DefaultBipedBoneIdents.LEFT_ARM_ARMOR_BONE_IDENT:
+                return currentEntity.getItemBySlot(EquipmentSlotType.CHEST);
+            case DefaultBipedBoneIdents.HEAD_ARMOR_BONE_IDENT:
+                return currentEntity.getItemBySlot(EquipmentSlotType.HEAD);
+            default:
+                return null;
+        }
     }
 
 //    @Override
@@ -147,8 +163,10 @@ public class GeoHumanoidRenderer<T extends MobEntity & IAnimatable> extends Exte
     protected void handleArmorRenderingForBone(GeoBone bone, MatrixStack stack, IVertexBuilder buffer, int packedLight, int packedOverlay, ResourceLocation currentTexture) {
         super.handleArmorRenderingForBone(bone, stack, buffer, packedLight, packedOverlay, currentTexture);
         for (EquipmentSlotType slot : SLOTS)
-            if (currentEntityBeingRendered.getItemBySlot(slot).getItem() instanceof GeoArmorItem geoArmorItem) {
-                if(GeoArmorRenderer.getRenderer(geoArmorItem.getClass(), this.currentEntityBeingRendered) instanceof GenericCustomArmorRenderer<?> armorRenderer){
+            if (currentEntityBeingRendered.getItemBySlot(slot).getItem() instanceof GeoArmorItem) {
+                GeoArmorItem geoArmorItem = (GeoArmorItem) currentEntityBeingRendered.getItemBySlot(slot).getItem();
+                if(GeoArmorRenderer.getRenderer(geoArmorItem.getClass(), this.currentEntityBeingRendered) instanceof GenericCustomArmorRenderer<?>){
+                    GenericCustomArmorRenderer<?> armorRenderer = (GenericCustomArmorRenderer<?>) GeoArmorRenderer.getRenderer(geoArmorItem.getClass(), this.currentEntityBeingRendered);
 
                 }
                 //HumanoidModel<?> armorModel = (HumanoidModel<?>) geoArmorRenderer;
@@ -159,22 +177,26 @@ public class GeoHumanoidRenderer<T extends MobEntity & IAnimatable> extends Exte
     @Nullable
     @Override
     protected ItemStack getHeldItemForBone(String boneName, T entity) {
-        return switch (boneName) {
-            case DefaultBipedBoneIdents.LEFT_HAND_BONE_IDENT ->
-                    entity.isLeftHanded() ? entity.getMainHandItem() : entity.getOffhandItem();
-            case DefaultBipedBoneIdents.RIGHT_HAND_BONE_IDENT ->
-                    entity.isLeftHanded() ? entity.getOffhandItem() : entity.getMainHandItem();
-            default -> null;
-        };
+        switch (boneName) {
+            case DefaultBipedBoneIdents.LEFT_HAND_BONE_IDENT:
+                return entity.isLeftHanded() ? entity.getMainHandItem() : entity.getOffhandItem();
+            case DefaultBipedBoneIdents.RIGHT_HAND_BONE_IDENT:
+                return entity.isLeftHanded() ? entity.getOffhandItem() : entity.getMainHandItem();
+            default:
+                return null;
+        }
     }
 
     @Override
     protected ItemCameraTransforms.TransformType getCameraTransformForItemAtBone(ItemStack stack, String boneName) {
-        return switch (boneName) {
-            case DefaultBipedBoneIdents.LEFT_HAND_BONE_IDENT, DefaultBipedBoneIdents.RIGHT_HAND_BONE_IDENT ->
-                    ItemCameraTransforms.TransformType.THIRD_PERSON_RIGHT_HAND; // Do Defaults
-            default -> ItemCameraTransforms.TransformType.NONE;
-        };
+        // Do Defaults
+        switch (boneName) {
+            case DefaultBipedBoneIdents.LEFT_HAND_BONE_IDENT:
+            case DefaultBipedBoneIdents.RIGHT_HAND_BONE_IDENT:
+                return ItemCameraTransforms.TransformType.THIRD_PERSON_RIGHT_HAND;
+            default:
+                return ItemCameraTransforms.TransformType.NONE;
+        }
     }
 
     @Nullable
@@ -185,8 +207,8 @@ public class GeoHumanoidRenderer<T extends MobEntity & IAnimatable> extends Exte
 
     @Override
     protected void preRenderItem(MatrixStack poseStack, ItemStack itemStack, String boneName, T animatable, IBone bone) {
-        var mainHandItem = animatable.getMainHandItem();
-        var offHandItem = animatable.getOffhandItem();
+        ItemStack mainHandItem = animatable.getMainHandItem();
+        ItemStack offHandItem = animatable.getOffhandItem();
         poseStack.translate(0, 0, -0.0625);
         poseStack.translate(0, -0.0625, 0);
 

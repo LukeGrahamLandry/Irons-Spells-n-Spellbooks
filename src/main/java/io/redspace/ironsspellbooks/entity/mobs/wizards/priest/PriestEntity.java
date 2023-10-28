@@ -210,10 +210,12 @@ public class PriestEntity extends NeutralWizard implements IVillagerDataHolder, 
         }
         if (this.tickCount % 60 == 0) {
             this.level.getEntities(this, this.getBoundingBox().inflate(this.getAttributeValue(Attributes.FOLLOW_RANGE)), (entity) -> entity instanceof IMob && !(entity instanceof CreeperEntity)).forEach((enemy) -> {
-                if (enemy instanceof MobEntity mob)
+                if (enemy instanceof MobEntity) {
+                    MobEntity mob = (MobEntity) enemy;
                     if (mob.getTarget() == null)
                         if (EntityPredicate.forCombat().test(mob, this))
                             mob.setTarget(this);
+                }
             });
         }
         if (unhappyTimer > 0)

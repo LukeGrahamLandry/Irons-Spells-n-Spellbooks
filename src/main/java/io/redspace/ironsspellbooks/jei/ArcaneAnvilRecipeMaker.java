@@ -44,17 +44,17 @@ public final class ArcaneAnvilRecipeMaker {
     }
 
     private static Stream<ArcaneAnvilRecipe> getImbueRecipes(IVanillaRecipeFactory vanillaRecipeFactory, IIngredientManager ingredientManager) {
-        var scrollStack = new ItemStack(ItemRegistry.SCROLL.get());
-        var leftInputs = new ArrayList<ItemStack>();
-        var rightInputs = new ArrayList<ItemStack>();
-        var outputs = new ArrayList<ItemStack>();
+        ItemStack scrollStack = new ItemStack(ItemRegistry.SCROLL.get());
+        ArrayList<ItemStack> leftInputs = new ArrayList<ItemStack>();
+        ArrayList<ItemStack> rightInputs = new ArrayList<ItemStack>();
+        ArrayList<ItemStack> outputs = new ArrayList<ItemStack>();
 
         SpellRegistry.REGISTRY.get().getValues().stream()
                 .filter(spell -> spell != SpellRegistry.none() && spell.isEnabled())
                 .sorted(Comparator.comparing(AbstractSpell::getSpellId))
                 .forEach((spellType) -> {
                     Registry.ITEM.stream().filter((k) -> k instanceof SwordItem && k.getItemCategory() != null).forEach((swordItem) -> {
-                        var inputSwordStack = new ItemStack(swordItem);
+                        ItemStack inputSwordStack = new ItemStack(swordItem);
                         IntStream.rangeClosed(spellType.getMinLevel(), spellType.getMaxLevel())
                                 .forEach((spellLevel) -> {
                                     leftInputs.add(inputSwordStack);
@@ -72,11 +72,11 @@ public final class ArcaneAnvilRecipeMaker {
     }
 
     private static ArcaneAnvilRecipe enumerateScrollCombinations(AbstractSpell spell) {
-        var scrollStack = new ItemStack(ItemRegistry.SCROLL.get());
+        ItemStack scrollStack = new ItemStack(ItemRegistry.SCROLL.get());
 
-        var leftInputs = new ArrayList<ItemStack>();
-        var rightInputs = new ArrayList<ItemStack>();
-        var outputs = new ArrayList<ItemStack>();
+        ArrayList<ItemStack> leftInputs = new ArrayList<ItemStack>();
+        ArrayList<ItemStack> rightInputs = new ArrayList<ItemStack>();
+        ArrayList<ItemStack> outputs = new ArrayList<ItemStack>();
 
         IntStream.range(spell.getMinLevel(), spell.getMaxLevel())
                 .forEach((spellLevel) -> {
@@ -89,7 +89,7 @@ public final class ArcaneAnvilRecipeMaker {
     }
 
     private static ItemStack getScrollStack(ItemStack stack, AbstractSpell spell, int spellLevel) {
-        var scrollStack = stack.copy();
+        ItemStack scrollStack = stack.copy();
         SpellData.setSpellData(scrollStack, spell, spellLevel);
         return scrollStack;
     }

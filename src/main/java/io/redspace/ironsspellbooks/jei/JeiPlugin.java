@@ -64,10 +64,10 @@ public class JeiPlugin implements IModPlugin {
 
         SpellRegistry.REGISTRY.get().getValues().stream().forEach(spell -> {
             if (spell.isEnabled() && spell != SpellRegistry.none()) {
-                var list = new ArrayList<ItemStack>();
+                ArrayList<ItemStack> list = new ArrayList<ItemStack>();
                 IntStream.rangeClosed(spell.getMinLevel(), spell.getMaxLevel())
                         .forEach((spellLevel) -> {
-                            var scrollStack = new ItemStack(ItemRegistry.SCROLL.get());
+                            ItemStack scrollStack = new ItemStack(ItemRegistry.SCROLL.get());
                             SpellData.setSpellData(scrollStack, spell, spellLevel);
                             list.add(scrollStack);
                         });
@@ -104,7 +104,7 @@ public class JeiPlugin implements IModPlugin {
 
     private static final IIngredientSubtypeInterpreter<ItemStack> SCROLL_INTERPRETER = (stack, context) -> {
         if (stack.hasTag()) {
-            var spellData = SpellData.getSpellData(stack);
+            SpellData spellData = SpellData.getSpellData(stack);
             return String.format("scroll:%s:%d", spellData.getSpell().getSpellId(), spellData.getLevel());
         }
 

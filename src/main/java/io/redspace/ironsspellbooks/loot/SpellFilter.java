@@ -1,6 +1,7 @@
 package io.redspace.ironsspellbooks.loot;
 
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import io.redspace.ironsspellbooks.api.registry.SchoolRegistry;
@@ -45,21 +46,21 @@ public class SpellFilter {
 
     public AbstractSpell getRandomSpell(RandomSource random, Predicate<AbstractSpell> filter) {
         //Will throw a non fatal error if the filter empties the list
-        var spells = getApplicableSpells().stream().filter(filter).toList();
+        List<AbstractSpell> spells = getApplicableSpells().stream().filter(filter).toList();
         return spells.get(random.nextInt(spells.size()));
     }
 
     public static SpellFilter deserializeSpellFilter(JsonObject json) {
         if (JSONUtils.isValidNode(json, "school")) {
-            var schoolType = JSONUtils.getAsString(json, "school");
+            String schoolType = JSONUtils.getAsString(json, "school");
             return new SpellFilter(SchoolRegistry.getSchool(new ResourceLocation(schoolType)));
         } else if (JSONUtils.isArrayNode(json, "spells")) {
-            var spellsFromJson = JSONUtils.getAsJsonArray(json, "spells");
+            JsonArray spellsFromJson = JSONUtils.getAsJsonArray(json, "spells");
             List<AbstractSpell> applicableSpellList = new ArrayList<>();
             for (JsonElement element : spellsFromJson) {
                 String spellId = element.getAsString();
 
-                var spell = SpellRegistry.getSpell(spellId);
+                AbstractSpell spell = SpellRegistry.getSpell(spellId);
 
                 if (spell != SpellRegistry.none()) {
                     applicableSpellList.add(spell);

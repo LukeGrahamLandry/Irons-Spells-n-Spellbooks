@@ -21,6 +21,7 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvents;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.Hand;
 import net.minecraft.entity.EntityType;
@@ -137,10 +138,10 @@ public abstract class AbstractSpellCastingMob extends CreatureEntity implements 
     @Override
     public void readAdditionalSaveData(CompoundNBT pCompound) {
         super.readAdditionalSaveData(pCompound);
-        var syncedSpellData = new SyncedSpellData(this);
+        SyncedSpellData syncedSpellData = new SyncedSpellData(this);
         syncedSpellData.loadNBTData(pCompound);
         if (syncedSpellData.isCasting()) {
-            var spell = SpellRegistry.getSpell(syncedSpellData.getCastingSpellId());
+            AbstractSpell spell = SpellRegistry.getSpell(syncedSpellData.getCastingSpellId());
             this.initiateCastSpell(spell, syncedSpellData.getCastingSpellLevel());
         }
         playerMagicData.setSyncedData(syncedSpellData);
@@ -187,7 +188,7 @@ public abstract class AbstractSpellCastingMob extends CreatureEntity implements 
             return;
         }
 
-        var isCasting = playerMagicData.isCasting();
+        boolean isCasting = playerMagicData.isCasting();
         playerMagicData.setSyncedData(syncedSpellData);
         castingSpell = playerMagicData.getCastingSpell();
 
@@ -202,7 +203,7 @@ public abstract class AbstractSpellCastingMob extends CreatureEntity implements 
         if (!playerMagicData.isCasting() && isCasting) {
             castComplete();
         } else if (playerMagicData.isCasting() && !isCasting)/* if (syncedSpellData.getCastingSpellType().getCastType() == CastType.CONTINUOUS)*/ {
-            var spell = playerMagicData.getCastingSpell().getSpell();
+            AbstractSpell spell = playerMagicData.getCastingSpell().getSpell();
 
             initiateCastSpell(spell, playerMagicData.getCastingSpellLevel());
 
@@ -311,18 +312,18 @@ public abstract class AbstractSpellCastingMob extends CreatureEntity implements 
     }
 
     public boolean setTeleportLocationBehindTarget(int distance) {
-        var target = getTarget();
+        LivingEntity target = getTarget();
         boolean valid = false;
         if (target != null) {
-            var rotation = target.getLookAngle().normalize().scale(-distance);
-            var pos = target.position();
-            var teleportPos = rotation.add(pos);
+            Vector3d rotation = target.getLookAngle().normalize().scale(-distance);
+            Vector3d pos = target.position();
+            Vector3d teleportPos = rotation.add(pos);
 
             for (int i = 0; i < 24; i++) {
                 Vector3d randomness = Utils.getRandomVec3(.15f * i).multiply(1, 0, 1);
                 teleportPos = Utils.moveToRelativeGroundLevel(level, target.position().subtract(new Vector3d(0, 0, distance / (float) (i / 7 + 1)).yRot(-(target.yRot + i * 45) * MathHelper.DEG_TO_RAD)).add(randomness), 5);
                 teleportPos = new Vector3d(teleportPos.x, teleportPos.y + .1f, teleportPos.z);
-                var reposBB = this.getBoundingBox().move(teleportPos.subtract(this.position()));
+                AxisAlignedBB reposBB = this.getBoundingBox().move(teleportPos.subtract(this.position()));
                 IronsSpellbooks.LOGGER.debug("setTeleportLocationBehindTarget attempt to teleport to {}:", reposBB.getCenter());
                 if (!level.collidesWithSuffocatingBlock(this, reposBB.inflate(-.05f))) {
                     //IronsSpellbooks.LOGGER.debug("\n\n\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n\nsetTeleportLocationBehindTarget: {} {} {} empty. teleporting\n\n\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n\n", reposBB.minX, reposBB.minY, reposBB.minZ);
@@ -418,7 +419,7 @@ public abstract class AbstractSpellCastingMob extends CreatureEntity implements 
             return PlayState.STOP;
         }
 
-        var controller = event.getController();
+        AnimationController controller = event.getController();
         if (instantCastSpellType != SpellRegistry.none() && controller.getAnimationState() == AnimationState.Stopped) {
             setStartAnimationFromSpell(controller, instantCastSpellType);
             instantCastSpellType = SpellRegistry.none();
@@ -431,7 +432,7 @@ public abstract class AbstractSpellCastingMob extends CreatureEntity implements 
             return PlayState.STOP;
         }
 
-        var controller = event.getController();
+        AnimationController controller = event.getController();
         if (isCasting() && castingSpell != null && castingSpell.getSpell().getCastType() == CastType.LONG && controller.getAnimationState() == AnimationState.Stopped) {
             setStartAnimationFromSpell(controller, castingSpell.getSpell());
         }
@@ -448,7 +449,7 @@ public abstract class AbstractSpellCastingMob extends CreatureEntity implements 
             return PlayState.STOP;
         }
 
-        var controller = event.getController();
+        AnimationController controller = event.getController();
         if (isCasting() && castingSpell != null && controller.getAnimationState() == AnimationState.Stopped) {
             if (castingSpell.getSpell().getCastType() == CastType.CONTINUOUS) {
                 setStartAnimationFromSpell(controller, castingSpell.getSpell());

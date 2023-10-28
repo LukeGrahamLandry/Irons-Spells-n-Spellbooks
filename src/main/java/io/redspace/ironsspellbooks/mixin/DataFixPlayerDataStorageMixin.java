@@ -34,9 +34,9 @@ public abstract class DataFixPlayerDataStorageMixin {
             if (file1.exists() && file1.isFile()) {
                 try {
                     synchronized (iron_sSpells_nSpellbooks$sync) {
-                        var compoundTag1 = CompressedStreamTools.readCompressed(file1);
+                        CompoundNBT compoundTag1 = CompressedStreamTools.readCompressed(file1);
 
-                        var ironsTraverser = new IronsTagTraverser();
+                        IronsTagTraverser ironsTraverser = new IronsTagTraverser();
                         ironsTraverser.visit(compoundTag1);
 
                         if (ironsTraverser.changesMade()) {

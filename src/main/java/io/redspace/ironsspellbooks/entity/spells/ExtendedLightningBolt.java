@@ -1,6 +1,7 @@
 package io.redspace.ironsspellbooks.entity.spells;
 
 import io.redspace.ironsspellbooks.api.registry.SpellRegistry;
+import io.redspace.ironsspellbooks.api.spells.AbstractSpell;
 import io.redspace.ironsspellbooks.damage.DamageSources;
 import io.redspace.ironsspellbooks.api.spells.SchoolType;
 import net.minecraft.entity.Entity;
@@ -36,7 +37,7 @@ public class ExtendedLightningBolt extends LightningBoltEntity {
                 List<Entity> list1 = this.level.getEntities(this, new AxisAlignedBB(this.getX() - 3.0D, this.getY() - 3.0D, this.getZ() - 3.0D, this.getX() + 3.0D, this.getY() + 6.0D + 3.0D, this.getZ() + 3.0D), Entity::isAlive);
 
                 for (Entity entity : list1) {
-                    var spell = SpellRegistry.LIGHTNING_BOLT_SPELL.get();
+                    AbstractSpell spell = SpellRegistry.LIGHTNING_BOLT_SPELL.get();
                     DamageSources.applyDamage(entity, damage, spell.getDamageSource(owner), spell.getSchoolType());
                 }
             }

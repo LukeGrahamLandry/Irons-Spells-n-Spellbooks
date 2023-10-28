@@ -39,7 +39,7 @@ public class ClientboundCastErrorMessage {
     public boolean handle(Supplier<NetworkEvent.Context> supplier) {
         NetworkEvent.Context ctx = supplier.get();
         ctx.enqueueWork(() -> {
-            var spell = SpellRegistry.getSpell(spellId);
+            AbstractSpell spell = SpellRegistry.getSpell(spellId);
             if (errorType == ErrorType.COOLDOWN) {
                 //ignore cooldown message if we are simply holding right click.
                 if (ClientInputEvents.hasReleasedSinceCasting)

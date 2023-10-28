@@ -7,6 +7,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import io.redspace.ironsspellbooks.IronsSpellbooks;
 import io.redspace.ironsspellbooks.api.registry.SpellRegistry;
+import io.redspace.ironsspellbooks.api.spells.AbstractSpell;
 import io.redspace.ironsspellbooks.entity.mobs.debug_wizard.DebugWizard;
 import io.redspace.ironsspellbooks.registries.EntityRegistry;
 import net.minecraft.command.CommandSource;
@@ -40,7 +41,7 @@ public class CreateDebugWizardCommand {
             spellId = IronsSpellbooks.MODID + ":" + spellId;
         }
 
-        var spell = SpellRegistry.getSpell(spellId);
+        AbstractSpell spell = SpellRegistry.getSpell(spellId);
 
         if (spellLevel > spell.getMaxLevel()) {
             throw new SimpleCommandExceptionType(ITextComponent.translatable("commands.irons_spellbooks.create_spell.failed_max_level", spell.getSpellName(), spell.getMaxLevel())).create();
@@ -48,7 +49,7 @@ public class CreateDebugWizardCommand {
 
         var serverPlayer = source.getPlayer();
         if (serverPlayer != null) {
-            var debugWizard = new DebugWizard(EntityRegistry.DEBUG_WIZARD.get(), serverPlayer.level, spell, spellLevel, targetsPlayer, cancelAfterTicks);
+            DebugWizard debugWizard = new DebugWizard(EntityRegistry.DEBUG_WIZARD.get(), serverPlayer.level, spell, spellLevel, targetsPlayer, cancelAfterTicks);
             debugWizard.setPos(serverPlayer.position());
             if (serverPlayer.level.addFreshEntity(debugWizard)) {
                 return 1;

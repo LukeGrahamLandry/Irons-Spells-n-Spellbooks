@@ -95,7 +95,8 @@ public class StarfallSpell extends AbstractSpell {
     @Override
     public void onServerCastTick(World level, int spellLevel, LivingEntity entity, @Nullable MagicData playerMagicData) {
         if (playerMagicData != null && (playerMagicData.getCastDurationRemaining() + 1) % 4 == 0)
-            if (playerMagicData.getAdditionalCastData() instanceof TargetAreaCastData targetAreaCastData) {
+            if (playerMagicData.getAdditionalCastData() instanceof TargetAreaCastData) {
+                TargetAreaCastData targetAreaCastData = (TargetAreaCastData) playerMagicData.getAdditionalCastData();
                 for (int i = 0; i < 2; i++) {
                     Vector3d center = targetAreaCastData.getCenter();
                     float radius = getRadius(entity);

@@ -8,6 +8,7 @@ import io.redspace.ironsspellbooks.registries.EntityRegistry;
 import io.redspace.ironsspellbooks.api.spells.SchoolType;
 import io.redspace.ironsspellbooks.util.ParticleHelper;
 import io.redspace.ironsspellbooks.api.util.Utils;
+import net.minecraft.entity.Entity;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
@@ -67,7 +68,7 @@ public class FireboltProjectile extends AbstractMagicProjectile {
     @Override
     protected void onHitEntity(EntityRayTraceResult entityHitResult) {
         super.onHitEntity(entityHitResult);
-        var target = entityHitResult.getEntity();
+        Entity target = entityHitResult.getEntity();
         DamageSources.applyDamage(target, getDamage(), SpellRegistry.FIREBOLT_SPELL.get().getDamageSource(this, getOwner()));
         discard();
     }

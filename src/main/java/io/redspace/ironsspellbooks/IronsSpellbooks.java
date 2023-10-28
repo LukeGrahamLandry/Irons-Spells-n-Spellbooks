@@ -43,6 +43,7 @@ import org.slf4j.Logger;
 import top.theillusivec4.curios.api.SlotTypeMessage;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.stream.Collectors;
 
 // The value here should match an entry in the META-INF/mods.toml file
@@ -126,8 +127,8 @@ public class IronsSpellbooks {
 
     private static void addBuiltinPack(AddPackFindersEvent event, String filename, ITextComponent displayName) throws IOException {
         filename = "builtin_resource_packs/" + filename;
-        var resourcePath = ModList.get().getModFileById(MODID).getFile().findResource(filename);
-        var pack = new PathPackResources(ModList.get().getModFileById(MODID).getFile().getFileName() + ":" + resourcePath, resourcePath);
+        Path resourcePath = ModList.get().getModFileById(MODID).getFile().findResource(filename);
+        PathPackResources pack = new PathPackResources(ModList.get().getModFileById(MODID).getFile().getFileName() + ":" + resourcePath, resourcePath);
         var metadataSection = pack.getMetadataSection(PackMetadataSection.SERIALIZER);
         String id = "builtin/" + filename;
         if (metadataSection != null) {

@@ -19,7 +19,9 @@ public class EntityRendererMixin<T extends Entity> {
      */
     @Inject(method = "shouldRender", at = @At(value = "HEAD"), cancellable = true)
     public void renderRayOverride(T pLivingEntity, ClippingHelper pCamera, double pCamX, double pCamY, double pCamZ, CallbackInfoReturnable<Boolean> cir) {
-        if (pLivingEntity instanceof LivingEntity livingEntity && ClientMagicData.getSyncedSpellData(livingEntity).isCasting())
+        if (pLivingEntity instanceof LivingEntity && ClientMagicData.getSyncedSpellData((LivingEntity) pLivingEntity).isCasting()) {
+            LivingEntity livingEntity = (LivingEntity) pLivingEntity;
             cir.setReturnValue(true);
+        }
     }
 }

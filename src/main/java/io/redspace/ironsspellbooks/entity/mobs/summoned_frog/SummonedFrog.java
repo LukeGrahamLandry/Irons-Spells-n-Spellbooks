@@ -66,7 +66,7 @@ public class SummonedFrog extends Frog implements MagicSummon {
 
     @Override
     protected Brain<?> makeBrain(Dynamic<?> pDynamic) {
-        var brain = (Brain<Frog>) super.makeBrain(pDynamic);
+        Brain<Frog> brain = (Brain<Frog>) super.makeBrain(pDynamic);
         brain.removeAllBehaviors();
         brain.addActivity(Activity.CORE, 0, ImmutableList.of(
                 new LookTask(45, 90),

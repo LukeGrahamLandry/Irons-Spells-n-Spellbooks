@@ -2,6 +2,7 @@ package io.redspace.ironsspellbooks.effect;
 
 import io.redspace.ironsspellbooks.registries.MobEffectRegistry;
 import net.minecraft.potion.Effect;
+import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.EffectType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -35,8 +36,9 @@ public class BlightEffect extends Effect {
     @SubscribeEvent
     public static void reduceDamageOutput(LivingDamageEvent event) {
         Entity attacker = event.getSource().getEntity();
-        if (attacker instanceof LivingEntity livingAttacker) {
-            var effect = livingAttacker.getEffect(MobEffectRegistry.BLIGHT.get());
+        if (attacker instanceof LivingEntity) {
+            LivingEntity livingAttacker = (LivingEntity) attacker;
+            EffectInstance effect = livingAttacker.getEffect(MobEffectRegistry.BLIGHT.get());
             if (effect != null) {
                 int lvl = effect.getAmplifier() + 1;
                 float before = event.getAmount();

@@ -78,8 +78,9 @@ public class AcupunctureSpell extends AbstractSpell {
 
     @Override
     public void onCast(World world, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
-        if (playerMagicData.getAdditionalCastData() instanceof CastTargetingData targetData) {
-            var targetEntity = targetData.getTarget((ServerWorld) world);
+        if (playerMagicData.getAdditionalCastData() instanceof CastTargetingData) {
+            CastTargetingData targetData = (CastTargetingData) playerMagicData.getAdditionalCastData();
+            LivingEntity targetEntity = targetData.getTarget((ServerWorld) world);
             if (targetEntity != null) {
                 int count = getCount(spellLevel, entity);
                 float damage = getDamage(spellLevel, entity);

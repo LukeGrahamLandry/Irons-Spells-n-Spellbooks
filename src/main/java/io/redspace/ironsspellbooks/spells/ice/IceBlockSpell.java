@@ -88,7 +88,8 @@ public class IceBlockSpell extends AbstractSpell {
         Vector3d spawn = null;
         LivingEntity target = null;
 
-        if (playerMagicData.getAdditionalCastData() instanceof CastTargetingData castTargetingData) {
+        if (playerMagicData.getAdditionalCastData() instanceof CastTargetingData) {
+            CastTargetingData castTargetingData = (CastTargetingData) playerMagicData.getAdditionalCastData();
             target = castTargetingData.getTarget((ServerWorld) level);
             if (target != null)
                 spawn = target.position();
@@ -97,8 +98,10 @@ public class IceBlockSpell extends AbstractSpell {
             RayTraceResult raycast = Utils.raycastForEntity(level, entity, 32, true, .25f);
             if (raycast.getType() == RayTraceResult.Type.ENTITY) {
                 spawn = ((EntityRayTraceResult) raycast).getEntity().position();
-                if (((EntityRayTraceResult) raycast).getEntity() instanceof LivingEntity livingEntity)
+                if (((EntityRayTraceResult) raycast).getEntity() instanceof LivingEntity) {
+                    LivingEntity livingEntity = (LivingEntity) ((EntityRayTraceResult) raycast).getEntity();
                     target = livingEntity;
+                }
             } else {
                 spawn = raycast.getLocation().subtract(entity.getForward().normalize());
             }

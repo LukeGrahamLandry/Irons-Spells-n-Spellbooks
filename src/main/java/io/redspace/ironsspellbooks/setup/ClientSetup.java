@@ -154,7 +154,8 @@ public class ClientSetup {
     @SuppressWarnings({"rawtypes", "unchecked"})
     private static void addLayerToPlayerSkin(EntityRenderersEvent.AddLayers event, String skinName) {
         EntityRenderer<? extends PlayerEntity> render = event.getSkin(skinName);
-        if (render instanceof LivingRenderer livingRenderer) {
+        if (render instanceof LivingRenderer) {
+            LivingRenderer livingRenderer = (LivingRenderer) render;
             livingRenderer.addLayer(new AngelWingsLayer<>(livingRenderer));
             livingRenderer.addLayer(new EnergySwirlLayer.Vanilla(livingRenderer, EVASION_TEXTURE, SyncedSpellData.EVASION));
             livingRenderer.addLayer(new EnergySwirlLayer.Vanilla(livingRenderer, CHARGE_TEXTURE, SyncedSpellData.CHARGED));

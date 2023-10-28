@@ -64,7 +64,7 @@ public class AlchemistCauldronRecipe {
     }
 
     public ItemStack getInput() {
-        var i = inputStack.copy();
+        ItemStack i = inputStack.copy();
         i.setCount(this.requiredBaseCount);
         return i;
     }
@@ -74,7 +74,7 @@ public class AlchemistCauldronRecipe {
     }
 
     public ItemStack getResult() {
-        var i = resultStack.copy();
+        ItemStack i = resultStack.copy();
         i.setCount(this.resultLimitCount);
         return i;
     }

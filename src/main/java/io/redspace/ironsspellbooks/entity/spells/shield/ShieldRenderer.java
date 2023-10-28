@@ -47,7 +47,7 @@ public class ShieldRenderer extends EntityRenderer<ShieldEntity> implements IEnt
         poseStack.mulPose(Vector3f.XP.rotationDegrees(entity.xRot));
 
         //VertexConsumer consumer = bufferSource.getBuffer(RenderType.entityCutoutNoCull(getTextureLocation(entity)));
-        var offset = getEnergySwirlOffset(entity, partialTicks);
+        Vector2f offset = getEnergySwirlOffset(entity, partialTicks);
         IVertexBuilder consumer = bufferSource.getBuffer(RenderType.energySwirl(getTextureLocation(entity), offset.x, offset.y));
 
         float width = entity.width * .65f;

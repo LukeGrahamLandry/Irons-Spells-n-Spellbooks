@@ -8,6 +8,7 @@ import io.redspace.ironsspellbooks.api.spells.*;
 import io.redspace.ironsspellbooks.entity.spells.spectral_hammer.SpectralHammer;
 import io.redspace.ironsspellbooks.api.util.Utils;
 import net.minecraft.util.Direction;
+import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.ResourceLocation;
@@ -82,13 +83,13 @@ public class SpectralHammerSpell extends AbstractSpell {
 
     @Override
     public void onCast(World world, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
-        var blockPosition = Utils.getTargetBlock(world, entity, RayTraceContext.FluidMode.NONE, distance);
-        var face = blockPosition.getDirection();
+        BlockRayTraceResult blockPosition = Utils.getTargetBlock(world, entity, RayTraceContext.FluidMode.NONE, distance);
+        Direction face = blockPosition.getDirection();
 
         int radius = getRadius(spellLevel, entity);
         int depth = getDepth(spellLevel, entity);
 
-        var spectralHammer = new SpectralHammer(world, entity, blockPosition, depth, radius);
+        SpectralHammer spectralHammer = new SpectralHammer(world, entity, blockPosition, depth, radius);
         Vector3d position = Vector3d.atCenterOf(blockPosition.getBlockPos());
 
         if (!face.getAxis().isVertical()) {

@@ -1,6 +1,7 @@
 package io.redspace.ironsspellbooks.gui.overlays;
 
 import io.redspace.ironsspellbooks.IronsSpellbooks;
+import io.redspace.ironsspellbooks.capabilities.spell.SpellData;
 import io.redspace.ironsspellbooks.capabilities.spellbook.SpellBookData;
 import io.redspace.ironsspellbooks.item.SpellBook;
 import io.redspace.ironsspellbooks.player.ClientMagicData;
@@ -16,6 +17,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.vector.Vector2f;
 import net.minecraftforge.client.gui.overlay.ForgeGui;
+
+import java.util.List;
 
 public class SpellBarOverlay extends AbstractGui {
     public final static ResourceLocation TEXTURE = new ResourceLocation(IronsSpellbooks.MODID, "textures/gui/icons.png");
@@ -43,14 +46,14 @@ public class SpellBarOverlay extends AbstractGui {
         //  Render Spells
         //
         ItemStack spellBookStack = player.getMainHandItem().getItem() instanceof SpellBook ? player.getMainHandItem() : player.getOffhandItem();
-        var spellBookData = SpellBookData.getSpellBookData(spellBookStack);
+        SpellBookData spellBookData = SpellBookData.getSpellBookData(spellBookStack);
         if (spellBookStack != lastSpellBook) {
             lastSpellBook = spellBookStack;
             ClientRenderCache.generateRelativeLocations(spellBookData, 20, 22);
         }
 
-        var spells = spellBookData.getInscribedSpells();
-        var locations = ClientRenderCache.relativeSpellBarSlotLocations;
+        SpellData[] spells = spellBookData.getInscribedSpells();
+        List<Vector2f> locations = ClientRenderCache.relativeSpellBarSlotLocations;
         int approximateWidth = locations.size() / 3;
         //Move spellbar away from hotbar as it gets bigger
         centerX -= approximateWidth * 5;

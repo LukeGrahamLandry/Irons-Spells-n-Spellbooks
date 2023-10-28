@@ -1,9 +1,11 @@
 package io.redspace.ironsspellbooks.network;
 
 import io.redspace.ironsspellbooks.api.magic.MagicData;
+import io.redspace.ironsspellbooks.capabilities.spell.SpellData;
 import io.redspace.ironsspellbooks.capabilities.spellbook.SpellBookData;
 import io.redspace.ironsspellbooks.api.spells.CastSource;
 import io.redspace.ironsspellbooks.api.spells.CastType;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.Hand;
@@ -35,12 +37,12 @@ public class ServerboundQuickCast {
         NetworkEvent.Context ctx = supplier.get();
         ctx.enqueueWork(() -> {
             ServerPlayerEntity serverPlayer = ctx.getSender();
-            var itemStack = serverPlayer.getItemInHand(hand);
+            ItemStack itemStack = serverPlayer.getItemInHand(hand);
             SpellBookData sbd = SpellBookData.getSpellBookData(itemStack);
             if (sbd.getSpellSlots() > 0) {
-                var spellData = sbd.getSpell(slot);
+                SpellData spellData = sbd.getSpell(slot);
                 if (spellData != null) {
-                    var playerMagicData = MagicData.getPlayerMagicData(serverPlayer);
+                    MagicData playerMagicData = MagicData.getPlayerMagicData(serverPlayer);
                     if (playerMagicData.isCasting() && !playerMagicData.getCastingSpellId().equals(spellData.getSpell().getSpellId())) {
                         ServerboundCancelCast.cancelCast(serverPlayer, playerMagicData.getCastType() != CastType.LONG);
                     }

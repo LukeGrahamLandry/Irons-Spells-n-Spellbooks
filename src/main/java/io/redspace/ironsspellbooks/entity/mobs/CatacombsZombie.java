@@ -18,11 +18,18 @@ public class CatacombsZombie extends ZombieEntity {
         super(EntityType.ZOMBIE, pLevel);
         if (this.random.nextFloat() < .2f) {
             switch (this.random.nextIntBetweenInclusive(1, 4)) {
-
-                case 1 -> addEffect(new EffectInstance(Effects.INVISIBILITY, Integer.MAX_VALUE));
-                case 2 -> addEffect(new EffectInstance(Effects.MOVEMENT_SPEED, Integer.MAX_VALUE, 1));
-                case 3 -> addEffect(new EffectInstance(Effects.DAMAGE_RESISTANCE, Integer.MAX_VALUE, 1));
-                case 4 -> addEffect(new EffectInstance(Effects.DAMAGE_BOOST, Integer.MAX_VALUE));
+                case 1:
+                    addEffect(new EffectInstance(Effects.INVISIBILITY, Integer.MAX_VALUE));
+                    break;
+                case 2:
+                    addEffect(new EffectInstance(Effects.MOVEMENT_SPEED, Integer.MAX_VALUE, 1));
+                    break;
+                case 3:
+                    addEffect(new EffectInstance(Effects.DAMAGE_RESISTANCE, Integer.MAX_VALUE, 1));
+                    break;
+                case 4:
+                    addEffect(new EffectInstance(Effects.DAMAGE_BOOST, Integer.MAX_VALUE));
+                    break;
             }
 
         }
