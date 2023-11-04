@@ -150,7 +150,7 @@ public class AlchemistCauldronTile extends TileEntity implements ISidedInventory
             //IronsSpellbooks.LOGGER.debug("AlchemistCauldronTile: custom recipe for: {}", itemStack.toString());
             for (int i = 0; i < resultItems.size(); i++) {
                 ItemStack potentialInput = resultItems.get(i).copy();
-                List<Integer> matchingItems = new ArrayList<>(List.of(i));
+                List<Integer> matchingItems = new ArrayList<>(Arrays.asList(i));
                 if (!potentialInput.isEmpty()) {
                     for (int j = 0; j < resultItems.size(); j++) {
                         if (j != i && ItemStack.isSameItemSameTags(resultItems.get(j), potentialInput)) {

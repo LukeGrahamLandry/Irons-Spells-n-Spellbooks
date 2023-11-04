@@ -50,7 +50,7 @@ public class ServerConfigs {
 
         RARITY_CONFIG = BUILDER.worldRestart()
                 .comment(String.format("rarityConfig array values must sum to 1: [%s, %s, %s, %s, %s]. Default: [.3d, .25d, .2d, .15d, .1d]", SpellRarity.COMMON, SpellRarity.UNCOMMON, SpellRarity.RARE, SpellRarity.EPIC, SpellRarity.LEGENDARY))
-                .defineList("rarityConfig", List.of(.3d, .25d, .2d, .15d, .1d), x -> true);
+                .defineList("rarityConfig", Arrays.asList(.3d, .25d, .2d, .15d, .1d), x -> true);
 
         BUILDER.comment("Whether or not imbued weapons require mana to be casted. Default: true");
         SWORDS_CONSUME_MANA = BUILDER.worldRestart().define("swordsConsumeMana", true);

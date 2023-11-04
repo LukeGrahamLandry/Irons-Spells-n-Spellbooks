@@ -8,7 +8,8 @@ import io.redspace.ironsspellbooks.api.magic.MagicData;
 import io.redspace.ironsspellbooks.entity.spells.ExtendedEvokerFang;
 import io.redspace.ironsspellbooks.api.util.Utils;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
+import java.util.Arrays;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
@@ -17,9 +18,11 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.util.math.RayTraceContext;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.util.math.vector.Vector3d;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,7 +32,7 @@ public class FangStrikeSpell extends AbstractSpell {
 
     @Override
     public List<IFormattableTextComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(new TranslationTextComponent("ui.irons_spellbooks.fang_count", getCount(spellLevel, caster)),
+        return Arrays.asList(new TranslationTextComponent("ui.irons_spellbooks.fang_count", getCount(spellLevel, caster)),
                 new TranslationTextComponent("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(spellLevel, caster), 1)));
     }
 

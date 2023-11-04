@@ -12,7 +12,8 @@ import io.redspace.ironsspellbooks.registries.ItemRegistry;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
+import java.util.Arrays;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.world.item.*;
@@ -116,7 +117,7 @@ public class GenerateSiteData {
             StringBuilder spellbookBuilder = new StringBuilder();
             StringBuilder blockBuilder = new StringBuilder();
 
-            List<String> armorTypes = List.of("Archevoker", "Cryomancer", "Cultist", "Electromancer", "Priest", "Pumpkin", "Pyromancer", "Shadow-Walker", "Wandering Magician", "Ring", "Heavy Chain", "Scarecrow", "Plagued");
+            List<String> armorTypes = Arrays.asList("Archevoker", "Cryomancer", "Cultist", "Electromancer", "Priest", "Pumpkin", "Pyromancer", "Shadow-Walker", "Wandering Magician", "Ring", "Heavy Chain", "Scarecrow", "Plagued");
             Set<Item> itemsTracked = new HashSet<>();
             //This will exclude these items
             itemsTracked.add(ItemRegistry.WIMPY_SPELL_BOOK.get());

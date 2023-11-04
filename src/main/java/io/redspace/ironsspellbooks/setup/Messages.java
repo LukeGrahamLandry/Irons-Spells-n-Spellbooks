@@ -11,9 +11,13 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.entity.Entity;
 import net.minecraftforge.fml.network.NetworkDirection;
+import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
+
+import java.util.function.BiConsumer;
+import java.util.function.Supplier;
 
 public class Messages {
 
@@ -129,7 +133,7 @@ public class Messages {
         net.messageBuilder(ServerboundQuickCast.class, id(), NetworkDirection.PLAY_TO_SERVER)
                 .decoder(ServerboundQuickCast::new)
                 .encoder(ServerboundQuickCast::toBytes)
-                .consumerNetworkThread(ServerboundQuickCast::handle)
+                .consumer(ServerboundQuickCast::handle)
                 .add();
 
         net.messageBuilder(ClientboundHealParticles.class, id(), NetworkDirection.PLAY_TO_CLIENT)
@@ -189,19 +193,19 @@ public class Messages {
         net.messageBuilder(ClientboundSyncAnimation.class, id(), NetworkDirection.PLAY_TO_CLIENT)
                 .decoder(ClientboundSyncAnimation::new)
                 .encoder(ClientboundSyncAnimation::toBytes)
-                .consumerMainThread(ClientboundSyncAnimation::handle)
+                .consumer((BiConsumer<ClientboundSyncAnimation, Supplier<NetworkEvent.Context>>) ClientboundSyncAnimation::handle)
                 .add();
 
         net.messageBuilder(ClientboundOakskinParticles.class, id(), NetworkDirection.PLAY_TO_CLIENT)
                 .decoder(ClientboundOakskinParticles::new)
                 .encoder(ClientboundOakskinParticles::toBytes)
-                .consumerMainThread(ClientboundOakskinParticles::handle)
+                .consumer(ClientboundOakskinParticles::handle)
                 .add();
 
         net.messageBuilder(ClientboundSyncCameraShake.class, id(), NetworkDirection.PLAY_TO_CLIENT)
                 .decoder(ClientboundSyncCameraShake::new)
                 .encoder(ClientboundSyncCameraShake::toBytes)
-                .consumerMainThread(ClientboundSyncCameraShake::handle)
+                .consumer(ClientboundSyncCameraShake::handle)
                 .add();
 
     }

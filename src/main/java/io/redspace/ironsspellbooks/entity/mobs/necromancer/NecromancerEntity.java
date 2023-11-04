@@ -51,10 +51,10 @@ public class NecromancerEntity extends AbstractSpellCastingMob implements IMob {
         this.goalSelector.addGoal(3, new FleeSunGoal(this, 1.0D));
         this.goalSelector.addGoal(4, new WizardAttackGoal(this, 1.25f, 35, 80)
                 .setSpells(
-                        List.of(SpellRegistry.FANG_STRIKE_SPELL.get(), SpellRegistry.ICICLE_SPELL.get(), SpellRegistry.MAGIC_MISSILE_SPELL.get()),
-                        List.of(SpellRegistry.FANG_WARD_SPELL.get(), SpellRegistry.FORTIFY_SPELL.get()),
-                        List.of(),
-                        List.of(SpellRegistry.BLIGHT_SPELL.get())
+                        Arrays.asList(SpellRegistry.FANG_STRIKE_SPELL.get(), SpellRegistry.ICICLE_SPELL.get(), SpellRegistry.MAGIC_MISSILE_SPELL.get()),
+                        Arrays.asList(SpellRegistry.FANG_WARD_SPELL.get(), SpellRegistry.FORTIFY_SPELL.get()),
+                        Arrays.asList(),
+                        Arrays.asList(SpellRegistry.BLIGHT_SPELL.get())
                 )
                 .setSingleUseSpell(SpellRegistry.RAISE_DEAD_SPELL.get(), 80, 350, 4, 5)
                 .setDrinksPotions());

@@ -79,7 +79,7 @@ public class CreeperHeadProjectile extends WitherSkullEntity implements AntiMagi
             this.level.addParticle(this.getTrailParticle(), position().x, position().y + 0.25D, position().z, 0.0D, 0.0D, 0.0D);
         }
         ProjectileHelper.rotateTowardsMovement(this, 1);
-        setPos(position().add(getDeltaMovement()));
+        moveTo(position().add(getDeltaMovement()));
 
         if (!this.isNoGravity()) {
             Vector3d vec34 = this.getDeltaMovement();

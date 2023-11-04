@@ -2,7 +2,8 @@ package io.redspace.ironsspellbooks.item.consumables;
 
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.advancements.CriteriaTriggers;
-import net.minecraft.util.text.ITextComponent;
+import java.util.Arrays;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ActionResult;

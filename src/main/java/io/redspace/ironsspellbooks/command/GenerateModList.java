@@ -8,7 +8,8 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.util.text.event.ClickEvent;
-import net.minecraft.util.text.ITextComponent;
+import java.util.Arrays;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.ModList;
 
 import java.io.BufferedWriter;

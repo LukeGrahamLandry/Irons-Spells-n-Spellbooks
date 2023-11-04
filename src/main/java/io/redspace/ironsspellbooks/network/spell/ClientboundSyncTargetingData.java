@@ -5,7 +5,7 @@ import io.redspace.ironsspellbooks.capabilities.magic.ClientSpellTargetingData;
 import io.redspace.ironsspellbooks.player.ClientMagicData;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.entity.LivingEntity;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.UUID;
 import java.util.function.Supplier;

@@ -9,7 +9,8 @@ import io.redspace.ironsspellbooks.setup.Messages;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.command.arguments.EntityArgument;
-import net.minecraft.util.text.ITextComponent;
+import java.util.Arrays;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.entity.player.ServerPlayerEntity;
 
 import java.util.Collection;

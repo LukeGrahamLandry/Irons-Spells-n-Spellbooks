@@ -15,7 +15,8 @@ import io.redspace.ironsspellbooks.api.util.AnimationHolder;
 import io.redspace.ironsspellbooks.util.ParticleHelper;
 import io.redspace.ironsspellbooks.api.util.Utils;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
+import java.util.Arrays;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
@@ -23,10 +24,12 @@ import net.minecraft.util.SoundEvents;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.util.math.vector.Vector3d;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,7 +39,7 @@ public class StarfallSpell extends AbstractSpell {
 
     @Override
     public List<IFormattableTextComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(
+        return Arrays.asList(
                 new TranslationTextComponent("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(spellLevel, caster), 1)),
                 new TranslationTextComponent("ui.irons_spellbooks.radius", Utils.stringTruncation(getRadius(caster), 1))
         );
@@ -137,7 +140,7 @@ public class StarfallSpell extends AbstractSpell {
 
     public void shootComet(World world, int spellLevel, LivingEntity entity, Vector3d spawn) {
         Comet fireball = new Comet(world, entity);
-        fireball.setPos(spawn.add(-1, 0, 0));
+        fireball.moveTo(spawn.add(-1, 0, 0));
         fireball.shoot(new Vector3d(.15f, -.85f, 0), .075f);
         fireball.setDamage(getDamage(spellLevel, entity));
         fireball.setExplosionRadius(2f);

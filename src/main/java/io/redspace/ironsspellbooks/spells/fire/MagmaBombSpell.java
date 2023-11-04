@@ -9,13 +9,16 @@ import io.redspace.ironsspellbooks.api.util.AnimationHolder;
 import io.redspace.ironsspellbooks.entity.spells.magma_ball.FireBomb;
 import io.redspace.ironsspellbooks.registries.SoundRegistry;
 import io.redspace.ironsspellbooks.api.util.Utils;
-import net.minecraft.util.text.ITextComponent;
+import java.util.Arrays;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,7 +28,7 @@ public class MagmaBombSpell extends AbstractSpell {
 
     @Override
     public List<IFormattableTextComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(
+        return Arrays.asList(
                 new TranslationTextComponent("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(spellLevel, caster), 1)),
                 new TranslationTextComponent("ui.irons_spellbooks.aoe_damage", Utils.stringTruncation(getDamage(spellLevel, caster) / 5f, 1)),
                 new TranslationTextComponent("ui.irons_spellbooks.radius", Utils.stringTruncation(getRadius(spellLevel, caster), 1))
@@ -75,7 +78,7 @@ public class MagmaBombSpell extends AbstractSpell {
     @Override
     public void onCast(World level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
         FireBomb orb = new FireBomb(level, entity);
-        orb.setPos(entity.position().add(0, entity.getEyeHeight() - orb.getBoundingBox().getYsize() * .5f, 0).add(entity.getForward()));
+        orb.moveTo(entity.position().add(0, entity.getEyeHeight() - orb.getBoundingBox().getYsize() * .5f, 0).add(entity.getForward()));
         orb.shoot(entity.getLookAngle());
         orb.setDeltaMovement(orb.getDeltaMovement().add(0, 0.2, 0));
         orb.setExplosionRadius(getRadius(spellLevel, entity));

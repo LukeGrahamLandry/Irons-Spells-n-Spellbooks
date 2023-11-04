@@ -2,25 +2,28 @@ package io.redspace.ironsspellbooks.spells.void_school;
 
 import io.redspace.ironsspellbooks.IronsSpellbooks;
 import io.redspace.ironsspellbooks.api.config.DefaultConfig;
-import io.redspace.ironsspellbooks.api.registry.SchoolRegistry;
-import io.redspace.ironsspellbooks.api.spells.*;
 import io.redspace.ironsspellbooks.api.magic.MagicData;
+import io.redspace.ironsspellbooks.api.registry.SchoolRegistry;
+import io.redspace.ironsspellbooks.api.spells.AbstractSpell;
+import io.redspace.ironsspellbooks.api.spells.AutoSpellConfig;
+import io.redspace.ironsspellbooks.api.spells.CastType;
+import io.redspace.ironsspellbooks.api.spells.SpellRarity;
+import io.redspace.ironsspellbooks.api.util.Utils;
 import io.redspace.ironsspellbooks.entity.spells.void_tentacle.VoidTentacle;
 import io.redspace.ironsspellbooks.registries.SoundRegistry;
-import io.redspace.ironsspellbooks.api.util.Utils;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceContext;
-import net.minecraft.world.World;
-import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.World;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,7 +33,7 @@ public class VoidTentaclesSpell extends AbstractSpell {
 
     @Override
     public List<IFormattableTextComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(
+        return Arrays.asList(
                 new TranslationTextComponent("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(spellLevel, caster), 1)),
                 new TranslationTextComponent("ui.irons_spellbooks.radius", Utils.stringTruncation(getRings(spellLevel, caster) * 1.3f, 1))
         );
@@ -93,13 +96,11 @@ public class VoidTentaclesSpell extends AbstractSpell {
                 if (!level.getBlockState(new BlockPos(spawn).below()).isAir()) {
                     VoidTentacle tentacle = new VoidTentacle(level, entity, getDamage(spellLevel, entity));
                     tentacle.moveTo(spawn);
-                    tentacle.setYRot(Utils.random.nextInt(360));
+                    tentacle.yRot = (Utils.random.nextInt(360));
                     level.addFreshEntity(tentacle);
                 }
             }
         }
-        //In order to trigger sculk sensors
-        level.gameEvent(null, GameEvent.ENTITY_ROAR, center);
         super.onCast(level, spellLevel, entity, playerMagicData);
     }
 

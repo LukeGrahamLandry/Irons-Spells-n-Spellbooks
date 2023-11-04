@@ -117,7 +117,7 @@ public abstract class AbstractConeProjectile extends ProjectileEntity implements
         if (owner != null) {
             Vector3d rayTraceVector = rayTrace(owner);
             Vector3d ownerEyePos = owner.getEyePosition(1.0f).subtract(0, .8, 0);
-            this.setPos(ownerEyePos);
+            this.moveTo(ownerEyePos);
             this.xRot = (owner.xRot);
             this.yRot = (owner.yRot);
             this.yRotO = getYRot();
@@ -131,7 +131,7 @@ public abstract class AbstractConeProjectile extends ProjectileEntity implements
 
                 double distance = 1 + (i * scale * subEntity.getDimensions(null).width / 2);
                 Vector3d newVector = ownerEyePos.add(rayTraceVector.multiply(distance, distance, distance));
-                subEntity.setPos(newVector);
+                subEntity.moveTo(newVector);
                 subEntity.setDeltaMovement(newVector);
                 Vector3d vec3 = new Vector3d(subEntity.getX(), subEntity.getY(), subEntity.getZ());
                 subEntity.xo = vec3.x;

@@ -1,9 +1,9 @@
 package io.redspace.ironsspellbooks.item.curios;
 
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.*;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.Style;
+import java.util.Arrays;
+
 import net.minecraft.world.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -35,9 +35,9 @@ public class SimpleDescriptiveCurio extends CurioBaseItem {
     @Override
     public List<ITextComponent> getSlotsTooltip(List<ITextComponent> tooltips, ItemStack stack) {
         if (slotIdentifier != null) {
-            var title = new TranslationTextComponent("curios.modifiers." + this.slotIdentifier).withStyle(TextFormatting.GOLD);
+            IFormattableTextComponent title = new TranslationTextComponent("curios.modifiers." + this.slotIdentifier).withStyle(TextFormatting.GOLD);
             if (showHeader) {
-                tooltips.add(ITextComponent.empty());
+                tooltips.add(new StringTextComponent(""));
                 tooltips.add(title);
             }
             tooltips.addAll(getDescriptionLines(stack));
@@ -47,7 +47,7 @@ public class SimpleDescriptiveCurio extends CurioBaseItem {
     }
 
     public List<ITextComponent> getDescriptionLines(ItemStack stack) {
-        return List.of(getDescription(stack));
+        return Arrays.asList(getDescription(stack));
     }
 
     public ITextComponent getDescription(ItemStack stack) {

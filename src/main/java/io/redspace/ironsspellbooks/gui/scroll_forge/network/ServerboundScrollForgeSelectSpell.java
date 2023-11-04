@@ -3,7 +3,7 @@ package io.redspace.ironsspellbooks.gui.scroll_forge.network;
 import io.redspace.ironsspellbooks.block.scroll_forge.ScrollForgeTile;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.Supplier;
 

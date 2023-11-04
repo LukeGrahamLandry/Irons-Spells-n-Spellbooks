@@ -12,7 +12,8 @@ import io.redspace.ironsspellbooks.entity.mobs.debug_wizard.DebugWizard;
 import io.redspace.ironsspellbooks.registries.EntityRegistry;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
-import net.minecraft.util.text.ITextComponent;
+import java.util.Arrays;
+import net.minecraft.util.text.TranslationTextComponent;
 
 public class CreateDebugWizardCommand {
 
@@ -50,7 +51,7 @@ public class CreateDebugWizardCommand {
         var serverPlayer = source.getPlayer();
         if (serverPlayer != null) {
             DebugWizard debugWizard = new DebugWizard(EntityRegistry.DEBUG_WIZARD.get(), serverPlayer.level, spell, spellLevel, targetsPlayer, cancelAfterTicks);
-            debugWizard.setPos(serverPlayer.position());
+            debugWizard.moveTo(serverPlayer.position());
             if (serverPlayer.level.addFreshEntity(debugWizard)) {
                 return 1;
             }

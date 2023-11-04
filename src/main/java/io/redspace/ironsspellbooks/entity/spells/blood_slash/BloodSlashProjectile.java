@@ -140,7 +140,7 @@ public class BloodSlashProjectile extends ProjectileEntity implements AntiMagicS
 //        for (Entity entity : collisions) {
 //        }
 
-        setPos(position().add(getDeltaMovement()));
+        moveTo(position().add(getDeltaMovement()));
         spawnParticles();
     }
 

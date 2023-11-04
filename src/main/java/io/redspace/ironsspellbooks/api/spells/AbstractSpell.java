@@ -32,7 +32,8 @@ import io.redspace.ironsspellbooks.api.util.AnimationHolder;
 import io.redspace.ironsspellbooks.util.Log;
 import io.redspace.ironsspellbooks.api.util.Utils;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.ITextComponent;
+import java.util.Arrays;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -425,7 +426,7 @@ public abstract class AbstractSpell {
     }
 
     public List<IFormattableTextComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of();
+        return Arrays.asList();
     }
 
     @Override

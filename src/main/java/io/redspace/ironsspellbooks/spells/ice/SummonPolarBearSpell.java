@@ -7,7 +7,8 @@ import io.redspace.ironsspellbooks.api.registry.SchoolRegistry;
 import io.redspace.ironsspellbooks.api.spells.*;
 import io.redspace.ironsspellbooks.entity.mobs.SummonedPolarBear;
 import io.redspace.ironsspellbooks.registries.MobEffectRegistry;
-import net.minecraft.util.text.ITextComponent;
+import java.util.Arrays;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
@@ -26,7 +27,7 @@ public class SummonPolarBearSpell extends AbstractSpell {
 
     @Override
     public List<IFormattableTextComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(
+        return Arrays.asList(
                 new TranslationTextComponent("ui.irons_spellbooks.hp", getBearHealth(spellLevel, null)),
                 new TranslationTextComponent("ui.irons_spellbooks.damage", getBearDamage(spellLevel, null))
         );
@@ -77,7 +78,7 @@ public class SummonPolarBearSpell extends AbstractSpell {
         int summonTime = 20 * 60 * 10;
 
         SummonedPolarBear polarBear = new SummonedPolarBear(world, entity);
-        polarBear.setPos(entity.position());
+        polarBear.moveTo(entity.position());
 
         polarBear.getAttributes().getInstance(Attributes.ATTACK_DAMAGE).setBaseValue(getBearDamage(spellLevel, entity));
         polarBear.getAttributes().getInstance(Attributes.MAX_HEALTH).setBaseValue(getBearHealth(spellLevel, entity));

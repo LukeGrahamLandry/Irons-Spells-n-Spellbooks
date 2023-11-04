@@ -9,7 +9,8 @@ import io.redspace.ironsspellbooks.api.util.AnimationHolder;
 import io.redspace.ironsspellbooks.entity.spells.lightning_lance.LightningLanceProjectile;
 import io.redspace.ironsspellbooks.registries.SoundRegistry;
 import io.redspace.ironsspellbooks.api.util.Utils;
-import net.minecraft.util.text.ITextComponent;
+import java.util.Arrays;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
@@ -25,7 +26,7 @@ public class LightningLanceSpell extends AbstractSpell {
 
     @Override
     public List<IFormattableTextComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(new TranslationTextComponent("ui.irons_spellbooks.damage", Utils.stringTruncation(getSpellPower(spellLevel, caster), 1)));
+        return Arrays.asList(new TranslationTextComponent("ui.irons_spellbooks.damage", Utils.stringTruncation(getSpellPower(spellLevel, caster), 1)));
     }
 
     private final DefaultConfig defaultConfig = new DefaultConfig()
@@ -71,7 +72,7 @@ public class LightningLanceSpell extends AbstractSpell {
     @Override
     public void onCast(World level, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
         LightningLanceProjectile lance = new LightningLanceProjectile(level, entity);
-        lance.setPos(entity.position().add(0, entity.getEyeHeight(), 0).add(entity.getForward()));
+        lance.moveTo(entity.position().add(0, entity.getEyeHeight(), 0).add(entity.getForward()));
         lance.shoot(entity.getLookAngle());
         lance.setDamage(getSpellPower(spellLevel, entity));
         level.addFreshEntity(lance);

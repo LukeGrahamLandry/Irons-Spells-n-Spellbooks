@@ -10,14 +10,17 @@ import io.redspace.ironsspellbooks.entity.spells.gust.GustCollider;
 import io.redspace.ironsspellbooks.registries.SoundRegistry;
 import io.redspace.ironsspellbooks.api.util.AnimationHolder;
 import io.redspace.ironsspellbooks.api.util.Utils;
-import net.minecraft.util.text.ITextComponent;
+import java.util.Arrays;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,7 +30,7 @@ public class GustSpell extends AbstractSpell {
 
     @Override
     public List<IFormattableTextComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(
+        return Arrays.asList(
                 new TranslationTextComponent("ui.irons_spellbooks.strength", Utils.stringTruncation(getStrength(spellLevel, caster), 1)),
                 new TranslationTextComponent("ui.irons_spellbooks.damage", Utils.stringTruncation(AirborneEffect.getDamageFromLevel(getLevel(spellLevel, caster)), 1))
         );
@@ -79,7 +82,7 @@ public class GustSpell extends AbstractSpell {
         float strength = getStrength(spellLevel, entity);
 
         GustCollider gust = new GustCollider(level, entity);
-        gust.setPos(entity.position().add(0, entity.getEyeHeight() * .7, 0).add(entity.getForward().normalize().scale(2f)));
+        gust.moveTo(entity.position().add(0, entity.getEyeHeight() * .7, 0).add(entity.getForward().normalize().scale(2f)));
         gust.range = range;
         gust.strength = strength;
         gust.amplifier = this.getLevel(spellLevel, entity) - 1;

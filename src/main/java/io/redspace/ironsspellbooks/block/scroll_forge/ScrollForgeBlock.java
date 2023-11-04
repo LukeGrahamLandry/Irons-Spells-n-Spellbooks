@@ -1,7 +1,8 @@
 package io.redspace.ironsspellbooks.block.scroll_forge;
 
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
+import java.util.Arrays;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ActionResultType;

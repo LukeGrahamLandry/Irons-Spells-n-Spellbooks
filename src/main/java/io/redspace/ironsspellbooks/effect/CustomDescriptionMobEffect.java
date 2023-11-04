@@ -1,7 +1,8 @@
 package io.redspace.ironsspellbooks.effect;
 
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.ITextComponent;
+import java.util.Arrays;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.potion.Effect;
 import net.minecraft.potion.EffectType;
 import net.minecraft.potion.EffectInstance;

@@ -8,16 +8,19 @@ import io.redspace.ironsspellbooks.api.spells.*;
 import io.redspace.ironsspellbooks.damage.ISpellDamageSource;
 import io.redspace.ironsspellbooks.entity.spells.firebolt.FireboltProjectile;
 import io.redspace.ironsspellbooks.api.util.Utils;
-import net.minecraft.util.text.ITextComponent;
+import java.util.Arrays;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.DamageSource;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,7 +30,7 @@ public class FireboltSpell extends AbstractSpell {
 
     @Override
     public List<IFormattableTextComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(new TranslationTextComponent("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(spellLevel, caster), 1)));
+        return Arrays.asList(new TranslationTextComponent("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(spellLevel, caster), 1)));
     }
 
     private final DefaultConfig defaultConfig = new DefaultConfig()
@@ -73,7 +76,7 @@ public class FireboltSpell extends AbstractSpell {
     @Override
     public void onCast(World world, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
         FireboltProjectile firebolt = new FireboltProjectile(world, entity);
-        firebolt.setPos(entity.position().add(0, entity.getEyeHeight() - firebolt.getBoundingBox().getYsize() * .5f, 0));
+        firebolt.moveTo(entity.position().add(0, entity.getEyeHeight() - firebolt.getBoundingBox().getYsize() * .5f, 0));
         firebolt.shoot(entity.getLookAngle());
         firebolt.setDamage(getDamage(spellLevel, entity));
         world.addFreshEntity(firebolt);

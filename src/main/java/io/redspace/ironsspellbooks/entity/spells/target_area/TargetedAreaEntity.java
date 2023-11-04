@@ -71,7 +71,7 @@ public class TargetedAreaEntity extends Entity {
 
     public static TargetedAreaEntity createTargetAreaEntity(World level, Vector3d center, float radius, int color) {
         TargetedAreaEntity targetedAreaEntity = new TargetedAreaEntity(level, radius, color);
-        targetedAreaEntity.setPos(center);
+        targetedAreaEntity.moveTo(center);
         level.addFreshEntity(targetedAreaEntity);
         return targetedAreaEntity;
     }
@@ -83,7 +83,7 @@ public class TargetedAreaEntity extends Entity {
         yOld = getY();
         zOld = getZ();
         if (owner != null) {
-            setPos(owner.position());
+            moveTo(owner.position());
             this.xOld = owner.xOld;
             this.yOld = owner.yOld;
             this.zOld = owner.zOld;

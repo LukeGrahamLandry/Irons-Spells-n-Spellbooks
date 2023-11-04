@@ -8,7 +8,8 @@ import io.redspace.ironsspellbooks.api.spells.*;
 import io.redspace.ironsspellbooks.capabilities.magic.CastTargetingData;
 import io.redspace.ironsspellbooks.entity.spells.sunbeam.Sunbeam;
 import io.redspace.ironsspellbooks.api.util.Utils;
-import net.minecraft.util.text.ITextComponent;
+import java.util.Arrays;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.server.ServerWorld;
@@ -28,7 +29,7 @@ public class SunbeamSpell extends AbstractSpell {
 
     @Override
     public List<IFormattableTextComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(
+        return Arrays.asList(
                 new TranslationTextComponent("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(spellLevel, caster), 1))
         );
     }

@@ -2,7 +2,8 @@ package io.redspace.ironsspellbooks.item;
 
 import io.redspace.ironsspellbooks.item.armor.UpgradeType;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.ITextComponent;
+import java.util.Arrays;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;

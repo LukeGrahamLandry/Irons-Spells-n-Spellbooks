@@ -7,7 +7,7 @@ import io.redspace.ironsspellbooks.item.Scroll;
 import io.redspace.ironsspellbooks.api.spells.CastType;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.Supplier;
 

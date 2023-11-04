@@ -44,10 +44,10 @@ public class CryomancerEntity extends AbstractSpellCastingMob implements IMob {
         this.goalSelector.addGoal(2, new SpellBarrageGoal(this, SpellRegistry.ICE_BLOCK_SPELL.get(), 3, 6, 100, 250, 1));
         this.goalSelector.addGoal(3, new WizardAttackGoal(this, 1.25f, 50, 75)
                 .setSpells(
-                        List.of(SpellRegistry.ICICLE_SPELL.get(), SpellRegistry.ICICLE_SPELL.get(), SpellRegistry.ICICLE_SPELL.get(), SpellRegistry.CONE_OF_COLD_SPELL.get()),
-                        List.of(SpellRegistry.COUNTERSPELL_SPELL.get()),
-                        List.of(SpellRegistry.FROST_STEP_SPELL.get()),
-                        List.of()
+                        Arrays.asList(SpellRegistry.ICICLE_SPELL.get(), SpellRegistry.ICICLE_SPELL.get(), SpellRegistry.ICICLE_SPELL.get(), SpellRegistry.CONE_OF_COLD_SPELL.get()),
+                        Arrays.asList(SpellRegistry.COUNTERSPELL_SPELL.get()),
+                        Arrays.asList(SpellRegistry.FROST_STEP_SPELL.get()),
+                        Arrays.asList()
                 ).setSingleUseSpell(SpellRegistry.SUMMON_POLAR_BEAR_SPELL.get(), 80, 400, 3, 6)
                 .setDrinksPotions());
         this.goalSelector.addGoal(4, new PatrolNearLocationGoal(this, 30, .75f));

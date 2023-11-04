@@ -70,7 +70,7 @@ public final class AlchemistCauldronRecipeMaker {
                     outputs.add(result);
                 }
             });
-            return new AlchemistCauldronJeiRecipe(List.of(reagentStack), outputs, catalysts);
+            return new AlchemistCauldronJeiRecipe(Arrays.asList(reagentStack), outputs, catalysts);
         });
     }
 
@@ -104,7 +104,7 @@ public final class AlchemistCauldronRecipeMaker {
                 catalysts.add(baseStack);
                 outputs.add(BrewingRecipeRegistry.getOutput(baseStack, reagentStack));
             });
-            return new AlchemistCauldronJeiRecipe(List.of(reagentStack), outputs, catalysts);
+            return new AlchemistCauldronJeiRecipe(Arrays.asList(reagentStack), outputs, catalysts);
         });
         //Grouped by catalyst
 //        List<ItemStack> potionCatalysts = ingredientManager.getAllItemStacks().stream()
@@ -123,7 +123,7 @@ public final class AlchemistCauldronRecipeMaker {
 //                reagents.add(baseStack);
 //                outputs.add(BrewingRecipeRegistry.getOutput(catalystStack, baseStack));
 //            });
-//            return new AlchemistCauldronRecipe(reagents, outputs, List.of(catalystStack));
+//            return new AlchemistCauldronRecipe(reagents, outputs, Arrays.asList(catalystStack));
 //        });
 
 

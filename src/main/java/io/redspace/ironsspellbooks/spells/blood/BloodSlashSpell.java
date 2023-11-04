@@ -9,16 +9,20 @@ import io.redspace.ironsspellbooks.damage.ISpellDamageSource;
 import io.redspace.ironsspellbooks.entity.spells.blood_slash.BloodSlashProjectile;
 import io.redspace.ironsspellbooks.api.util.AnimationHolder;
 import io.redspace.ironsspellbooks.api.util.Utils;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.math.vector.Vector3d;
+import java.util.Arrays;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.DamageSource;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,7 +38,7 @@ public class BloodSlashSpell extends AbstractSpell {
 
     @Override
     public List<IFormattableTextComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(new TranslationTextComponent("ui.irons_spellbooks.damage", Utils.stringTruncation(getSpellPower(spellLevel, caster), 1)));
+        return Arrays.asList(new TranslationTextComponent("ui.irons_spellbooks.damage", Utils.stringTruncation(getSpellPower(spellLevel, caster), 1)));
     }
 
     public BloodSlashSpell() {
@@ -73,7 +77,8 @@ public class BloodSlashSpell extends AbstractSpell {
     @Override
     public void onCast(World world, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
         BloodSlashProjectile bloodSlash = new BloodSlashProjectile(world, entity);
-        bloodSlash.setPos(entity.getEyePosition(0));
+        Vector3d pos = entity.getEyePosition(0);
+        bloodSlash.setPos(pos.x, pos.y, pos.z);
         bloodSlash.shoot(entity.getLookAngle());
         bloodSlash.setDamage(getSpellPower(spellLevel, entity));
         world.addFreshEntity(bloodSlash);

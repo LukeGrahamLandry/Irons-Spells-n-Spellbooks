@@ -12,7 +12,8 @@ import io.redspace.ironsspellbooks.api.spells.CastType;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
-import net.minecraft.util.text.ITextComponent;
+import java.util.Arrays;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.IReorderingProcessor;
@@ -63,7 +64,7 @@ public class TooltipsUtils {
         SpellData spellData = SpellData.getSpellData(stack);
 
         if (spellData.equals(SpellData.EMPTY)) {
-            return List.of();
+            return Arrays.asList();
         }
 
         AbstractSpell spell = spellData.getSpell();

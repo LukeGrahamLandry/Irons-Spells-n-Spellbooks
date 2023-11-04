@@ -10,14 +10,12 @@ import io.redspace.ironsspellbooks.entity.mobs.SummonedZombie;
 import io.redspace.ironsspellbooks.registries.MobEffectRegistry;
 import io.redspace.ironsspellbooks.registries.SoundRegistry;
 import io.redspace.ironsspellbooks.api.util.Utils;
-import net.minecraft.core.BlockPos;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.RandomSource;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.entity.LivingEntity;
@@ -30,8 +28,10 @@ import net.minecraft.item.Items;
 import net.minecraft.world.World;
 import net.minecraft.util.math.vector.Vector3d;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 @AutoSpellConfig
 public class RaiseDeadSpell extends AbstractSpell {
@@ -45,7 +45,7 @@ public class RaiseDeadSpell extends AbstractSpell {
 
     @Override
     public List<IFormattableTextComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(new TranslationTextComponent("ui.irons_spellbooks.summon_count", getLevel(spellLevel, caster)));
+        return Arrays.asList(new TranslationTextComponent("ui.irons_spellbooks.summon_count", getLevel(spellLevel, caster)));
     }
 
     public RaiseDeadSpell() {
@@ -95,11 +95,10 @@ public class RaiseDeadSpell extends AbstractSpell {
             undead.finalizeSpawn((ServerWorld) world, world.getCurrentDifficultyAt(undead.getOnPos()), SpawnReason.MOB_SUMMONED, null, null);
             undead.addEffect(new EffectInstance(MobEffectRegistry.RAISE_DEAD_TIMER.get(), summonTime, 0, false, false, false));
             equip(undead, equipment);
-            var yrot = 6.281f / level * i + entity.yRot * Utils.DEG_TO_RAD;
+            float yrot = 6.281f / level * i + entity.yRot * Utils.DEG_TO_RAD;
             Vector3d spawn = Utils.moveToRelativeGroundLevel(world, entity.getEyePosition(0).add(new Vector3d(radius * MathHelper.cos(yrot), 0, radius * MathHelper.sin(yrot))), 10);
-            undead.setPos(spawn.x, spawn.y, spawn.z);
-            undead.setYRot(entity.yRot);
-            undead.setOldPosAndRot();
+            undead.setPosAndOldPos(spawn.x, spawn.y, spawn.z);
+            undead.yRot = (entity.yRot);
             world.addFreshEntity(undead);
         }
 
@@ -122,7 +121,7 @@ public class RaiseDeadSpell extends AbstractSpell {
         mob.setDropChance(EquipmentSlotType.HEAD, 0.0F);
     }
 
-    private ItemStack[] getEquipment(float power, RandomSource random) {
+    private ItemStack[] getEquipment(float power, Random random) {
         Item[] leather = {Items.LEATHER_BOOTS, Items.LEATHER_LEGGINGS, Items.LEATHER_CHESTPLATE, Items.LEATHER_HELMET};
         Item[] chain = {Items.CHAINMAIL_BOOTS, Items.CHAINMAIL_LEGGINGS, Items.CHAINMAIL_CHESTPLATE, Items.CHAINMAIL_HELMET};
         Item[] iron = {Items.IRON_BOOTS, Items.IRON_LEGGINGS, Items.IRON_CHESTPLATE, Items.IRON_HELMET};
@@ -132,7 +131,7 @@ public class RaiseDeadSpell extends AbstractSpell {
 
         ItemStack[] result = new ItemStack[4];
         for (int i = 0; i < 4; i++) {
-            float quality = MathHelper.clamp((power + (random.nextIntBetweenInclusive(-3, 8)) - minQuality) / (maxQuality - minQuality), 0, .95f);
+            float quality = MathHelper.clamp((power + (Utils.randomBetweenInclusive(random, -3, 8)) - minQuality) / (maxQuality - minQuality), 0, .95f);
             if (random.nextDouble() < quality * quality) {
                 if (quality > .85) {
                     result[i] = new ItemStack(iron[i]);

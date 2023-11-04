@@ -70,7 +70,7 @@
 //    protected Brain<?> makeBrain(Dynamic<?> pDynamic) {
 //        Brain<Frog> brain = (Brain<Frog>) super.makeBrain(pDynamic);
 //        brain.removeAllBehaviors();
-//        brain.addActivity(Activity.CORE, 0, ImmutableList.of(
+//        brain.addActivity(Activity.CORE, 0, ImmutableArrays.asList(
 //                new LookTask(45, 90),
 //                new WalkToTargetTask(),
 //                new CountDownCooldownTicks(MemoryModuleType.TEMPTATION_COOLDOWN_TICKS),
@@ -310,29 +310,29 @@
 //        }
 //    }
 ////    private static void initIdleActivity(Brain<Frog> pBrain) {
-////        pBrain.addActivityWithConditions(Activity.IDLE, ImmutableList.of(Pair.of(0, new RunSometimes<>(new SetEntityLookTarget(EntityType.PLAYER, 6.0F), UniformInt.of(30, 60))), Pair.of(0, new AnimalMakeLove(EntityType.FROG, 1.0F)), Pair.of(1, new FollowTemptation((p_218585_) -> {
+////        pBrain.addActivityWithConditions(Activity.IDLE, ImmutableArrays.asList(Pair.of(0, new RunSometimes<>(new SetEntityLookTarget(EntityType.PLAYER, 6.0F), UniformInt.of(30, 60))), Pair.of(0, new AnimalMakeLove(EntityType.FROG, 1.0F)), Pair.of(1, new FollowTemptation((p_218585_) -> {
 ////            return 1.25F;
 ////        })), Pair.of(2, new StartAttacking<>(pTarget -> true, (p_218605_) -> {
 ////            return p_218605_.getBrain().getMemory(MemoryModuleType.NEAREST_ATTACKABLE);
-////        })), Pair.of(3, new TryFindLand(6, 1.0F)), Pair.of(4, new RunOne<>(ImmutableMap.of(MemoryModuleType.WALK_TARGET, MemoryStatus.VALUE_ABSENT), ImmutableList.of(Pair.of(new RandomStroll(1.0F), 1), Pair.of(new SetWalkTargetFromLookTarget(1.0F, 3), 1), Pair.of(new Croak(), 3), Pair.of(new RunIf<>(Entity::isOnGround, new DoNothing(5, 20)), 2))))), ImmutableSet.of(Pair.of(MemoryModuleType.LONG_JUMP_MID_JUMP, MemoryStatus.VALUE_ABSENT), Pair.of(MemoryModuleType.IS_IN_WATER, MemoryStatus.VALUE_ABSENT)));
+////        })), Pair.of(3, new TryFindLand(6, 1.0F)), Pair.of(4, new RunOne<>(ImmutableMap.of(MemoryModuleType.WALK_TARGET, MemoryStatus.VALUE_ABSENT), ImmutableArrays.asList(Pair.of(new RandomStroll(1.0F), 1), Pair.of(new SetWalkTargetFromLookTarget(1.0F, 3), 1), Pair.of(new Croak(), 3), Pair.of(new RunIf<>(Entity::isOnGround, new DoNothing(5, 20)), 2))))), ImmutableSet.of(Pair.of(MemoryModuleType.LONG_JUMP_MID_JUMP, MemoryStatus.VALUE_ABSENT), Pair.of(MemoryModuleType.IS_IN_WATER, MemoryStatus.VALUE_ABSENT)));
 ////    }
 ////
 ////    private static void initSwimActivity(Brain<Frog> pBrain) {
-////        pBrain.addActivityWithConditions(Activity.SWIM, ImmutableList.of(Pair.of(0, new RunSometimes<>(new SetEntityLookTarget(EntityType.PLAYER, 6.0F), UniformInt.of(30, 60))), Pair.of(1, new FollowTemptation((p_218574_) -> {
+////        pBrain.addActivityWithConditions(Activity.SWIM, ImmutableArrays.asList(Pair.of(0, new RunSometimes<>(new SetEntityLookTarget(EntityType.PLAYER, 6.0F), UniformInt.of(30, 60))), Pair.of(1, new FollowTemptation((p_218574_) -> {
 ////            return 1.25F;
 ////        })), Pair.of(2, new StartAttacking<>(pTarget -> true, (p_218601_) -> {
 ////            return p_218601_.getBrain().getMemory(MemoryModuleType.NEAREST_ATTACKABLE);
-////        })), Pair.of(3, new TryFindLand(8, 1.5F)), Pair.of(5, new GateBehavior<>(ImmutableMap.of(MemoryModuleType.WALK_TARGET, MemoryStatus.VALUE_ABSENT), ImmutableSet.of(), GateBehavior.OrderPolicy.ORDERED, GateBehavior.RunningPolicy.TRY_ALL, ImmutableList.of(Pair.of(new RandomSwim(0.75F), 1), Pair.of(new RandomStroll(1.0F, true), 1), Pair.of(new SetWalkTargetFromLookTarget(1.0F, 3), 1), Pair.of(new RunIf<>(Entity::isInWaterOrBubble, new DoNothing(30, 60)), 5))))), ImmutableSet.of(Pair.of(MemoryModuleType.LONG_JUMP_MID_JUMP, MemoryStatus.VALUE_ABSENT), Pair.of(MemoryModuleType.IS_IN_WATER, MemoryStatus.VALUE_PRESENT)));
+////        })), Pair.of(3, new TryFindLand(8, 1.5F)), Pair.of(5, new GateBehavior<>(ImmutableMap.of(MemoryModuleType.WALK_TARGET, MemoryStatus.VALUE_ABSENT), ImmutableSet.of(), GateBehavior.OrderPolicy.ORDERED, GateBehavior.RunningPolicy.TRY_ALL, ImmutableArrays.asList(Pair.of(new RandomSwim(0.75F), 1), Pair.of(new RandomStroll(1.0F, true), 1), Pair.of(new SetWalkTargetFromLookTarget(1.0F, 3), 1), Pair.of(new RunIf<>(Entity::isInWaterOrBubble, new DoNothing(30, 60)), 5))))), ImmutableSet.of(Pair.of(MemoryModuleType.LONG_JUMP_MID_JUMP, MemoryStatus.VALUE_ABSENT), Pair.of(MemoryModuleType.IS_IN_WATER, MemoryStatus.VALUE_PRESENT)));
 ////    }
 ////
 ////    private static void initLaySpawnActivity(Brain<Frog> pBrain) {
-////        pBrain.addActivityWithConditions(Activity.LAY_SPAWN, ImmutableList.of(Pair.of(0, new RunSometimes<>(new SetEntityLookTarget(EntityType.PLAYER, 6.0F), UniformInt.of(30, 60))), Pair.of(1, new StartAttacking<>(FrogAi::canAttack, (p_218597_) -> {
+////        pBrain.addActivityWithConditions(Activity.LAY_SPAWN, ImmutableArrays.asList(Pair.of(0, new RunSometimes<>(new SetEntityLookTarget(EntityType.PLAYER, 6.0F), UniformInt.of(30, 60))), Pair.of(1, new StartAttacking<>(FrogAi::canAttack, (p_218597_) -> {
 ////            return p_218597_.getBrain().getMemory(MemoryModuleType.NEAREST_ATTACKABLE);
-////        })), Pair.of(2, new TryFindLandNearWater(8, 1.0F)), Pair.of(3, new TryLaySpawnOnWaterNearLand(Blocks.FROGSPAWN, MemoryModuleType.IS_PREGNANT)), Pair.of(4, new RunOne<>(ImmutableList.of(Pair.of(new RandomStroll(1.0F), 2), Pair.of(new SetWalkTargetFromLookTarget(1.0F, 3), 1), Pair.of(new Croak(), 2), Pair.of(new RunIf<>(Entity::isOnGround, new DoNothing(5, 20)), 1))))), ImmutableSet.of(Pair.of(MemoryModuleType.LONG_JUMP_MID_JUMP, MemoryStatus.VALUE_ABSENT), Pair.of(MemoryModuleType.IS_PREGNANT, MemoryStatus.VALUE_PRESENT)));
+////        })), Pair.of(2, new TryFindLandNearWater(8, 1.0F)), Pair.of(3, new TryLaySpawnOnWaterNearLand(Blocks.FROGSPAWN, MemoryModuleType.IS_PREGNANT)), Pair.of(4, new RunOne<>(ImmutableArrays.asList(Pair.of(new RandomStroll(1.0F), 2), Pair.of(new SetWalkTargetFromLookTarget(1.0F, 3), 1), Pair.of(new Croak(), 2), Pair.of(new RunIf<>(Entity::isOnGround, new DoNothing(5, 20)), 1))))), ImmutableSet.of(Pair.of(MemoryModuleType.LONG_JUMP_MID_JUMP, MemoryStatus.VALUE_ABSENT), Pair.of(MemoryModuleType.IS_PREGNANT, MemoryStatus.VALUE_PRESENT)));
 ////    }
 ////
 //    private static void initJumpActivity(Brain<Frog> pBrain) {
-//        pBrain.addActivityWithConditions(Activity.LONG_JUMP, ImmutableList.of(Pair.of(0, new LongJumpMidJump(UniformInt.of(100, 140), SoundEvents.FROG_STEP)), Pair.of(1, new LongJumpToPreferredBlock<>(UniformInt.of(100, 140), 2, 4, 1.5F, (p_218593_) -> {
+//        pBrain.addActivityWithConditions(Activity.LONG_JUMP, ImmutableArrays.asList(Pair.of(0, new LongJumpMidJump(UniformInt.of(100, 140), SoundEvents.FROG_STEP)), Pair.of(1, new LongJumpToPreferredBlock<>(UniformInt.of(100, 140), 2, 4, 1.5F, (p_218593_) -> {
 //            return SoundEvents.FROG_LONG_JUMP;
 //        }, BlockTags.FROG_PREFER_JUMP_TO, 0.5F, (p_218583_) -> {
 //            return p_218583_.is(Blocks.LILY_PAD);
@@ -340,6 +340,6 @@
 //    }
 //
 //    private static void initTongueActivity(Brain<Frog> pBrain) {
-//        pBrain.addActivityAndRemoveMemoryWhenStopped(Activity.TONGUE, 0, ImmutableList.of(new FindNewAttackTargetTask<>(), new ShootTongue(SoundEvents.FROG_TONGUE, SoundEvents.FROG_EAT)), MemoryModuleType.ATTACK_TARGET);
+//        pBrain.addActivityAndRemoveMemoryWhenStopped(Activity.TONGUE, 0, ImmutableArrays.asList(new FindNewAttackTargetTask<>(), new ShootTongue(SoundEvents.FROG_TONGUE, SoundEvents.FROG_EAT)), MemoryModuleType.ATTACK_TARGET);
 //    }
 //}

@@ -28,7 +28,7 @@
 //        Arcane Debris
 //     */
 //    //What blocks the ore can generate in
-//    public static final Supplier<List<OreFeatureConfig.TargetBlockState>> ARCANE_DEBRIS_ORE_TARGET = Suppliers.memoize(() -> List.of(
+//    public static final Supplier<List<OreFeatureConfig.TargetBlockState>> ARCANE_DEBRIS_ORE_TARGET = Suppliers.memoize(() -> Arrays.asList(
 //            OreFeatureConfig.target(OreFeatures.DEEPSLATE_ORE_REPLACEABLES, BlockRegistry.ARCANE_DEBRIS.get().defaultBlockState())
 //    ));
 //    //Vein size/conditions (this ore cannot spawn exposed to air)
@@ -37,11 +37,11 @@
 //
 //    public static final RegistryObject<PlacedFeature> ORE_ARCANE_DEBRIS_FEATURE = PLACED_FEATURES.register("ore_arcane_debris_feature",
 //            () -> new PlacedFeature(ORE_ARCANE_DEBRIS.getHolder().get(),
-//                    List.of(InSquarePlacement.spread(), HeightRangePlacement.uniform(VerticalAnchor.absolute(-64), VerticalAnchor.absolute(-38)))));
+//                    Arrays.asList(InSquarePlacement.spread(), HeightRangePlacement.uniform(VerticalAnchor.absolute(-64), VerticalAnchor.absolute(-38)))));
 //
 //    //Copied private helpers from OrePlacements
 //    private static List<PlacementModifier> orePlacement(PlacementModifier p_195347_, PlacementModifier p_195348_) {
-//        return List.of(p_195347_, InSquarePlacement.spread(), p_195348_, BiomeFilter.biome());
+//        return Arrays.asList(p_195347_, InSquarePlacement.spread(), p_195348_, BiomeFilter.biome());
 //    }
 //
 //    private static List<PlacementModifier> commonOrePlacement(int pCount, PlacementModifier pHeightRange) {

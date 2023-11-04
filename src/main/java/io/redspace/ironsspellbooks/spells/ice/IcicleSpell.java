@@ -8,7 +8,8 @@ import io.redspace.ironsspellbooks.api.spells.*;
 import io.redspace.ironsspellbooks.damage.ISpellDamageSource;
 import io.redspace.ironsspellbooks.entity.spells.icicle.IcicleProjectile;
 import io.redspace.ironsspellbooks.api.util.Utils;
-import net.minecraft.util.text.ITextComponent;
+import java.util.Arrays;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
@@ -27,7 +28,7 @@ public class IcicleSpell extends AbstractSpell {
 
     @Override
     public List<IFormattableTextComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(new TranslationTextComponent("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(spellLevel, caster), 1)));
+        return Arrays.asList(new TranslationTextComponent("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(spellLevel, caster), 1)));
     }
 
     private final DefaultConfig defaultConfig = new DefaultConfig()
@@ -73,7 +74,7 @@ public class IcicleSpell extends AbstractSpell {
     @Override
     public void onCast(World world, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
         IcicleProjectile icicle = new IcicleProjectile(world, entity);
-        icicle.setPos(entity.position().add(0, entity.getEyeHeight() - icicle.getBoundingBox().getYsize() * .5f, 0));
+        icicle.moveTo(entity.position().add(0, entity.getEyeHeight() - icicle.getBoundingBox().getYsize() * .5f, 0));
         icicle.shoot(entity.getLookAngle());
         icicle.setDamage(getDamage(spellLevel, entity));
         icicle.setNoGravity(true);

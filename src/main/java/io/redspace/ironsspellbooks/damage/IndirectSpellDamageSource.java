@@ -1,7 +1,8 @@
 package io.redspace.ironsspellbooks.damage;
 
 import io.redspace.ironsspellbooks.api.spells.AbstractSpell;
-import net.minecraft.util.text.ITextComponent;
+import java.util.Arrays;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.IndirectEntityDamageSource;
 import net.minecraft.entity.Entity;

@@ -62,7 +62,7 @@ public abstract class AbstractShieldEntity extends Entity implements AntiMagicSu
         hurtThisTick = false;
         for (PartEntity<?> subEntity : getParts()) {
             Vector3d pos = subEntity.position();
-            subEntity.setPos(pos);
+            subEntity.moveTo(pos);
             subEntity.xo = pos.x;
             subEntity.yo = pos.y;
             subEntity.zo = pos.z;

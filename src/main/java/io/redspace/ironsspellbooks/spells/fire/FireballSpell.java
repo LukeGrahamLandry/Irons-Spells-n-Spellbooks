@@ -8,14 +8,17 @@ import io.redspace.ironsspellbooks.api.spells.*;
 import io.redspace.ironsspellbooks.entity.spells.fireball.MagicFireball;
 import io.redspace.ironsspellbooks.registries.SoundRegistry;
 import io.redspace.ironsspellbooks.api.util.Utils;
-import net.minecraft.util.text.ITextComponent;
+import java.util.Arrays;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.util.math.vector.Vector3d;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,7 +28,7 @@ public class FireballSpell extends AbstractSpell {
 
     @Override
     public List<IFormattableTextComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(
+        return Arrays.asList(
                 new TranslationTextComponent("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(spellLevel, caster), 1)),
                 new TranslationTextComponent("ui.irons_spellbooks.radius", getRadius(spellLevel, caster))
         );
@@ -80,7 +83,7 @@ public class FireballSpell extends AbstractSpell {
         fireball.setDamage(getDamage(spellLevel, entity));
         fireball.setExplosionRadius(getRadius(spellLevel, entity));
 
-        fireball.setPos(origin.add(entity.getForward()).subtract(0, fireball.getBbHeight() / 2, 0));
+        fireball.moveTo(origin.add(entity.getForward()).subtract(0, fireball.getBbHeight() / 2, 0));
         fireball.shoot(entity.getLookAngle());
 
         world.addFreshEntity(fireball);

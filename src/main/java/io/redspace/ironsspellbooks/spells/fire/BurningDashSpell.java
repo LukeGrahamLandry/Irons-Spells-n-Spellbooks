@@ -12,7 +12,8 @@ import io.redspace.ironsspellbooks.entity.mobs.abstract_spell_casting_mob.Abstra
 import io.redspace.ironsspellbooks.player.SpinAttackType;
 import io.redspace.ironsspellbooks.util.ParticleHelper;
 import io.redspace.ironsspellbooks.api.util.Utils;
-import net.minecraft.util.text.ITextComponent;
+import java.util.Arrays;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
@@ -20,10 +21,12 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.util.math.vector.Vector3d;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,7 +37,7 @@ public class BurningDashSpell extends AbstractSpell {
 
     @Override
     public List<IFormattableTextComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(new TranslationTextComponent("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(spellLevel, caster), 1)));
+        return Arrays.asList(new TranslationTextComponent("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(spellLevel, caster), 1)));
     }
 
     private final DefaultConfig defaultConfig = new DefaultConfig()
@@ -115,7 +118,7 @@ public class BurningDashSpell extends AbstractSpell {
 
         //Start Spin Attack
         if (entity.isOnGround())
-            entity.setPos(entity.position().add(0, 1.2, 0));
+            entity.moveTo(entity.position().add(0, 1.2, 0));
         startSpinAttack(entity, 10);
 
         //Deal Shockwave Damage and particles

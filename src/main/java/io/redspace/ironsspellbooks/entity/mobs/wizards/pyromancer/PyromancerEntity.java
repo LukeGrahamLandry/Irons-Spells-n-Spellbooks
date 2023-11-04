@@ -42,10 +42,10 @@ public class PyromancerEntity extends AbstractSpellCastingMob implements IMob {
         this.goalSelector.addGoal(1, new SwimGoal(this));
         this.goalSelector.addGoal(2, new WizardAttackGoal(this, 1.25f, 25, 50)
                 .setSpells(
-                        List.of(SpellRegistry.FIREBOLT_SPELL.get(), SpellRegistry.FIREBOLT_SPELL.get(), SpellRegistry.FIREBOLT_SPELL.get(), SpellRegistry.FIRE_BREATH_SPELL.get(), SpellRegistry.BLAZE_STORM_SPELL.get()),
-                        List.of(),
-                        List.of(SpellRegistry.BURNING_DASH_SPELL.get()),
-                        List.of()
+                        Arrays.asList(SpellRegistry.FIREBOLT_SPELL.get(), SpellRegistry.FIREBOLT_SPELL.get(), SpellRegistry.FIREBOLT_SPELL.get(), SpellRegistry.FIRE_BREATH_SPELL.get(), SpellRegistry.BLAZE_STORM_SPELL.get()),
+                        Arrays.asList(),
+                        Arrays.asList(SpellRegistry.BURNING_DASH_SPELL.get()),
+                        Arrays.asList()
                 )
                 .setDrinksPotions()
                 .setSingleUseSpell(SpellRegistry.MAGMA_BOMB_SPELL.get(), 80, 200, 4, 6)

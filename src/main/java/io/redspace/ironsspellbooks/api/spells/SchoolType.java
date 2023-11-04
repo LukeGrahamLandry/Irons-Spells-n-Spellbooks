@@ -2,7 +2,8 @@ package io.redspace.ironsspellbooks.api.spells;
 
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.ChatFormatting;
-import net.minecraft.util.text.ITextComponent;
+import java.util.Arrays;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;

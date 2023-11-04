@@ -1,5 +1,6 @@
 package io.redspace.ironsspellbooks.api.util;
 
+import io.redspace.ironsspellbooks.entity.spells.dragon_breath.DragonBreathProjectile;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.util.math.vector.Vector3f;
 import io.redspace.ironsspellbooks.api.magic.MagicData;
@@ -31,7 +32,8 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
-import net.minecraft.util.text.ITextComponent;
+import java.util.Arrays;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.Hand;

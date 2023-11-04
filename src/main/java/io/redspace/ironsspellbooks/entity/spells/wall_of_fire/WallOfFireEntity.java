@@ -72,7 +72,7 @@ public class WallOfFireEntity extends AbstractShieldEntity implements IEntityAdd
         for (int i = 0, subEntitiesLength = subEntities.length; i < subEntitiesLength; i++) {
             PartEntity<?> subEntity = subEntities[i];
             Vector3d pos = partPositions.get(i);
-            subEntity.setPos(pos);
+            subEntity.moveTo(pos);
             subEntity.xo = pos.x;
             subEntity.yo = pos.y;
             subEntity.zo = pos.z;

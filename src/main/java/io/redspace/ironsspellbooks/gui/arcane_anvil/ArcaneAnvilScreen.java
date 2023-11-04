@@ -5,7 +5,8 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import io.redspace.ironsspellbooks.IronsSpellbooks;
 import net.minecraft.client.gui.screen.inventory.AbstractRepairScreen;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.util.text.ITextComponent;
+import java.util.Arrays;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.entity.player.PlayerInventory;
 

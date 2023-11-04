@@ -46,10 +46,10 @@ public class ArchevokerEntity extends AbstractSpellCastingMob implements IMob {
         this.goalSelector.addGoal(1, new GustDefenseGoal(this));
         this.goalSelector.addGoal(2, new WizardAttackGoal(this, 1.5f, 30, 80)
                 .setSpells(
-                        List.of(SpellRegistry.FANG_STRIKE_SPELL.get(), SpellRegistry.FIRECRACKER_SPELL.get()),
-                        List.of(SpellRegistry.FANG_WARD_SPELL.get(), SpellRegistry.SHIELD_SPELL.get()),
-                        List.of(),
-                        List.of())
+                        Arrays.asList(SpellRegistry.FANG_STRIKE_SPELL.get(), SpellRegistry.FIRECRACKER_SPELL.get()),
+                        Arrays.asList(SpellRegistry.FANG_WARD_SPELL.get(), SpellRegistry.SHIELD_SPELL.get()),
+                        Arrays.asList(),
+                        Arrays.asList())
                 .setSpellQuality(.4f, .6f)
                 .setSingleUseSpell(SpellRegistry.INVISIBILITY_SPELL.get(), 40, 80, 5, 5)
                 .setDrinksPotions());

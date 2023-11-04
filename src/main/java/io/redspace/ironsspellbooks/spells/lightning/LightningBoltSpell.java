@@ -7,7 +7,8 @@ import io.redspace.ironsspellbooks.api.registry.SchoolRegistry;
 import io.redspace.ironsspellbooks.api.spells.*;
 import io.redspace.ironsspellbooks.entity.spells.ExtendedLightningBolt;
 import io.redspace.ironsspellbooks.api.util.Utils;
-import net.minecraft.util.text.ITextComponent;
+import java.util.Arrays;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -27,7 +28,7 @@ public class LightningBoltSpell extends AbstractSpell {
 
     @Override
     public List<IFormattableTextComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(new TranslationTextComponent("ui.irons_spellbooks.damage", Utils.stringTruncation(getSpellPower(spellLevel, caster), 1)));
+        return Arrays.asList(new TranslationTextComponent("ui.irons_spellbooks.damage", Utils.stringTruncation(getSpellPower(spellLevel, caster), 1)));
     }
 
     private final DefaultConfig defaultConfig = new DefaultConfig()
@@ -75,7 +76,7 @@ public class LightningBoltSpell extends AbstractSpell {
         Vector3d pos = Utils.raycastForEntity(level, entity, 100, true).getLocation();
         LightningBoltEntity lightningBolt = new ExtendedLightningBolt(level, entity, getSpellPower(spellLevel, entity));
         //lightningBolt.setDamage(getSpellPower(entity));
-        lightningBolt.setPos(pos);
+        lightningBolt.moveTo(pos);
         if (entity instanceof ServerPlayerEntity) {
             ServerPlayerEntity serverPlayer = (ServerPlayerEntity) entity;
             lightningBolt.setCause(serverPlayer);

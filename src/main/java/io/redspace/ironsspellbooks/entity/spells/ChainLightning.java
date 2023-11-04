@@ -45,7 +45,7 @@ public class ChainLightning extends AbstractMagicProjectile {
     public ChainLightning(World level, Entity owner, Entity initialVictim) {
         this(EntityRegistry.CHAIN_LIGHTNING.get(), level);
         this.setOwner(owner);
-        this.setPos(initialVictim.position());
+        this.moveTo(initialVictim.position());
         this.initialVictim = initialVictim;
     }
 

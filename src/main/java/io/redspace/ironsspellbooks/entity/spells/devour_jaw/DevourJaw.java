@@ -60,7 +60,7 @@ public class DevourJaw extends AoeEntity {
     public void tick() {
         if (tickCount < waitTime) {
             if (this.target != null)
-                setPos(this.target.position());
+                moveTo(this.target.position());
         } else if (tickCount == waitTime) {
             this.playSound(SoundRegistry.DEVOUR_BITE.get(), 2, 1);
         } else if (tickCount == warmupTime) {

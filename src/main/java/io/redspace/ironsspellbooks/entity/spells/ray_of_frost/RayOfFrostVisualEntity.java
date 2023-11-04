@@ -23,7 +23,7 @@ public class RayOfFrostVisualEntity extends Entity implements IEntityAdditionalS
 
     public RayOfFrostVisualEntity(World level, Vector3d start, Vector3d end, LivingEntity owner) {
         super(EntityRegistry.RAY_OF_FROST_VISUAL_ENTITY.get(), level);
-        this.setPos(start.subtract(0, .75f, 0));
+        this.moveTo(start.subtract(0, .75f, 0));
         this.distance = (float) start.distanceTo(end);
         this.setRot(owner.yRot, owner.xRot);
 

@@ -76,15 +76,15 @@ public class PriestEntity extends NeutralWizard implements IVillagerDataHolder, 
         this.goalSelector.addGoal(1, new GustDefenseGoal(this));
         this.goalSelector.addGoal(2, new WizardSupportGoal<>(this, 1.5f, 100, 180)
                 .setSpells(
-                        List.of(SpellRegistry.BLESSING_OF_LIFE_SPELL.get(), SpellRegistry.BLESSING_OF_LIFE_SPELL.get(), SpellRegistry.HEALING_CIRCLE_SPELL.get()),
-                        List.of(SpellRegistry.FORTIFY_SPELL.get())
+                        Arrays.asList(SpellRegistry.BLESSING_OF_LIFE_SPELL.get(), SpellRegistry.BLESSING_OF_LIFE_SPELL.get(), SpellRegistry.HEALING_CIRCLE_SPELL.get()),
+                        Arrays.asList(SpellRegistry.FORTIFY_SPELL.get())
                 ));
         this.goalSelector.addGoal(3, new WizardAttackGoal(this, 1.5f, 35, 70)
                 .setSpells(
-                        List.of(SpellRegistry.WISP_SPELL.get(), SpellRegistry.GUIDING_BOLT_SPELL.get(), SpellRegistry.GUIDING_BOLT_SPELL.get()),
-                        List.of(SpellRegistry.GUST_SPELL.get()),
-                        List.of(),
-                        List.of(SpellRegistry.HEAL_SPELL.get()))
+                        Arrays.asList(SpellRegistry.WISP_SPELL.get(), SpellRegistry.GUIDING_BOLT_SPELL.get(), SpellRegistry.GUIDING_BOLT_SPELL.get()),
+                        Arrays.asList(SpellRegistry.GUST_SPELL.get()),
+                        Arrays.asList(),
+                        Arrays.asList(SpellRegistry.HEAL_SPELL.get()))
                 .setSpellQuality(0.3f, 0.5f)
                 .setDrinksPotions());
         this.goalSelector.addGoal(5, new RoamVillageGoal(this, 30, 1f));
@@ -220,7 +220,7 @@ public class PriestEntity extends NeutralWizard implements IVillagerDataHolder, 
 //        this.level.getProfiler().push("priestBrain");
 //        this.getBrain().tick((ServerLevel) this.level, this);
 //        this.level.getProfiler().pop();
-//        this.getBrain().setActiveActivityToFirstValid(ImmutableList.of(Activity.CORE));
+//        this.getBrain().setActiveActivityToFirstValid(ImmutableArrays.asList(Activity.CORE));
 
     }
 
@@ -276,7 +276,7 @@ public class PriestEntity extends NeutralWizard implements IVillagerDataHolder, 
     protected Brain.Provider<PriestEntity> brainProvider() {
         return Brain.provider(
                 //Memories
-                ImmutableList.of(
+                ImmutableArrays.asList(
                         MemoryModuleType.WALK_TARGET,
                         MemoryModuleType.CANT_REACH_WALK_TARGET_SINCE,
                         MemoryModuleType.PATH,
@@ -285,9 +285,9 @@ public class PriestEntity extends NeutralWizard implements IVillagerDataHolder, 
                         MemoryModuleType.NEAREST_VISIBLE_LIVING_ENTITIES
                 ),
                 //Sensors
-                ImmutableList.of(SensorType.NEAREST_LIVING_ENTITIES, SensorType.NEAREST_PLAYERS, SensorType.HURT_BY));
+                ImmutableArrays.asList(SensorType.NEAREST_LIVING_ENTITIES, SensorType.NEAREST_PLAYERS, SensorType.HURT_BY));
     }
-    //ImmutableList.of(SensorType.NEAREST_LIVING_ENTITIES, SensorType.NEAREST_PLAYERS, SensorType.NEAREST_ITEMS, SensorType.NEAREST_BED, SensorType.HURT_BY, SensorType.VILLAGER_HOSTILES, SensorType.VILLAGER_BABIES, SensorType.SECONDARY_POIS, SensorType.GOLEM_DETECTED);
+    //ImmutableArrays.asList(SensorType.NEAREST_LIVING_ENTITIES, SensorType.NEAREST_PLAYERS, SensorType.NEAREST_ITEMS, SensorType.NEAREST_BED, SensorType.HURT_BY, SensorType.VILLAGER_HOSTILES, SensorType.VILLAGER_BABIES, SensorType.SECONDARY_POIS, SensorType.GOLEM_DETECTED);
 
     protected Brain<?> makeBrain(Dynamic<?> pDynamic) {
         Brain<PriestEntity> brain = this.brainProvider().makeBrain(pDynamic);
@@ -304,7 +304,7 @@ public class PriestEntity extends NeutralWizard implements IVillagerDataHolder, 
 
     private void registerBrainGoals(Brain<PriestEntity> brain) {
 
-        ImmutableList<Pair<Integer, ? extends Behavior<? super PriestEntity>>> core = ImmutableList.of(
+        ImmutableList<Pair<Integer, ? extends Behavior<? super PriestEntity>>> core = ImmutableArrays.asList(
                 Pair.of(0, new Swim(0.8F)),
                 Pair.of(0, new InteractWithDoor()),
 
@@ -314,7 +314,7 @@ public class PriestEntity extends NeutralWizard implements IVillagerDataHolder, 
 //                Pair.of(0, new RunSometimes<>(new SetEntityLookTarget(EntityType.PLAYER, 6.0F), UniformInt.of(30, 60))),
 //
 //                //Pair.of(0, new SetRaidStatus()),
-//                Pair.of(3, new RunOne<>(ImmutableList.of(
+//                Pair.of(3, new RunOne<>(ImmutableArrays.asList(
 //                        Pair.of(new RandomStroll(1.0F), 2),
 //                        Pair.of(new SetWalkTargetFromLookTarget(1.0F, 3), 2),
 //                        Pair.of(new DoNothing(30, 60), 1)
@@ -326,10 +326,10 @@ public class PriestEntity extends NeutralWizard implements IVillagerDataHolder, 
 //                    return p_217497_.is(PoiTypes.MEETING);
 //                }, MemoryModuleType.MEETING_POINT, true, Optional.of((byte) 14)))
         );
-        ImmutableList<Pair<Integer, ? extends Behavior<? super PriestEntity>>> idle = ImmutableList.of(
+        ImmutableList<Pair<Integer, ? extends Behavior<? super PriestEntity>>> idle = ImmutableArrays.asList(
                 Pair.of(0, new RunSometimes<>(new SetEntityLookTarget(EntityType.PLAYER, 6.0F), UniformInt.of(30, 60))),
 
-                Pair.of(3, new RunOne<>(ImmutableList.of(
+                Pair.of(3, new RunOne<>(ImmutableArrays.asList(
                         Pair.of(new RandomStroll(1.0F), 2),
                         Pair.of(new SetWalkTargetFromLookTarget(1.0F, 3), 2),
                         Pair.of(new DoNothing(30, 60), 1)
@@ -350,7 +350,7 @@ public class PriestEntity extends NeutralWizard implements IVillagerDataHolder, 
         brain.useDefaultActivity();
 //
 //        pBrain.addActivity(Activity.CORE, 0,
-//                ImmutableList.of(
+//                ImmutableArrays.asList(
 //                        new Swim(0.8F),
 //                        new AnimalPanic(2.0F),
 //                        new LookAtTargetSink(45, 90),
@@ -361,14 +361,14 @@ public class PriestEntity extends NeutralWizard implements IVillagerDataHolder, 
 //                ));
 //
 //        pBrain.addActivityWithConditions(Activity.IDLE,
-//                ImmutableList.of(
+//                ImmutableArrays.asList(
 //                        Pair.of(0, new RunSometimes<>(new SetEntityLookTarget(EntityType.PLAYER, 6.0F), UniformInt.of(30, 60))),
 //                        Pair.of(0, new AnimalMakeLove(EntityType.GOAT, 1.0F)),
 //                        Pair.of(1, new FollowTemptation((p_149446_) -> {
 //                            return 1.25F;
 //                        })),
 //                        Pair.of(2, new BabyFollowAdult<>(ADULT_FOLLOW_RANGE, 1.25F)),
-//                        Pair.of(3, new RunOne<>(ImmutableList.of(
+//                        Pair.of(3, new RunOne<>(ImmutableArrays.asList(
 //                                Pair.of(new RandomStroll(1.0F), 2),
 //                                Pair.of(new SetWalkTargetFromLookTarget(1.0F, 3), 2),
 //                                Pair.of(new DoNothing(30, 60), 1)

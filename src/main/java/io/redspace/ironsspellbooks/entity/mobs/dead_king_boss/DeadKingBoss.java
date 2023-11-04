@@ -14,7 +14,8 @@ import io.redspace.ironsspellbooks.util.ParticleHelper;
 import io.redspace.ironsspellbooks.api.util.Utils;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.text.ITextComponent;
+import java.util.Arrays;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.network.IPacket;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
@@ -112,7 +113,7 @@ public class DeadKingBoss extends AbstractSpellCastingMob implements IMob {
 
     private DeadKingAnimatedWarlockAttackGoal getCombatGoal() {
         return (DeadKingAnimatedWarlockAttackGoal) new DeadKingAnimatedWarlockAttackGoal(this, 1f, 55, 85, 3.5f).setSpellQuality(.3f, .5f).setSpells(
-                List.of(
+                Arrays.asList(
                         SpellRegistry.RAY_OF_SIPHONING_SPELL.get(),
                         SpellRegistry.BLOOD_SLASH_SPELL.get(), SpellRegistry.BLOOD_SLASH_SPELL.get(),
                         SpellRegistry.WITHER_SKULL_SPELL.get(), SpellRegistry.WITHER_SKULL_SPELL.get(), SpellRegistry.WITHER_SKULL_SPELL.get(),
@@ -121,9 +122,9 @@ public class DeadKingBoss extends AbstractSpellCastingMob implements IMob {
                         SpellRegistry.BLIGHT_SPELL.get(),
                         SpellRegistry.ACID_ORB_SPELL.get()
                 ),
-                List.of(SpellRegistry.FANG_WARD_SPELL.get(), SpellRegistry.BLOOD_STEP_SPELL.get()),
-                List.of(/*SpellType.BLOOD_STEP_SPELL*/),
-                List.of()
+                Arrays.asList(SpellRegistry.FANG_WARD_SPELL.get(), SpellRegistry.BLOOD_STEP_SPELL.get()),
+                Arrays.asList(/*SpellType.BLOOD_STEP_SPELL*/),
+                Arrays.asList()
         ).setMeleeBias(0.75f).setShouldFlee(false);
     }
 

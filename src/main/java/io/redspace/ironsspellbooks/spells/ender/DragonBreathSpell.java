@@ -11,15 +11,19 @@ import io.redspace.ironsspellbooks.entity.spells.dragon_breath.DragonBreathProje
 import io.redspace.ironsspellbooks.registries.SoundRegistry;
 import io.redspace.ironsspellbooks.spells.*;
 import io.redspace.ironsspellbooks.api.util.Utils;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.math.vector.Vector3d;
+import java.util.Arrays;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,7 +33,7 @@ public class DragonBreathSpell extends AbstractSpell {
 
     @Override
     public List<IFormattableTextComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(new TranslationTextComponent("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(spellLevel, caster), 1)));
+        return Arrays.asList(new TranslationTextComponent("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(spellLevel, caster), 1)));
     }
 
     private final DefaultConfig defaultConfig = new DefaultConfig()
@@ -83,7 +87,7 @@ public class DragonBreathSpell extends AbstractSpell {
             cone.setDealDamageActive();
         } else {
             DragonBreathProjectile dragonBreathProjectile = new DragonBreathProjectile(world, entity);
-            dragonBreathProjectile.setPos(entity.position().add(0, entity.getEyeHeight() * .7, 0));
+            dragonBreathProjectile.moveTo(entity.position().add(0, entity.getEyeHeight() * .7, 0));
             dragonBreathProjectile.setDamage(getDamage(spellLevel, entity));
             world.addFreshEntity(dragonBreathProjectile);
 

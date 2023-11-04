@@ -18,7 +18,8 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.util.text.ITextComponent;
+import java.util.Arrays;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.util.text.ITextProperties;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.Style;
@@ -253,7 +254,7 @@ public class ScrollForgeScreen extends ContainerScreen<ScrollForgeMenu> {
 
         List<IReorderingProcessor> getHoverText() {
             if (!this.button.active) {
-                return List.of(IReorderingProcessor.forward(new TranslationTextComponent("ui.irons_spellbooks.ink_rarity_error").getString(), Style.EMPTY));
+                return Arrays.asList(IReorderingProcessor.forward(new TranslationTextComponent("ui.irons_spellbooks.ink_rarity_error").getString(), Style.EMPTY));
             } else {
                 return TooltipsUtils.createSpellDescriptionTooltip(this.spell, font);
             }

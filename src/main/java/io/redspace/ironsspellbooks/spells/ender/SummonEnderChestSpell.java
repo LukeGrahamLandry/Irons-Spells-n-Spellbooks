@@ -6,31 +6,18 @@ import io.redspace.ironsspellbooks.api.magic.MagicData;
 import io.redspace.ironsspellbooks.api.registry.SchoolRegistry;
 import io.redspace.ironsspellbooks.api.spells.*;
 import io.redspace.ironsspellbooks.api.util.AnimationHolder;
-import io.redspace.ironsspellbooks.api.util.Utils;
-import io.redspace.ironsspellbooks.capabilities.magic.MagicManager;
-import io.redspace.ironsspellbooks.entity.mobs.AntiMagicSusceptible;
-import io.redspace.ironsspellbooks.entity.mobs.MagicSummon;
-import io.redspace.ironsspellbooks.entity.mobs.abstract_spell_casting_mob.AbstractSpellCastingMob;
-import io.redspace.ironsspellbooks.registries.MobEffectRegistry;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.util.text.ITextComponent;
+import java.util.Arrays;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.inventory.container.SimpleNamedContainerProvider;
-import net.minecraft.world.effect.MobEffect;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.container.ChestContainer;
 import net.minecraft.inventory.EnderChestInventory;
 import net.minecraft.world.World;
-import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.util.LazyOptional;
 
-import java.util.List;
 import java.util.Optional;
 
 @AutoSpellConfig

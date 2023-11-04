@@ -38,11 +38,11 @@ public class AngelWingsModel<T extends LivingEntity> extends AgeableModel<T> {
     }
 
     protected Iterable<ModelRenderer> headParts() {
-        return ImmutableList.of();
+        return ImmutableArrays.asList();
     }
 
     protected Iterable<ModelRenderer> bodyParts() {
-        return ImmutableList.of(this.leftWing, this.rightWing);
+        return ImmutableArrays.asList(this.leftWing, this.rightWing);
     }
 
     /**

@@ -5,6 +5,7 @@ import io.redspace.ironsspellbooks.api.config.DefaultConfig;
 import io.redspace.ironsspellbooks.api.registry.SchoolRegistry;
 import io.redspace.ironsspellbooks.api.spells.*;
 import io.redspace.ironsspellbooks.api.magic.MagicData;
+import io.redspace.ironsspellbooks.api.util.Utils;
 import io.redspace.ironsspellbooks.config.ServerConfigs;
 import io.redspace.ironsspellbooks.entity.mobs.SummonedHorse;
 import io.redspace.ironsspellbooks.registries.MobEffectRegistry;
@@ -77,9 +78,9 @@ public class SummonHorseSpell extends AbstractSpell {
         List<SummonedHorse> horses = world.getEntitiesOfClass(SummonedHorse.class, entity.getBoundingBox().inflate(100), (summonedHorse) -> summonedHorse.getSummoner() == entity && !summonedHorse.isDeadOrDying());
         SummonedHorse horse = horses.size() > 0 ? horses.get(0) : new SummonedHorse(world, entity);
 
-        horse.setPos(spawn);
+        horse.moveTo(spawn);
         horse.removeEffectNoUpdate(MobEffectRegistry.SUMMON_HORSE_TIMER.get());
-        horse.forceAddEffect(new EffectInstance(MobEffectRegistry.SUMMON_HORSE_TIMER.get(), summonTime, 0, false, false, false), null);
+        horse.forceAddEffect(new EffectInstance(MobEffectRegistry.SUMMON_HORSE_TIMER.get(), summonTime, 0, false, false, false));
         setAttributes(horse, getSpellPower(spellLevel, entity));
 
         world.addFreshEntity(horse);

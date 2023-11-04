@@ -8,7 +8,8 @@ import io.redspace.ironsspellbooks.api.spells.*;
 import io.redspace.ironsspellbooks.damage.ISpellDamageSource;
 import io.redspace.ironsspellbooks.entity.spells.fireball.SmallMagicFireball;
 import io.redspace.ironsspellbooks.api.util.Utils;
-import net.minecraft.util.text.ITextComponent;
+import java.util.Arrays;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
@@ -17,10 +18,12 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.DamageSource;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.util.math.vector.Vector3d;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,7 +33,7 @@ public class BlazeStormSpell extends AbstractSpell {
 
     @Override
     public List<IFormattableTextComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(new TranslationTextComponent("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(spellLevel, caster), 1)));
+        return Arrays.asList(new TranslationTextComponent("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(spellLevel, caster), 1)));
     }
 
     private final DefaultConfig defaultConfig = new DefaultConfig()
@@ -96,7 +99,7 @@ public class BlazeStormSpell extends AbstractSpell {
     public void shootBlazeFireball(World world, int spellLevel, LivingEntity entity) {
         Vector3d origin = entity.getEyePosition(0).add(entity.getForward().normalize().scale(.2f));
         SmallMagicFireball fireball = new SmallMagicFireball(world, entity);
-        fireball.setPos(origin.subtract(0, fireball.getBbHeight(), 0));
+        fireball.moveTo(origin.subtract(0, fireball.getBbHeight(), 0));
         fireball.shoot(entity.getLookAngle(), .05f);
         fireball.setDamage(getDamage(spellLevel, entity));
         world.playSound(null, origin.x, origin.y, origin.z, SoundEvents.BLAZE_SHOOT, SoundCategory.PLAYERS, 2.0f, 1.0f);

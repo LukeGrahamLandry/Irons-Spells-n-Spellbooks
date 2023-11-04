@@ -12,7 +12,8 @@ import io.redspace.ironsspellbooks.network.ServerboundCancelCast;
 import io.redspace.ironsspellbooks.api.util.Utils;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.text.ITextComponent;
+import java.util.Arrays;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -21,12 +22,14 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.math.RayTraceContext;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraft.util.math.vector.Vector3d;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,7 +39,7 @@ public class WallOfFireSpell extends AbstractSpell {
 
     @Override
     public List<IFormattableTextComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(
+        return Arrays.asList(
                 new TranslationTextComponent("ui.irons_spellbooks.distance", Utils.stringTruncation(getWallLength(spellLevel, caster), 1))
         );
     }
@@ -127,7 +130,7 @@ public class WallOfFireSpell extends AbstractSpell {
                     origin.add(fireWallData.anchors.get(i));
                 }
                 origin.scale(1 / (float) fireWallData.anchors.size());
-                fireWall.setPos(origin);
+                fireWall.moveTo(origin);
                 level.addFreshEntity(fireWall);
             }
         }

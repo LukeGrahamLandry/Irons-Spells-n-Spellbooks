@@ -6,8 +6,9 @@ import io.redspace.ironsspellbooks.player.ClientInputEvents;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraftforge.network.NetworkEvent;
+import java.util.Arrays;
+import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.Supplier;
 

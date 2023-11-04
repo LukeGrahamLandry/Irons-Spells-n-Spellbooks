@@ -10,7 +10,8 @@ import io.redspace.ironsspellbooks.damage.DamageSources;
 import io.redspace.ironsspellbooks.registries.MobEffectRegistry;
 import io.redspace.ironsspellbooks.api.util.Utils;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
+import java.util.Arrays;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.server.ServerWorld;
@@ -32,7 +33,7 @@ public class AscensionSpell extends AbstractSpell {
 
     @Override
     public List<IFormattableTextComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(new TranslationTextComponent("ui.irons_spellbooks.damage", Utils.stringTruncation(getSpellPower(spellLevel, caster), 1)));
+        return Arrays.asList(new TranslationTextComponent("ui.irons_spellbooks.damage", Utils.stringTruncation(getSpellPower(spellLevel, caster), 1)));
     }
 
     private final DefaultConfig defaultConfig = new DefaultConfig()
@@ -108,7 +109,7 @@ public class AscensionSpell extends AbstractSpell {
         LightningBoltEntity lightningBolt = EntityType.LIGHTNING_BOLT.create(level);
         lightningBolt.setVisualOnly(true);
         lightningBolt.setDamage(0);
-        lightningBolt.setPos(strikePos);
+        lightningBolt.moveTo(strikePos);
         level.addFreshEntity(lightningBolt);
 
         //livingEntity.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 100));

@@ -10,7 +10,8 @@ import io.redspace.ironsspellbooks.entity.spells.electrocute.ElectrocuteProjecti
 import io.redspace.ironsspellbooks.registries.SoundRegistry;
 import io.redspace.ironsspellbooks.spells.*;
 import io.redspace.ironsspellbooks.api.util.Utils;
-import net.minecraft.util.text.ITextComponent;
+import java.util.Arrays;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
@@ -27,7 +28,7 @@ public class ElectrocuteSpell extends AbstractSpell {
 
     @Override
     public List<IFormattableTextComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(new TranslationTextComponent("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(spellLevel, caster), 1)));
+        return Arrays.asList(new TranslationTextComponent("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(spellLevel, caster), 1)));
     }
 
     private final DefaultConfig defaultConfig = new DefaultConfig()
@@ -81,7 +82,7 @@ public class ElectrocuteSpell extends AbstractSpell {
             cone.setDealDamageActive();
         } else {
             ElectrocuteProjectile electrocuteProjectile = new ElectrocuteProjectile(world, entity);
-            electrocuteProjectile.setPos(entity.position().add(0, entity.getEyeHeight() * .7, 0));
+            electrocuteProjectile.moveTo(entity.position().add(0, entity.getEyeHeight() * .7, 0));
             electrocuteProjectile.setDamage(getDamage(spellLevel, entity));
             world.addFreshEntity(electrocuteProjectile);
             playerMagicData.setAdditionalCastData(new EntityCastData(electrocuteProjectile));

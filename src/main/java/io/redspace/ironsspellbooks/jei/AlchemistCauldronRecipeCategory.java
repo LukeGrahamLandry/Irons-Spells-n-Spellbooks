@@ -18,7 +18,8 @@ import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.text.ITextComponent;
+import java.util.Arrays;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 

@@ -7,7 +7,8 @@ import io.redspace.ironsspellbooks.api.registry.SchoolRegistry;
 import io.redspace.ironsspellbooks.api.spells.*;
 import io.redspace.ironsspellbooks.registries.MobEffectRegistry;
 import io.redspace.ironsspellbooks.api.util.Utils;
-import net.minecraft.util.text.ITextComponent;
+import java.util.Arrays;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
@@ -24,7 +25,7 @@ public class AngelWingsSpell extends AbstractSpell {
 
     @Override
     public List<IFormattableTextComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(new TranslationTextComponent("ui.irons_spellbooks.effect_length", Utils.timeFromTicks(getSpellPower(spellLevel, caster) * 20, 1)));
+        return Arrays.asList(new TranslationTextComponent("ui.irons_spellbooks.effect_length", Utils.timeFromTicks(getSpellPower(spellLevel, caster) * 20, 1)));
     }
 
     private final DefaultConfig defaultConfig = new DefaultConfig()
@@ -73,7 +74,7 @@ public class AngelWingsSpell extends AbstractSpell {
 
     @Override
     public void onCast(World world, int spellLevel, LivingEntity entity, MagicData playerMagicData) {
-        entity.addEffect(new EffectInstance(MobEffectRegistry.ANGEL_WINGS.get(), getEffectDuration(spellLevel, entity)), entity);
+        entity.addEffect(new EffectInstance(MobEffectRegistry.ANGEL_WINGS.get(), getEffectDuration(spellLevel, entity)));
         super.onCast(world, spellLevel, entity, playerMagicData);
     }
 }

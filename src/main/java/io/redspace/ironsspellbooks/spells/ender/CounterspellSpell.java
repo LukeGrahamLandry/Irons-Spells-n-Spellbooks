@@ -24,6 +24,7 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.common.util.LazyOptional;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,7 +33,7 @@ public class CounterspellSpell extends AbstractSpell {
     private final ResourceLocation spellId = new ResourceLocation(IronsSpellbooks.MODID, "counterspell");
 
     public static final LazyOptional<List<Effect>> LAZY_MAGICAL_EFFECTS = LazyOptional.of(() ->
-            List.of(MobEffectRegistry.ABYSSAL_SHROUD.get(),
+            Arrays.asList(MobEffectRegistry.ABYSSAL_SHROUD.get(),
                     MobEffectRegistry.ASCENSION.get(),
                     MobEffectRegistry.ANGEL_WINGS.get(),
                     MobEffectRegistry.CHARGED.get(),

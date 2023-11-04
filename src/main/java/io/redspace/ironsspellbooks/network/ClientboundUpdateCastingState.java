@@ -3,7 +3,7 @@ package io.redspace.ironsspellbooks.network;
 import io.redspace.ironsspellbooks.player.ClientMagicData;
 import io.redspace.ironsspellbooks.api.spells.CastSource;
 import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.Supplier;
 

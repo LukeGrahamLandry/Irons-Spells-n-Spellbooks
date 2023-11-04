@@ -12,7 +12,8 @@ import io.redspace.ironsspellbooks.entity.spells.target_area.TargetedAreaEntity;
 import io.redspace.ironsspellbooks.registries.SoundRegistry;
 import io.redspace.ironsspellbooks.api.util.AnimationHolder;
 import io.redspace.ironsspellbooks.api.util.Utils;
-import net.minecraft.util.text.ITextComponent;
+import java.util.Arrays;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.server.ServerWorld;
@@ -30,7 +31,7 @@ public class HealingCircleSpell extends AbstractSpell {
 
     @Override
     public List<IFormattableTextComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(
+        return Arrays.asList(
                 new TranslationTextComponent("ui.irons_spellbooks.aoe_healing", Utils.stringTruncation(getHealing(spellLevel, caster), 2)),
                 new TranslationTextComponent("ui.irons_spellbooks.radius", Utils.stringTruncation(getRadius(spellLevel, caster), 1)),
                 new TranslationTextComponent("ui.irons_spellbooks.duration", Utils.timeFromTicks(getDuration(spellLevel, caster), 1))
@@ -107,7 +108,7 @@ public class HealingCircleSpell extends AbstractSpell {
         aoeEntity.setRadius(radius);
         aoeEntity.setDuration(duration);
         aoeEntity.setDamage(getHealing(spellLevel, entity));
-        aoeEntity.setPos(spawn);
+        aoeEntity.moveTo(spawn);
         world.addFreshEntity(aoeEntity);
 
         TargetedAreaEntity visualEntity = TargetedAreaEntity.createTargetAreaEntity(world, spawn, radius, 0xc80000);

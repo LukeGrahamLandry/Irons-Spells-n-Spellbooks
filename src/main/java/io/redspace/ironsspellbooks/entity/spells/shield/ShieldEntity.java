@@ -89,7 +89,7 @@ public class ShieldEntity extends AbstractShieldEntity {
                 ShieldPart subEntity = subEntities[i];
 
                 Vector3d pos = subPositions[i].xRot(Utils.DEG_TO_RAD * -this.xRot).yRot(Utils.DEG_TO_RAD * -this.yRot).add(this.position());
-                subEntity.setPos(pos);
+                subEntity.moveTo(pos);
                 //subEntity.setDeltaMovement(newVector);
                 //var vec3 = new Vec3(subEntity.getX(), subEntity.getY(), subEntity.getZ());
                 subEntity.xo = pos.x;

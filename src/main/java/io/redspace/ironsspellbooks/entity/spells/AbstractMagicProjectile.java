@@ -80,7 +80,7 @@ public abstract class AbstractMagicProjectile extends ProjectileEntity implement
         if (hitresult.getType() != RayTraceResult.Type.MISS && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, hitresult)) {
             onHit(hitresult);
         }
-        setPos(position().add(getDeltaMovement()));
+        moveTo(position().add(getDeltaMovement()));
         ProjectileHelper.rotateTowardsMovement(this, 1);
         if (!this.isNoGravity() && respectsGravity()) {
             Vector3d vec34 = this.getDeltaMovement();

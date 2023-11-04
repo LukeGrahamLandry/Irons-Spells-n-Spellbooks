@@ -6,14 +6,17 @@ import io.redspace.ironsspellbooks.api.magic.MagicData;
 import io.redspace.ironsspellbooks.api.registry.SchoolRegistry;
 import io.redspace.ironsspellbooks.api.spells.*;
 import io.redspace.ironsspellbooks.registries.MobEffectRegistry;
-import net.minecraft.util.text.ITextComponent;
+import java.util.Arrays;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,7 +26,7 @@ public class EvasionSpell extends AbstractSpell {
 
     @Override
     public List<IFormattableTextComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(new TranslationTextComponent("ui.irons_spellbooks.hits_dodged", (int) getSpellPower(spellLevel, caster) + 1));
+        return Arrays.asList(new TranslationTextComponent("ui.irons_spellbooks.hits_dodged", (int) getSpellPower(spellLevel, caster) + 1));
     }
 
     private final DefaultConfig defaultConfig = new DefaultConfig()

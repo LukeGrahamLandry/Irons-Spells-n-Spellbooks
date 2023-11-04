@@ -271,7 +271,7 @@ public class IronsWorldUpgrader {
             return p_18823_.endsWith(".mca");
         });
         if (afile == null) {
-            return ImmutableList.of();
+            return ImmutableArrays.asList();
         } else {
             List<ChunkPos> list = Lists.newArrayList();
 

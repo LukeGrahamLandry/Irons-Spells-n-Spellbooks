@@ -9,9 +9,11 @@ import io.redspace.ironsspellbooks.capabilities.magic.CastTargetingData;
 import io.redspace.ironsspellbooks.entity.spells.creeper_head.CreeperHeadProjectile;
 import io.redspace.ironsspellbooks.api.util.Utils;
 import net.minecraft.util.math.vector.Vector2f;
-import net.minecraft.util.text.ITextComponent;
+import java.util.Arrays;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
@@ -22,6 +24,7 @@ import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,7 +34,7 @@ public class ChainCreeperSpell extends AbstractSpell {
 
     @Override
     public List<IFormattableTextComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(new TranslationTextComponent("ui.irons_spellbooks.damage", Utils.stringTruncation(getSpellPower(spellLevel, caster), 1)),
+        return Arrays.asList(new TranslationTextComponent("ui.irons_spellbooks.damage", Utils.stringTruncation(getSpellPower(spellLevel, caster), 1)),
                 new TranslationTextComponent("ui.irons_spellbooks.projectile_count", getCount(spellLevel, caster)));
     }
 

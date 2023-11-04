@@ -2,9 +2,11 @@ package io.redspace.ironsspellbooks.item.curios;
 
 import io.redspace.ironsspellbooks.api.util.Utils;
 import io.redspace.ironsspellbooks.util.SpellbookModCreativeTabs;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.text.ITextComponent;
+import java.util.Arrays;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.item.ItemStack;
 
@@ -27,7 +29,7 @@ public class LurkerRing extends SimpleDescriptiveCurio {
     public List<ITextComponent> getDescriptionLines(ItemStack stack) {
         double playerCooldownModifier = Minecraft.getInstance().player == null ? 1 : Minecraft.getInstance().player.getAttributeValue(COOLDOWN_REDUCTION.get());
 
-        return List.of(
+        return Arrays.asList(
                 new TranslationTextComponent("tooltip.irons_spellbooks.passive_ability", Utils.timeFromTicks((float) (COOLDOWN_IN_TICKS * (2 - Utils.softCapFormula(playerCooldownModifier))), 1)).withStyle(TextFormatting.GREEN),
                 getDescription(stack)
         );

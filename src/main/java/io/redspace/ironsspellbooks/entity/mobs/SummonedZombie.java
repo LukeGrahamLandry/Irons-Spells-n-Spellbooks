@@ -41,6 +41,7 @@ import software.bernie.geckolib3.core.manager.AnimationFactory;
 import software.bernie.geckolib3.util.GeckoLibUtil;
 
 import javax.annotation.Nullable;
+import java.util.Random;
 import java.util.UUID;
 
 import net.minecraft.entity.Entity;
@@ -203,13 +204,13 @@ public class SummonedZombie extends ZombieEntity implements MagicSummon, IAnimat
     //
 
     protected void clientDiggingParticles(LivingEntity livingEntity) {
-        RandomSource randomsource = livingEntity.getRandom();
+        Random randomsource = livingEntity.getRandom();
         BlockState blockstate = livingEntity.getBlockStateOn();
         if (blockstate.getRenderShape() != BlockRenderType.INVISIBLE) {
             for (int i = 0; i < 15; ++i) {
-                double d0 = livingEntity.getX() + (double) MathHelper.randomBetween(randomsource, -0.5F, 0.5F);
+                double d0 = livingEntity.getX() + (double) Utils.randomBetween(randomsource, -0.5F, 0.5F);
                 double d1 = livingEntity.getY();
-                double d2 = livingEntity.getZ() + (double) MathHelper.randomBetween(randomsource, -0.5F, 0.5F);
+                double d2 = livingEntity.getZ() + (double) Utils.randomBetween(randomsource, -0.5F, 0.5F);
                 livingEntity.level.addParticle(new BlockParticleData(ParticleTypes.BLOCK, blockstate), d0, d1, d2, 0.0D, 0.0D, 0.0D);
             }
         }

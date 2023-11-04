@@ -13,17 +13,20 @@ import io.redspace.ironsspellbooks.api.util.Utils;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.text.ITextComponent;
+import java.util.Arrays;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.math.RayTraceContext;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -95,7 +98,7 @@ public class TeleportSpell extends AbstractSpell {
             entity.stopRiding();
         }
         entity.teleportTo(dest.x, dest.y, dest.z);
-        entity.resetFallDistance();
+        entity.fallDistance = 0;
 
         playerMagicData.resetAdditionalCastData();
 
@@ -172,7 +175,7 @@ public class TeleportSpell extends AbstractSpell {
 
     @Override
     public List<IFormattableTextComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(new TranslationTextComponent("ui.irons_spellbooks.distance", Utils.stringTruncation(getDistance(spellLevel, caster), 1)));
+        return Arrays.asList(new TranslationTextComponent("ui.irons_spellbooks.distance", Utils.stringTruncation(getDistance(spellLevel, caster), 1)));
     }
 
     @Override

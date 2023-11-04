@@ -13,7 +13,8 @@ import io.redspace.ironsspellbooks.api.util.Utils;
 import net.minecraft.command.arguments.EntityAnchorArgument;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.text.ITextComponent;
+import java.util.Arrays;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
@@ -22,12 +23,14 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.Hand;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,7 +46,7 @@ public class BloodStepSpell extends AbstractSpell {
 
     @Override
     public List<IFormattableTextComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(new TranslationTextComponent("ui.irons_spellbooks.distance", Utils.stringTruncation(getDistance(spellLevel, caster), 1)));
+        return Arrays.asList(new TranslationTextComponent("ui.irons_spellbooks.distance", Utils.stringTruncation(getDistance(spellLevel, caster), 1)));
     }
 
     public BloodStepSpell() {
@@ -121,7 +124,7 @@ public class BloodStepSpell extends AbstractSpell {
 
             }
         }
-        entity.resetFallDistance();
+        entity.fallDistance = 0;
         level.playSound(null, dest.x, dest.y, dest.z, getCastFinishSound().get(), SoundCategory.NEUTRAL, 1f, 1f);
 
         //Invis take 1 tick to set in

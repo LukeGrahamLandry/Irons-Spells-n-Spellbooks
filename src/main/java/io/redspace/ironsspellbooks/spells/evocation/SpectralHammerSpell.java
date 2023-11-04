@@ -9,16 +9,19 @@ import io.redspace.ironsspellbooks.entity.spells.spectral_hammer.SpectralHammer;
 import io.redspace.ironsspellbooks.api.util.Utils;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.text.ITextComponent;
+import java.util.Arrays;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.math.RayTraceContext;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,7 +33,7 @@ public class SpectralHammerSpell extends AbstractSpell {
 
     @Override
     public List<IFormattableTextComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(
+        return Arrays.asList(
                 new TranslationTextComponent("ui.irons_spellbooks.dimensions", 1 + getRadius(spellLevel, caster) * 2, 1 + getRadius(spellLevel, caster) * 2, getDepth(spellLevel, caster) + 1),
                 new TranslationTextComponent("ui.irons_spellbooks.distance", distance)
         );

@@ -9,9 +9,12 @@ import io.redspace.ironsspellbooks.capabilities.magic.CastTargetingData;
 import io.redspace.ironsspellbooks.damage.ISpellDamageSource;
 import io.redspace.ironsspellbooks.entity.spells.devour_jaw.DevourJaw;
 import io.redspace.ironsspellbooks.api.util.Utils;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.math.vector.Vector3d;
+import java.util.Arrays;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.DamageSource;
@@ -20,6 +23,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,7 +39,7 @@ public class DevourSpell extends AbstractSpell {
 
     @Override
     public List<IFormattableTextComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(
+        return Arrays.asList(
                 new TranslationTextComponent("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(spellLevel, caster), 1)),
                 new TranslationTextComponent("ui.irons_spellbooks.max_hp_on_kill", getHpBonus(spellLevel, caster))
         );
@@ -87,8 +91,9 @@ public class DevourSpell extends AbstractSpell {
             LivingEntity targetEntity = targetData.getTarget((ServerWorld) world);
             if (targetEntity != null) {
                 DevourJaw devour = new DevourJaw(world, entity, targetEntity);
-                devour.setPos(targetEntity.position());
-                devour.setYRot(entity.yRot);
+                Vector3d pos = targetEntity.position();
+                devour.setPos(pos.x, pos.y, pos.z);
+                devour.yRot = (entity.yRot);
                 devour.setDamage(getDamage(spellLevel, entity));
                 devour.vigorLevel = (getHpBonus(spellLevel, entity) / 2) - 1;
                 world.addFreshEntity(devour);

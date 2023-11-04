@@ -33,13 +33,13 @@ public class VanillaAnvilRecipeMaker {
                     ItemStack damagedHalf = new ItemStack(item);
                     damagedHalf.setDamageValue(damagedHalf.getMaxDamage() / 2);
 
-                    IJeiAnvilRecipe repairWithSame = vanillaRecipeFactory.createAnvilRecipe(List.of(damagedThreeQuarters), List.of(damagedThreeQuarters), List.of(damagedHalf));
+                    IJeiAnvilRecipe repairWithSame = vanillaRecipeFactory.createAnvilRecipe(Arrays.asList(damagedThreeQuarters), Arrays.asList(damagedThreeQuarters), Arrays.asList(damagedHalf));
                     consumer.accept(repairWithSame);
 
                     List<ItemStack> repairMaterials = Arrays.stream(item.getTier().getRepairIngredient().getItems()).toList();
                     ItemStack damagedFully = new ItemStack(item);
                     damagedFully.setDamageValue(damagedFully.getMaxDamage());
-                    IJeiAnvilRecipe repairWithMaterial = vanillaRecipeFactory.createAnvilRecipe(List.of(damagedFully), repairMaterials, List.of(damagedThreeQuarters));
+                    IJeiAnvilRecipe repairWithMaterial = vanillaRecipeFactory.createAnvilRecipe(Arrays.asList(damagedFully), repairMaterials, Arrays.asList(damagedThreeQuarters));
                     consumer.accept(repairWithMaterial);
                 });
     }
@@ -53,13 +53,13 @@ public class VanillaAnvilRecipeMaker {
                     ItemStack damagedHalf = new ItemStack(item);
                     damagedHalf.setDamageValue(damagedHalf.getMaxDamage() / 2);
 
-                    IJeiAnvilRecipe repairWithSame = vanillaRecipeFactory.createAnvilRecipe(List.of(damagedThreeQuarters), List.of(damagedThreeQuarters), List.of(damagedHalf));
+                    IJeiAnvilRecipe repairWithSame = vanillaRecipeFactory.createAnvilRecipe(Arrays.asList(damagedThreeQuarters), Arrays.asList(damagedThreeQuarters), Arrays.asList(damagedHalf));
                     consumer.accept(repairWithSame);
 
                     List<ItemStack> repairMaterials = Arrays.stream(item.getMaterial().getRepairIngredient().getItems()).toList();
                     ItemStack damagedFully = new ItemStack(item);
                     damagedFully.setDamageValue(damagedFully.getMaxDamage());
-                    IJeiAnvilRecipe repairWithMaterial = vanillaRecipeFactory.createAnvilRecipe(List.of(damagedFully), repairMaterials, List.of(damagedThreeQuarters));
+                    IJeiAnvilRecipe repairWithMaterial = vanillaRecipeFactory.createAnvilRecipe(Arrays.asList(damagedFully), repairMaterials, Arrays.asList(damagedThreeQuarters));
                     consumer.accept(repairWithMaterial);
                 });
     }
