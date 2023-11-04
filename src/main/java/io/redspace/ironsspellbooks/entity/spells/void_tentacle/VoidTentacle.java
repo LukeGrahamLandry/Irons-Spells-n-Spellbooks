@@ -17,7 +17,6 @@ import net.minecraft.world.server.ServerWorld;
 import net.minecraft.util.DamageSource;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
-import net.minecraft.world.entity.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import software.bernie.geckolib3.core.AnimationState;
@@ -82,7 +81,7 @@ public class VoidTentacle extends LivingEntity implements IAnimatable, AntiMagic
         if (!level.isClientSide) {
             if (age > 300) {
                 //IronsSpellbooks.LOGGER.debug("Discarding void Tentacle (age:{})", age);
-                this.discard();
+                this.remove();
             } else {
                 if (age < 280 && (age) % 20 == 0) {
                     level.getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(1.2)).forEach(this::dealDamage);
@@ -91,7 +90,7 @@ public class VoidTentacle extends LivingEntity implements IAnimatable, AntiMagic
                 }
             }
             if (age == 260 && Utils.random.nextFloat() < .3f)
-                playSound(SoundRegistry.VOID_TENTACLES_LEAVE.get());
+                playSound(SoundRegistry.VOID_TENTACLES_LEAVE.get(), 1.0F, 1.0F);
         } else {
             if (age < 280)
 //                for (int i = 0; i < 4; i++) {
@@ -198,7 +197,7 @@ public class VoidTentacle extends LivingEntity implements IAnimatable, AntiMagic
     @Override
     public void onAntiMagic(MagicData playerMagicData) {
         MagicManager.spawnParticles(level, ParticleTypes.SMOKE, getX(), getY() + 1, getZ(), 50, .2, 1.25, .2, .08, false);
-        this.discard();
+        this.remove();
     }
 
 

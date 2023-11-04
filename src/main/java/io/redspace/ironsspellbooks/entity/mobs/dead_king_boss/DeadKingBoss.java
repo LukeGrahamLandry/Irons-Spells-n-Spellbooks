@@ -25,12 +25,10 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.BossInfo;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.IndirectEntityDamageSource;
-import net.minecraft.world.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.SwimGoal;
@@ -49,7 +47,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.IServerWorld;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
-import net.minecraftforge.network.NetworkHooks;
+import net.minecraftforge.fml.network.NetworkHooks;
 import software.bernie.geckolib3.core.AnimationState;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
@@ -60,6 +58,7 @@ import software.bernie.geckolib3.core.manager.AnimationData;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Random;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntitySize;
@@ -180,8 +179,7 @@ public class DeadKingBoss extends AbstractSpellCastingMob implements IMob {
 
     @Override
     public ILivingEntityData finalizeSpawn(IServerWorld pLevel, DifficultyInstance pDifficulty, SpawnReason pReason, @Nullable ILivingEntityData pSpawnData, @Nullable CompoundNBT pDataTag) {
-        RandomSource randomsource = Utils.random;
-        this.populateDefaultEquipmentSlots(randomsource, pDifficulty);
+        this.populateDefaultEquipmentSlots(pDifficulty);
         return pSpawnData;
     }
 
@@ -191,7 +189,7 @@ public class DeadKingBoss extends AbstractSpellCastingMob implements IMob {
     }
 
     @Override
-    protected void populateDefaultEquipmentSlots(RandomSource pRandom, DifficultyInstance pDifficulty) {
+    protected void populateDefaultEquipmentSlots(DifficultyInstance pDifficulty) {
         this.setItemSlot(EquipmentSlotType.OFFHAND, new ItemStack(ItemRegistry.BLOOD_STAFF.get()));
         this.setDropChance(EquipmentSlotType.OFFHAND, 0f);
 //        this.setItemSlot(EquipmentSlot.CHEST, new ItemStack(ItemRegistry.WANDERING_MAGICIAN_ROBE.get()));
@@ -247,7 +245,7 @@ public class DeadKingBoss extends AbstractSpellCastingMob implements IMob {
             //irons_spellbooks.LOGGER.debug("DeadKingBoss.tick | Phase: {} | isTransitioning: {} | TransitionTime: {}", getPhase(), isPhaseTransitioning(), transitionAnimationTime);
             float halfHealth = this.getMaxHealth() / 2;
             if (isPhase(Phases.FirstPhase)) {
-                this.bossEvent.setProgress((this.getHealth() - halfHealth) / (this.getMaxHealth() - halfHealth));
+                this.bossEvent.setPercent((this.getHealth() - halfHealth) / (this.getMaxHealth() - halfHealth));
                 if (this.getHealth() <= halfHealth) {
                     setPhase(Phases.Transitioning);
                     PlayerEntity player = level.getNearestPlayer(this, 16);
@@ -257,7 +255,7 @@ public class DeadKingBoss extends AbstractSpellCastingMob implements IMob {
                     if (!isDeadOrDying()) {
                         setHealth(halfHealth);
                     }
-                    playSound(SoundRegistry.DEAD_KING_FAKE_DEATH.get());
+                    playSound(SoundRegistry.DEAD_KING_FAKE_DEATH.get(), 1.0F, 1.0F);
                     //Overriding isInvulnerable just doesn't seem to work
                     setInvulnerable(true);
                 }
@@ -267,12 +265,12 @@ public class DeadKingBoss extends AbstractSpellCastingMob implements IMob {
                     MagicManager.spawnParticles(level, ParticleHelper.FIRE, position().x, position().y + 2.5, position().z, 80, .2, .2, .2, .25, true);
                     setFinalPhaseGoals();
                     setNoGravity(true);
-                    playSound(SoundRegistry.DEAD_KING_EXPLODE.get());
+                    playSound(SoundRegistry.DEAD_KING_EXPLODE.get(), 1.0F, 1.0F);
                     level.getEntities(this, this.getBoundingBox().inflate(5), (entity) -> entity.distanceToSqr(position()) < 5 * 5).forEach(super::doHurtTarget);
                     setInvulnerable(false);
                 }
             } else if (isPhase(Phases.FinalPhase)) {
-                this.bossEvent.setProgress(this.getHealth() / (this.getMaxHealth() - halfHealth));
+                this.bossEvent.setPercent(this.getHealth() / (this.getMaxHealth() - halfHealth));
             }
         }
     }
@@ -284,10 +282,10 @@ public class DeadKingBoss extends AbstractSpellCastingMob implements IMob {
     }
 
     @Override
-    public boolean causeFallDamage(float pFallDistance, float pMultiplier, DamageSource pSource) {
+    public boolean causeFallDamage(float pFallDistance, float pMultiplier) {
         if (isPhase(Phases.FinalPhase))
             return false;
-        return super.causeFallDamage(pFallDistance, pMultiplier, pSource);
+        return super.causeFallDamage(pFallDistance, pMultiplier);
     }
 
     public boolean isPhase(Phases phase) {

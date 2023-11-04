@@ -11,7 +11,6 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.entity.*;
 import net.minecraft.world.World;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.fluids.FluidType;
@@ -94,7 +93,7 @@ public class TargetedAreaEntity extends Entity {
                 || duration == 0 && tickCount > 20 * 20
                 || (hasOwner && (owner == null || owner.isRemoved())))
         ) {
-            discard();
+            this.remove();
         }
     }
 
@@ -164,7 +163,7 @@ public class TargetedAreaEntity extends Entity {
         if (DATA_RADIUS.equals(pKey)) {
             this.refreshDimensions();
             if (getRadius() < .1f)
-                this.discard();
+                this.remove();
         }
         super.onSyncedDataUpdated(pKey);
     }

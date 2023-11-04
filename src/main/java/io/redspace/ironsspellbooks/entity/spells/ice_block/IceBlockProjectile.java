@@ -137,8 +137,8 @@ public class IceBlockProjectile extends AbstractMagicProjectile implements IAnim
     @Override
     public void tick() {
 //        IronsSpellbooks.LOGGER.debug("IceBlockProjectileRotation: X:{} Y:{}", getXRot(), getYRot());
-//        this.setYRot((float)(Mth.atan2(getDeltaMovement().x, getDeltaMovement().z) * (double)(180F / (float)Math.PI)));
-//        this.setXRot(0);
+//        this.yRot = ((float)(Mth.atan2(getDeltaMovement().x, getDeltaMovement().z) * (double)(180F / (float)Math.PI)));
+//        this.xRot = (0);
 //        this.yRotO = this.yRot;
 //        this.xRotO = this.xRot;
         baseTick();
@@ -154,7 +154,7 @@ public class IceBlockProjectile extends AbstractMagicProjectile implements IAnim
                     doImpactDamage();
                     playSound(SoundRegistry.ICE_BLOCK_IMPACT.get(), 2.5f, .8f + random.nextFloat() * .4f);
                     impactParticles(getX(), getY(), getZ());
-                    discard();
+                    this.remove();
                 } else {
                     level.getEntities(this, getBoundingBox().inflate(0.35)).forEach(this::doFallingDamage);
                 }
@@ -205,12 +205,12 @@ public class IceBlockProjectile extends AbstractMagicProjectile implements IAnim
     @Override
     public void setXRot(float pXRot) {
 //        IronsSpellbooks.LOGGER.debug("IceBlockProjectile: Something is trying to set my x rot! Ignoring.");
-        //super.setXRot(pXRot);
+        //super.xRot = (pXRot);
     }
 
     @Override
     public void setYRot(float pYRot) {
-//        super.setYRot(pYRot);
+//        super.yRot = (pYRot);
     }
 
     @Override

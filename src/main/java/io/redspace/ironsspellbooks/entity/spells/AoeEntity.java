@@ -8,7 +8,6 @@ import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.entity.*;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.world.World;
 import net.minecraft.world.phys.Vec2;
@@ -66,7 +65,7 @@ public abstract class AoeEntity extends ProjectileEntity implements NoKnockbackP
         super.tick();
         if (tickCount > duration) {
             //IronsSpellbooks.LOGGER.debug("AOEProjectile.discarding ({}/{})", tickCount, duration);
-            discard();
+            this.remove();
             return;
         }
         if (!level.isClientSide) {
@@ -186,7 +185,7 @@ public abstract class AoeEntity extends ProjectileEntity implements NoKnockbackP
         if (DATA_RADIUS.equals(pKey)) {
             this.refreshDimensions();
             if (getRadius() < .1f)
-                this.discard();
+                this.remove();
         }
 
         super.onSyncedDataUpdated(pKey);

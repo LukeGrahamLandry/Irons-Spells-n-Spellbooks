@@ -117,7 +117,7 @@ public class WizardSupportGoal<T extends AbstractSpellCastingMob & SupportMob> e
         }
 
         double distanceSquared = this.mob.distanceToSqr(this.target.getX(), this.target.getY(), this.target.getZ());
-        hasLineOfSight = this.mob.getSensing().hasLineOfSight(this.target);
+        hasLineOfSight = this.mob.getSensing().canSee(this.target);
         if (hasLineOfSight) {
             ++this.seeTime;
         } else {

@@ -149,7 +149,7 @@
 //    public void onUnSummon() {
 //        if (!level.isClientSide) {
 //            MagicManager.spawnParticles(level, ParticleTypes.POOF, getX(), getY(), getZ(), 25, .4, .8, .4, .03, false);
-//            discard();
+//            this.remove();
 //        }
 //    }
 //

@@ -3,6 +3,8 @@ package io.redspace.ironsspellbooks.entity.mobs;
 import io.redspace.ironsspellbooks.api.magic.MagicData;
 import io.redspace.ironsspellbooks.config.ServerConfigs;
 import io.redspace.ironsspellbooks.effect.SummonTimer;
+import net.minecraft.entity.passive.TameableEntity;
+import net.minecraft.util.Util;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.network.play.server.SPlayEntityEffectPacket;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -37,7 +39,7 @@ public interface MagicSummon extends AntiMagicSusceptible {
         if (getSummoner() == null)
             return false;
         boolean isFellowSummon = entity == getSummoner() || entity.isAlliedTo(getSummoner());
-        boolean hasCommonOwner = entity instanceof aqt && ((aqt) entity).getOwner() == getSummoner();
+        boolean hasCommonOwner = entity instanceof TameableEntity && ((TameableEntity) entity).getOwner() == getSummoner();
         return isFellowSummon || hasCommonOwner;
     }
 
@@ -49,7 +51,7 @@ public interface MagicSummon extends AntiMagicSusceptible {
 
             if (!level.isClientSide && level.getGameRules().getBoolean(GameRules.RULE_SHOWDEATHMESSAGES) && getSummoner() instanceof ServerPlayerEntity) {
                 ServerPlayerEntity player = (ServerPlayerEntity) getSummoner();
-                player.sendSystemMessage(deathMessage);
+                player.sendMessage(deathMessage, Util.NIL_UUID);
             }
         }
     }

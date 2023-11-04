@@ -1,5 +1,6 @@
 package io.redspace.ironsspellbooks.entity.mobs.keeper;
 
+import io.redspace.ironsspellbooks.api.util.Utils;
 import io.redspace.ironsspellbooks.entity.mobs.goals.WarlockAttackGoal;
 import io.redspace.ironsspellbooks.network.ClientboundSyncAnimation;
 import io.redspace.ironsspellbooks.registries.SoundRegistry;
@@ -31,7 +32,7 @@ public class KeeperAnimatedWarlockAttackGoal extends WarlockAttackGoal {
     protected void handleAttackLogic(double distanceSquared) {
         //Handling Animation hit frames
         float distance = MathHelper.sqrt((float) distanceSquared);
-        mob.getLookControl().setLookAt(target);
+        mob.getLookControl().setLookAt(target.position());
         if (meleeAnimTimer > 0) {
             //We are currently attacking and are in a melee animation
             forceFaceTarget();
@@ -122,7 +123,7 @@ public class KeeperAnimatedWarlockAttackGoal extends WarlockAttackGoal {
         float yRot = (float) (MathHelper.atan2(d1, d0) * (double) (180F / (float) Math.PI)) - 90.0F;
         mob.setYBodyRot(yRot);
         mob.setYHeadRot(yRot);
-        mob.setYRot(yRot);
+        mob.yRot = (yRot);
     }
 
     @Override
@@ -160,10 +161,10 @@ public class KeeperAnimatedWarlockAttackGoal extends WarlockAttackGoal {
     }
 
     public void playSwingSound() {
-        mob.playSound(SoundRegistry.KEEPER_SWING.get(), 1, MathHelper.randomBetweenInclusive(mob.getRandom(), 9, 13) * .1f);
+        mob.playSound(SoundRegistry.KEEPER_SWING.get(), 1, Utils.randomBetweenInclusive(mob.getRandom(), 9, 13) * .1f);
     }
 
     public void playImpactSound() {
-        mob.playSound(SoundRegistry.KEEPER_SWORD_IMPACT.get(), 1, MathHelper.randomBetweenInclusive(mob.getRandom(), 9, 13) * .1f);
+        mob.playSound(SoundRegistry.KEEPER_SWORD_IMPACT.get(), 1, Utils.randomBetweenInclusive(mob.getRandom(), 9, 13) * .1f);
     }
 }

@@ -1,6 +1,5 @@
 package io.redspace.ironsspellbooks.entity.mobs.goals;
 
-import net.minecraft.world.entity.*;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.ai.goal.TargetGoal;
 import net.minecraft.entity.ai.brain.memory.MemoryModuleType;
@@ -22,7 +21,7 @@ import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.util.EntityPredicates;
 
 public class GenericHurtByTargetGoal  extends TargetGoal {
-    private static final EntityPredicate HURT_BY_TARGETING = EntityPredicate.forCombat().ignoreLineOfSight().ignoreInvisibilityTesting();
+    private static final EntityPredicate HURT_BY_TARGETING = (new EntityPredicate()).allowUnseeable().ignoreInvisibilityTesting();
     private static final int ALERT_RANGE_Y = 10;
     private boolean alertSameType;
     /** Store the previous revengeTimer value */

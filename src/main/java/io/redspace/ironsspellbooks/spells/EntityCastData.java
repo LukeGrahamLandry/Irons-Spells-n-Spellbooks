@@ -18,7 +18,7 @@ public class EntityCastData implements ICastData {
 
     public void discardCastingEntity() {
         if (this.castingEntity != null) {
-            this.castingEntity.discard();
+            this.castingEntity.remove();
         }
     }
 

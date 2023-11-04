@@ -8,6 +8,7 @@ import net.minecraft.entity.ai.goal.TargetGoal;
 import net.minecraft.entity.EntityPredicate;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 
 import javax.annotation.Nullable;
@@ -29,9 +30,9 @@ public class AcquireTargetNearLocationGoal<T extends LivingEntity> extends Targe
     public AcquireTargetNearLocationGoal(MobEntity pMob, Class<T> pTargetType, int pRandomInterval, boolean pMustSee, boolean pMustReach, Vector3d targetSearchPos, @Nullable Predicate<LivingEntity> pTargetPredicate) {
         super(pMob, pMustSee, pMustReach);
         this.targetType = pTargetType;
-        this.randomInterval = reducedTickDelay(pRandomInterval);
+        this.randomInterval = pRandomInterval; // TODO reducedTickDelay(pRandomInterval);
         this.setFlags(EnumSet.of(Goal.Flag.TARGET));
-        this.targetConditions = EntityPredicate.forCombat().range(this.getFollowDistance()).selector(pTargetPredicate);
+        this.targetConditions = (new EntityPredicate()).range(this.getFollowDistance()).selector(pTargetPredicate);
         this.targetSearchPos = targetSearchPos;
     }
 

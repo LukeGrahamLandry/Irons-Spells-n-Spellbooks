@@ -68,7 +68,7 @@ public abstract class AbstractMagicProjectile extends ProjectileEntity implement
     public void tick() {
         super.tick();
         if (age > EXPIRE_TIME) {
-            discard();
+            this.remove();
             return;
         }
         if (level.isClientSide) {
@@ -115,7 +115,7 @@ public abstract class AbstractMagicProjectile extends ProjectileEntity implement
     @Override
     public void onAntiMagic(MagicData playerMagicData) {
         this.impactParticles(getX(), getY(), getZ());
-        this.discard();
+        this.remove();
     }
 
     @Override

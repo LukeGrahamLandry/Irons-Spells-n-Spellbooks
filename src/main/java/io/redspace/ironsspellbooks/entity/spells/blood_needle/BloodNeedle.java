@@ -94,7 +94,7 @@ public class BloodNeedle extends AbstractMagicProjectile {
     @Override
     protected void onHit(RayTraceResult hitresult) {
         super.onHit(hitresult);
-        discard();
+        this.remove();
     }
 
     private static int soundTimestamp;

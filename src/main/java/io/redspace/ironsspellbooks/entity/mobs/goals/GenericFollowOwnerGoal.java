@@ -100,7 +100,7 @@ public class GenericFollowOwnerGoal extends Goal {
     public void tick() {
         this.entity.getLookControl().setLookAt(this.owner, 10.0F, (float) this.entity.getMaxHeadXRot());
         if (--this.timeToRecalcPath <= 0) {
-            this.timeToRecalcPath = this.adjustedTickDelay(10);
+            this.timeToRecalcPath = 10; // this.adjustedTickDelay(10);
             if (!this.entity.isLeashed() && !this.entity.isPassenger()) {
                 if (this.entity.distanceToSqr(this.owner) >= teleportDistance) {
                     this.teleportToOwner();

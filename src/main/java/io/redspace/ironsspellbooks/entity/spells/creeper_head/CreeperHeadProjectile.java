@@ -18,7 +18,7 @@ import net.minecraft.world.World;
 import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
-import net.minecraftforge.network.NetworkHooks;
+import net.minecraftforge.fml.network.NetworkHooks;
 
 import java.util.List;
 
@@ -114,7 +114,7 @@ public class CreeperHeadProjectile extends WitherSkullEntity implements AntiMagi
             }
 
             this.level.explode(this, this.getX(), this.getY(), this.getZ(), 0.0F, false, Explosion.Mode.NONE);
-            this.discard();
+            this.remove();
         }
     }
 
@@ -125,6 +125,6 @@ public class CreeperHeadProjectile extends WitherSkullEntity implements AntiMagi
 
     @Override
     public void onAntiMagic(MagicData playerMagicData) {
-        this.discard();
+        this.remove();
     }
 }

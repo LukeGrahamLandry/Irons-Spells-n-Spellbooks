@@ -11,7 +11,6 @@ import io.redspace.ironsspellbooks.entity.mobs.debug_wizard.DebugWizard;
 import io.redspace.ironsspellbooks.entity.mobs.frozen_humanoid.FrozenHumanoid;
 import io.redspace.ironsspellbooks.entity.mobs.keeper.KeeperEntity;
 import io.redspace.ironsspellbooks.entity.mobs.necromancer.NecromancerEntity;
-import io.redspace.ironsspellbooks.entity.mobs.summoned_frog.SummonedFrog;
 import io.redspace.ironsspellbooks.entity.mobs.wizards.archevoker.ArchevokerEntity;
 import io.redspace.ironsspellbooks.entity.mobs.wizards.cryomancer.CryomancerEntity;
 import io.redspace.ironsspellbooks.entity.mobs.wizards.priest.PriestEntity;
@@ -28,16 +27,15 @@ import net.minecraft.entity.monster.VindicatorEntity;
 import net.minecraft.entity.monster.ZombieEntity;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
-import net.minecraftforge.event.entity.SpawnPlacementRegisterEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.event.config.ModConfigEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 
 @Mod.EventBusSubscriber(modid = IronsSpellbooks.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class CommonSetup {
     @SubscribeEvent
-    public static void onModConfigLoadingEvent(ModConfigEvent.Loading event) {
+    public static void onModConfigLoadingEvent(ModConfig.Loading event) {
         IronsSpellbooks.LOGGER.debug("onModConfigLoadingEvent");
         if (event.getConfig().getType() == ModConfig.Type.SERVER) {
 
@@ -45,7 +43,7 @@ public class CommonSetup {
     }
 
     @SubscribeEvent
-    public static void onModConfigReloadingEvent(ModConfigEvent.Reloading event) {
+    public static void onModConfigReloadingEvent(ModConfig.Reloading event) {
         IronsSpellbooks.LOGGER.debug("onModConfigReloadingEvent");
         if (event.getConfig().getType() == ModConfig.Type.SERVER) {
 //            SpellType.resolveSchools();
@@ -80,10 +78,9 @@ public class CommonSetup {
         event.put(EntityRegistry.FIREFLY_SWARM.get(), WispEntity.prepareAttributes().build());
     }
 
+    // Old forge doesn't seem to have an event for this
     @SubscribeEvent
-    public static void spawnPlacements(SpawnPlacementRegisterEvent event) {
-        event.register(EntityRegistry.NECROMANCER.get(), EntitySpawnPlacementRegistry.PlacementType.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, (type, serverLevelAccessor, spawnType, blockPos, random) -> Utils.checkMonsterSpawnRules(serverLevelAccessor, spawnType, blockPos, random), SpawnPlacementRegisterEvent.Operation.OR);
+    public static void spawnPlacements(FMLCommonSetupEvent event) {
+        EntitySpawnPlacementRegistry.register(EntityRegistry.NECROMANCER.get(), EntitySpawnPlacementRegistry.PlacementType.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, (type, serverLevelAccessor, spawnType, blockPos, random) -> Utils.checkMonsterSpawnRules(serverLevelAccessor, spawnType, blockPos, random));
     }
-
-
 }

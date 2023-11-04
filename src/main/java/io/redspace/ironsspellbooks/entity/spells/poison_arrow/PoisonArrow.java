@@ -54,7 +54,7 @@ public class PoisonArrow extends AbstractMagicProjectile {
             //IronsSpellbooks.LOGGER.debug("Poison Arrow Flying!! {}", inGround);
         } else {
             if (++age > EXPIRE_TIME) {
-                discard();
+                this.remove();
                 return;
             }
             if (shouldFall()) {
@@ -122,10 +122,10 @@ public class PoisonArrow extends AbstractMagicProjectile {
                 }
                 Vector3d spawn = entityHitResult.getLocation();
             }
-            this.discard();
+            this.remove();
         } else {
             this.setDeltaMovement(this.getDeltaMovement().scale(-0.1D));
-            this.setYRot(this.yRot + 180.0F);
+            this.yRot = (this.yRot + 180.0F);
             this.yRotO += 180.0F;
         }
 

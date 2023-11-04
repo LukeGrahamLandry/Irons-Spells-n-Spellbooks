@@ -75,7 +75,7 @@ public class FireBomb extends AbstractMagicProjectile {
                 }
             }
         }
-        discard();
+        this.remove();
     }
 
     public void createFireField(Vector3d location) {

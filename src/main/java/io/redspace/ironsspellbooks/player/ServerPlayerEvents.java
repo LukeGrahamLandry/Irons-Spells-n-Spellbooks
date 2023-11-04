@@ -268,8 +268,8 @@ public class ServerPlayerEvents {
 //    }
 
     @SubscribeEvent
-    public static void onLivingChangeTarget(LivingChangeTargetEvent event) {
-        var newTarget = event.getNewTarget();
+    public static void onLivingChangeTarget(LivingSetAttackTargetEvent event) {
+        LivingEntity newTarget = event.getTarget();
         if (newTarget != null && newTarget.getType().is(ModTags.VILLAGE_ALLIES) && event.getEntity().getType().is(ModTags.VILLAGE_ALLIES)
         ) {
             event.setCanceled(true);
@@ -278,9 +278,9 @@ public class ServerPlayerEvents {
 
     @SubscribeEvent
     public static void testManaEvent(ChangeManaEvent event) {
-        if (event.getEntity().hasEffect(Effects.REGENERATION))
+        if (event.getEntityLiving().hasEffect(Effects.REGENERATION))
             event.setCanceled(true);
-        else if (event.getEntity().hasEffect(Effects.POISON) ){
+        else if (event.getEntityLiving().hasEffect(Effects.POISON) ){
             float diff = event.getNewMana() - event.getOldMana();
             if (diff < 0) {
                 diff *= 2;
@@ -303,7 +303,7 @@ public class ServerPlayerEvents {
              * Spider aspect handling
              */
             if (livingAttacker.hasEffect(MobEffectRegistry.SPIDER_ASPECT.get())) {
-                if (event.getEntity().hasEffect(Effects.POISON)) {
+                if (event.getEntityLiving().hasEffect(Effects.POISON)) {
                     int lvl = livingAttacker.getEffect(MobEffectRegistry.SPIDER_ASPECT.get()).getAmplifier() + 1;
                     float before = event.getAmount();
                     float multiplier = 1 + SpiderAspectEffect.DAMAGE_PER_LEVEL * lvl;
@@ -326,7 +326,7 @@ public class ServerPlayerEvents {
         /*
         Damage Reducing Effects
          */
-        MagicData playerMagicData = MagicData.getPlayerMagicData(event.getEntity());
+        MagicData playerMagicData = MagicData.getPlayerMagicData(event.getEntityLiving());
         if (playerMagicData.getSyncedData().hasEffect(SyncedSpellData.HEARTSTOP)) {
             playerMagicData.getSyncedData().addHeartstopDamage(event.getAmount() * .5f);
             //Ironsspellbooks.logger.debug("Accumulated damage: {}", playerMagicData.getSyncedData().getHeartstopAccumulatedDamage());
@@ -396,9 +396,9 @@ public class ServerPlayerEvents {
     public static void useOnEntityEvent(PlayerInteractEvent.EntityInteractSpecific event) {
         if (event.getTarget() instanceof CreeperEntity) {
             CreeperEntity creeper = (CreeperEntity) event.getTarget();
-            Entity player = event.getEntity();
-            var useItem = player.getItemInHand(event.getHand());
-            if (useItem.is(Items.GLASS_BOTTLE) && creeper.isPowered()) {
+            PlayerEntity player = event.getPlayer();
+            ItemStack useItem = player.getItemInHand(event.getHand());
+            if (useItem.getItem() == Items.GLASS_BOTTLE && creeper.isPowered()) {
                 creeper.hurt(DamageSource.GENERIC.bypassMagic(), 5);
                 player.level.playSound((PlayerEntity) null, player.getX(), player.getY(), player.getZ(), SoundEvents.BOTTLE_FILL_DRAGONBREATH, SoundCategory.NEUTRAL, 1.0F, 1.0F);
                 player.swing(event.getHand());

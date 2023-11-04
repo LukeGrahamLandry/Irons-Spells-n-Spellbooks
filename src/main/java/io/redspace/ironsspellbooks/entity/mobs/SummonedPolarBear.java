@@ -75,14 +75,14 @@ public class SummonedPolarBear extends PolarBearEntity implements MagicSummon {
 
     @Nullable
     public Entity getControllingPassenger() {
-        return this.getFirstPassenger();
+        return this.getPassengers().isEmpty() ? null : this.getPassengers().get(0);
     }
 
     protected void doPlayerRide(PlayerEntity pPlayer) {
         this.setStanding(false);
         if (!this.level.isClientSide) {
-            pPlayer.setYRot(this.yRot);
-            pPlayer.setXRot(this.xRot);
+            pPlayer.yRot = (this.yRot);
+            pPlayer.xRot = (this.xRot);
             pPlayer.startRiding(this);
         }
 
@@ -138,7 +138,7 @@ public class SummonedPolarBear extends PolarBearEntity implements MagicSummon {
     public void onUnSummon() {
         if (!level.isClientSide) {
             MagicManager.spawnParticles(level, ParticleTypes.POOF, getX(), getY(), getZ(), 25, .4, .8, .4, .03, false);
-            discard();
+            this.remove();
         }
     }
 
@@ -164,8 +164,8 @@ public class SummonedPolarBear extends PolarBearEntity implements MagicSummon {
         if (this.isVehicle() && conductor instanceof LivingEntity) {
             LivingEntity livingEntity = (LivingEntity) conductor;
             this.yRotO = this.yRot;
-            this.setYRot(livingEntity.yRot);
-            this.setXRot(livingEntity.xRot);
+            this.yRot = (livingEntity.yRot);
+            this.xRot = (livingEntity.xRot);
             this.setRot(this.yRot, this.xRot);
             this.yBodyRot = this.yRotO;
             this.yHeadRot = this.yRot;

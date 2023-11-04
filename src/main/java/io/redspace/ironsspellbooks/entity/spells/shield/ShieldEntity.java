@@ -32,8 +32,8 @@ public class ShieldEntity extends AbstractShieldEntity {
         subEntities = new ShieldPart[width * height];
         subPositions = new Vector3d[width * height];
         this.setHealth(10);
-        //this.setXRot(45);
-        //this.setYRot(45);
+        //this.xRot = (45);
+        //this.yRot = (45);
         LIFETIME = 20 * 20;
         createShield();
 
@@ -57,9 +57,9 @@ public class ShieldEntity extends AbstractShieldEntity {
     }
 
     public void setRotation(float x, float y) {
-        this.setXRot(x);
+        this.xRot = (x);
         this.xRotO = x;
-        this.setYRot(y);
+        this.yRot = (y);
         this.yRotO = y;
     }
 
@@ -83,7 +83,7 @@ public class ShieldEntity extends AbstractShieldEntity {
             if (!this.level.isClientSide) {
                 level.playSound(null, getX(), getY(), getZ(), SoundEvents.RESPAWN_ANCHOR_SET_SPAWN, SoundCategory.NEUTRAL, 1, 1.4f);
             }
-            discard();
+            this.remove();
         } else {
             for (int i = 0; i < subEntities.length; i++) {
                 ShieldPart subEntity = subEntities[i];

@@ -13,7 +13,6 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.util.DamageSource;
-import net.minecraft.world.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.item.FallingBlockEntity;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -82,8 +81,8 @@ public class SpectralHammer extends LivingEntity implements IAnimatable {
         float yRot = owner.yRot;
         float yHeadRot = owner.getYHeadRot();
 
-        this.setYRot(yRot);
-        this.setXRot(xRot);
+        this.yRot = (yRot);
+        this.xRot = (xRot);
         this.setYBodyRot(yRot);
         this.setYHeadRot(yHeadRot);
 
@@ -100,7 +99,7 @@ public class SpectralHammer extends LivingEntity implements IAnimatable {
     @Override
     public void tick() {
         if (++ticksAlive >= ticksToLive) {
-            discard();
+            this.remove();
         }
 
         if (ticksAlive >= doAnimateTick && !didAnimate) {

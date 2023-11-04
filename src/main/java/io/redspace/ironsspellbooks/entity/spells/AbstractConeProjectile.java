@@ -103,7 +103,7 @@ public abstract class AbstractConeProjectile extends ProjectileEntity implements
 
         if (++age > FAILSAFE_EXPIRE_TIME) {
             //This exists in case there is any bug with removing the cone onCastComplete
-            discard();
+            this.remove();
         }
 
         //TODO: try this instead of the ray trace
@@ -118,8 +118,8 @@ public abstract class AbstractConeProjectile extends ProjectileEntity implements
             Vector3d rayTraceVector = rayTrace(owner);
             Vector3d ownerEyePos = owner.getEyePosition(1.0f).subtract(0, .8, 0);
             this.setPos(ownerEyePos);
-            this.setXRot(owner.xRot);
-            this.setYRot(owner.yRot);
+            this.xRot = (owner.xRot);
+            this.yRot = (owner.yRot);
             this.yRotO = getYRot();
             this.xRotO = getXRot();
             //setDeltaMovement(ownerEyePos);

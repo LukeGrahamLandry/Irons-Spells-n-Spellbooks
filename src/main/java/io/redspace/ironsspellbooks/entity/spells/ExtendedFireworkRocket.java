@@ -45,7 +45,7 @@ public class ExtendedFireworkRocket extends FireworkRocketEntity implements Anti
         this.level.broadcastEntityEvent(this, (byte) 17);
         this.gameEvent(GameEvent.EXPLODE, this.getOwner());
         this.dealExplosionDamage();
-        this.discard();
+        this.remove();
     }
 
     private void dealExplosionDamage() {
@@ -76,6 +76,6 @@ public class ExtendedFireworkRocket extends FireworkRocketEntity implements Anti
 
     @Override
     public void onAntiMagic(MagicData playerMagicData) {
-        this.discard();
+        this.remove();
     }
 }

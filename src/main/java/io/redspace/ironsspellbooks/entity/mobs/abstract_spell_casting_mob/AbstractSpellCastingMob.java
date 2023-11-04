@@ -180,7 +180,7 @@ public abstract class AbstractSpellCastingMob extends CreatureEntity implements 
             this.setLivingEntityFlag(4, true);
         }
         //Lil trick
-        this.setYRot((float) (Math.atan2(getDeltaMovement().x, getDeltaMovement().z) * MathHelper.RAD_TO_DEG));
+        this.yRot = ((float) (Math.atan2(getDeltaMovement().x, getDeltaMovement().z) * Utils.RAD_TO_DEG));
     }
 
     public void setSyncedSpellData(SyncedSpellData syncedSpellData) {
@@ -367,8 +367,8 @@ public abstract class AbstractSpellCastingMob extends CreatureEntity implements 
             double d3 = Math.sqrt(d0 * d0 + d2 * d2);
             float f = (float) (MathHelper.atan2(d2, d0) * (double) (180F / (float) Math.PI)) - 90.0F;
             float f1 = (float) (-(MathHelper.atan2(d1, d3) * (double) (180F / (float) Math.PI)));
-            this.setXRot(f1 % 360);
-            this.setYRot(f % 360);
+            this.xRot = (f1 % 360);
+            this.yRot = (f % 360);
         }
     }
 

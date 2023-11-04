@@ -13,7 +13,6 @@ import net.minecraft.particles.ParticleTypes;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.DamageSource;
-import net.minecraft.world.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.controller.FlyingMovementController;
@@ -81,8 +80,8 @@ public class WispEntity extends CreatureEntity implements IAnimatable {
         float yRot = owner.yRot;
         float yHeadRot = owner.getYHeadRot();
 
-        this.setYRot(yRot);
-        this.setXRot(xRot);
+        this.yRot = (yRot);
+        this.xRot = (xRot);
         this.setYBodyRot(yRot);
         this.setYHeadRot(yHeadRot);
         this.lastTickPos = this.position();
@@ -136,7 +135,7 @@ public class WispEntity extends CreatureEntity implements IAnimatable {
                     this.playSound(WispSpell.getImpactSound(), 1.0f, 1.0f);
                     Vector3d p = target.getEyePosition(0);
                     MagicManager.spawnParticles(level, ParticleHelper.WISP, p.x, p.y, p.z, 25, 0, 0, 0, .18, true);
-                    discard();
+                    this.remove();
                 }
             }
         }
@@ -212,7 +211,7 @@ public class WispEntity extends CreatureEntity implements IAnimatable {
     @Override
     protected void customServerAiStep() {
         if (this.cachedOwner == null || !this.cachedOwner.isAlive()) {
-            this.discard();
+            this.remove();
         }
     }
 
@@ -255,7 +254,7 @@ public class WispEntity extends CreatureEntity implements IAnimatable {
         if (!this.level.isClientSide) {
             this.playSound(SoundEvents.SHULKER_BULLET_HURT, 1.0F, 1.0F);
             ((ServerWorld)this.level).sendParticles(ParticleTypes.CRIT, this.getX(), this.getY(), this.getZ(), 15, 0.2D, 0.2D, 0.2D, 0.0D);
-            this.discard();
+            this.remove();
         }
 
         return true;

@@ -6,6 +6,7 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
+import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib3.renderers.geo.GeoEntityRenderer;
@@ -17,7 +18,7 @@ public class RootRenderer extends GeoEntityRenderer<RootEntity> {
 
     @Override
     public void renderEarly(RootEntity animatable, MatrixStack poseStack, float partialTick, IRenderTypeBuffer bufferSource, IVertexBuilder buffer, int packedLight, int packedOverlay, float red, float green, float blue, float partialTicks) {
-        var rooted = animatable.getFirstPassenger();
+        Entity rooted = animatable.getPassengers().isEmpty() ? null : animatable.getPassengers().get(0);
 
         if (rooted != null) {
             float scale = rooted.getBbWidth() / 0.6f; //.6 is the default player bb width

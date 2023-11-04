@@ -10,8 +10,8 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.world.World;
 import net.minecraft.util.math.vector.Vector3d;
-import net.minecraftforge.entity.IEntityAdditionalSpawnData;
-import net.minecraftforge.network.NetworkHooks;
+import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
+import net.minecraftforge.fml.network.NetworkHooks;
 
 public class RayOfFrostVisualEntity extends Entity implements IEntityAdditionalSpawnData {
     public static final int lifetime = 15;
@@ -33,7 +33,7 @@ public class RayOfFrostVisualEntity extends Entity implements IEntityAdditionalS
     @Override
     public void tick() {
         if (++tickCount > lifetime) {
-            this.discard();
+            this.remove();
         }
     }
 

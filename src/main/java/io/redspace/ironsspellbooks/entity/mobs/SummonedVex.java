@@ -122,7 +122,7 @@ public class SummonedVex extends VexEntity implements MagicSummon {
     public void onUnSummon() {
         if (!level.isClientSide) {
             MagicManager.spawnParticles(level, ParticleTypes.POOF, getX(), getY(), getZ(), 25, .4, .8, .4, .03, false);
-            discard();
+            this.remove();
         }
     }
 
@@ -142,7 +142,8 @@ public class SummonedVex extends VexEntity implements MagicSummon {
          */
         public boolean canUse() {
             LivingEntity livingentity = SummonedVex.this.getTarget();
-            if (livingentity != null && livingentity.isAlive() && !SummonedVex.this.getMoveControl().hasWanted() && SummonedVex.this.random.nextInt(reducedTickDelay(7)) == 0) {
+            // TODO: reducedTickDelay(7)
+            if (livingentity != null && livingentity.isAlive() && !SummonedVex.this.getMoveControl().hasWanted() && SummonedVex.this.random.nextInt(7) == 0) {
                 return SummonedVex.this.distanceToSqr(livingentity) > 4.0D;
             } else {
                 return false;
@@ -215,7 +216,8 @@ public class SummonedVex extends VexEntity implements MagicSummon {
          * method as well.
          */
         public boolean canUse() {
-            return !SummonedVex.this.getMoveControl().hasWanted() && SummonedVex.this.random.nextInt(reducedTickDelay(7)) == 0;
+            // TODO: reducedTickDelay(7)
+            return !SummonedVex.this.getMoveControl().hasWanted() && SummonedVex.this.random.nextInt(7) == 0;
         }
 
         /**

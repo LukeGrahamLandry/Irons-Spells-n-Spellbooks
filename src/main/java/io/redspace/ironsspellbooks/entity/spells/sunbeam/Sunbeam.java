@@ -39,7 +39,7 @@ public class Sunbeam extends AoeEntity implements AntiMagicSusceptible {
         }
 
         if (this.tickCount > 6) {
-            discard();
+            this.remove();
         }
     }
 
@@ -71,6 +71,6 @@ public class Sunbeam extends AoeEntity implements AntiMagicSusceptible {
 
     @Override
     public void onAntiMagic(MagicData magicData) {
-        discard();
+        this.remove();
     }
 }

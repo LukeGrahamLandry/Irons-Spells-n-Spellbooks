@@ -84,7 +84,7 @@ public class LightningLanceProjectile extends AbstractMagicProjectile {
 //            }
         }
         super.onHit(pResult);
-        this.discard();
+        this.remove();
     }
 
     public int getAge(){

@@ -73,7 +73,7 @@ public class ScrollForgeMenu extends Container {
         focusSlot = new SlotItemHandler(itemHandler, 2, 58, 17) {
             @Override
             public boolean mayPlace(ItemStack stack) {
-                return stack.is(ModTags.SCHOOL_FOCUS);
+                return stack.getItem().is(ModTags.SCHOOL_FOCUS);
             }
         };
         resultSlot = new SlotItemHandler(itemHandler, 3, 35, 47) {

@@ -13,7 +13,6 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.DamageSource;
-import net.minecraft.world.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.player.PlayerEntity;
@@ -75,7 +74,7 @@ public class FrozenHumanoid extends LivingEntity {
         //irons_spellbooks.LOGGER.debug("yRot: {}", entityToCopy.yRot);
         //irons_spellbooks.LOGGER.debug("yBodyRot: {}", entityToCopy.yBodyRot);
 //        var y = entityToCopy.yRot;
-//        this.setYRot(y);
+//        this.yRot = (y);
 //        this.setYBodyRot(y);
 //        this.setOldPosAndRot();
         if (entityToCopy.isBaby())
@@ -218,7 +217,7 @@ public class FrozenHumanoid extends LivingEntity {
 
         spawnIcicleShards(this.getEyePosition(0), this.shatterProjectileDamage);
         this.playHurtSound(pSource);
-        this.discard();
+        this.remove();
         return true;
     }
 

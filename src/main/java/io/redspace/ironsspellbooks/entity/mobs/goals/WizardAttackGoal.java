@@ -6,14 +6,13 @@ import io.redspace.ironsspellbooks.api.util.Utils;
 import io.redspace.ironsspellbooks.capabilities.spell.SpellData;
 import io.redspace.ironsspellbooks.entity.mobs.abstract_spell_casting_mob.AbstractSpellCastingMob;
 import io.redspace.ironsspellbooks.api.spells.AbstractSpell;
-import net.minecraft.commands.arguments.EntityAnchorArgument;
+import net.minecraft.entity.ai.RandomPositionGenerator;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.world.entity.ai.util.DefaultRandomPos;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.shapes.VoxelShape;
@@ -157,7 +156,7 @@ public class WizardAttackGoal extends Goal {
         }
 
         double distanceSquared = this.mob.distanceToSqr(this.target.getX(), this.target.getY(), this.target.getZ());
-        hasLineOfSight = this.mob.getSensing().hasLineOfSight(this.target);
+        hasLineOfSight = this.mob.getSensing().canSee(this.target);
         if (hasLineOfSight) {
             ++this.seeTime;
         } else {
@@ -221,7 +220,7 @@ public class WizardAttackGoal extends Goal {
         //make distance (flee), move into range, or strafe around
         float fleeDist = .275f;
         if (shouldFlee && distanceSquared < attackRadiusSqr * (fleeDist * fleeDist)) {
-            Vector3d flee = DefaultRandomPos.getPosAway(this.mob, 16, 7, target.position());
+            Vector3d flee = RandomPositionGenerator.getLandPosAvoid(this.mob, 16, 7, target.position());
             if (flee != null) {
                 this.mob.getNavigation().moveTo(flee.x, flee.y, flee.z, speed * 1.5);
             } else {

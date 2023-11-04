@@ -56,7 +56,7 @@ public class MagicMissileProjectile extends AbstractMagicProjectile {
     protected void onHitBlock(BlockRayTraceResult blockHitResult) {
         super.onHitBlock(blockHitResult);
         //irons_spellbooks.LOGGER.debug("MagicMissileProjectile.onHitBlock");
-        discard();
+        this.remove();
 
 
     }
@@ -67,7 +67,7 @@ public class MagicMissileProjectile extends AbstractMagicProjectile {
         //irons_spellbooks.LOGGER.debug("MagicMissileProjectile.onHitEntity");
 
         DamageSources.applyDamage(entityHitResult.getEntity(), damage, SpellRegistry.MAGIC_MISSILE_SPELL.get().getDamageSource(this, getOwner()), SpellRegistry.MAGIC_MISSILE_SPELL.get().getSchoolType());
-        discard();
+        this.remove();
 
     }
 

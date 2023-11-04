@@ -14,10 +14,8 @@ import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.util.DamageSource;
-import net.minecraft.world.entity.*;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
@@ -41,6 +39,7 @@ import software.bernie.geckolib3.core.manager.AnimationFactory;
 import software.bernie.geckolib3.util.GeckoLibUtil;
 
 import javax.annotation.Nullable;
+import java.util.Random;
 import java.util.UUID;
 
 import net.minecraft.entity.Entity;
@@ -149,7 +148,7 @@ public class SummonedSkeleton extends SkeletonEntity implements MagicSummon, IAn
             if (--riseAnimTime < 0) {
                 entityData.set(DATA_IS_ANIMATING_RISE, false);
                 //they do a weird head flick thing
-                this.setXRot(0);
+                this.xRot = (0);
                 this.setOldPosAndRot();
             }
         } else {
@@ -161,7 +160,7 @@ public class SummonedSkeleton extends SkeletonEntity implements MagicSummon, IAn
     public void onUnSummon() {
         if (!level.isClientSide) {
             MagicManager.spawnParticles(level, ParticleTypes.POOF, getX(), getY(), getZ(), 25, .4, .8, .4, .03, false);
-            discard();
+            this.remove();
         }
     }
 
@@ -172,9 +171,8 @@ public class SummonedSkeleton extends SkeletonEntity implements MagicSummon, IAn
 
     @Override
     public ILivingEntityData finalizeSpawn(IServerWorld pLevel, DifficultyInstance pDifficulty, SpawnReason pReason, @Nullable ILivingEntityData pSpawnData, @Nullable CompoundNBT pDataTag) {
-        RandomSource randomsource = Utils.random;
-        this.populateDefaultEquipmentSlots(randomsource, pDifficulty);
-        if (randomsource.nextDouble() < .3)
+        this.populateDefaultEquipmentSlots(pDifficulty);
+        if (this.random.nextDouble() < .3)
             this.setItemSlot(EquipmentSlotType.MAINHAND, new ItemStack(Items.IRON_SWORD));
 
         this.reassessWeaponGoal();
@@ -198,13 +196,13 @@ public class SummonedSkeleton extends SkeletonEntity implements MagicSummon, IAn
     //
 
     protected void clientDiggingParticles(LivingEntity livingEntity) {
-        RandomSource randomsource = livingEntity.getRandom();
+        Random randomsource = livingEntity.getRandom();
         BlockState blockstate = livingEntity.getBlockStateOn();
         if (blockstate.getRenderShape() != BlockRenderType.INVISIBLE) {
             for (int i = 0; i < 15; ++i) {
-                double d0 = livingEntity.getX() + (double) MathHelper.randomBetween(randomsource, -0.5F, 0.5F);
+                double d0 = livingEntity.getX() + (double) Utils.randomBetween(randomsource, -0.5F, 0.5F);
                 double d1 = livingEntity.getY();
-                double d2 = livingEntity.getZ() + (double) MathHelper.randomBetween(randomsource, -0.5F, 0.5F);
+                double d2 = livingEntity.getZ() + (double) Utils.randomBetween(randomsource, -0.5F, 0.5F);
                 livingEntity.level.addParticle(new BlockParticleData(ParticleTypes.BLOCK, blockstate), d0, d1, d2, 0.0D, 0.0D, 0.0D);
             }
         }
@@ -255,7 +253,8 @@ public class SummonedSkeleton extends SkeletonEntity implements MagicSummon, IAn
         if (!isAnimatingRise())
             return PlayState.STOP;
         if (event.getController().getAnimationState() == AnimationState.Stopped) {
-            String animation = new String[]{"rise_from_ground_01", "rise_from_ground_02", "rise_from_ground_03", "rise_from_ground_04"}[random.nextIntBetweenInclusive(0, 3)];
+            final String[] options = new String[]{"rise_from_ground_01", "rise_from_ground_02", "rise_from_ground_03", "rise_from_ground_04"};
+            String animation = options[Utils.randomBetweenInclusive(this.getRandom(), 0, options.length-1)];
             event.getController().setAnimation(new AnimationBuilder().addAnimation(animation, ILoopType.EDefaultLoopTypes.LOOP));
         }
         return PlayState.CONTINUE;

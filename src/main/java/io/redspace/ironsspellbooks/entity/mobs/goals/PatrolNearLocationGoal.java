@@ -1,8 +1,8 @@
 package io.redspace.ironsspellbooks.entity.mobs.goals;
 
 import net.minecraft.entity.CreatureEntity;
+import net.minecraft.entity.ai.RandomPositionGenerator;
 import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
-import net.minecraft.world.entity.ai.util.LandRandomPos;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.common.util.LazyOptional;
 import org.jetbrains.annotations.Nullable;
@@ -23,8 +23,13 @@ public class PatrolNearLocationGoal extends WaterAvoidingRandomWalkingGoal {
     protected Vector3d getPosition() {
         Vector3d f = super.getPosition();
         //IronsSpellbooks.LOGGER.debug("PatrolNearLocationGoal origin: {}", origin.resolve().get());
-        if (mob.position().horizontalDistanceSqr() > radiusSqr)
-            f = LandRandomPos.getPosTowards(mob, 8, 4, origin.resolve().get());
+        // This used to be mob.position().horizontalDistanceSqr() > radiusSqr
+        // Which seems wrong. That would be distance from 0,0,0 not from start?
+        Vector3d home = origin.resolve().get();
+        Vector3d diff = mob.position().subtract(home);
+        double horizontalDistanceSqr = diff.x * diff.x + diff.z * diff.z;
+        if (horizontalDistanceSqr > radiusSqr)
+            f = RandomPositionGenerator.getLandPosTowards(mob, 8, 4, home);
 
         //IronsSpellbooks.LOGGER.debug("PatrolNearLocationGoal newPosition: {}", f);
         return f;

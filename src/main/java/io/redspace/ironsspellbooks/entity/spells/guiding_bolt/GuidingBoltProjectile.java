@@ -61,7 +61,7 @@ public class GuidingBoltProjectile extends AbstractMagicProjectile {
     protected void onHitBlock(BlockRayTraceResult blockHitResult) {
         super.onHitBlock(blockHitResult);
         //irons_spellbooks.LOGGER.debug("MagicMissileProjectile.onHitBlock");
-        discard();
+        this.remove();
 
     }
 
@@ -78,7 +78,7 @@ public class GuidingBoltProjectile extends AbstractMagicProjectile {
 
             }
         }
-        discard();
+        this.remove();
 
     }
 

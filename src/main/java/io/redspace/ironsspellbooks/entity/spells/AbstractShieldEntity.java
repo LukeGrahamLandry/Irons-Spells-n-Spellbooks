@@ -34,8 +34,8 @@ public abstract class AbstractShieldEntity extends Entity implements AntiMagicSu
 //        subEntities = new ShieldPart[width * height];
 //        subPositions = new Vec3[width * height];
 //        this.setHealth(100);
-//        //this.setXRot(45);
-//        //this.setYRot(45);
+//        //this.xRot = (45);
+//        //this.yRot = (45);
 //        LIFETIME = 20 * 20;
 //        createShield();
 
@@ -49,9 +49,9 @@ public abstract class AbstractShieldEntity extends Entity implements AntiMagicSu
     protected abstract void createShield();
 
 //    public void setRotation(float x, float y) {
-//        this.setXRot(x);
+//        this.xRot = (x);
 //        this.xRotO = x;
-//        this.setYRot(y);
+//        this.yRot = (y);
 //        this.yRotO = y;
 //    }
 
@@ -143,6 +143,6 @@ public abstract class AbstractShieldEntity extends Entity implements AntiMagicSu
 
     @Override
     public void onAntiMagic(MagicData playerMagicData) {
-        this.discard();
+        this.remove();
     }
 }

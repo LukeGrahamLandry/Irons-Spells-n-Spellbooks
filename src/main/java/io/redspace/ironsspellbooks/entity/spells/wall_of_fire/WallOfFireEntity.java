@@ -20,9 +20,9 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraft.util.math.vector.Vector3d;
-import net.minecraftforge.entity.IEntityAdditionalSpawnData;
 import net.minecraftforge.entity.PartEntity;
-import net.minecraftforge.network.NetworkHooks;
+import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
+import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -65,7 +65,7 @@ public class WallOfFireEntity extends AbstractShieldEntity implements IEntityAdd
     @Override
     public void tick() {
         if (anchorPoints.size() <= 1 || subEntities.length <= 1) {
-            discard();
+            this.remove();
             return;
         }
 
@@ -98,7 +98,7 @@ public class WallOfFireEntity extends AbstractShieldEntity implements IEntityAdd
             }
         }
         if (!level.isClientSide && --lifetime < 0)
-            discard();
+            this.remove();
     }
 
     @Override

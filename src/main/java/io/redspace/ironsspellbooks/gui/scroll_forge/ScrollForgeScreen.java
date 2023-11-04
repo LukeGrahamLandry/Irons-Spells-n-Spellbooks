@@ -160,7 +160,7 @@ public class ScrollForgeScreen extends ContainerScreen<ScrollForgeMenu> {
 
         ItemStack focusStack = menu.getFocusSlot().getItem();
         IronsSpellbooks.LOGGER.info("ScrollForgeMenu.generateSpellSlots.focus: {}", focusStack.getItem());
-        if (!focusStack.isEmpty() && focusStack.is(ModTags.SCHOOL_FOCUS)) {
+        if (!focusStack.isEmpty() && focusStack.getItem().is(ModTags.SCHOOL_FOCUS)) {
             SchoolType school = SchoolRegistry.getSchoolFromFocus(focusStack);
             //irons_spellbooks.LOGGER.info("ScrollForgeMenu.generateSpellSlots.school: {}", school.toString());
             List<AbstractSpell> spells = SpellRegistry.getSpellsForSchool(school);

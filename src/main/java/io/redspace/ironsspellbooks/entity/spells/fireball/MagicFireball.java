@@ -77,7 +77,7 @@ public class MagicFireball extends AbstractMagicProjectile implements IRendersAs
             }
             boolean flag = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.level, this.getOwner());
             this.level.explode(null, SpellRegistry.FIREBALL_SPELL.get().getDamageSource(this, getOwner()), null, this.getX(), this.getY(), this.getZ(), (float) this.getExplosionRadius(), flag, flag ? Explosion.Mode.DESTROY : Explosion.Mode.NONE);
-            this.discard();
+            this.remove();
         }
     }
 

@@ -53,7 +53,7 @@ public class GeoKeeperGhostLayer extends GeoLayerRenderer<AbstractSpellCastingMo
             this.getRenderer().render(
                     model,
                     entityLivingBaseIn, partialTicks, renderType, matrixStackIn, bufferIn,
-                    vertexconsumer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, .15f * alpha, .02f * alpha, 0.0f * alpha, 1f
+                    vertexconsumer, 15728880 /*LightTexture.FULL_BRIGHT*/, OverlayTexture.NO_OVERLAY, .15f * alpha, .02f * alpha, 0.0f * alpha, 1f
             );
 //        bone.ifPresent((b) -> b.setHidden(false));
             model.getBone("body").ifPresent((rootBone) -> {

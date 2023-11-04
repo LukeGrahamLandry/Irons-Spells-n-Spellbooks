@@ -17,7 +17,6 @@ import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.entity.*;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.entity.projectile.ProjectileHelper;
 import net.minecraft.world.World;
@@ -111,7 +110,7 @@ public class BloodSlashProjectile extends ProjectileEntity implements AntiMagicS
     public void tick() {
         super.tick();
         if (++age > EXPIRE_TIME) {
-            discard();
+            this.remove();
             return;
         }
         oldBB = getBoundingBox();
@@ -127,7 +126,7 @@ public class BloodSlashProjectile extends ProjectileEntity implements AntiMagicS
                 //IronsSpellbooks.LOGGER.info(entity.getName().getString());
                 MagicManager.spawnParticles(level, ParticleHelper.BLOOD, entity.getX(), entity.getY(), entity.getZ(), 50, 0, 0, 0, .5, true);
                 if (entity instanceof ShieldPart || entity instanceof AbstractShieldEntity) {
-                    discard();
+                    this.remove();
                     return;
                 }
             }
@@ -188,7 +187,7 @@ public class BloodSlashProjectile extends ProjectileEntity implements AntiMagicS
     @Override
     protected void onHitBlock(BlockRayTraceResult blockHitResult) {
         super.onHitBlock(blockHitResult);
-        discard();
+        this.remove();
     }
 
 //    @Override
@@ -237,7 +236,7 @@ public class BloodSlashProjectile extends ProjectileEntity implements AntiMagicS
 
     @Override
     public void onAntiMagic(MagicData playerMagicData) {
-        this.discard();
+        this.remove();
     }
 
     @Override

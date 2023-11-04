@@ -59,7 +59,7 @@ public class PoisonSplash extends AoeEntity {
         }
 
         if (this.tickCount > 6) {
-            discard();
+            this.remove();
         }
     }
 

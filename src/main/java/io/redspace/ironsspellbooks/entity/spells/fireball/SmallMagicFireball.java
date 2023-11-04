@@ -93,7 +93,7 @@ public class SmallMagicFireball extends AbstractMagicProjectile implements IRend
     protected void onHit(RayTraceResult pResult) {
         super.onHit(pResult);
         if (!this.level.isClientSide) {
-            this.discard();
+            this.remove();
         }
 
     }

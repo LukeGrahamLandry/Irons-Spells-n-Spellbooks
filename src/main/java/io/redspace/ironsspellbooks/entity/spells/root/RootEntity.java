@@ -14,9 +14,7 @@ import net.minecraft.network.IPacket;
 import net.minecraft.network.play.server.SSpawnObjectPacket;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.RandomSource;
 import net.minecraft.util.DamageSource;
-import net.minecraft.world.entity.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
@@ -197,7 +195,7 @@ public class RootEntity extends LivingEntity implements IAnimatable, PreventDism
             }
         }
         this.ejectPassengers();
-        this.discard();
+        this.remove();
     }
 
     public void addAdditionalSaveData(CompoundNBT pCompound) {

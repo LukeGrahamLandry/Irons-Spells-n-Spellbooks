@@ -15,7 +15,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.world.World;
 import net.minecraft.util.math.vector.Vector3d;
-import net.minecraftforge.network.NetworkHooks;
+import net.minecraftforge.fml.network.NetworkHooks;
 
 public class DevourJaw extends AoeEntity {
     public DevourJaw(EntityType<? extends ProjectileEntity> pEntityType, World pLevel) {
@@ -76,7 +76,7 @@ public class DevourJaw extends AoeEntity {
                 checkHits();
             }
         } else if (tickCount > deathTime)
-            discard();
+            this.remove();
     }
 
     @Override

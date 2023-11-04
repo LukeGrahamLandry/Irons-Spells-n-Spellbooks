@@ -73,8 +73,8 @@ public class DeadKingCorpseEntity extends AbstractSpellCastingMob {
                 if (currentAnimTime > animLength) {
                     DeadKingBoss boss = new DeadKingBoss(level);
                     boss.moveTo(this.position().add(0, 1, 0));
-                    boss.setYRot(this.yRot);
-                    boss.finalizeSpawn((ServerWorld) level, level.getCurrentDifficultyAt(boss.getOnPos()), SpawnReason.TRIGGERED, null, null);
+                    boss.yRot = (this.yRot);
+                    boss.finalizeSpawn((ServerWorld) level, level.getCurrentDifficultyAt(boss.blockPosition()), SpawnReason.TRIGGERED, null, null);
                     int playerCount = Math.max(level.getEntitiesOfClass(PlayerEntity.class, boss.getBoundingBox().inflate(32)).size(), 1);
                     boss.getAttributes().getInstance(Attributes.MAX_HEALTH).addPermanentModifier(new AttributeModifier("Gank Health Bonus", (playerCount - 1) * .5, AttributeModifier.Operation.MULTIPLY_BASE));
                     boss.setHealth(boss.getMaxHealth());
@@ -82,9 +82,10 @@ public class DeadKingCorpseEntity extends AbstractSpellCastingMob {
                     boss.getAttributes().getInstance(AttributeRegistry.SPELL_RESIST.get()).addPermanentModifier(new AttributeModifier("Gank Spell Resist Bonus", (playerCount - 1) * .1, AttributeModifier.Operation.MULTIPLY_BASE));
                     boss.setPersistenceRequired();
                     level.addFreshEntity(boss);
-                    MagicManager.spawnParticles(level, ParticleTypes.SCULK_SOUL, position().x, position().y + 2.5, position().z, 80, .2, .2, .2, .25, true);
+                    // TODO: pick particle instead of SCULK
+                    MagicManager.spawnParticles(level, ParticleTypes.FLAME, position().x, position().y + 2.5, position().z, 80, .2, .2, .2, .25, true);
                     level.playSound(null, getX(), getY(), getZ(), SoundRegistry.DEAD_KING_SPAWN.get(), SoundCategory.MASTER, 20, 1);
-                    discard();
+                    this.remove();
                 }
             } else {
                 resurrectParticles();
@@ -99,7 +100,8 @@ public class DeadKingCorpseEntity extends AbstractSpellCastingMob {
         float distance = MathHelper.clamp(Utils.smoothstep(0, 1.15f, f * 3), 0, 1.15f);
         Vector3d pos = new Vector3d(0, 0, distance).yRot(rot * Utils.DEG_TO_RAD).add(0, height, 0).add(position());
 
-        level.addParticle(ParticleTypes.SCULK_SOUL, pos.x, pos.y, pos.z, 0, 0, 0);
+        // TODO: pick particle instead of SCULK
+        level.addParticle(ParticleTypes.FLAME, pos.x, pos.y, pos.z, 0, 0, 0);
         float radius = 4;
         if (random.nextFloat() < f * 1.5f) {
             Vector3d random = position().add(new Vector3d(
@@ -108,7 +110,8 @@ public class DeadKingCorpseEntity extends AbstractSpellCastingMob {
                     (this.random.nextFloat() * 2 - 1) * radius
             ));
             Vector3d motion = position().subtract(random).scale(.04f);
-            level.addParticle(ParticleTypes.SCULK_SOUL, random.x, random.y, random.z, motion.x, motion.y, motion.z);
+            // TODO: pick particle instead of SCULK
+            level.addParticle(ParticleTypes.FLAME, random.x, random.y, random.z, motion.x, motion.y, motion.z);
         }
     }
 

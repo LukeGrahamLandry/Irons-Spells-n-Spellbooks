@@ -17,15 +17,12 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.DamageSource;
-import net.minecraft.world.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.entity.ai.goal.HurtByTargetGoal;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
 import net.minecraft.entity.ai.goal.ResetAngerGoal;
@@ -110,15 +107,14 @@ public class PriestEntity extends NeutralWizard implements IVillagerDataHolder, 
 
     @Override
     public ILivingEntityData finalizeSpawn(IServerWorld pLevel, DifficultyInstance pDifficulty, SpawnReason pReason, @Nullable ILivingEntityData pSpawnData, @Nullable CompoundNBT pDataTag) {
-        RandomSource randomsource = Utils.random;
-        this.populateDefaultEquipmentSlots(randomsource, pDifficulty);
+        this.populateDefaultEquipmentSlots(pDifficulty);
         this.setHome(this.blockPosition());
         IronsSpellbooks.LOGGER.debug("Priest new home: {}", this.getHome());
         return super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData, pDataTag);
     }
 
     @Override
-    protected void populateDefaultEquipmentSlots(RandomSource pRandom, DifficultyInstance pDifficulty) {
+    protected void populateDefaultEquipmentSlots(DifficultyInstance pDifficulty) {
         this.setItemSlot(EquipmentSlotType.HEAD, new ItemStack(ItemRegistry.PRIEST_HELMET.get()));
         this.setItemSlot(EquipmentSlotType.CHEST, new ItemStack(ItemRegistry.PRIEST_CHESTPLATE.get()));
         this.setDropChance(EquipmentSlotType.HEAD, 0.0F);
@@ -213,7 +209,7 @@ public class PriestEntity extends NeutralWizard implements IVillagerDataHolder, 
                 if (enemy instanceof MobEntity) {
                     MobEntity mob = (MobEntity) enemy;
                     if (mob.getTarget() == null)
-                        if (EntityPredicate.forCombat().test(mob, this))
+                        if ((new EntityPredicate()).test(mob, this))
                             mob.setTarget(this);
                 }
             });

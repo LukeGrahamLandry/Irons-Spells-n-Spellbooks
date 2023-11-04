@@ -13,10 +13,10 @@ public class IceBlockRenderer extends GeoProjectilesRenderer<IceBlockProjectile>
 
 //    @Override
 //    public void render(IceBlockProjectile animatable, float yaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
-//        animatable.setXRot(0);
+//        animatable.xRot = (0);
 //        animatable.xRotO = animatable.xRot;
 //        if (animatable.getDeltaMovement().horizontalDistanceSqr() > 1)
-//            animatable.setYRot((float) (Mth.atan2(animatable.getDeltaMovement().x, animatable.getDeltaMovement().z) * (double) (180F / (float) Math.PI)));
+//            animatable.yRot = ((float) (Mth.atan2(animatable.getDeltaMovement().x, animatable.getDeltaMovement().z) * (double) (180F / (float) Math.PI)));
 //
 //        double x = (animatable.getX() - animatable.xOld) * partialTick;
 //        double y = (animatable.getY() - animatable.yOld) * partialTick;

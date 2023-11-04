@@ -17,7 +17,7 @@ public class GenericDefendVillageTargetGoal extends TargetGoal {
     private final MobEntity protector;
     @Nullable
     private LivingEntity potentialTarget;
-    private final EntityPredicate attackTargeting = EntityPredicate.forCombat().range(64.0D);
+    private final EntityPredicate attackTargeting = (new EntityPredicate()).range(64.0D);
 
     public GenericDefendVillageTargetGoal(MobEntity mob) {
         super(mob, false, true);

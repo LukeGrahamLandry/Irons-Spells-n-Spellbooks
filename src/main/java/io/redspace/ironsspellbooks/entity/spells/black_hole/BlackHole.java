@@ -12,7 +12,6 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.world.entity.*;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.world.World;
 import net.minecraft.util.math.vector.Vector3d;
@@ -76,7 +75,7 @@ public class BlackHole extends ProjectileEntity implements AntiMagicSusceptible 
         if (DATA_RADIUS.equals(pKey)) {
             this.refreshDimensions();
             if (getRadius() < .1f)
-                this.discard();
+                this.remove();
         }
 
         super.onSyncedDataUpdated(pKey);
@@ -136,7 +135,7 @@ public class BlackHole extends ProjectileEntity implements AntiMagicSusceptible 
         }
         if (!level.isClientSide) {
             if (tickCount > 20 * 16 * 2) {
-                this.discard();
+                this.remove();
                 this.playSound(SoundRegistry.BLACK_HOLE_CAST.get(), getRadius() / 2f, 1);
                 MagicManager.spawnParticles(level, ParticleHelper.UNSTABLE_ENDER, getX(), getY() + getRadius(), getZ(), 200, 1, 1, 1, 1, true);
             } else if ((tickCount - 1) % loopSoundDurationInTicks == 0) {

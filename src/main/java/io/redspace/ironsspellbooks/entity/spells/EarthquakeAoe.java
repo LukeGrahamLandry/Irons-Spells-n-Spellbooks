@@ -20,7 +20,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
-import net.minecraft.world.entity.*;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.world.World;
 import net.minecraft.util.math.vector.Vector3d;
@@ -127,7 +126,7 @@ public class EarthquakeAoe extends AoeEntity implements AntiMagicSusceptible {
                 if (waveAnim++ >= radius) {
                     waveAnim = -1;
                     if (tickCount + reapplicationDelay >= duration) {
-                        this.discard();
+                        this.remove();
                         //end ourselves smoothly with the last bang instead of timing out awkwardly
                     }
                 }
@@ -191,7 +190,7 @@ public class EarthquakeAoe extends AoeEntity implements AntiMagicSusceptible {
 
     @Override
     public void onAntiMagic(MagicData magicData) {
-        discard();
+        this.remove();
     }
 
     @Override

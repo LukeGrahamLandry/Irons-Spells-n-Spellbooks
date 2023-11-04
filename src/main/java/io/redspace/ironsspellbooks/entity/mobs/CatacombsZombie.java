@@ -1,5 +1,6 @@
 package io.redspace.ironsspellbooks.entity.mobs;
 
+import io.redspace.ironsspellbooks.api.util.Utils;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
@@ -16,7 +17,7 @@ public class CatacombsZombie extends ZombieEntity {
     public CatacombsZombie(EntityType<? extends ZombieEntity> pEntityType, World pLevel) {
         super(EntityType.ZOMBIE, pLevel);
         if (this.random.nextFloat() < .2f) {
-            switch (this.random.nextInt(1, 4 + 1)) {
+            switch (Utils.randomBetweenInclusive(this.random, 1, 4)) {
                 case 1:
                     addEffect(new EffectInstance(Effects.INVISIBILITY, Integer.MAX_VALUE));
                     break;

@@ -15,10 +15,8 @@ import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.util.DamageSource;
-import net.minecraft.world.entity.*;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.MeleeAttackGoal;
@@ -107,9 +105,8 @@ public class SummonedZombie extends ZombieEntity implements MagicSummon, IAnimat
 
     @Override
     public ILivingEntityData finalizeSpawn(IServerWorld pLevel, DifficultyInstance pDifficulty, SpawnReason pReason, @Nullable ILivingEntityData pSpawnData, @Nullable CompoundNBT pDataTag) {
-        RandomSource randomsource = Utils.random;
-        this.populateDefaultEquipmentSlots(randomsource, pDifficulty);
-        if (randomsource.nextDouble() < .25)
+        this.populateDefaultEquipmentSlots(pDifficulty);
+        if (this.random.nextDouble() < .25)
             this.setItemSlot(EquipmentSlotType.MAINHAND, new ItemStack(Items.IRON_SWORD));
 
         return pSpawnData;
@@ -146,14 +143,6 @@ public class SummonedZombie extends ZombieEntity implements MagicSummon, IAnimat
         super.onRemovedFromWorld();
     }
 
-
-    @Override
-    public void remove(RemovalReason pReason) {
-        // IronsSpellbooks.LOGGER.debug("Summoned Zombie: Attempt remove for: {}",pReason.toString());
-
-        super.remove(pReason);
-    }
-
     @Override
     public boolean doHurtTarget(Entity pEntity) {
         return Utils.doMeleeAttack(this, pEntity, SpellRegistry.RAISE_DEAD_SPELL.get().getDamageSource(this, getSummoner()));
@@ -175,7 +164,7 @@ public class SummonedZombie extends ZombieEntity implements MagicSummon, IAnimat
             if (--riseAnimTime < 0) {
                 entityData.set(DATA_IS_ANIMATING_RISE, false);
                 //they do a weird head flick thing
-                this.setXRot(0);
+                this.xRot = (0);
                 this.setOldPosAndRot();
             }
         } else {
@@ -192,7 +181,7 @@ public class SummonedZombie extends ZombieEntity implements MagicSummon, IAnimat
     public void onUnSummon() {
         if (!level.isClientSide) {
             MagicManager.spawnParticles(level, ParticleTypes.POOF, getX(), getY(), getZ(), 25, .4, .8, .4, .03, false);
-            discard();
+            this.remove();
         }
     }
 

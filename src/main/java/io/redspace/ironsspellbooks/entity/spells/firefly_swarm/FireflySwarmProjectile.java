@@ -13,7 +13,6 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.entity.*;
 import net.minecraft.entity.ai.controller.FlyingMovementController;
 import net.minecraft.pathfinding.FlyingPathNavigator;
 import net.minecraft.pathfinding.PathNavigator;
@@ -74,7 +73,7 @@ public class FireflySwarmProjectile extends CreatureEntity implements AntiMagicS
         }
         super.tick();
         if (this.tickCount > maxLife) {
-            this.discard();
+            this.remove();
         }
     }
 
@@ -208,6 +207,6 @@ public class FireflySwarmProjectile extends CreatureEntity implements AntiMagicS
 
     @Override
     public void onAntiMagic(MagicData playerMagicData) {
-        this.discard();
+        this.remove();
     }
 }

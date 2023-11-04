@@ -88,7 +88,7 @@ public class AcidOrb extends AbstractMagicProjectile {
                     }
                 }
             }
-            this.discard();
+            this.remove();
         }
     }
 

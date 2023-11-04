@@ -27,7 +27,7 @@ public class TrueInvisibilityEffect extends Effect {
             MagicData.getPlayerMagicData(livingEntity).getSyncedData().addEffects(SyncedSpellData.TRUE_INVIS);
         }
 
-        var targetingCondition = EntityPredicate.forCombat().ignoreLineOfSight().selector(e -> {
+        var targetingCondition = (new EntityPredicate()).allowUnseeable().selector(e -> {
             //IronsSpellbooks.LOGGER.debug("InvisibilitySpell TargetingConditions:{}", e);
             return (((MobEntity) e).getTarget() == livingEntity);
         });

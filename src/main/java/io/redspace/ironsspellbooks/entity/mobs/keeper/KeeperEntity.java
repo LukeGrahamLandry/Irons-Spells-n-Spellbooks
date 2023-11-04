@@ -11,10 +11,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.util.DamageSource;
-import net.minecraft.world.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.controller.BodyController;
@@ -143,7 +141,7 @@ public class KeeperEntity extends AbstractSpellCastingMob implements IMob, Anima
 
     @Override
     public void playAmbientSound() {
-        this.playSound(getAmbientSound(), 1, MathHelper.randomBetweenInclusive(getRandom(), 5, 10) * .1f);
+        this.playSound(getAmbientSound(), 1, Utils.randomBetweenInclusive(getRandom(), 5, 10) * .1f);
     }
 
     protected SoundEvent getHurtSound(DamageSource pDamageSource) {
@@ -156,13 +154,12 @@ public class KeeperEntity extends AbstractSpellCastingMob implements IMob, Anima
 
     @Override
     public ILivingEntityData finalizeSpawn(IServerWorld pLevel, DifficultyInstance pDifficulty, SpawnReason pReason, @Nullable ILivingEntityData pSpawnData, @Nullable CompoundNBT pDataTag) {
-        RandomSource randomsource = Utils.random;
-        this.populateDefaultEquipmentSlots(randomsource, pDifficulty);
+        this.populateDefaultEquipmentSlots(pDifficulty);
         return pSpawnData;
     }
 
     @Override
-    protected void populateDefaultEquipmentSlots(RandomSource pRandom, DifficultyInstance pDifficulty) {
+    protected void populateDefaultEquipmentSlots(DifficultyInstance pDifficulty) {
         this.setItemSlot(EquipmentSlotType.MAINHAND, new ItemStack(ItemRegistry.KEEPER_FLAMBERGE.get()));
     }
 

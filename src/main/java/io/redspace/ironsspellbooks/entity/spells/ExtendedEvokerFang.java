@@ -57,7 +57,7 @@ public class ExtendedEvokerFang extends EvokerFangsEntity implements AntiMagicSu
             }
         }
         if (--warmupDelayTicks < -22)
-            this.discard();
+            this.remove();
 
     }
 
@@ -82,6 +82,6 @@ public class ExtendedEvokerFang extends EvokerFangsEntity implements AntiMagicSu
 
     @Override
     public void onAntiMagic(MagicData playerMagicData) {
-        this.discard();
+        this.remove();
     }
 }

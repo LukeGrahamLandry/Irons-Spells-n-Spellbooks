@@ -10,7 +10,6 @@ import net.minecraft.entity.item.FallingBlockEntity;
 import net.minecraft.world.World;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.world.phys.Vec3;
 
 public class VisualFallingBlockEntity extends FallingBlockEntity {
     public VisualFallingBlockEntity(EntityType<? extends VisualFallingBlockEntity> pEntityType, World pLevel) {
@@ -61,7 +60,7 @@ public class VisualFallingBlockEntity extends FallingBlockEntity {
     public void tick() {
 //        super.tick();
         if (this.blockState.isAir() || this.isOnGround() || tickCount > maxAge) {
-            this.discard();
+            this.remove();
         } else {
             this.move(MoverType.SELF, this.getDeltaMovement());
             if (!this.isNoGravity()) {
@@ -82,13 +81,14 @@ public class VisualFallingBlockEntity extends FallingBlockEntity {
         return false;
     }
 
-    @Override
-    public void callOnBrokenAfterFall(Block pBlock, BlockPos pPos) {
-        return;
-    }
+    /// TODO
+//    @Override
+//    public void callOnBrokenAfterFall(Block pBlock, BlockPos pPos) {
+//        return;
+//    }
 
     @Override
-    public boolean causeFallDamage(float pFallDistance, float pMultiplier, DamageSource pSource) {
+    public boolean causeFallDamage(float pFallDistance, float pMultiplier) {
         return false;
     }
 

@@ -14,7 +14,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.world.World;
 import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
-import net.minecraftforge.network.NetworkHooks;
+import net.minecraftforge.fml.network.NetworkHooks;
 import org.jetbrains.annotations.Nullable;
 
 public class GustCollider extends AbstractConeProjectile {
@@ -72,7 +72,7 @@ public class GustCollider extends AbstractConeProjectile {
     @Override
     public void tick() {
         if (tickCount > 8)
-            discard();
+            this.remove();
         else
             super.tick();
     }

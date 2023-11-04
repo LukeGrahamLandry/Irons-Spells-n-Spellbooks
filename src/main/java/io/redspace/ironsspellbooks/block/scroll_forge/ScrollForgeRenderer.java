@@ -47,7 +47,7 @@ public class  ScrollForgeRenderer implements TileEntityRenderer<ScrollForgeTile>
         if (!inkStack.isEmpty() && inkStack.getItem() instanceof InkItem) {
             renderItem(inkStack, INK_POS, 15, scrollForgeTile, partialTick, poseStack, bufferSource, packedLight, packedOverlay);
         }
-        if (!focusStack.isEmpty() && focusStack.is(ModTags.SCHOOL_FOCUS)) {
+        if (!focusStack.isEmpty() && focusStack.getItem().is(ModTags.SCHOOL_FOCUS)) {
             renderItem(focusStack, FOCUS_POS, 5, scrollForgeTile, partialTick, poseStack, bufferSource, packedLight, packedOverlay);
         }
 

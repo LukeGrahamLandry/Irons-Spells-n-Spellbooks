@@ -17,7 +17,6 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.entity.passive.horse.AbstractHorseEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.World;
@@ -64,7 +63,7 @@ public class SummonedHorse extends AbstractHorseEntity implements MagicSummon {
     }
 
     @Override
-    public void openCustomInventoryScreen(PlayerEntity pPlayer) {
+    public void openInventory(PlayerEntity pPlayer) {
         return;
     }
 
@@ -95,7 +94,7 @@ public class SummonedHorse extends AbstractHorseEntity implements MagicSummon {
     public void onUnSummon() {
         if (!level.isClientSide) {
             MagicManager.spawnParticles(level, ParticleTypes.POOF, getX(), getY(), getZ(), 25, .4, .8, .4, .03, false);
-            discard();
+            this.remove();
         }
     }
 

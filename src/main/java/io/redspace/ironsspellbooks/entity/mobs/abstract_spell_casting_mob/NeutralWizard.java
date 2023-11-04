@@ -1,9 +1,9 @@
 package io.redspace.ironsspellbooks.entity.mobs.abstract_spell_casting_mob;
 
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.RangedInteger;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.util.TickRangeConverter;
-import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.IAngerable;
 import net.minecraft.entity.CreatureEntity;
@@ -17,13 +17,13 @@ public class NeutralWizard extends AbstractSpellCastingMob implements IAngerable
         super(pEntityType, pLevel);
     }
 
-    private static final UniformInt PERSISTENT_ANGER_TIME = TickRangeConverter.rangeOfSeconds(20, 39);
+    private static final RangedInteger PERSISTENT_ANGER_TIME = TickRangeConverter.rangeOfSeconds(20, 39);
     private int remainingPersistentAngerTime;
     @Nullable
     private UUID persistentAngerTarget;
 
     public void startPersistentAngerTimer() {
-        this.setRemainingPersistentAngerTime(PERSISTENT_ANGER_TIME.sample(this.random));
+        this.setRemainingPersistentAngerTime(PERSISTENT_ANGER_TIME.randomValue(this.random));
     }
 
     public void setRemainingPersistentAngerTime(int pTime) {
@@ -51,7 +51,7 @@ public class NeutralWizard extends AbstractSpellCastingMob implements IAngerable
 
     @Override
     public void readAdditionalSaveData(CompoundNBT pCompound) {
-        this.readPersistentAngerSaveData(this.level, pCompound);
+        this.readPersistentAngerSaveData((ServerWorld) this.level, pCompound);
         super.readAdditionalSaveData(pCompound);
     }
 

@@ -32,28 +32,21 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.network.protocol.game.ClientboundSetActionBarTextPacket;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.RandomSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.DamageSource;
-import net.minecraft.world.entity.*;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.world.item.*;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.world.level.BlockCollisions;
 import net.minecraft.util.math.RayTraceContext;
 import net.minecraft.world.World;
 import net.minecraft.world.IServerWorld;
 import net.minecraft.world.biome.Biomes;
-import net.minecraft.world.level.levelgen.ThreadSafeLegacyRandomSource;
-import net.minecraft.world.phys.*;
 import net.minecraftforge.entity.PartEntity;
 import org.jetbrains.annotations.NotNull;
 
@@ -83,6 +76,7 @@ import net.minecraft.util.math.vector.Vector3d;
 
 public class Utils {
     public static final float DEG_TO_RAD = (float) (Math.PI / 180);
+    public static final float RAD_TO_DEG = (float) (180.0 / Math.PI);
 
     public static final Random random = ThreadLocalRandom.current();
     public static String getStackTraceAsString() {
@@ -369,7 +363,7 @@ public class Utils {
         if (flag) {
             if (f1 > 0.0F && target instanceof LivingEntity) {
                 LivingEntity livingTarget = (LivingEntity) target;
-                ((LivingEntity) target).knockback((double) (f1 * 0.5F), (double) MathHelper.sin(attacker.yRot * ((float) Math.PI / 180F)), (double) (-MathHelper.cos(attacker.yRot * ((float) Math.PI / 180F))));
+                ((LivingEntity) target).knockback(f1 * 0.5F, MathHelper.sin(attacker.yRot * ((float) Math.PI / 180F)), (double) (-MathHelper.cos(attacker.yRot * ((float) Math.PI / 180F))));
                 attacker.setDeltaMovement(attacker.getDeltaMovement().multiply(0.6D, 1.0D, 0.6D));
                 livingTarget.setLastHurtByMob(attacker);
             }
@@ -544,7 +538,7 @@ public class Utils {
         return level.clip(new RayTraceContext(start, start.add(0, maxSteps * -2, 0), RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, null)).getLocation();
     }
 
-    public static boolean checkMonsterSpawnRules(IServerWorld pLevel, SpawnReason pSpawnType, BlockPos pPos, RandomSource pRandom) {
+    public static boolean checkMonsterSpawnRules(IServerWorld pLevel, SpawnReason pSpawnType, BlockPos pPos, Random pRandom) {
         //Omits monster from spawn where monsters are not allowed, as well as default monster spawning conditions
         return !pLevel.getBiome(pPos).is(Biomes.DEEP_DARK) && !pLevel.getBiome(pPos).is(Biomes.MUSHROOM_FIELDS) && MonsterEntity.checkMonsterSpawnRules(EntityType.ZOMBIE, pLevel, pSpawnType, pPos, pRandom);
     }
@@ -611,5 +605,14 @@ public class Utils {
                 pList.set(j, ItemStack.of(compoundtag));
             }
         }
+    }
+
+    // TODO: there are a few places i inlined this before it started seeming silly. Could go back and use this.
+    public static int randomBetweenInclusive(Random random, int min, int max) {
+        return random.nextInt(min, max + 1);
+    }
+
+    public static float randomBetween(Random random, float min, float max) {
+        return random.nextFloat(min, max);
     }
 }
