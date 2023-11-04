@@ -4,10 +4,12 @@ import net.minecraft.client.util.InputMappings;
 import io.redspace.ironsspellbooks.IronsSpellbooks;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,8 +18,8 @@ import java.util.List;
 public final class KeyMappings {
     public static final String KEY_BIND_GENERAL_CATEGORY = "key.irons_spellbooks.group_1";
     public static final String KEY_BIND_QUICK_CAST_CATEGORY = "key.irons_spellbooks.group_2";
-    public static final KeyBinding SPELL_WHEEL_KEYMAP = new KeyBinding(getResourceName("spell_wheel"), KeyConflictContext.IN_GAME, InputMappings.Type.KEYSYM, InputMappings.KEY_R, KEY_BIND_GENERAL_CATEGORY);
-    public static final KeyBinding SPELLBAR_SCROLL_MODIFIER_KEYMAP = new KeyBinding(getResourceName("spell_bar_modifier"), KeyConflictContext.IN_GAME, InputMappings.Type.KEYSYM, InputMappings.KEY_LSHIFT, KEY_BIND_GENERAL_CATEGORY);
+    public static final KeyBinding SPELL_WHEEL_KEYMAP = new KeyBinding(getResourceName("spell_wheel"), KeyConflictContext.IN_GAME, InputMappings.Type.KEYSYM, GLFW.GLFW_KEY_R, KEY_BIND_GENERAL_CATEGORY);
+    public static final KeyBinding SPELLBAR_SCROLL_MODIFIER_KEYMAP = new KeyBinding(getResourceName("spell_bar_modifier"), KeyConflictContext.IN_GAME, InputMappings.Type.KEYSYM, GLFW.GLFW_KEY_LEFT_SHIFT, KEY_BIND_GENERAL_CATEGORY);
 
     public static final List<KeyBinding> QUICK_CAST_MAPPINGS = createQuickCastKeybinds();
 
@@ -26,11 +28,11 @@ public final class KeyMappings {
     }
 
     @SubscribeEvent
-    public static void onRegisterKeybinds(RegisterKeyMappingsEvent event) {
+    public static void onRegisterKeybinds(FMLClientSetupEvent event) {
  //Ironsspellbooks.logger.debug("KeyMappings.onRegisterKeybinds");
-        event.register(SPELL_WHEEL_KEYMAP);
-        event.register(SPELLBAR_SCROLL_MODIFIER_KEYMAP);
-        QUICK_CAST_MAPPINGS.forEach(event::register);
+        ClientRegistry.registerKeyBinding(SPELL_WHEEL_KEYMAP);
+        ClientRegistry.registerKeyBinding(SPELLBAR_SCROLL_MODIFIER_KEYMAP);
+        QUICK_CAST_MAPPINGS.forEach(ClientRegistry::registerKeyBinding);
     }
 
     private static List<KeyBinding> createQuickCastKeybinds() {

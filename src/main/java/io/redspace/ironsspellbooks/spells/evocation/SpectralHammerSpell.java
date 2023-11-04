@@ -31,8 +31,8 @@ public class SpectralHammerSpell extends AbstractSpell {
     @Override
     public List<IFormattableTextComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
-                ITextComponent.translatable("ui.irons_spellbooks.dimensions", 1 + getRadius(spellLevel, caster) * 2, 1 + getRadius(spellLevel, caster) * 2, getDepth(spellLevel, caster) + 1),
-                ITextComponent.translatable("ui.irons_spellbooks.distance", distance)
+                new TranslationTextComponent("ui.irons_spellbooks.dimensions", 1 + getRadius(spellLevel, caster) * 2, 1 + getRadius(spellLevel, caster) * 2, getDepth(spellLevel, caster) + 1),
+                new TranslationTextComponent("ui.irons_spellbooks.distance", distance)
         );
     }
 

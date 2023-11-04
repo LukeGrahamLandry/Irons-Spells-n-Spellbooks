@@ -5,6 +5,7 @@ import io.redspace.ironsspellbooks.api.spells.AbstractSpell;
 import io.redspace.ironsspellbooks.capabilities.spell.SpellData;
 import io.redspace.ironsspellbooks.api.util.Utils;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
@@ -17,7 +18,7 @@ public class CommonPlayerEvents {
 
         if (Utils.canImbue(stack)) {
             SpellData spellData = SpellData.getSpellData(stack);
-            ActionResult<ItemStack> result = Utils.onUseCastingHelper(event.getLevel(), event.getEntity(), event.getHand(), stack, spellData);
+            ActionResult<ItemStack> result = Utils.onUseCastingHelper(event.getWorld(), event.getPlayer(), event.getHand(), stack, spellData);
 
             if (result != null) {
                 event.setCancellationResult(result.getResult());
@@ -31,7 +32,7 @@ public class CommonPlayerEvents {
         ItemStack stack = event.getItem();
         if (Utils.canImbue(stack)) {
             AbstractSpell spell = SpellData.getSpellData(stack).getSpell();
-            Entity entity = event.getEntity();
+            LivingEntity entity = event.getEntityLiving();
 
             if (spell != SpellRegistry.none()) {
                 entity.stopUsingItem();

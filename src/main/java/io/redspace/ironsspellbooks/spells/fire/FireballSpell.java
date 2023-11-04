@@ -26,8 +26,8 @@ public class FireballSpell extends AbstractSpell {
     @Override
     public List<IFormattableTextComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
-                ITextComponent.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(spellLevel, caster), 1)),
-                ITextComponent.translatable("ui.irons_spellbooks.radius", getRadius(spellLevel, caster))
+                new TranslationTextComponent("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(spellLevel, caster), 1)),
+                new TranslationTextComponent("ui.irons_spellbooks.radius", getRadius(spellLevel, caster))
         );
     }
 

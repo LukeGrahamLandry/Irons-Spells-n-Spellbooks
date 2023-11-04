@@ -45,7 +45,7 @@ public class RaiseDeadSpell extends AbstractSpell {
 
     @Override
     public List<IFormattableTextComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(ITextComponent.translatable("ui.irons_spellbooks.summon_count", getLevel(spellLevel, caster)));
+        return List.of(new TranslationTextComponent("ui.irons_spellbooks.summon_count", getLevel(spellLevel, caster)));
     }
 
     public RaiseDeadSpell() {

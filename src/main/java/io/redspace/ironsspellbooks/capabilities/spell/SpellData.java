@@ -83,7 +83,7 @@ public class SpellData implements Comparable<SpellData> {
 
     public ITextComponent getDisplayName() {
         if (displayName == null) {
-            displayName = getSpell().getDisplayName().append(" ").append(ITextComponent.translatable(ItemRegistry.SCROLL.get().getDescriptionId()));//.append(" ").append(Component.translatable("tooltip.irons_spellbooks.rarity",getSpell().getRarity().getDisplayName().getString()));
+            displayName = getSpell().getDisplayName().append(" ").append(new TranslationTextComponent(ItemRegistry.SCROLL.get().getDescriptionId()));//.append(" ").append(Component.translatable("tooltip.irons_spellbooks.rarity",getSpell().getRarity().getDisplayName().getString()));
         }
         return displayName;
     }

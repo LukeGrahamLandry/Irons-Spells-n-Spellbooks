@@ -28,14 +28,14 @@ public class LurkerRing extends SimpleDescriptiveCurio {
         double playerCooldownModifier = Minecraft.getInstance().player == null ? 1 : Minecraft.getInstance().player.getAttributeValue(COOLDOWN_REDUCTION.get());
 
         return List.of(
-                ITextComponent.translatable("tooltip.irons_spellbooks.passive_ability", Utils.timeFromTicks((float) (COOLDOWN_IN_TICKS * (2 - Utils.softCapFormula(playerCooldownModifier))), 1)).withStyle(TextFormatting.GREEN),
+                new TranslationTextComponent("tooltip.irons_spellbooks.passive_ability", Utils.timeFromTicks((float) (COOLDOWN_IN_TICKS * (2 - Utils.softCapFormula(playerCooldownModifier))), 1)).withStyle(TextFormatting.GREEN),
                 getDescription(stack)
         );
     }
 
     @Override
     public ITextComponent getDescription(ItemStack stack) {
-        return ITextComponent.literal(" ").append(ITextComponent.translatable(this.getDescriptionId() + ".desc",
+        return new StringTextComponent(" ").append(new TranslationTextComponent(this.getDescriptionId() + ".desc",
                 (int) ((MULTIPLIER - 1) * 100)
         )).withStyle(descriptionStyle);
     }

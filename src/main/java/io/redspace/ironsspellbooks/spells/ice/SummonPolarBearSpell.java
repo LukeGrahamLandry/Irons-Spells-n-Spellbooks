@@ -27,8 +27,8 @@ public class SummonPolarBearSpell extends AbstractSpell {
     @Override
     public List<IFormattableTextComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
-                ITextComponent.translatable("ui.irons_spellbooks.hp", getBearHealth(spellLevel, null)),
-                ITextComponent.translatable("ui.irons_spellbooks.damage", getBearDamage(spellLevel, null))
+                new TranslationTextComponent("ui.irons_spellbooks.hp", getBearHealth(spellLevel, null)),
+                new TranslationTextComponent("ui.irons_spellbooks.damage", getBearDamage(spellLevel, null))
         );
     }
 

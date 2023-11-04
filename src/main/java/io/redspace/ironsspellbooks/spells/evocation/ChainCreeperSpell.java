@@ -31,8 +31,8 @@ public class ChainCreeperSpell extends AbstractSpell {
 
     @Override
     public List<IFormattableTextComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(ITextComponent.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getSpellPower(spellLevel, caster), 1)),
-                ITextComponent.translatable("ui.irons_spellbooks.projectile_count", getCount(spellLevel, caster)));
+        return List.of(new TranslationTextComponent("ui.irons_spellbooks.damage", Utils.stringTruncation(getSpellPower(spellLevel, caster), 1)),
+                new TranslationTextComponent("ui.irons_spellbooks.projectile_count", getCount(spellLevel, caster)));
     }
 
     private final DefaultConfig defaultConfig = new DefaultConfig()

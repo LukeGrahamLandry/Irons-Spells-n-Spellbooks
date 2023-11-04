@@ -544,7 +544,7 @@ public class Utils {
     }
 
     public static void sendTargetedNotification(ServerPlayerEntity target, LivingEntity caster, AbstractSpell spell) {
-        target.connection.send(new ClientboundSetActionBarTextPacket(ITextComponent.translatable("ui.irons_spellbooks.spell_target_warning", caster.getDisplayName().getString(), spell.getDisplayName()).withStyle(TextFormatting.LIGHT_PURPLE)));
+        target.connection.send(new ClientboundSetActionBarTextPacket(new TranslationTextComponent("ui.irons_spellbooks.spell_target_warning", caster.getDisplayName().getString(), spell.getDisplayName()).withStyle(TextFormatting.LIGHT_PURPLE)));
     }
 
     public static boolean preCastTargetHelper(World level, LivingEntity caster, MagicData playerMagicData, AbstractSpell spell, int range, float aimAssist) {
@@ -560,7 +560,7 @@ public class Utils {
             if (caster instanceof ServerPlayerEntity) {
                 ServerPlayerEntity serverPlayer = (ServerPlayerEntity) caster;
                 Messages.sendToPlayer(new ClientboundSyncTargetingData(livingTarget, spell), serverPlayer);
-                serverPlayer.connection.send(new ClientboundSetActionBarTextPacket(ITextComponent.translatable("ui.irons_spellbooks.spell_target_success", livingTarget.getDisplayName().getString(), spell.getDisplayName()).withStyle(TextFormatting.GREEN)));
+                serverPlayer.connection.send(new ClientboundSetActionBarTextPacket(new TranslationTextComponent("ui.irons_spellbooks.spell_target_success", livingTarget.getDisplayName().getString(), spell.getDisplayName()).withStyle(TextFormatting.GREEN)));
             }
             if (livingTarget instanceof ServerPlayerEntity) {
                 ServerPlayerEntity serverPlayer = (ServerPlayerEntity) livingTarget;
@@ -569,7 +569,7 @@ public class Utils {
             return true;
         } else if (sendFailureMessage && caster instanceof ServerPlayerEntity) {
             ServerPlayerEntity serverPlayer = (ServerPlayerEntity) caster;
-            serverPlayer.connection.send(new ClientboundSetActionBarTextPacket(ITextComponent.translatable("ui.irons_spellbooks.cast_error_target").withStyle(TextFormatting.RED)));
+            serverPlayer.connection.send(new ClientboundSetActionBarTextPacket(new TranslationTextComponent("ui.irons_spellbooks.cast_error_target").withStyle(TextFormatting.RED)));
         }
         return false;
 

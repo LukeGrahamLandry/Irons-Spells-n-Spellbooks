@@ -17,7 +17,7 @@ import net.minecraft.item.ItemStack;
 
 public class CreateScrollCommand {
 
-    private static final SimpleCommandExceptionType ERROR_FAILED = new SimpleCommandExceptionType(ITextComponent.translatable("commands.irons_spellbooks.create_scroll.failed"));
+    private static final SimpleCommandExceptionType ERROR_FAILED = new SimpleCommandExceptionType(new TranslationTextComponent("commands.irons_spellbooks.create_scroll.failed"));
 
     public static void register(CommandDispatcher<CommandSource> pDispatcher) {
         pDispatcher.register(Commands.literal("createScroll").requires((p_138819_) -> {
@@ -39,7 +39,7 @@ public class CreateScrollCommand {
         }
 
         if (spellLevel > abstractSpell.getMaxLevel()) {
-            throw new SimpleCommandExceptionType(ITextComponent.translatable("commands.irons_spellbooks.create_spell.failed_max_level", abstractSpell.getSpellName(), abstractSpell.getMaxLevel())).create();
+            throw new SimpleCommandExceptionType(new TranslationTextComponent("commands.irons_spellbooks.create_spell.failed_max_level", abstractSpell.getSpellName(), abstractSpell.getMaxLevel())).create();
         }
 
         var serverPlayer = source.getPlayer();

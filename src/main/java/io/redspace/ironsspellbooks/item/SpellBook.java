@@ -118,11 +118,11 @@ public class SpellBook extends Item implements ISpellbook {
     @Override
     public void appendHoverText(ItemStack itemStack, @Nullable World level, List<ITextComponent> lines, ITooltipFlag flag) {
         if (!this.isUnique()) {
-            lines.add(ITextComponent.translatable("tooltip.irons_spellbooks.spellbook_rarity", this.rarity.getDisplayName()).withStyle(TextFormatting.GRAY));
+            lines.add(new TranslationTextComponent("tooltip.irons_spellbooks.spellbook_rarity", this.rarity.getDisplayName()).withStyle(TextFormatting.GRAY));
         } else {
-            lines.add(ITextComponent.translatable("tooltip.irons_spellbooks.spellbook_rarity", ITextComponent.translatable("tooltip.irons_spellbooks.spellbook_unique").withStyle(Style.EMPTY.withColor(0xe04324))).withStyle(TextFormatting.GRAY));
+            lines.add(new TranslationTextComponent("tooltip.irons_spellbooks.spellbook_rarity", new TranslationTextComponent("tooltip.irons_spellbooks.spellbook_unique").withStyle(Style.EMPTY.withColor(0xe04324))).withStyle(TextFormatting.GRAY));
         }
-        lines.add(ITextComponent.translatable("tooltip.irons_spellbooks.spellbook_spell_count", this.spellSlots).withStyle(TextFormatting.GRAY));
+        lines.add(new TranslationTextComponent("tooltip.irons_spellbooks.spellbook_spell_count", this.spellSlots).withStyle(TextFormatting.GRAY));
 
         ClientPlayerEntity player = Minecraft.getInstance().player;
         if (player != null && !SpellBookData.getSpellBookData(itemStack).getActiveSpell().equals(SpellData.EMPTY)) {

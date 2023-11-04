@@ -36,6 +36,6 @@ public class RingData {
     }
 
     public String getNameForItem(){
-        return getSpell() == SpellRegistry.none() ? ITextComponent.translatable("tooltip.irons_spellbooks.no_affinity").getString() : getSpell().getSchoolType().getDisplayName().getString();
+        return getSpell() == SpellRegistry.none() ? new TranslationTextComponent("tooltip.irons_spellbooks.no_affinity").getString() : getSpell().getSchoolType().getDisplayName().getString();
     }
 }

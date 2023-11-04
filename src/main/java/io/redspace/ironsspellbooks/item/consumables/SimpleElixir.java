@@ -74,7 +74,7 @@ public class SimpleElixir extends DrinkableItem {
          * adapted from PotionUtils.addPotionTooltip
          */
         List<Pair<Attribute, AttributeModifier>> list1 = Lists.newArrayList();
-        IFormattableTextComponent mutablecomponent = ITextComponent.translatable(mobeffectinstance.getDescriptionId());
+        IFormattableTextComponent mutablecomponent = new TranslationTextComponent(mobeffectinstance.getDescriptionId());
         Effect mobeffect = mobeffectinstance.getEffect();
         Map<Attribute, AttributeModifier> map = mobeffect.getAttributeModifiers();
         if (!map.isEmpty()) {
@@ -86,18 +86,18 @@ public class SimpleElixir extends DrinkableItem {
         }
 
         if (mobeffectinstance.getAmplifier() > 0) {
-            mutablecomponent = ITextComponent.translatable("potion.withAmplifier", mutablecomponent, ITextComponent.translatable("potion.potency." + mobeffectinstance.getAmplifier()));
+            mutablecomponent = new TranslationTextComponent("potion.withAmplifier", mutablecomponent, new TranslationTextComponent("potion.potency." + mobeffectinstance.getAmplifier()));
         }
 
         if (mobeffectinstance.getDuration() > 20) {
-            mutablecomponent = ITextComponent.translatable("potion.withDuration", mutablecomponent, EffectUtils.formatDuration(mobeffectinstance, pDurationFactor));
+            mutablecomponent = new TranslationTextComponent("potion.withDuration", mutablecomponent, EffectUtils.formatDuration(mobeffectinstance, pDurationFactor));
         }
 
         pTooltips.add(mutablecomponent.withStyle(mobeffect.getCategory().getTooltipFormatting()));
 
         if (!list1.isEmpty()) {
             pTooltips.add(DialogTexts.EMPTY);
-            pTooltips.add(ITextComponent.translatable("potion.whenDrank").withStyle(TextFormatting.DARK_PURPLE));
+            pTooltips.add(new TranslationTextComponent("potion.whenDrank").withStyle(TextFormatting.DARK_PURPLE));
 
             for (Pair<Attribute, AttributeModifier> pair : list1) {
                 AttributeModifier attributemodifier2 = pair.getSecond();
@@ -110,10 +110,10 @@ public class SimpleElixir extends DrinkableItem {
                 }
 
                 if (d0 > 0.0D) {
-                    pTooltips.add(ITextComponent.translatable("attribute.modifier.plus." + attributemodifier2.getOperation().toValue(), ItemStack.ATTRIBUTE_MODIFIER_FORMAT.format(d1), ITextComponent.translatable(pair.getFirst().getDescriptionId())).withStyle(TextFormatting.BLUE));
+                    pTooltips.add(new TranslationTextComponent("attribute.modifier.plus." + attributemodifier2.getOperation().toValue(), ItemStack.ATTRIBUTE_MODIFIER_FORMAT.format(d1), new TranslationTextComponent(pair.getFirst().getDescriptionId())).withStyle(TextFormatting.BLUE));
                 } else if (d0 < 0.0D) {
                     d1 *= -1.0D;
-                    pTooltips.add(ITextComponent.translatable("attribute.modifier.take." + attributemodifier2.getOperation().toValue(), ItemStack.ATTRIBUTE_MODIFIER_FORMAT.format(d1), ITextComponent.translatable(pair.getFirst().getDescriptionId())).withStyle(TextFormatting.RED));
+                    pTooltips.add(new TranslationTextComponent("attribute.modifier.take." + attributemodifier2.getOperation().toValue(), ItemStack.ATTRIBUTE_MODIFIER_FORMAT.format(d1), new TranslationTextComponent(pair.getFirst().getDescriptionId())).withStyle(TextFormatting.RED));
                 }
             }
         }

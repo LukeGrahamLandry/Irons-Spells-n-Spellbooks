@@ -53,7 +53,7 @@ public class SchoolRegistry {
     public static final RegistryObject<SchoolType> FIRE = registerSchool(new SchoolType(
             FIRE_RESOURCE,
             ModTags.FIRE_FOCUS,
-            ITextComponent.translatable("school.irons_spellbooks.fire").withStyle(TextFormatting.GOLD),
+            new TranslationTextComponent("school.irons_spellbooks.fire").withStyle(TextFormatting.GOLD),
             LazyOptional.of(AttributeRegistry.FIRE_SPELL_POWER::get),
             LazyOptional.of(AttributeRegistry.FIRE_MAGIC_RESIST::get),
             LazyOptional.of(SoundRegistry.FIRE_CAST::get)));
@@ -61,7 +61,7 @@ public class SchoolRegistry {
     public static final RegistryObject<SchoolType> ICE = registerSchool(new SchoolType(
             ICE_RESOURCE,
             ModTags.ICE_FOCUS,
-            ITextComponent.translatable("school.irons_spellbooks.ice").withStyle(Style.EMPTY.withColor(0xd0f9ff)),
+            new TranslationTextComponent("school.irons_spellbooks.ice").withStyle(Style.EMPTY.withColor(0xd0f9ff)),
             LazyOptional.of(AttributeRegistry.ICE_SPELL_POWER::get),
             LazyOptional.of(AttributeRegistry.ICE_MAGIC_RESIST::get),
             LazyOptional.of(SoundRegistry.ICE_CAST::get)
@@ -70,7 +70,7 @@ public class SchoolRegistry {
     public static final RegistryObject<SchoolType> LIGHTNING = registerSchool(new SchoolType(
             LIGHTNING_RESOURCE,
             ModTags.LIGHTNING_FOCUS,
-            ITextComponent.translatable("school.irons_spellbooks.lightning").withStyle(TextFormatting.AQUA),
+            new TranslationTextComponent("school.irons_spellbooks.lightning").withStyle(TextFormatting.AQUA),
             LazyOptional.of(AttributeRegistry.LIGHTNING_SPELL_POWER::get),
             LazyOptional.of(AttributeRegistry.LIGHTNING_MAGIC_RESIST::get),
             LazyOptional.of(SoundRegistry.LIGHTNING_CAST::get)
@@ -79,7 +79,7 @@ public class SchoolRegistry {
     public static final RegistryObject<SchoolType> HOLY = registerSchool(new SchoolType(
             HOLY_RESOURCE,
             ModTags.HOLY_FOCUS,
-            ITextComponent.translatable("school.irons_spellbooks.holy").withStyle(Style.EMPTY.withColor(0xfff8d4)),
+            new TranslationTextComponent("school.irons_spellbooks.holy").withStyle(Style.EMPTY.withColor(0xfff8d4)),
             LazyOptional.of(AttributeRegistry.HOLY_SPELL_POWER::get),
             LazyOptional.of(AttributeRegistry.HOLY_MAGIC_RESIST::get),
             LazyOptional.of(SoundRegistry.HOLY_CAST::get)
@@ -88,7 +88,7 @@ public class SchoolRegistry {
     public static final RegistryObject<SchoolType> ENDER = registerSchool(new SchoolType(
             ENDER_RESOURCE,
             ModTags.ENDER_FOCUS,
-            ITextComponent.translatable("school.irons_spellbooks.ender").withStyle(TextFormatting.LIGHT_PURPLE),
+            new TranslationTextComponent("school.irons_spellbooks.ender").withStyle(TextFormatting.LIGHT_PURPLE),
             LazyOptional.of(AttributeRegistry.ENDER_SPELL_POWER::get),
             LazyOptional.of(AttributeRegistry.ENDER_MAGIC_RESIST::get),
             LazyOptional.of(SoundRegistry.ENDER_CAST::get)
@@ -97,7 +97,7 @@ public class SchoolRegistry {
     public static final RegistryObject<SchoolType> BLOOD = registerSchool(new SchoolType(
             BLOOD_RESOURCE,
             ModTags.BLOOD_FOCUS,
-            ITextComponent.translatable("school.irons_spellbooks.blood").withStyle(TextFormatting.DARK_RED),
+            new TranslationTextComponent("school.irons_spellbooks.blood").withStyle(TextFormatting.DARK_RED),
             LazyOptional.of(AttributeRegistry.BLOOD_SPELL_POWER::get),
             LazyOptional.of(AttributeRegistry.BLOOD_MAGIC_RESIST::get),
             LazyOptional.of(SoundRegistry.BLOOD_CAST::get)));
@@ -105,7 +105,7 @@ public class SchoolRegistry {
     public static final RegistryObject<SchoolType> EVOCATION = registerSchool(new SchoolType(
             EVOCATION_RESOURCE,
             ModTags.EVOCATION_FOCUS,
-            ITextComponent.translatable("school.irons_spellbooks.evocation").withStyle(TextFormatting.WHITE),
+            new TranslationTextComponent("school.irons_spellbooks.evocation").withStyle(TextFormatting.WHITE),
             LazyOptional.of(AttributeRegistry.EVOCATION_SPELL_POWER::get),
             LazyOptional.of(AttributeRegistry.EVOCATION_MAGIC_RESIST::get),
             LazyOptional.of(SoundRegistry.EVOCATION_CAST::get)
@@ -114,7 +114,7 @@ public class SchoolRegistry {
     public static final RegistryObject<SchoolType> NATURE = registerSchool(new SchoolType(
             NATURE_RESOURCE,
             ModTags.NATURE_FOCUS,
-            ITextComponent.translatable("school.irons_spellbooks.nature").withStyle(TextFormatting.GREEN),
+            new TranslationTextComponent("school.irons_spellbooks.nature").withStyle(TextFormatting.GREEN),
             LazyOptional.of(AttributeRegistry.NATURE_SPELL_POWER::get),
             LazyOptional.of(AttributeRegistry.NATURE_MAGIC_RESIST::get),
             LazyOptional.of(SoundRegistry.NATURE_CAST::get)

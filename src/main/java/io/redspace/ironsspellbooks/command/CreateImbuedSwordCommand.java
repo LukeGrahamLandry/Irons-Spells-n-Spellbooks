@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 
 public class CreateImbuedSwordCommand {
 
-    private static final SimpleCommandExceptionType ERROR_FAILED = new SimpleCommandExceptionType(ITextComponent.translatable("commands.irons_spellbooks.create_imbued_sword.failed"));
+    private static final SimpleCommandExceptionType ERROR_FAILED = new SimpleCommandExceptionType(new TranslationTextComponent("commands.irons_spellbooks.create_imbued_sword.failed"));
 
     private static final SuggestionProvider<CommandSource> SWORD_SUGGESTIONS = (p_180253_, p_180254_) -> {
         Set<ResourceLocation> resources = Registry.ITEM.stream().filter((k) -> k instanceof SwordItem).map(Registry.ITEM::getKey).collect(Collectors.toSet());
@@ -53,7 +53,7 @@ public class CreateImbuedSwordCommand {
         AbstractSpell abstractSpell = SpellRegistry.REGISTRY.get().getValue(new ResourceLocation(spell));
 
         if (spellLevel > abstractSpell.getMaxLevel()) {
-            throw new SimpleCommandExceptionType(ITextComponent.translatable("commands.irons_spellbooks.create_spell.failed_max_level", abstractSpell.getSpellName(), abstractSpell.getMaxLevel())).create();
+            throw new SimpleCommandExceptionType(new TranslationTextComponent("commands.irons_spellbooks.create_spell.failed_max_level", abstractSpell.getSpellName(), abstractSpell.getMaxLevel())).create();
         }
 
         var serverPlayer = source.getPlayer();

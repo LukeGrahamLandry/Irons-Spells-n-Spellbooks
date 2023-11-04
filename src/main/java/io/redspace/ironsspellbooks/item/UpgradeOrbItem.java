@@ -17,13 +17,13 @@ import static net.minecraft.item.ItemStack.ATTRIBUTE_MODIFIER_FORMAT;
 
 public class UpgradeOrbItem extends Item {
     private final UpgradeType upgrade;
-    private final static ITextComponent TOOLTIP_HEADER = ITextComponent.translatable("tooltip.irons_spellbooks.upgrade_tooltip").withStyle(TextFormatting.GRAY);
+    private final static ITextComponent TOOLTIP_HEADER = new TranslationTextComponent("tooltip.irons_spellbooks.upgrade_tooltip").withStyle(TextFormatting.GRAY);
     private final ITextComponent TOOLTIP_TEXT;
 
     public UpgradeOrbItem(UpgradeType upgrade, Properties pProperties) {
         super(pProperties);
         this.upgrade = upgrade;
-        TOOLTIP_TEXT = ITextComponent.literal(" ").append(ITextComponent.translatable("attribute.modifier.plus." + upgrade.getOperation().toValue(), ATTRIBUTE_MODIFIER_FORMAT.format(upgrade.getAmountPerUpgrade() * (upgrade.getOperation() == AttributeModifier.Operation.ADDITION ? 1 : 100)), ITextComponent.translatable(upgrade.getAttribute().getDescriptionId())).withStyle(TextFormatting.BLUE));
+        TOOLTIP_TEXT = new StringTextComponent(" ").append(new TranslationTextComponent("attribute.modifier.plus." + upgrade.getOperation().toValue(), ATTRIBUTE_MODIFIER_FORMAT.format(upgrade.getAmountPerUpgrade() * (upgrade.getOperation() == AttributeModifier.Operation.ADDITION ? 1 : 100)), new TranslationTextComponent(upgrade.getAttribute().getDescriptionId())).withStyle(TextFormatting.BLUE));
     }
 
     public UpgradeType getUpgradeType() {

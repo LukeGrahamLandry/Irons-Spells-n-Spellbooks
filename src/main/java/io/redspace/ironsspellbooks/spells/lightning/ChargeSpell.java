@@ -27,10 +27,10 @@ public class ChargeSpell extends AbstractSpell {
     @Override
     public List<IFormattableTextComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
-                ITextComponent.translatable("ui.irons_spellbooks.effect_length", Utils.timeFromTicks(getSpellPower(spellLevel, caster) * 20, 1)),
-                ITextComponent.translatable("attribute.modifier.plus.1", Utils.stringTruncation(getPercentSpeed(spellLevel, caster), 0), ITextComponent.translatable("attribute.name.generic.movement_speed")),
-                ITextComponent.translatable("attribute.modifier.plus.1", Utils.stringTruncation(getPercentAttackDamage(spellLevel, caster), 0), ITextComponent.translatable("attribute.name.generic.attack_damage")),
-                ITextComponent.translatable("attribute.modifier.plus.1", Utils.stringTruncation(getPercentSpellPower(spellLevel, caster), 0), ITextComponent.translatable("attribute.irons_spellbooks.spell_power"))
+                new TranslationTextComponent("ui.irons_spellbooks.effect_length", Utils.timeFromTicks(getSpellPower(spellLevel, caster) * 20, 1)),
+                new TranslationTextComponent("attribute.modifier.plus.1", Utils.stringTruncation(getPercentSpeed(spellLevel, caster), 0), new TranslationTextComponent("attribute.name.generic.movement_speed")),
+                new TranslationTextComponent("attribute.modifier.plus.1", Utils.stringTruncation(getPercentAttackDamage(spellLevel, caster), 0), new TranslationTextComponent("attribute.name.generic.attack_damage")),
+                new TranslationTextComponent("attribute.modifier.plus.1", Utils.stringTruncation(getPercentSpellPower(spellLevel, caster), 0), new TranslationTextComponent("attribute.irons_spellbooks.spell_power"))
         );
     }
 

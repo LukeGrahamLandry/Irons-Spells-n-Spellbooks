@@ -28,7 +28,7 @@ public class InstantManaEffect extends CustomDescriptionMobEffect {
         int amp = instance.getAmplifier() + 1;
         int addition = amp * InstantManaEffect.manaPerAmplifier;
         int percent = (int) (amp * InstantManaEffect.manaPerAmplifierPercent * 100);
-        return ITextComponent.translatable("tooltip.irons_spellbooks.instant_mana_description", addition, percent).withStyle(TextFormatting.BLUE);
+        return new TranslationTextComponent("tooltip.irons_spellbooks.instant_mana_description", addition, percent).withStyle(TextFormatting.BLUE);
     }
 
     @Override

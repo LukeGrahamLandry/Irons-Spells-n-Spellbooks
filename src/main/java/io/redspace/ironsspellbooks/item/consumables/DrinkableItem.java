@@ -84,8 +84,8 @@ public class DrinkableItem extends Item {
         super.appendHoverText(pStack, pLevel, pTooltipComponents, pIsAdvanced);
         if(showDesc ){
             pTooltipComponents.add(ITextComponent.empty());
-            pTooltipComponents.add(ITextComponent.translatable("potion.whenDrank").withStyle(TextFormatting.DARK_PURPLE));
-            pTooltipComponents.add(ITextComponent.translatable(this.getDescriptionId() + ".desc").withStyle(TextFormatting.BLUE));
+            pTooltipComponents.add(new TranslationTextComponent("potion.whenDrank").withStyle(TextFormatting.DARK_PURPLE));
+            pTooltipComponents.add(new TranslationTextComponent(this.getDescriptionId() + ".desc").withStyle(TextFormatting.BLUE));
         }
     }
 }

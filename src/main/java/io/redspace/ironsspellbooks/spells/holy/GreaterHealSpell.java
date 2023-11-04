@@ -26,7 +26,7 @@ public class GreaterHealSpell extends AbstractSpell {
     @Override
     public List<IFormattableTextComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
-                ITextComponent.translatable("ui.irons_spellbooks.greater_healing")
+                new TranslationTextComponent("ui.irons_spellbooks.greater_healing")
         );
     }
 

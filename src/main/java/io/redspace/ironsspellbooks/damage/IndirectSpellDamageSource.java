@@ -23,7 +23,7 @@ public class IndirectSpellDamageSource extends IndirectEntityDamageSource implem
     public @NotNull ITextComponent getLocalizedDeathMessage(@NotNull LivingEntity pLivingEntity) {
         String s = "death.attack." + spell.getDeathMessageId();
         ITextComponent component = this.entity != null ? this.getEntity().getDisplayName() : this.getDirectEntity().getDisplayName();
-        return ITextComponent.translatable(s, pLivingEntity.getDisplayName(), component);
+        return new TranslationTextComponent(s, pLivingEntity.getDisplayName(), component);
     }
 
     public IndirectSpellDamageSource setLifestealPercent(float lifesteal) {

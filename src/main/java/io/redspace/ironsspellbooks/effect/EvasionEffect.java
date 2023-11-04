@@ -45,7 +45,7 @@ public class EvasionEffect extends CustomDescriptionMobEffect {
     @Override
     public ITextComponent getDescriptionLine(EffectInstance instance) {
         int amp = instance.getAmplifier() + 1;
-        return ITextComponent.translatable("tooltip.irons_spellbooks.evasion_description", amp).withStyle(TextFormatting.BLUE);
+        return new TranslationTextComponent("tooltip.irons_spellbooks.evasion_description", amp).withStyle(TextFormatting.BLUE);
     }
 
     @Override

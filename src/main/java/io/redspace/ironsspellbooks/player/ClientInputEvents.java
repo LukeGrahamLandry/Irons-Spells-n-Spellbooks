@@ -20,6 +20,7 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.apache.commons.lang3.ArrayUtils;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,7 +60,7 @@ public final class ClientInputEvents {
     }
 
     @SubscribeEvent
-    public static void clientMouseScrolled(InputEvent.MouseScrollingEvent event) {
+    public static void clientMouseScrolled(InputEvent.MouseScrollEvent event) {
         Minecraft minecraft = Minecraft.getInstance();
         PlayerEntity player = minecraft.player;
         if (player == null)
@@ -110,7 +111,7 @@ public final class ClientInputEvents {
     }
 
     @SubscribeEvent
-    public static void onUseInput(InputEvent.InteractionKeyMappingTriggered event) {
+    public static void onUseInput(InputEvent.ClickInputEvent event) {
         //IronsSpellbooks.LOGGER.debug("InteractionKeyMappingTriggered: {}", event.getKeyMapping().getName());
         if (event.isUseItem()) {
             if (ClientSpellCastHelper.shouldSuppressRightClicks()) {
@@ -126,7 +127,7 @@ public final class ClientInputEvents {
     }
 
     @SubscribeEvent
-    public static void onKeyInput(InputEvent.Key event) {
+    public static void onKeyInput(InputEvent.KeyInputEvent event) {
         //IronsSpellbooks.LOGGER.debug("onKeyInput key:{}", event.getKey());
         handleRightClickSuppression(event.getKey(), event.getAction());
 
@@ -141,7 +142,7 @@ public final class ClientInputEvents {
     }
 
     @SubscribeEvent
-    public static void onMouseInput(InputEvent.MouseButton.Pre event) {
+    public static void onMouseInput(InputEvent.RawMouseEvent event) {  // TODO: maybe i want MouseInputEvent instead?
         handleRightClickSuppression(event.getButton(), event.getAction());
     }
 
@@ -152,12 +153,12 @@ public final class ClientInputEvents {
         }
 
         if (button == useKeyId) {
-            if (action == InputMappings.RELEASE) {
+            if (action == GLFW.GLFW_RELEASE) {
                 //IronsSpellbooks.LOGGER.debug("ClientInputEvents.handleRightClickSuppression.1");
                 ClientSpellCastHelper.setSuppressRightClicks(false);
                 isUseKeyDown = false;
                 hasReleasedSinceCasting = true;
-            } else if (action == InputMappings.PRESS) {
+            } else if (action == GLFW.GLFW_PRESS) {
                 //IronsSpellbooks.LOGGER.debug("ClientInputEvents.handleRightClickSuppression.2");
                 isUseKeyDown = true;
             }

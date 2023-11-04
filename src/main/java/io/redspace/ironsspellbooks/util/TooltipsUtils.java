@@ -38,19 +38,19 @@ public class TooltipsUtils {
 //                Component.literal("" + spell.getLevel())).withStyle(spellType.getRarity(spell.getLevel()).getDisplayName().getStyle());
         IFormattableTextComponent levelText = getLevelComponenet(spellData, player);
 
-        var title = ITextComponent.translatable("tooltip.irons_spellbooks.selected_spell",
+        var title = new TranslationTextComponent("tooltip.irons_spellbooks.selected_spell",
                 spell.getDisplayName(),
                 levelText).withStyle(spell.getSchoolType().getDisplayName().getStyle());
         List<IFormattableTextComponent> uniqueInfo = spell.getUniqueInfo(spellData.getLevel(), player);
         IFormattableTextComponent manaCost = getManaCostComponent(spell.getCastType(), spell.getManaCost(spellData.getLevel(), player)).withStyle(TextFormatting.BLUE);
-        var cooldownTime = ITextComponent.translatable("tooltip.irons_spellbooks.cooldown_length_seconds", Utils.timeFromTicks(MagicManager.getEffectiveSpellCooldown(spell, player, castSource), 1)).withStyle(TextFormatting.BLUE);
+        var cooldownTime = new TranslationTextComponent("tooltip.irons_spellbooks.cooldown_length_seconds", Utils.timeFromTicks(MagicManager.getEffectiveSpellCooldown(spell, player, castSource), 1)).withStyle(TextFormatting.BLUE);
 
         List<ITextComponent> lines = new ArrayList<>();
         lines.add(ITextComponent.empty());
         lines.add(title);
-        uniqueInfo.forEach((line) -> lines.add(ITextComponent.literal(" ").append(line.withStyle(TextFormatting.DARK_GREEN))));
+        uniqueInfo.forEach((line) -> lines.add(new StringTextComponent(" ").append(line.withStyle(TextFormatting.DARK_GREEN))));
         if (spell.getCastType() != CastType.INSTANT) {
-            lines.add(ITextComponent.literal(" ").append(getCastTimeComponent(spell.getCastType(), Utils.timeFromTicks(spell.getEffectiveCastTime(spellData.getLevel(), player), 1)).withStyle(TextFormatting.BLUE)));
+            lines.add(new StringTextComponent(" ").append(getCastTimeComponent(spell.getCastType(), Utils.timeFromTicks(spell.getEffectiveCastTime(spellData.getLevel(), player), 1)).withStyle(TextFormatting.BLUE)));
         }
         if (castSource != CastSource.SWORD || ServerConfigs.SWORDS_CONSUME_MANA.get())
             lines.add(manaCost);
@@ -68,17 +68,17 @@ public class TooltipsUtils {
 
         AbstractSpell spell = spellData.getSpell();
         IFormattableTextComponent levelText = getLevelComponenet(spellData, player);
-        var title = ITextComponent.translatable("tooltip.irons_spellbooks.level", levelText).append(" ").append(ITextComponent.translatable("tooltip.irons_spellbooks.rarity", spell.getRarity(spellData.getLevel()).getDisplayName()).withStyle(spell.getRarity(spellData.getLevel()).getDisplayName().getStyle())).withStyle(TextFormatting.GRAY);
+        var title = new TranslationTextComponent("tooltip.irons_spellbooks.level", levelText).append(" ").append(new TranslationTextComponent("tooltip.irons_spellbooks.rarity", spell.getRarity(spellData.getLevel()).getDisplayName()).withStyle(spell.getRarity(spellData.getLevel()).getDisplayName().getStyle())).withStyle(TextFormatting.GRAY);
         List<IFormattableTextComponent> uniqueInfo = spell.getUniqueInfo(spellData.getLevel(), player);
-        var whenInSpellBook = ITextComponent.translatable("tooltip.irons_spellbooks.scroll_tooltip").withStyle(TextFormatting.GRAY);
+        var whenInSpellBook = new TranslationTextComponent("tooltip.irons_spellbooks.scroll_tooltip").withStyle(TextFormatting.GRAY);
         IFormattableTextComponent manaCost = getManaCostComponent(spell.getCastType(), spell.getManaCost(spellData.getLevel(), player)).withStyle(TextFormatting.BLUE);
-        var cooldownTime = ITextComponent.translatable("tooltip.irons_spellbooks.cooldown_length_seconds", Utils.timeFromTicks(MagicManager.getEffectiveSpellCooldown(spell, player, CastSource.SCROLL), 1)).withStyle(TextFormatting.BLUE);
+        var cooldownTime = new TranslationTextComponent("tooltip.irons_spellbooks.cooldown_length_seconds", Utils.timeFromTicks(MagicManager.getEffectiveSpellCooldown(spell, player, CastSource.SCROLL), 1)).withStyle(TextFormatting.BLUE);
 
         List<ITextComponent> lines = new ArrayList<>();
-        lines.add(ITextComponent.literal(" ").append(title));
-        uniqueInfo.forEach((line) -> lines.add(ITextComponent.literal(" ").append(line.withStyle(TextFormatting.DARK_GREEN))));
+        lines.add(new StringTextComponent(" ").append(title));
+        uniqueInfo.forEach((line) -> lines.add(new StringTextComponent(" ").append(line.withStyle(TextFormatting.DARK_GREEN))));
         if (spell.getCastType() != CastType.INSTANT) {
-            lines.add(ITextComponent.literal(" ").append(getCastTimeComponent(spell.getCastType(), Utils.timeFromTicks(spell.getEffectiveCastTime(spellData.getLevel(), player), 1)).withStyle(TextFormatting.BLUE)));
+            lines.add(new StringTextComponent(" ").append(getCastTimeComponent(spell.getCastType(), Utils.timeFromTicks(spell.getEffectiveCastTime(spellData.getLevel(), player), 1)).withStyle(TextFormatting.BLUE)));
         }
         lines.add(ITextComponent.empty());
         lines.add(whenInSpellBook);
@@ -93,34 +93,34 @@ public class TooltipsUtils {
         int levelTotal = spellData.getSpell().getLevel(spellData.getLevel(), caster);
         int diff = levelTotal - spellData.getLevel();
         if (diff > 0) {
-            return ITextComponent.translatable("tooltip.irons_spellbooks.level_plus", levelTotal, diff);
+            return new TranslationTextComponent("tooltip.irons_spellbooks.level_plus", levelTotal, diff);
         } else {
-            return ITextComponent.literal(String.valueOf(levelTotal));
+            return new StringTextComponent(String.valueOf(levelTotal));
         }
     }
 
     public static IFormattableTextComponent getCastTimeComponent(CastType type, String castTime) {
         switch (type) {
             case CONTINUOUS:
-                return ITextComponent.translatable("tooltip.irons_spellbooks.cast_continuous", castTime);
+                return new TranslationTextComponent("tooltip.irons_spellbooks.cast_continuous", castTime);
             case LONG:
-                return ITextComponent.translatable("tooltip.irons_spellbooks.cast_long", castTime);
+                return new TranslationTextComponent("tooltip.irons_spellbooks.cast_long", castTime);
             default:
-                return ITextComponent.translatable("ui.irons_spellbooks.cast_instant");
+                return new TranslationTextComponent("ui.irons_spellbooks.cast_instant");
         }
     }
 
     public static IFormattableTextComponent getManaCostComponent(CastType castType, int manaCost) {
         if (castType == CastType.CONTINUOUS) {
-            return ITextComponent.translatable("tooltip.irons_spellbooks.mana_cost_per_second", manaCost * (20 / MagicManager.CONTINUOUS_CAST_TICK_INTERVAL));
+            return new TranslationTextComponent("tooltip.irons_spellbooks.mana_cost_per_second", manaCost * (20 / MagicManager.CONTINUOUS_CAST_TICK_INTERVAL));
         } else {
-            return ITextComponent.translatable("tooltip.irons_spellbooks.mana_cost", manaCost);
+            return new TranslationTextComponent("tooltip.irons_spellbooks.mana_cost", manaCost);
         }
     }
 
     public static List<IReorderingProcessor> createSpellDescriptionTooltip(AbstractSpell spell, FontRenderer font) {
         IFormattableTextComponent name = spell.getDisplayName();
-        List<IReorderingProcessor> description = font.split(ITextComponent.translatable(String.format("%s.guide", spell.getComponentId())).withStyle(TextFormatting.GRAY), 180);
+        List<IReorderingProcessor> description = font.split(new TranslationTextComponent(String.format("%s.guide", spell.getComponentId())).withStyle(TextFormatting.GRAY), 180);
         ArrayList<IReorderingProcessor> hoverText = new ArrayList<IReorderingProcessor>();
         hoverText.add(IReorderingProcessor.forward(name.getString(), Style.EMPTY.withUnderlined(true)));
         hoverText.addAll(description);

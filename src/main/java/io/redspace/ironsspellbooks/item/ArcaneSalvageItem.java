@@ -14,7 +14,7 @@ import java.util.List;
 import net.minecraft.item.Item.Properties;
 
 public class ArcaneSalvageItem extends Item {
-    private static final ITextComponent description = ITextComponent.translatable("item.irons_spellbooks.arcane_salvage_desc").withStyle(TextFormatting.GRAY);
+    private static final ITextComponent description = new TranslationTextComponent("item.irons_spellbooks.arcane_salvage_desc").withStyle(TextFormatting.GRAY);
     public ArcaneSalvageItem() {
         super(new Properties().tab(SpellbookModCreativeTabs.SPELL_MATERIALS_TAB));
     }

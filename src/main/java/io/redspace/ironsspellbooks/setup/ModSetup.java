@@ -17,7 +17,6 @@ import net.minecraft.item.Items;
 import net.minecraft.block.DispenserBlock;
 import net.minecraft.tileentity.DispenserTileEntity;
 import net.minecraft.block.BlockState;
-import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -68,7 +67,8 @@ public class ModSetup {
                     private ItemStack takeLiquid(IBlockSource p_123447_, ItemStack p_123448_, ItemStack p_123449_) {
                         p_123448_.shrink(1);
                         if (p_123448_.isEmpty()) {
-                            p_123447_.getLevel().gameEvent(null, GameEvent.FLUID_PICKUP, p_123447_.getPos());
+                            // TODO: does this matter?
+                            // p_123447_.getLevel().gameEvent(null, GameEvent.FLUID_PICKUP, p_123447_.getPos());
                             return p_123449_.copy();
                         } else {
                             if (p_123447_.<DispenserTileEntity>getEntity().addItem(p_123449_.copy()) < 0) {

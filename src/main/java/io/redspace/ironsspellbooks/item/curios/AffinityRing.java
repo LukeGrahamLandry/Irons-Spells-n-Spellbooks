@@ -32,16 +32,16 @@ public class AffinityRing extends SimpleDescriptiveCurio {
         AbstractSpell spell = RingData.getRingData(pStack).getSpell();
         if (!spell.equals(SpellRegistry.none())) {
             tooltip.add(ITextComponent.empty());
-            tooltip.add(ITextComponent.translatable("curios.modifiers.ring").withStyle(TextFormatting.GOLD));
-            tooltip.add(ITextComponent.translatable("tooltip.irons_spellbooks.enhance_spell_level", spell.getDisplayName().withStyle(spell.getSchoolType().getDisplayName().getStyle())).withStyle(TextFormatting.YELLOW));
+            tooltip.add(new TranslationTextComponent("curios.modifiers.ring").withStyle(TextFormatting.GOLD));
+            tooltip.add(new TranslationTextComponent("tooltip.irons_spellbooks.enhance_spell_level", spell.getDisplayName().withStyle(spell.getSchoolType().getDisplayName().getStyle())).withStyle(TextFormatting.YELLOW));
         } else {
-            tooltip.add(ITextComponent.translatable("tooltip.irons_spellbooks.empty_affinity_ring").withStyle(TextFormatting.GRAY, TextFormatting.ITALIC));
+            tooltip.add(new TranslationTextComponent("tooltip.irons_spellbooks.empty_affinity_ring").withStyle(TextFormatting.GRAY, TextFormatting.ITALIC));
         }
     }
 
     @Override
     public ITextComponent getName(ItemStack pStack) {
-        return ITextComponent.translatable(this.getDescriptionId(pStack), RingData.getRingData(pStack).getNameForItem());
+        return new TranslationTextComponent(this.getDescriptionId(pStack), RingData.getRingData(pStack).getNameForItem());
     }
 
     @Override

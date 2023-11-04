@@ -26,9 +26,9 @@ public class ChainLightningSpell extends AbstractSpell {
     @Override
     public List<IFormattableTextComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
-                ITextComponent.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(spellLevel, caster), 1)),
-                ITextComponent.translatable("ui.irons_spellbooks.max_victims", getMaxConnections(spellLevel, caster)),
-                ITextComponent.translatable("ui.irons_spellbooks.distance", Utils.stringTruncation(getRange(spellLevel, caster), 1))
+                new TranslationTextComponent("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(spellLevel, caster), 1)),
+                new TranslationTextComponent("ui.irons_spellbooks.max_victims", getMaxConnections(spellLevel, caster)),
+                new TranslationTextComponent("ui.irons_spellbooks.distance", Utils.stringTruncation(getRange(spellLevel, caster), 1))
         );
     }
 

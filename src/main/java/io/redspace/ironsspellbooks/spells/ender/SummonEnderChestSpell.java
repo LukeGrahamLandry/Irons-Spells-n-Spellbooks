@@ -77,7 +77,7 @@ public class SummonEnderChestSpell extends AbstractSpell {
         return Optional.empty();
     }
 
-    private static final ITextComponent CONTAINER_TITLE = ITextComponent.translatable("container.enderchest");
+    private static final ITextComponent CONTAINER_TITLE = new TranslationTextComponent("container.enderchest");
 
     @Override
     public void onCast(World world, int spellLevel, LivingEntity entity, MagicData playerMagicData) {

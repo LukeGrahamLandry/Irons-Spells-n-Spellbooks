@@ -71,16 +71,16 @@ public class JeiPlugin implements IModPlugin {
                             SpellData.setSpellData(scrollStack, spell, spellLevel);
                             list.add(scrollStack);
                         });
-                registration.addIngredientInfo(list, VanillaTypes.ITEM_STACK, ITextComponent.translatable(String.format("%s.guide", spell.getComponentId())));
+                registration.addIngredientInfo(list, VanillaTypes.ITEM_STACK, new TranslationTextComponent(String.format("%s.guide", spell.getComponentId())));
             }
         });
-        registration.addItemStackInfo(new ItemStack(ItemRegistry.LIGHTNING_BOTTLE.get()), ITextComponent.translatable("item.irons_spellbooks.lightning_bottle.guide"));
-        registration.addItemStackInfo(new ItemStack(ItemRegistry.BLOOD_VIAL.get()), ITextComponent.translatable("item.irons_spellbooks.blood_vial.guide"));
-        registration.addItemStackInfo(new ItemStack(ItemRegistry.FROZEN_BONE_SHARD.get()), ITextComponent.translatable("item.irons_spellbooks.frozen_bone.guide"));
-        registration.addItemStackInfo(new ItemStack(ItemRegistry.HOGSKIN.get()), ITextComponent.translatable("item.irons_spellbooks.hogskin.guide"));
-        registration.addItemStackInfo(new ItemStack(ItemRegistry.DRAGONSKIN.get()), ITextComponent.translatable("item.irons_spellbooks.dragonskin.guide"));
-        registration.addItemStackInfo(new ItemStack(ItemRegistry.RUINED_BOOK.get()), ITextComponent.translatable("item.irons_spellbooks.ruined_book.guide"));
-        registration.addItemStackInfo(new ItemStack(ItemRegistry.CINDER_ESSENCE.get()), ITextComponent.translatable("item.irons_spellbooks.cinder_essence.guide"));
+        registration.addItemStackInfo(new ItemStack(ItemRegistry.LIGHTNING_BOTTLE.get()), new TranslationTextComponent("item.irons_spellbooks.lightning_bottle.guide"));
+        registration.addItemStackInfo(new ItemStack(ItemRegistry.BLOOD_VIAL.get()), new TranslationTextComponent("item.irons_spellbooks.blood_vial.guide"));
+        registration.addItemStackInfo(new ItemStack(ItemRegistry.FROZEN_BONE_SHARD.get()), new TranslationTextComponent("item.irons_spellbooks.frozen_bone.guide"));
+        registration.addItemStackInfo(new ItemStack(ItemRegistry.HOGSKIN.get()), new TranslationTextComponent("item.irons_spellbooks.hogskin.guide"));
+        registration.addItemStackInfo(new ItemStack(ItemRegistry.DRAGONSKIN.get()), new TranslationTextComponent("item.irons_spellbooks.dragonskin.guide"));
+        registration.addItemStackInfo(new ItemStack(ItemRegistry.RUINED_BOOK.get()), new TranslationTextComponent("item.irons_spellbooks.ruined_book.guide"));
+        registration.addItemStackInfo(new ItemStack(ItemRegistry.CINDER_ESSENCE.get()), new TranslationTextComponent("item.irons_spellbooks.cinder_essence.guide"));
     }
 
 

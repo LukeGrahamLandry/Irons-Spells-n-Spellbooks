@@ -33,6 +33,7 @@ import net.minecraft.block.Blocks;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 
+import java.util.Random;
 import java.util.UUID;
 
 import static io.redspace.ironsspellbooks.config.ClientConfigs.SHOW_FIRST_PERSON_ARMS;
@@ -105,11 +106,11 @@ public class ClientSpellCastHelper {
     public static void handleClientboundOakskinParticles(Vector3d pos) {
         ClientPlayerEntity player = Minecraft.getInstance().player;
 
-        RandomSource randomsource = player.getRandom();
+        Random randomsource = player.getRandom();
         for (int i = 0; i < 50; ++i) {
-            double d0 = MathHelper.randomBetween(randomsource, -0.5F, 0.5F);
-            double d1 = MathHelper.randomBetween(randomsource, 0F, 2f);
-            double d2 = MathHelper.randomBetween(randomsource, -0.5F, 0.5F);
+            double d0 = Utils.randomBetween(randomsource, -0.5F, 0.5F);
+            double d1 = Utils.randomBetween(randomsource, 0F, 2f);
+            double d2 = Utils.randomBetween(randomsource, -0.5F, 0.5F);
             IParticleData particleType = randomsource.nextFloat() < .1f ? ParticleHelper.FIREFLY : new BlockParticleData(ParticleTypes.BLOCK, Blocks.OAK_WOOD.defaultBlockState());
             player.level.addParticle(particleType, pos.x + d0, pos.y + d1, pos.z + d2, d0 * .05, 0.05, d2 * .05);
         }
@@ -126,7 +127,7 @@ public class ClientSpellCastHelper {
             float xDeg = 360f / xSteps * Utils.DEG_TO_RAD;
             for (int x = 0; x < xSteps; x++) {
                 for (int y = 0; y < ySteps; y++) {
-                    Vector3d offset = new Vector3d(0, 0, CloudOfRegenerationSpell.radius).yRot(y * yDeg).xRot(x * xDeg).zRot(-MathHelper.PI / 2).multiply(1, .85f, 1);
+                    Vector3d offset = new Vector3d(0, 0, CloudOfRegenerationSpell.radius).yRot(y * yDeg).xRot(x * xDeg).zRot((float) (-Math.PI / 2)).multiply(1, .85f, 1);
                     level.addParticle(RedstoneParticleData.REDSTONE, pos.x + offset.x, pos.y + offset.y, pos.z + offset.z, 0, 0, 0);
                 }
             }

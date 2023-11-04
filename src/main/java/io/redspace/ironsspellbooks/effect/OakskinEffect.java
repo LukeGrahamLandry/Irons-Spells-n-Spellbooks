@@ -30,7 +30,7 @@ public class OakskinEffect extends CustomDescriptionMobEffect {
     public ITextComponent getDescriptionLine(EffectInstance instance) {
         int amp = instance.getAmplifier() + 1;
         float reductionAmount = getReductionAmount(amp);
-        return ITextComponent.translatable("tooltip.irons_spellbooks.oakskin_description", (int) (reductionAmount * 100)).withStyle(TextFormatting.BLUE);
+        return new TranslationTextComponent("tooltip.irons_spellbooks.oakskin_description", (int) (reductionAmount * 100)).withStyle(TextFormatting.BLUE);
     }
 
     @SubscribeEvent

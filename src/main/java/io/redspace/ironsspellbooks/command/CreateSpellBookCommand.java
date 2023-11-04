@@ -14,7 +14,7 @@ import net.minecraft.item.ItemStack;
 
 public class CreateSpellBookCommand {
 
-    private static final SimpleCommandExceptionType ERROR_FAILED = new SimpleCommandExceptionType(ITextComponent.translatable("commands.irons_spellbooks.create_spell_book.failed"));
+    private static final SimpleCommandExceptionType ERROR_FAILED = new SimpleCommandExceptionType(new TranslationTextComponent("commands.irons_spellbooks.create_spell_book.failed"));
 
     public static void register(CommandDispatcher<CommandSource> pDispatcher) {
         pDispatcher.register(Commands.literal("createSpellBook").requires((p_138819_) -> {

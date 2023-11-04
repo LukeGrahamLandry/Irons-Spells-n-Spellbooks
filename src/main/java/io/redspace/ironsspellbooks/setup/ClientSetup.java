@@ -66,6 +66,7 @@ import io.redspace.ironsspellbooks.render.*;
 import io.redspace.ironsspellbooks.compat.tetra.TetraProxy;
 import io.redspace.ironsspellbooks.util.AbstractClientPlayerMixinHelper;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.particle.ParticleManager;
 import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.client.model.geom.LayerDefinitions;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
@@ -80,8 +81,10 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.ModelEvent;
+import net.minecraftforge.client.event.ParticleFactoryRegisterEvent;
 import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import software.bernie.geckolib3.renderers.geo.GeoArmorRenderer;
@@ -126,8 +129,8 @@ public class ClientSetup {
 
     @SubscribeEvent
     public static void replaceRenderers(EntityRenderersEvent.RegisterRenderers event) {
-        event.registerEntityRenderer(EntityType.SMALL_FIREBALL, (context) -> new ReplacedFireballRenderer(context, 0.75f, .75f));
-        event.registerEntityRenderer(EntityType.FIREBALL, (context) -> new ReplacedFireballRenderer(context, 1.25f, 3f));
+        RenderingRegistry.registerEntityRenderingHandler(EntityType.SMALL_FIREBALL, (context) -> new ReplacedFireballRenderer(context, 0.75f, .75f));
+        RenderingRegistry.registerEntityRenderingHandler(EntityType.FIREBALL, (context) -> new ReplacedFireballRenderer(context, 1.25f, 3f));
     }
 
     @SubscribeEvent
@@ -191,66 +194,66 @@ public class ClientSetup {
     }
 
     @SubscribeEvent
-    public static void rendererRegister(EntityRenderersEvent.RegisterRenderers event) {
-        event.registerEntityRenderer(EntityRegistry.MAGIC_MISSILE_PROJECTILE.get(), MagicMissileRenderer::new);
-        event.registerEntityRenderer(EntityRegistry.CONE_OF_COLD_PROJECTILE.get(), ConeOfColdRenderer::new);
-        event.registerEntityRenderer(EntityRegistry.BLOOD_SLASH_PROJECTILE.get(), BloodSlashRenderer::new);
-        event.registerEntityRenderer(EntityRegistry.ELECTROCUTE_PROJECTILE.get(), ElectrocuteRenderer::new);
-        event.registerEntityRenderer(EntityRegistry.FIREBOLT_PROJECTILE.get(), FireboltRenderer::new);
-        event.registerEntityRenderer(EntityRegistry.ICICLE_PROJECTILE.get(), IcicleRenderer::new);
-        event.registerEntityRenderer(EntityRegistry.FIRE_BREATH_PROJECTILE.get(), NoopRenderer::new);
-        event.registerEntityRenderer(EntityRegistry.POISON_BREATH_PROJECTILE.get(), NoopRenderer::new);
-        event.registerEntityRenderer(EntityRegistry.DRAGON_BREATH_PROJECTILE.get(), NoopRenderer::new);
-        event.registerEntityRenderer(EntityRegistry.DEBUG_WIZARD.get(), (renderManager) -> new DebugWizardRenderer(renderManager));
-        event.registerEntityRenderer(EntityRegistry.PYROMANCER.get(), PyromancerRenderer::new);
-        event.registerEntityRenderer(EntityRegistry.NECROMANCER.get(), NecromancerRenderer::new);
-        event.registerEntityRenderer(EntityRegistry.SPECTRAL_STEED.get(), SpectralSteedRenderer::new);
-        event.registerEntityRenderer(EntityRegistry.SHIELD_ENTITY.get(), ShieldRenderer::new);
-        event.registerEntityRenderer(EntityRegistry.WALL_OF_FIRE_ENTITY.get(), NoopRenderer::new);
-        event.registerEntityRenderer(EntityRegistry.WISP.get(), WispRenderer::new);
-        event.registerEntityRenderer(EntityRegistry.SPECTRAL_HAMMER.get(), SpectralHammerRenderer::new);
-        event.registerEntityRenderer(EntityRegistry.SUMMONED_VEX.get(), VexRenderer::new);
-        event.registerEntityRenderer(EntityRegistry.SUMMONED_ZOMBIE.get(), SummonedZombieMultiRenderer::new);
-        event.registerEntityRenderer(EntityRegistry.SUMMONED_SKELETON.get(), SummonedSkeletonMultiRenderer::new);
-        event.registerEntityRenderer(EntityRegistry.LIGHTNING_LANCE_PROJECTILE.get(), LightningLanceRenderer::new);
-        event.registerEntityRenderer(EntityRegistry.WITHER_SKULL_PROJECTILE.get(), WitherSkullRenderer::new);
-        event.registerEntityRenderer(EntityRegistry.MAGIC_ARROW_PROJECTILE.get(), MagicArrowRenderer::new);
-        event.registerEntityRenderer(EntityRegistry.CREEPER_HEAD_PROJECTILE.get(), CreeperHeadRenderer::new);
-        event.registerEntityRenderer(EntityRegistry.FROZEN_HUMANOID.get(), FrozenHumanoidRenderer::new);
-        event.registerEntityRenderer(EntityRegistry.SMALL_FIREBALL_PROJECTILE.get(), (context) -> new FireballRenderer(context, 0.75f));
-        event.registerEntityRenderer(EntityRegistry.COMET.get(), (context) -> new CometRenderer(context, 0.75f));
-        event.registerEntityRenderer(EntityRegistry.MAGIC_FIREBALL.get(), (context) -> new FireballRenderer(context, 1.25f));
-        event.registerEntityRenderer(EntityRegistry.SUMMONED_POLAR_BEAR.get(), PolarBearRenderer::new);
-        event.registerEntityRenderer(EntityRegistry.DEAD_KING.get(), DeadKingRenderer::new);
-        event.registerEntityRenderer(EntityRegistry.DEAD_KING_CORPSE.get(), DeadKingRenderer::new);
-        event.registerEntityRenderer(EntityRegistry.ARCHEVOKER.get(), ArchevokerRenderer::new);
-        event.registerEntityRenderer(EntityRegistry.KEEPER.get(), KeeperRenderer::new);
-        event.registerEntityRenderer(EntityRegistry.VOID_TENTACLE.get(), VoidTentacleRenderer::new);
-        event.registerEntityRenderer(EntityRegistry.ROOT.get(), RootRenderer::new);
-        event.registerEntityRenderer(EntityRegistry.ICE_BLOCK_PROJECTILE.get(), IceBlockRenderer::new);
-        event.registerEntityRenderer(EntityRegistry.CRYOMANCER.get(), CryomancerRenderer::new);
-        event.registerEntityRenderer(EntityRegistry.POISON_CLOUD.get(), NoopRenderer::new);
-        event.registerEntityRenderer(EntityRegistry.SUNBEAM.get(), NoopRenderer::new);
-        event.registerEntityRenderer(EntityRegistry.DRAGON_BREATH_POOL.get(), NoopRenderer::new);
-        event.registerEntityRenderer(EntityRegistry.POISON_ARROW.get(), PoisonArrowRenderer::new);
-        event.registerEntityRenderer(EntityRegistry.POISON_SPLASH.get(), NoopRenderer::new);
-//        event.registerEntityRenderer(EntityRegistry.SUMMONED_FROG.get(), FrogRenderer::new);
-        event.registerEntityRenderer(EntityRegistry.ACID_ORB.get(), AcidOrbRenderer::new);
-        event.registerEntityRenderer(EntityRegistry.BLACK_HOLE.get(), BlackHoleRenderer::new);
-        event.registerEntityRenderer(EntityRegistry.BLOOD_NEEDLE.get(), BloodNeedleRenderer::new);
-        event.registerEntityRenderer(EntityRegistry.FIRE_FIELD.get(), NoopRenderer::new);
-        event.registerEntityRenderer(EntityRegistry.FIRE_BOMB.get(), MagmaBallRenderer::new);
-        event.registerEntityRenderer(EntityRegistry.TARGET_AREA_ENTITY.get(), TargetAreaRenderer::new);
-        event.registerEntityRenderer(EntityRegistry.HEALING_AOE.get(), NoopRenderer::new);
-        event.registerEntityRenderer(EntityRegistry.PRIEST.get(), PriestRenderer::new);
-        event.registerEntityRenderer(EntityRegistry.GUIDING_BOLT.get(), GuidingBoltRenderer::new);
-        event.registerEntityRenderer(EntityRegistry.GUST_COLLIDER.get(), GustRenderer::new);
-        event.registerEntityRenderer(EntityRegistry.CHAIN_LIGHTNING.get(), NoopRenderer::new);
-        event.registerEntityRenderer(EntityRegistry.DEVOUR_JAW.get(), DevourJawRenderer::new);
-        event.registerEntityRenderer(EntityRegistry.FIREFLY_SWARM.get(), NoopRenderer::new);
-        event.registerEntityRenderer(EntityRegistry.EARTHQUAKE_AOE.get(), NoopRenderer::new);
-        event.registerEntityRenderer(EntityRegistry.FALLING_BLOCK.get(), VisualFallingBlockRenderer::new);
-        event.registerEntityRenderer(EntityRegistry.RAY_OF_FROST_VISUAL_ENTITY.get(), RayOfFrostRenderer::new);
+    public static void rendererRegister(FMLClientSetupEvent event) {
+        RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.MAGIC_MISSILE_PROJECTILE.get(), MagicMissileRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.CONE_OF_COLD_PROJECTILE.get(), ConeOfColdRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.BLOOD_SLASH_PROJECTILE.get(), BloodSlashRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.ELECTROCUTE_PROJECTILE.get(), ElectrocuteRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.FIREBOLT_PROJECTILE.get(), FireboltRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.ICICLE_PROJECTILE.get(), IcicleRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.FIRE_BREATH_PROJECTILE.get(), NoopRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.POISON_BREATH_PROJECTILE.get(), NoopRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.DRAGON_BREATH_PROJECTILE.get(), NoopRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.DEBUG_WIZARD.get(), (renderManager) -> new DebugWizardRenderer(renderManager));
+        RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.PYROMANCER.get(), PyromancerRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.NECROMANCER.get(), NecromancerRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.SPECTRAL_STEED.get(), SpectralSteedRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.SHIELD_ENTITY.get(), ShieldRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.WALL_OF_FIRE_ENTITY.get(), NoopRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.WISP.get(), WispRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.SPECTRAL_HAMMER.get(), SpectralHammerRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.SUMMONED_VEX.get(), VexRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.SUMMONED_ZOMBIE.get(), SummonedZombieMultiRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.SUMMONED_SKELETON.get(), SummonedSkeletonMultiRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.LIGHTNING_LANCE_PROJECTILE.get(), LightningLanceRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.WITHER_SKULL_PROJECTILE.get(), WitherSkullRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.MAGIC_ARROW_PROJECTILE.get(), MagicArrowRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.CREEPER_HEAD_PROJECTILE.get(), CreeperHeadRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.FROZEN_HUMANOID.get(), FrozenHumanoidRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.SMALL_FIREBALL_PROJECTILE.get(), (context) -> new FireballRenderer(context, 0.75f));
+        RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.COMET.get(), (context) -> new CometRenderer(context, 0.75f));
+        RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.MAGIC_FIREBALL.get(), (context) -> new FireballRenderer(context, 1.25f));
+        RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.SUMMONED_POLAR_BEAR.get(), PolarBearRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.DEAD_KING.get(), DeadKingRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.DEAD_KING_CORPSE.get(), DeadKingRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.ARCHEVOKER.get(), ArchevokerRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.KEEPER.get(), KeeperRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.VOID_TENTACLE.get(), VoidTentacleRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.ROOT.get(), RootRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.ICE_BLOCK_PROJECTILE.get(), IceBlockRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.CRYOMANCER.get(), CryomancerRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.POISON_CLOUD.get(), NoopRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.SUNBEAM.get(), NoopRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.DRAGON_BREATH_POOL.get(), NoopRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.POISON_ARROW.get(), PoisonArrowRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.POISON_SPLASH.get(), NoopRenderer::new);
+//        RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.SUMMONED_FROG.get(), FrogRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.ACID_ORB.get(), AcidOrbRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.BLACK_HOLE.get(), BlackHoleRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.BLOOD_NEEDLE.get(), BloodNeedleRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.FIRE_FIELD.get(), NoopRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.FIRE_BOMB.get(), MagmaBallRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.TARGET_AREA_ENTITY.get(), TargetAreaRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.HEALING_AOE.get(), NoopRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.PRIEST.get(), PriestRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.GUIDING_BOLT.get(), GuidingBoltRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.GUST_COLLIDER.get(), GustRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.CHAIN_LIGHTNING.get(), NoopRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.DEVOUR_JAW.get(), DevourJawRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.FIREFLY_SWARM.get(), NoopRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.EARTHQUAKE_AOE.get(), NoopRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.FALLING_BLOCK.get(), VisualFallingBlockRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.RAY_OF_FROST_VISUAL_ENTITY.get(), RayOfFrostRenderer::new);
 
         event.registerBlockEntityRenderer(BlockRegistry.SCROLL_FORGE_TILE.get(), ScrollForgeRenderer::new);
         event.registerBlockEntityRenderer(BlockRegistry.PEDESTAL_TILE.get(), PedestalRenderer::new);
@@ -258,22 +261,23 @@ public class ClientSetup {
     }
 
     @SubscribeEvent
-    public static void registerParticles(RegisterParticleProvidersEvent event) {
-        event.register(ParticleRegistry.WISP_PARTICLE.get(), WispParticle.Provider::new);
-        event.register(ParticleRegistry.BLOOD_PARTICLE.get(), BloodParticle.Provider::new);
-        event.register(ParticleRegistry.BLOOD_GROUND_PARTICLE.get(), BloodGroundParticle.Provider::new);
-        event.register(ParticleRegistry.SNOWFLAKE_PARTICLE.get(), SnowflakeParticle.Provider::new);
-        event.register(ParticleRegistry.ELECTRICITY_PARTICLE.get(), ElectricityParticle.Provider::new);
-        event.register(ParticleRegistry.UNSTABLE_ENDER_PARTICLE.get(), UnstableEnderParticle.Provider::new);
-        event.register(ParticleRegistry.DRAGON_FIRE_PARTICLE.get(), DragonFireParticle.Provider::new);
-        event.register(ParticleRegistry.FIRE_PARTICLE.get(), FireParticle.Provider::new);
-        event.register(ParticleRegistry.EMBER_PARTICLE.get(), EmberParticle.Provider::new);
-        event.register(ParticleRegistry.SIPHON_PARTICLE.get(), SiphonParticle.Provider::new);
-        event.register(ParticleRegistry.FOG_PARTICLE.get(), FogParticle.Provider::new);
-        event.register(ParticleRegistry.ACID_PARTICLE.get(), AcidParticle.Provider::new);
-        event.register(ParticleRegistry.ACID_BUBBLE_PARTICLE.get(), AcidBubbleParticle.Provider::new);
-        event.register(ParticleRegistry.ZAP_PARTICLE.get(), ZapParticle.Provider::new);
-        event.register(ParticleRegistry.FIREFLY_PARTICLE.get(), FireflyParticle.Provider::new);
+    public static void registerParticles(ParticleFactoryRegisterEvent event) {
+        ParticleManager particles = Minecraft.getInstance().particleEngine;
+        particles.register(ParticleRegistry.WISP_PARTICLE.get(), WispParticle.Provider::new);
+        particles.register(ParticleRegistry.BLOOD_PARTICLE.get(), BloodParticle.Provider::new);
+        particles.register(ParticleRegistry.BLOOD_GROUND_PARTICLE.get(), BloodGroundParticle.Provider::new);
+        particles.register(ParticleRegistry.SNOWFLAKE_PARTICLE.get(), SnowflakeParticle.Provider::new);
+        particles.register(ParticleRegistry.ELECTRICITY_PARTICLE.get(), ElectricityParticle.Provider::new);
+        particles.register(ParticleRegistry.UNSTABLE_ENDER_PARTICLE.get(), UnstableEnderParticle.Provider::new);
+        particles.register(ParticleRegistry.DRAGON_FIRE_PARTICLE.get(), DragonFireParticle.Provider::new);
+        particles.register(ParticleRegistry.FIRE_PARTICLE.get(), FireParticle.Provider::new);
+        particles.register(ParticleRegistry.EMBER_PARTICLE.get(), EmberParticle.Provider::new);
+        particles.register(ParticleRegistry.SIPHON_PARTICLE.get(), SiphonParticle.Provider::new);
+        particles.register(ParticleRegistry.FOG_PARTICLE.get(), FogParticle.Provider::new);
+        particles.register(ParticleRegistry.ACID_PARTICLE.get(), AcidParticle.Provider::new);
+        particles.register(ParticleRegistry.ACID_BUBBLE_PARTICLE.get(), AcidBubbleParticle.Provider::new);
+        particles.register(ParticleRegistry.ZAP_PARTICLE.get(), ZapParticle.Provider::new);
+        particles.register(ParticleRegistry.FIREFLY_PARTICLE.get(), FireflyParticle.Provider::new);
     }
 
     @SubscribeEvent

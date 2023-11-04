@@ -27,7 +27,7 @@ import java.util.List;
 import net.minecraft.item.Item.Properties;
 
 public class WaywardCompass extends Item {
-    private static final ITextComponent description = ITextComponent.translatable("item.irons_spellbooks.wayward_compass_desc").withStyle(TextFormatting.DARK_AQUA);
+    private static final ITextComponent description = new TranslationTextComponent("item.irons_spellbooks.wayward_compass_desc").withStyle(TextFormatting.DARK_AQUA);
     public WaywardCompass() {
         super(new Properties().tab(SpellbookModCreativeTabs.SPELL_EQUIPMENT_TAB));
     }
@@ -85,7 +85,7 @@ public class WaywardCompass extends Item {
         super.appendHoverText(pStack, pLevel, pTooltipComponents, pIsAdvanced);
         pTooltipComponents.add(description);
         if (missingWarning(pStack)) {
-            pTooltipComponents.add(ITextComponent.translatable("item.irons_spellbooks.wayward_compass.error", Minecraft.getInstance().options.keyUse.getTranslatedKeyMessage()).withStyle(TextFormatting.RED));
+            pTooltipComponents.add(new TranslationTextComponent("item.irons_spellbooks.wayward_compass.error", Minecraft.getInstance().options.keyUse.getTranslatedKeyMessage()).withStyle(TextFormatting.RED));
         }
     }
 }

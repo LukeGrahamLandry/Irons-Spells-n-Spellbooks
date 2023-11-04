@@ -23,7 +23,7 @@ public class SpellDamageSource extends EntityDamageSource implements ISpellDamag
     public @NotNull ITextComponent getLocalizedDeathMessage(@NotNull LivingEntity pLivingEntity) {
         String s = "death.attack." + spell.getDeathMessageId();
         ITextComponent component = this.entity.getDisplayName();
-        return ITextComponent.translatable(s, pLivingEntity.getDisplayName(), component);
+        return new TranslationTextComponent(s, pLivingEntity.getDisplayName(), component);
     }
 
     public SpellDamageSource setLifestealPercent(float lifesteal) {

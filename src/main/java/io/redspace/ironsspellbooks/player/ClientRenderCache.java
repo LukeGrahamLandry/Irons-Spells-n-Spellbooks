@@ -2,8 +2,8 @@ package io.redspace.ironsspellbooks.player;
 
 import io.redspace.ironsspellbooks.capabilities.spellbook.SpellBookData;
 import net.minecraft.util.math.vector.Vector2f;
-import org.apache.commons.compress.utils.Lists;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ClientRenderCache {
@@ -11,7 +11,7 @@ public class ClientRenderCache {
     /**
      * SPELL BAR RENDER CACHING
      *************************/
-    public static List<Vector2f> relativeSpellBarSlotLocations = Lists.newArrayList();
+    public static List<Vector2f> relativeSpellBarSlotLocations = new ArrayList<>();
 
     public static void generateRelativeLocations(SpellBookData spellBookData, int boxSize, int spriteSize) {
         relativeSpellBarSlotLocations.clear();
@@ -40,7 +40,7 @@ public class ClientRenderCache {
             for (int column = 0; column < display[row].length; column++) {
                 int offset = -rowWidth[row] / 2;
                 Vector2f location = new Vector2f(offset + column * boxSize, (row) * boxSize - (overallHeight / 2));
-                location.add(-spriteSize / 2);
+                location = new Vector2f((float) (location.x - spriteSize / 2.0), (float) (location.y - spriteSize / 2.0));
                 relativeSpellBarSlotLocations.add(location);
             }
         }

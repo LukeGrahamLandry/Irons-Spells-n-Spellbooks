@@ -22,7 +22,7 @@ import java.util.List;
 import net.minecraft.item.Item.Properties;
 
 public class AntiquatedCompass extends Item {
-    private static final ITextComponent description = ITextComponent.translatable("item.irons_spellbooks.antiquated_compass_desc").withStyle(Style.EMPTY.withColor(0x873200));
+    private static final ITextComponent description = new TranslationTextComponent("item.irons_spellbooks.antiquated_compass_desc").withStyle(Style.EMPTY.withColor(0x873200));
     public AntiquatedCompass() {
         super(new Properties().tab(SpellbookModCreativeTabs.SPELL_EQUIPMENT_TAB));
     }

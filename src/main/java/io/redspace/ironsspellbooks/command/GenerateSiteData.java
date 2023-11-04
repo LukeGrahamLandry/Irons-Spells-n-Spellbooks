@@ -37,7 +37,7 @@ import net.minecraft.item.crafting.SmithingRecipe;
 
 public class GenerateSiteData {
 
-    private static final SimpleCommandExceptionType ERROR_FAILED = new SimpleCommandExceptionType(ITextComponent.translatable("commands.irons_spellbooks.generate_recipe_data.failed"));
+    private static final SimpleCommandExceptionType ERROR_FAILED = new SimpleCommandExceptionType(new TranslationTextComponent("commands.irons_spellbooks.generate_recipe_data.failed"));
 
     private static final String RECIPE_DATA_TEMPLATE = """
             - id: "%s"
@@ -420,7 +420,7 @@ public class GenerateSiteData {
                                 handleCapitalization(spellType.getCastType().name()),
                                 handleCapitalization(spellType.getRarity(spellMin).name()),
                                 handleCapitalization(spellType.getRarity(spellMax).name()),
-                                ITextComponent.translatable(String.format("%s.guide", spellType.getComponentId())).getString(),
+                                new TranslationTextComponent(String.format("%s.guide", spellType.getComponentId())).getString(),
                                 u1,
                                 u2,
                                 u3,

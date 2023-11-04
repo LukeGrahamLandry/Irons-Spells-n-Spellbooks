@@ -18,6 +18,7 @@ import io.redspace.ironsspellbooks.util.TooltipsUtils;
 import io.redspace.ironsspellbooks.api.util.Utils;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.model.EntityModel;
@@ -29,6 +30,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionUtils;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.event.TickEvent;
@@ -139,9 +141,9 @@ public class ClientPlayerEvents {
             if (!(stack.getItem() instanceof Scroll)) {
                 List<ITextComponent> additionalLines = TooltipsUtils.formatActiveSpellTooltip(stack, CastSource.SWORD, player);
                 //Add header to sword tooltip
-                additionalLines.add(1, ITextComponent.translatable("tooltip.irons_spellbooks.imbued_tooltip").withStyle(TextFormatting.GRAY));
+                additionalLines.add(1, new TranslationTextComponent("tooltip.irons_spellbooks.imbued_tooltip").withStyle(TextFormatting.GRAY));
                 //Indent the title because we have an additional header
-                additionalLines.set(2, ITextComponent.literal(" ").append(additionalLines.get(2)));
+                additionalLines.set(2, new StringTextComponent(" ").append(additionalLines.get(2)));
                 //Make room for the stuff the advanced tooltips add to the tooltip
                 if (event.getFlags().isAdvanced())
                     event.getToolTip().addAll(event.getToolTip().size() - 2, additionalLines);

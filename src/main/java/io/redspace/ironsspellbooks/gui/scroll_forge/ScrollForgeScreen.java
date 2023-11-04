@@ -253,7 +253,7 @@ public class ScrollForgeScreen extends ContainerScreen<ScrollForgeMenu> {
 
         List<IReorderingProcessor> getHoverText() {
             if (!this.button.active) {
-                return List.of(IReorderingProcessor.forward(ITextComponent.translatable("ui.irons_spellbooks.ink_rarity_error").getString(), Style.EMPTY));
+                return List.of(IReorderingProcessor.forward(new TranslationTextComponent("ui.irons_spellbooks.ink_rarity_error").getString(), Style.EMPTY));
             } else {
                 return TooltipsUtils.createSpellDescriptionTooltip(this.spell, font);
             }

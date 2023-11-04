@@ -108,7 +108,7 @@ public abstract class AbstractSpell {
     }
 
     public IFormattableTextComponent getDisplayName() {
-        return ITextComponent.translatable(getComponentId());
+        return new TranslationTextComponent(getComponentId());
     }
 
     public String getComponentId() {
@@ -253,12 +253,12 @@ public abstract class AbstractSpell {
             boolean isSpellOnCooldown = playerMagicData.getPlayerCooldowns().isOnCooldown(this);
 
             if ((castSource == CastSource.SPELLBOOK || castSource == CastSource.SWORD) && isSpellOnCooldown) {
-                serverPlayer.connection.send(new ClientboundSetActionBarTextPacket(ITextComponent.translatable("ui.irons_spellbooks.cast_error_cooldown", getDisplayName()).withStyle(TextFormatting.RED)));
+                serverPlayer.connection.send(new ClientboundSetActionBarTextPacket(new TranslationTextComponent("ui.irons_spellbooks.cast_error_cooldown", getDisplayName()).withStyle(TextFormatting.RED)));
                 return false;
             }
 
             if (castSource.consumesMana() && !hasEnoughMana) {
-                serverPlayer.connection.send(new ClientboundSetActionBarTextPacket(ITextComponent.translatable("ui.irons_spellbooks.cast_error_mana", getDisplayName()).withStyle(TextFormatting.RED)));
+                serverPlayer.connection.send(new ClientboundSetActionBarTextPacket(new TranslationTextComponent("ui.irons_spellbooks.cast_error_mana", getDisplayName()).withStyle(TextFormatting.RED)));
                 return false;
             }
 

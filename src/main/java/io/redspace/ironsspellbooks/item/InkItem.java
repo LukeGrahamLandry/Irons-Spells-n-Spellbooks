@@ -27,6 +27,6 @@ public class InkItem extends Item {
     @Override
     public void appendHoverText(ItemStack pStack, @Nullable World pLevel, List<ITextComponent> lines, ITooltipFlag pIsAdvanced) {
         super.appendHoverText(pStack, pLevel, lines, pIsAdvanced);
-        lines.add(ITextComponent.translatable("tooltip.irons_spellbooks.ink_tooltip", rarity.getDisplayName()).withStyle(TextFormatting.GRAY));
+        lines.add(new TranslationTextComponent("tooltip.irons_spellbooks.ink_tooltip", rarity.getDisplayName()).withStyle(TextFormatting.GRAY));
     }
 }

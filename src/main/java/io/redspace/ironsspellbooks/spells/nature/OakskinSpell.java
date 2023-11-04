@@ -37,8 +37,8 @@ public class OakskinSpell extends AbstractSpell {
     @Override
     public List<IFormattableTextComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
-                ITextComponent.translatable("ui.irons_spellbooks.damage_reduction", Utils.stringTruncation(getPercentDamage(spellLevel, caster), 0)),
-                ITextComponent.translatable("ui.irons_spellbooks.effect_length", Utils.timeFromTicks(getSpellPower(spellLevel, caster) * 20, 1))
+                new TranslationTextComponent("ui.irons_spellbooks.damage_reduction", Utils.stringTruncation(getPercentDamage(spellLevel, caster), 0)),
+                new TranslationTextComponent("ui.irons_spellbooks.effect_length", Utils.timeFromTicks(getSpellPower(spellLevel, caster) * 20, 1))
         );
     }
 

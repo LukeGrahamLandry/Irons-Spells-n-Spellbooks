@@ -16,8 +16,8 @@ import net.minecraft.util.text.ITextComponent;
 
 public class CreateDebugWizardCommand {
 
-    private static final SimpleCommandExceptionType ERROR_FAILED = new SimpleCommandExceptionType(ITextComponent.translatable("commands.irons_spellbooks.create_debug_wizard.failed"));
-    private static final SimpleCommandExceptionType ERROR_FAILED_MAX_LEVEL = new SimpleCommandExceptionType(ITextComponent.translatable("commands.irons_spellbooks.create_debug_wizard.failed_max_level"));
+    private static final SimpleCommandExceptionType ERROR_FAILED = new SimpleCommandExceptionType(new TranslationTextComponent("commands.irons_spellbooks.create_debug_wizard.failed"));
+    private static final SimpleCommandExceptionType ERROR_FAILED_MAX_LEVEL = new SimpleCommandExceptionType(new TranslationTextComponent("commands.irons_spellbooks.create_debug_wizard.failed_max_level"));
 
     public static void register(CommandDispatcher<CommandSource> pDispatcher) {
         pDispatcher.register(Commands.literal("createDebugWizard").requires((commandSourceStack) -> {
@@ -44,7 +44,7 @@ public class CreateDebugWizardCommand {
         AbstractSpell spell = SpellRegistry.getSpell(spellId);
 
         if (spellLevel > spell.getMaxLevel()) {
-            throw new SimpleCommandExceptionType(ITextComponent.translatable("commands.irons_spellbooks.create_spell.failed_max_level", spell.getSpellName(), spell.getMaxLevel())).create();
+            throw new SimpleCommandExceptionType(new TranslationTextComponent("commands.irons_spellbooks.create_spell.failed_max_level", spell.getSpellName(), spell.getMaxLevel())).create();
         }
 
         var serverPlayer = source.getPlayer();

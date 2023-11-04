@@ -24,8 +24,8 @@ public class GuidingBoltSpell extends AbstractSpell {
 
     @Override
     public List<IFormattableTextComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
-        return List.of(ITextComponent.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(spellLevel, caster), 1)),
-                ITextComponent.translatable("ui.irons_spellbooks.effect_length", "15s"));
+        return List.of(new TranslationTextComponent("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(spellLevel, caster), 1)),
+                new TranslationTextComponent("ui.irons_spellbooks.effect_length", "15s"));
     }
 
     private final DefaultConfig defaultConfig = new DefaultConfig()

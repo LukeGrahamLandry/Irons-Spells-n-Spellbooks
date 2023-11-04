@@ -145,8 +145,8 @@ public class SpellWheelOverlay extends AbstractGui {
             int textCenterMargin = 5;
             int textTitleMargin = 5;
             IFormattableTextComponent title = currentSpell.getSpell().getDisplayName().withStyle(Style.EMPTY.withUnderlined(true));
-            var level = ITextComponent.translatable("ui.irons_spellbooks.level", TooltipsUtils.getLevelComponenet(selectedSpell, player).withStyle(selectedSpell.getSpell().getRarity(selectedSpell.getLevel()).getDisplayName().getStyle()));
-            var mana = ITextComponent.translatable("ui.irons_spellbooks.mana_cost", selectedSpell.getSpell().getManaCost(selectedSpell.getLevel(), null)).withStyle(TextFormatting.AQUA);
+            var level = new TranslationTextComponent("ui.irons_spellbooks.level", TooltipsUtils.getLevelComponenet(selectedSpell, player).withStyle(selectedSpell.getSpell().getRarity(selectedSpell.getLevel()).getDisplayName().getStyle()));
+            var mana = new TranslationTextComponent("ui.irons_spellbooks.mana_cost", selectedSpell.getSpell().getManaCost(selectedSpell.getLevel(), null)).withStyle(TextFormatting.AQUA);
 //            selectedSpell.getUniqueInfo(minecraft.player).forEach((line) -> lines.add(line.withStyle(ChatFormatting.DARK_GREEN)));
 
             drawTextBackground(poseStack, centerX, centerY, ringOuterEdge + textHeight - textTitleMargin - font.lineHeight, textCenterMargin, Math.max(2, info.size()) * font.lineHeight);

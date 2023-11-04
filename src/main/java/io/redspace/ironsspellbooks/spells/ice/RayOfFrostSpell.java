@@ -46,9 +46,9 @@ public class RayOfFrostSpell extends AbstractSpell {
     @Override
     public List<IFormattableTextComponent> getUniqueInfo(int spellLevel, LivingEntity caster) {
         return List.of(
-                ITextComponent.translatable("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(spellLevel, caster), 1)),
-                ITextComponent.translatable("ui.irons_spellbooks.freeze_time", Utils.timeFromTicks(getFreezeTime(spellLevel, caster), 1)),
-                ITextComponent.translatable("ui.irons_spellbooks.distance", Utils.stringTruncation(getRange(spellLevel), 1))
+                new TranslationTextComponent("ui.irons_spellbooks.damage", Utils.stringTruncation(getDamage(spellLevel, caster), 1)),
+                new TranslationTextComponent("ui.irons_spellbooks.freeze_time", Utils.timeFromTicks(getFreezeTime(spellLevel, caster), 1)),
+                new TranslationTextComponent("ui.irons_spellbooks.distance", Utils.stringTruncation(getRange(spellLevel), 1))
         );
     }
 

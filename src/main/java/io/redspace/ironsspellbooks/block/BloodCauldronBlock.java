@@ -1,4 +1,4 @@
-// TODO: 1.15 didn't have fancy cauldron stuff i think
+// TODO: 1.16 didn't have fancy cauldron stuff i think
 
 //package io.redspace.ironsspellbooks.block;
 //
