@@ -3,6 +3,7 @@ package io.redspace.ironsspellbooks.render;
 import io.redspace.ironsspellbooks.api.registry.SpellRegistry;
 import io.redspace.ironsspellbooks.capabilities.magic.SyncedSpellData;
 import io.redspace.ironsspellbooks.entity.mobs.abstract_spell_casting_mob.AbstractSpellCastingMob;
+import io.redspace.ironsspellbooks.entity.mobs.abstract_spell_casting_mob.DefaultBipedBoneIdents;
 import io.redspace.ironsspellbooks.entity.spells.lightning_lance.LightningLanceRenderer;
 import io.redspace.ironsspellbooks.entity.spells.magic_arrow.MagicArrowRenderer;
 import io.redspace.ironsspellbooks.entity.spells.poison_arrow.PoisonArrowRenderer;
@@ -17,7 +18,6 @@ import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.util.Hand;
 import net.minecraft.util.HandSide;
 import net.minecraft.entity.LivingEntity;
-import software.bernie.example.client.DefaultBipedBoneIdents;
 import software.bernie.geckolib3.geo.render.built.GeoBone;
 import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.renderers.geo.GeoLayerRenderer;
@@ -81,13 +81,13 @@ public class ChargeSpellLayer {
 
             //irons_spellbooks.LOGGER.debug("GeoChargeSpellLayer.render: {}", syncedSpellData);
             String spellId = syncedSpellData.getCastingSpellId();
-            var modelResource = entityRenderer.getGeoModelProvider().getModelResource(entity);
+            var modelResource = entityRenderer.getGeoModelProvider().getModelLocation(entity);
             GeoModel model = entityRenderer.getGeoModelProvider().getModel(modelResource);
             GeoBone bone = model.getBone(DefaultBipedBoneIdents.RIGHT_HAND_BONE_IDENT).get();
             poseStack.pushPose();
-            RenderUtils.translateToPivotPoint(poseStack, bone);
-            RenderUtils.rotateMatrixAroundBone(poseStack, model.getBone("right_arm").get());
-            RenderUtils.translateAwayFromPivotPoint(poseStack, bone);
+            RenderUtils.moveToPivot(bone, poseStack);
+            RenderUtils.rotate(model.getBone("right_arm").get(), poseStack);
+            RenderUtils.moveBackFromPivot(bone, poseStack);
             //poseStack.translate(0,bone.getPivotY()/2/16,0);
             HandSide arm = getArmFromUseHand(entity);
             //TODO: hold on... were still rotating around the right arm regardless...

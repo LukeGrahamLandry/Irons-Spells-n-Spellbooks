@@ -83,7 +83,7 @@ public class FangStrikeSpell extends AbstractSpell {
             spawn = new Vector3d(spawn.x, getGroundLevel(world, spawn, 8), spawn.z);
             if (!world.getBlockState(new BlockPos(spawn).below()).isAir()) {
                 int delay = i / 3;
-                ExtendedEvokerFang fang = new ExtendedEvokerFang(world, spawn.x, spawn.y, spawn.z, (entity.yRot - 90) * MathHelper.DEG_TO_RAD, delay, entity, getDamage(spellLevel, entity));
+                ExtendedEvokerFang fang = new ExtendedEvokerFang(world, spawn.x, spawn.y, spawn.z, (entity.yRot - 90) * Utils.DEG_TO_RAD, delay, entity, getDamage(spellLevel, entity));
                 world.addFreshEntity(fang);
             }
         }

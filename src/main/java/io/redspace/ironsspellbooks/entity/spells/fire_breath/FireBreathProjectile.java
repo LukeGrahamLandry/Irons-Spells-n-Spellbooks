@@ -37,7 +37,7 @@ public class FireBreathProjectile extends AbstractConeProjectile {
                 boolean doFire = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.level, this.getOwner());
 
                 if(doFire){
-                    float range = 15 * MathHelper.DEG_TO_RAD;
+                    float range = 15 * Utils.DEG_TO_RAD;
                     for (int i = 0; i < 3; i++) {
                         Vector3d cast = getOwner().getLookAngle().normalize().xRot(Utils.random.nextFloat() * range * 2 - range).yRot(Utils.random.nextFloat() * range * 2 - range);
                         RayTraceResult hitResult = level.clip(new RayTraceContext(getOwner().getEyePosition(0), getOwner().getEyePosition(0).add(cast.scale(10)), RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, this));

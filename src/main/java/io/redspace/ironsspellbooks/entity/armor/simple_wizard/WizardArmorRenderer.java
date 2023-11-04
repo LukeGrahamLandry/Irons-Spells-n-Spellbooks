@@ -46,7 +46,7 @@ public class WizardArmorRenderer extends GeoArmorRenderer<WizardArmorItem> {
     @Override
     public GeoArmorRenderer applySlot(EquipmentSlotType slot) {
         //What is this for?
-        this.getGeoModelProvider().getModel(this.getGeoModelProvider().getModelResource(this.currentArmorItem));
+        this.getGeoModelProvider().getModel(this.getGeoModelProvider().getModelLocation(this.currentArmorItem));
         ensureBone();
 
 

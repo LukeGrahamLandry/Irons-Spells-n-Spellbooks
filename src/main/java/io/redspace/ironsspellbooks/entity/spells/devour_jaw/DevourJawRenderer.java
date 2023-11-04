@@ -10,7 +10,7 @@ import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
@@ -19,7 +19,7 @@ public class DevourJawRenderer extends EntityRenderer<DevourJaw> {
 
     private final DevourJawModel model;
 
-    public DevourJawRenderer(EntityRendererProvider.Context pContext) {
+    public DevourJawRenderer(EntityRendererManager pContext) {
         super(pContext);
         this.model = new DevourJawModel(pContext.bakeLayer(ModelLayers.EVOKER_FANGS));
     }
@@ -69,7 +69,7 @@ public class DevourJawRenderer extends EntityRenderer<DevourJaw> {
             this.lowerJaw.zRot = (float) Math.PI + f * 0.35F * (float) Math.PI;
 
             float f2 = (time / interval);
-            f2 = .5f * MathHelper.cos(.5f * MathHelper.PI * (f2 - 1)) + .5f;
+            f2 = .5f * MathHelper.cos(.5f * ((float) Math.PI) * (f2 - 1)) + .5f;
             f2 *= f2;
             this.upperJaw.y = -18F * f2 + 16f;
             this.lowerJaw.y = this.upperJaw.y;

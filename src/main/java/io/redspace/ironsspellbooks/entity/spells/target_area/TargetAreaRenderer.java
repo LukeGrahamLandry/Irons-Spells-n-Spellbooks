@@ -12,14 +12,14 @@ import io.redspace.ironsspellbooks.render.SpellTargetingLayer;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3f;
 
 public class TargetAreaRenderer extends EntityRenderer<TargetedAreaEntity> {
-    public TargetAreaRenderer(EntityRendererProvider.Context pContext) {
+    public TargetAreaRenderer(EntityRendererManager pContext) {
         super(pContext);
     }
 
@@ -40,7 +40,7 @@ public class TargetAreaRenderer extends EntityRenderer<TargetedAreaEntity> {
 
         float radius = entity.getRadius();
         int segments = (int) (5 * radius + 9);
-        float angle = 2 * MathHelper.PI / segments;
+        float angle = 2 * ((float) Math.PI) / segments;
         float entityY = (float) MathHelper.lerp(pPartialTick, entity.yOld, entity.getY());
 
         for (int i = 0; i < segments; i++) {

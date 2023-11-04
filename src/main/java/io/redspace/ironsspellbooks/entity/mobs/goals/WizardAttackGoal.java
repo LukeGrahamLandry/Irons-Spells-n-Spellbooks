@@ -92,8 +92,8 @@ public class WizardAttackGoal extends Goal {
 
     public WizardAttackGoal setSingleUseSpell(AbstractSpell abstractSpell, int minDelay, int maxDelay, int minLevel, int maxLevel) {
         this.singleUseSpell = abstractSpell;
-        this.singleUseDelay = Utils.random.nextIntBetweenInclusive(minDelay, maxDelay);
-        this.singleUseLevel = Utils.random.nextIntBetweenInclusive(minLevel, maxLevel);
+        this.singleUseDelay = Utils.random.nextInt(minDelay, maxDelay + 1);
+        this.singleUseLevel = Utils.random.nextInt(minLevel, maxLevel + 1);
         return this;
     }
 

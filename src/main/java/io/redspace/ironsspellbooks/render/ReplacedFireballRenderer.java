@@ -4,7 +4,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import io.redspace.ironsspellbooks.config.ClientConfigs;
 import io.redspace.ironsspellbooks.entity.spells.fireball.FireballRenderer;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.SpriteRenderer;
 import net.minecraft.entity.projectile.AbstractFireballEntity;
 import net.minecraft.entity.projectile.FireballEntity;
@@ -14,7 +14,7 @@ import net.minecraft.entity.projectile.SmallFireballEntity;
 public class ReplacedFireballRenderer extends FireballRenderer {
     SpriteRenderer<AbstractFireballEntity> backupRenderer;
 
-    public ReplacedFireballRenderer(EntityRendererProvider.Context context, float scale, float backupScale) {
+    public ReplacedFireballRenderer(EntityRendererManager context, float scale, float backupScale) {
         super(context, scale);
         backupRenderer = new SpriteRenderer<AbstractFireballEntity>(context, backupScale, true);
     }

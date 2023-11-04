@@ -1,25 +1,26 @@
 package io.redspace.ironsspellbooks.entity.mobs.abstract_spell_casting_mob;
 
+import io.redspace.ironsspellbooks.api.util.Utils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.geom.PartNames;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.processor.IBone;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
+import io.redspace.ironsspellbooks.entity.mobs.abstract_spell_casting_mob.DefaultBipedBoneIdents.PartNames;
 
 public abstract class AbstractSpellCastingMobModel extends AnimatedGeoModel<AbstractSpellCastingMob> {
 
     @Override
-    public ResourceLocation getModelResource(AbstractSpellCastingMob object) {
+    public ResourceLocation getModelLocation(AbstractSpellCastingMob object) {
         return AbstractSpellCastingMob.modelResource;
     }
 
     @Override
-    public abstract ResourceLocation getTextureResource(AbstractSpellCastingMob mob);
+    public abstract ResourceLocation getTextureLocation(AbstractSpellCastingMob mob);
 
     @Override
-    public ResourceLocation getAnimationResource(AbstractSpellCastingMob animatable) {
+    public ResourceLocation getAnimationFileLocation(AbstractSpellCastingMob animatable) {
         return AbstractSpellCastingMob.animationInstantCast;
     }
 
@@ -46,9 +47,9 @@ public abstract class AbstractSpellCastingMobModel extends AnimatedGeoModel<Abst
         //Make the head look forward, whatever forward is (influenced externally, such as a lootAt target)
         if (!entity.isAnimating() || entity.shouldAlwaysAnimateHead()) {
             head.setRotationY(MathHelper.lerp(partialTick,
-                    MathHelper.wrapDegrees(-entity.yHeadRotO + entity.yBodyRotO) * MathHelper.DEG_TO_RAD,
-                    MathHelper.wrapDegrees(-entity.yHeadRot + entity.yBodyRot) * MathHelper.DEG_TO_RAD));
-            head.setRotationX(MathHelper.lerp(partialTick, -entity.xRotO, -entity.xRot) * MathHelper.DEG_TO_RAD);
+                    MathHelper.wrapDegrees(-entity.yHeadRotO + entity.yBodyRotO) * Utils.DEG_TO_RAD,
+                    MathHelper.wrapDegrees(-entity.yHeadRot + entity.yBodyRot) * Utils.DEG_TO_RAD));
+            head.setRotationX(MathHelper.lerp(partialTick, -entity.xRotO, -entity.xRot) * Utils.DEG_TO_RAD);
         }
         /*
             Crazy Vanilla Magic Calculations (LivingEntityRenderer:116 & HumanoidModel#setupAnim
@@ -103,13 +104,13 @@ public abstract class AbstractSpellCastingMobModel extends AnimatedGeoModel<Abst
             bobBone(rightArm, entity.tickCount, 1);
             bobBone(leftArm, entity.tickCount, -1);
             if (entity.isDrinkingPotion()) {
-                addRotationX(entity.isLeftHanded() ? leftArm : rightArm, 35 * MathHelper.DEG_TO_RAD);
-                addRotationZ(entity.isLeftHanded() ? leftArm : rightArm, (entity.isLeftHanded() ? 15 : -15) * MathHelper.DEG_TO_RAD);
-                addRotationY(entity.isLeftHanded() ? leftArm : rightArm, (entity.isLeftHanded() ? -25 : 25) * MathHelper.DEG_TO_RAD);
+                addRotationX(entity.isLeftHanded() ? leftArm : rightArm, 35 * Utils.DEG_TO_RAD);
+                addRotationZ(entity.isLeftHanded() ? leftArm : rightArm, (entity.isLeftHanded() ? 15 : -15) * Utils.DEG_TO_RAD);
+                addRotationY(entity.isLeftHanded() ? leftArm : rightArm, (entity.isLeftHanded() ? -25 : 25) * Utils.DEG_TO_RAD);
             }
         } else if (entity.shouldPointArmsWhileCasting()) {
-            addRotationX(rightArm, -entity.xRot * MathHelper.DEG_TO_RAD);
-            addRotationX(leftArm, -entity.xRot * MathHelper.DEG_TO_RAD);
+            addRotationX(rightArm, -entity.xRot * Utils.DEG_TO_RAD);
+            addRotationX(leftArm, -entity.xRot * Utils.DEG_TO_RAD);
         }
 
 //        rightArm.setRotationX(Mth.cos(pLimbSwing * 0.6662F + (float) Math.PI) * 2.0F * pLimbSwingAmount * 0.5F / f);

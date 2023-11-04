@@ -17,7 +17,7 @@ public class WarlockAttackGoal extends WizardAttackGoal {
     public WarlockAttackGoal(AbstractSpellCastingMob abstractSpellCastingMob, double pSpeedModifier, int minAttackInterval, int maxAttackInterval, float meleeRange) {
         super(abstractSpellCastingMob, pSpeedModifier, minAttackInterval, maxAttackInterval);
         this.meleeRange = meleeRange;
-        meleeTimeDelay = abstractSpellCastingMob.getRandom().nextIntBetweenInclusive(80, 200);
+        meleeTimeDelay = abstractSpellCastingMob.getRandom().nextInt(80, 200 + 1);
         meleeBias = .5f;
         this.shouldFlee = false;
     }
@@ -28,7 +28,7 @@ public class WarlockAttackGoal extends WizardAttackGoal {
         if (++meleeTime > meleeTimeDelay) {
             meleeTime = 0;
             wantsToMelee = mob.getRandom().nextFloat() <= meleeBias;
-            meleeTimeDelay = mob.getRandom().nextIntBetweenInclusive(60, 120);
+            meleeTimeDelay = mob.getRandom().nextInt(60, 120 + 1);
         }
     }
 

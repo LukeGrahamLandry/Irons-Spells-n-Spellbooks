@@ -2,10 +2,10 @@ package io.redspace.ironsspellbooks.entity.mobs.wizards.priest;
 
 
 import io.redspace.ironsspellbooks.entity.mobs.abstract_spell_casting_mob.AbstractSpellCastingMobRenderer;
-import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.EntityRendererManager;
 
 public class PriestRenderer extends AbstractSpellCastingMobRenderer {
-    public PriestRenderer(EntityRendererProvider.Context context) {
+    public PriestRenderer(EntityRendererManager context) {
         super(context, new PriestModel());
     }
 }

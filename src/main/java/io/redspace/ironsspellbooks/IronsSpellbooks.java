@@ -64,7 +64,8 @@ public class IronsSpellbooks {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         modEventBus.addListener(ModSetup::init);
 
-        modEventBus.addListener(OverlayRegistry::onRegisterOverlays);
+        // TODO
+//        modEventBus.addListener(OverlayRegistry::onRegisterOverlays);
 
         SchoolRegistry.register(modEventBus);
         SpellRegistry.register(modEventBus);

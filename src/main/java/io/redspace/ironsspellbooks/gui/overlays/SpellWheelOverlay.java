@@ -310,7 +310,7 @@ public class SpellWheelOverlay extends AbstractGui {
         ringOuterEdge = Math.max(ringOuterEdgeMin, ringOuterEdgeMax);
 
         for (int i = 0; i < spells.size(); i++) {
-            final double closeWidth = 8 * MathHelper.DEG_TO_RAD;
+            final double closeWidth = 8 * Utils.DEG_TO_RAD;
             final double farWidth = closeWidth / 4;
             final double beginCloseRadians = i * radiansPerSpell - (quarterCircle + (radiansPerSpell / 2)) - (closeWidth / 4);
             final double endCloseRadians = beginCloseRadians + closeWidth;

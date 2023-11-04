@@ -2,7 +2,7 @@ package io.redspace.ironsspellbooks.entity.spells.comet;
 
 import io.redspace.ironsspellbooks.IronsSpellbooks;
 import io.redspace.ironsspellbooks.entity.spells.fireball.FireballRenderer;
-import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
+import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.entity.projectile.ProjectileEntity;
 

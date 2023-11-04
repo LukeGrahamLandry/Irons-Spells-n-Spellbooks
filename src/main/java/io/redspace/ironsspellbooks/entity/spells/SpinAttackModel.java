@@ -18,7 +18,7 @@ public class SpinAttackModel extends GeoModelProvider<AbstractSpellCastingMob> {
     }
 
     @Override
-    public ResourceLocation getTextureResource(AbstractSpellCastingMob object) {
+    public ResourceLocation getTextureLocation(AbstractSpellCastingMob object) {
         SpinAttackType spinAttackType = ClientMagicData.getSyncedSpellData(object).getSpinAttackType();
         switch (spinAttackType) {
             case FIRE:
@@ -30,7 +30,7 @@ public class SpinAttackModel extends GeoModelProvider<AbstractSpellCastingMob> {
     }
 
     @Override
-    public ResourceLocation getModelResource(AbstractSpellCastingMob object) {
+    public ResourceLocation getModelLocation(AbstractSpellCastingMob object) {
         return MODEL;
     }
 

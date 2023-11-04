@@ -5,16 +5,16 @@ import io.redspace.ironsspellbooks.entity.mobs.SummonedHorse;
 import net.minecraft.client.renderer.entity.model.HorseModel;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.entity.AbstractHorseRenderer;
-import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.util.ResourceLocation;
 
 public class SpectralSteedRenderer extends AbstractHorseRenderer<SummonedHorse, HorseModel<SummonedHorse>> {
-    public SpectralSteedRenderer(EntityRendererProvider.Context p_174167_) {
+    public SpectralSteedRenderer(EntityRendererManager p_174167_) {
         super(p_174167_, new HorseModel<>(p_174167_.bakeLayer(ModelLayers.HORSE)), 1.1F);
         //.addLayer(new HorseMarkingLayer(this));
         //this.addLayer(new HorseArmorLayer(this, p_174167_.getModelSet()));
     }
-//    public MagicHorseRenderer(EntityRendererProvider.Context pContext, HorseModel pModel, float pScale) {
+//    public MagicHorseRenderer(EntityRendererManager pContext, HorseModel pModel, float pScale) {
 //        super(pContext, pModel, pScale);
 //    }
 

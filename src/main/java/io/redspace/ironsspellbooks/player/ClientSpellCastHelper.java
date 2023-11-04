@@ -122,8 +122,8 @@ public class ClientSpellCastHelper {
             World level = player.level;
             int ySteps = 16;
             int xSteps = 48;
-            float yDeg = 180f / ySteps * MathHelper.DEG_TO_RAD;
-            float xDeg = 360f / xSteps * MathHelper.DEG_TO_RAD;
+            float yDeg = 180f / ySteps * Utils.DEG_TO_RAD;
+            float xDeg = 360f / xSteps * Utils.DEG_TO_RAD;
             for (int x = 0; x < xSteps; x++) {
                 for (int y = 0; y < ySteps; y++) {
                     Vector3d offset = new Vector3d(0, 0, CloudOfRegenerationSpell.radius).yRot(y * yDeg).xRot(x * xDeg).zRot(-MathHelper.PI / 2).multiply(1, .85f, 1);
@@ -139,7 +139,7 @@ public class ClientSpellCastHelper {
         if (player != null) {
             World level = player.level;
             int ySteps = 128;
-            float yDeg = 180f / ySteps * MathHelper.DEG_TO_RAD;
+            float yDeg = 180f / ySteps * Utils.DEG_TO_RAD;
             for (int y = 0; y < ySteps; y++) {
                 Vector3d offset = new Vector3d(0, 0, FortifySpell.radius).yRot(y * yDeg);
                 Vector3d motion = new Vector3d(

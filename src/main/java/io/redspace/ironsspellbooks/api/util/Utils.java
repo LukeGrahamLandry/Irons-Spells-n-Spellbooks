@@ -58,10 +58,8 @@ import net.minecraftforge.entity.PartEntity;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -84,8 +82,9 @@ import net.minecraft.util.math.vector.Vector2f;
 import net.minecraft.util.math.vector.Vector3d;
 
 public class Utils {
+    public static final float DEG_TO_RAD = (float) (Math.PI / 180);
 
-    public static final RandomSource random = RandomSource.createThreadSafe();
+    public static final Random random = ThreadLocalRandom.current();
     public static String getStackTraceAsString() {
         Stream<StackTraceElement> trace = Arrays.stream(Thread.currentThread().getStackTrace());
         StringBuffer sb = new StringBuffer();

@@ -7,14 +7,14 @@ import io.redspace.ironsspellbooks.entity.mobs.abstract_spell_casting_mob.Abstra
 import io.redspace.ironsspellbooks.entity.mobs.abstract_spell_casting_mob.AbstractSpellCastingMobRenderer;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
 public class KeeperRenderer extends AbstractSpellCastingMobRenderer {
 
-    public KeeperRenderer(EntityRendererProvider.Context context) {
+    public KeeperRenderer(EntityRendererManager context) {
         super(context, new KeeperModel());
         this.addLayer(new GeoKeeperGhostLayer(this));
         this.shadowRadius = 0.65f;

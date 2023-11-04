@@ -4,7 +4,8 @@ import io.redspace.ironsspellbooks.IronsSpellbooks;
 import io.redspace.ironsspellbooks.entity.mobs.abstract_spell_casting_mob.AbstractSpellCastingMob;
 import io.redspace.ironsspellbooks.entity.mobs.abstract_spell_casting_mob.AbstractSpellCastingMobModel;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.geom.PartNames;
+
+import io.redspace.ironsspellbooks.entity.mobs.abstract_spell_casting_mob.DefaultBipedBoneIdents.PartNames;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
@@ -15,12 +16,12 @@ public class PriestModel extends AbstractSpellCastingMobModel {
     public static final ResourceLocation MODEL = new ResourceLocation(IronsSpellbooks.MODID, "geo/archevoker.geo.json");
 
     @Override
-    public ResourceLocation getModelResource(AbstractSpellCastingMob object) {
+    public ResourceLocation getModelLocation(AbstractSpellCastingMob object) {
         return MODEL;
     }
 
     @Override
-    public ResourceLocation getTextureResource(AbstractSpellCastingMob object) {
+    public ResourceLocation getTextureLocation(AbstractSpellCastingMob object) {
         return TEXTURE;
     }
 

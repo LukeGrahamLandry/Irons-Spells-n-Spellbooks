@@ -277,3 +277,7 @@ mixin {
     add sourceSets.main, 'irons_spellbooks.refmap.json'
     config 'mixins.irons_spellbooks.json'
 }
+
+// Can remove but doesn't do anything when not on aarch64 Mac OS.
+// Just makes gradle get the arm64 version of lwjgl so I don't have to run the game on a rosetta JVM when testing.
+apply from: "https://moddingtutorials.org/applesilicon.gradle"

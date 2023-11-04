@@ -30,7 +30,7 @@ public class  ScrollForgeRenderer implements TileEntityRenderer<ScrollForgeTile>
     private static final ResourceLocation SIGIL_TEXTURE = new ResourceLocation(IronsSpellbooks.MODID, "textures/block/scroll_forge_sigil.png");
     ItemRenderer itemRenderer;
 
-    public ScrollForgeRenderer(BlockEntityRendererProvider.Context context) {
+    public ScrollForgeRenderer(BlockEntityRendererManager context) {
         this.itemRenderer = context.getItemRenderer();
     }
 

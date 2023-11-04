@@ -6,13 +6,13 @@ import io.redspace.ironsspellbooks.entity.mobs.abstract_spell_casting_mob.Abstra
 import io.redspace.ironsspellbooks.entity.mobs.abstract_spell_casting_mob.AbstractSpellCastingMobRenderer;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
 public class NecromancerRenderer extends AbstractSpellCastingMobRenderer {
 
-    public NecromancerRenderer(EntityRendererProvider.Context renderManager) {
+    public NecromancerRenderer(EntityRendererManager renderManager) {
         super(renderManager, new NecromancerModel());
     }
 

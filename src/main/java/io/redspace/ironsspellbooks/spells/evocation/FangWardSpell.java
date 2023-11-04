@@ -82,7 +82,7 @@ public class FangWardSpell extends AbstractSpell {
         for (int r = 0; r < rings; r++) {
             float fangs = count + r * r;
             for (int i = 0; i < fangs; i++) {
-                Vector3d spawn = center.add(new Vector3d(0, 0, 1.5 * (r + 1)).yRot(entity.yRot * MathHelper.DEG_TO_RAD + ((6.281f / fangs) * i)));
+                Vector3d spawn = center.add(new Vector3d(0, 0, 1.5 * (r + 1)).yRot(entity.yRot * Utils.DEG_TO_RAD + ((6.281f / fangs) * i)));
                 spawn = Utils.moveToRelativeGroundLevel(world, spawn, 5);
                 if (!world.getBlockState(new BlockPos(spawn).below()).isAir()) {
                     ExtendedEvokerFang fang = new ExtendedEvokerFang(world, spawn.x, spawn.y, spawn.z, get2DAngle(center, spawn), r, entity, getDamage(spellLevel, entity));

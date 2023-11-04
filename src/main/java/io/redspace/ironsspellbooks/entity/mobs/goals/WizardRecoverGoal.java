@@ -29,7 +29,7 @@ public class WizardRecoverGoal extends Goal {
     @Override
     public void start() {
         mob.startDrinkingPotion();
-        delay = mob.getRandom().nextIntBetweenInclusive(minDelay, maxDelay);
+        delay = mob.getRandom().nextInt(minDelay, maxDelay + 1);
         //IronsSpellbooks.LOGGER.debug("WizardRecoverGoal begin {}", delay);
     }
 }

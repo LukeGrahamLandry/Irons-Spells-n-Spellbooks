@@ -8,7 +8,7 @@ import io.redspace.ironsspellbooks.entity.mobs.abstract_spell_casting_mob.GeoHum
 import io.redspace.ironsspellbooks.render.SpellTargetingLayer;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.SkeletonRenderer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.entity.monster.AbstractSkeletonEntity;
@@ -18,7 +18,7 @@ public class SummonedSkeletonMultiRenderer extends GeoHumanoidRenderer<SummonedS
     SkeletonRenderer vanillaRenderer;
     public static final ResourceLocation TEXTURE_ALT = new ResourceLocation(IronsSpellbooks.MODID, "textures/entity/summoned_skeleton_alt.png");
 
-    public SummonedSkeletonMultiRenderer(EntityRendererProvider.Context pContext) {
+    public SummonedSkeletonMultiRenderer(EntityRendererManager pContext) {
         super(pContext, new SummonedSkeletonModel());
         vanillaRenderer = new SkeletonRenderer(pContext) {
             @Override

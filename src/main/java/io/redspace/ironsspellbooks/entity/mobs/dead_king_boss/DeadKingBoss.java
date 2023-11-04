@@ -219,9 +219,9 @@ public class DeadKingBoss extends AbstractSpellCastingMob implements IMob {
                 isCloseToGround = Utils.raycastForBlock(level, position(), position().subtract(0, 2.5, 0), RayTraceContext.FluidMode.ANY).getType() == RayTraceResult.Type.BLOCK;
             }
             Vector3d woosh = new Vector3d(
-                    MathHelper.sin((tickCount * 5) * MathHelper.DEG_TO_RAD),
-                    (MathHelper.cos((tickCount * 3 + 986741) * MathHelper.DEG_TO_RAD) + (isCloseToGround ? .05 : -.185)) * .5f,
-                    MathHelper.sin((tickCount * 1 + 465) * MathHelper.DEG_TO_RAD)
+                    MathHelper.sin((tickCount * 5) * Utils.DEG_TO_RAD),
+                    (MathHelper.cos((tickCount * 3 + 986741) * Utils.DEG_TO_RAD) + (isCloseToGround ? .05 : -.185)) * .5f,
+                    MathHelper.sin((tickCount * 1 + 465) * Utils.DEG_TO_RAD)
             );
             if (this.getTarget() == null)
                 woosh = woosh.scale(.25f);

@@ -4,7 +4,8 @@ import io.redspace.ironsspellbooks.IronsSpellbooks;
 import io.redspace.ironsspellbooks.entity.mobs.abstract_spell_casting_mob.AbstractSpellCastingMob;
 import io.redspace.ironsspellbooks.entity.mobs.abstract_spell_casting_mob.AbstractSpellCastingMobModel;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.geom.PartNames;
+
+import io.redspace.ironsspellbooks.entity.mobs.abstract_spell_casting_mob.DefaultBipedBoneIdents.PartNames;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
@@ -15,12 +16,12 @@ public class KeeperModel extends AbstractSpellCastingMobModel {
     public static final ResourceLocation modelResource = new ResourceLocation(IronsSpellbooks.MODID, "geo/citadel_keeper.geo.json");
 
     @Override
-    public ResourceLocation getTextureResource(AbstractSpellCastingMob object) {
+    public ResourceLocation getTextureLocation(AbstractSpellCastingMob object) {
         return TEXTURE;
     }
 
     @Override
-    public ResourceLocation getModelResource(AbstractSpellCastingMob object) {
+    public ResourceLocation getModelLocation(AbstractSpellCastingMob object) {
         return modelResource;
     }
 
@@ -58,8 +59,8 @@ public class KeeperModel extends AbstractSpellCastingMobModel {
         if (!(entity.isPassenger() && entity.getVehicle().shouldRiderSit())) {
             float strength = .75f;
             updatePosition(rightLeg, 0, MathHelper.cos(pLimbSwing * 0.6662F) * 4 * strength * pLimbSwingAmount, -MathHelper.sin(pLimbSwing * 0.6662F) * 4 * pLimbSwingAmount);
-            updatePosition(leftLeg, 0, MathHelper.cos(pLimbSwing * 0.6662F - MathHelper.PI) * 4 * strength * pLimbSwingAmount, -MathHelper.sin(pLimbSwing * 0.6662F - MathHelper.PI) * 4 * pLimbSwingAmount);
-            updatePosition(body, 0, MathHelper.cos(pLimbSwing * 1.2662F - MathHelper.PI * .5f) * 1 * strength * pLimbSwingAmount, 0);
+            updatePosition(leftLeg, 0, MathHelper.cos(pLimbSwing * 0.6662F - ((float) Math.PI)) * 4 * strength * pLimbSwingAmount, -MathHelper.sin(pLimbSwing * 0.6662F - ((float) Math.PI)) * 4 * pLimbSwingAmount);
+            updatePosition(body, 0, MathHelper.cos(pLimbSwing * 1.2662F - ((float) Math.PI) * .5f) * 1 * strength * pLimbSwingAmount, 0);
             if (tick) {
                 if (!entity.isAnimating() || entity.shouldAlwaysAnimateLegs()) {
                     legTween = MathHelper.lerp(.9f, 0, 1);

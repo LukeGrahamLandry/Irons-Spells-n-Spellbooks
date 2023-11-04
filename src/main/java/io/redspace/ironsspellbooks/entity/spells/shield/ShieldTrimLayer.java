@@ -6,7 +6,7 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.IEntityRenderer;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -17,7 +17,7 @@ public class ShieldTrimLayer extends LayerRenderer<ShieldEntity, ShieldModel> {
     private static final ResourceLocation TEXTURE = IronsSpellbooks.id("textures/entity/shield/shield_trim.png");
     private final ShieldTrimModel model;
 
-    public ShieldTrimLayer(IEntityRenderer<ShieldEntity, ShieldModel> renderer, EntityRendererProvider.Context context) {
+    public ShieldTrimLayer(IEntityRenderer<ShieldEntity, ShieldModel> renderer, EntityRendererManager context) {
         super(renderer);
         this.model = new ShieldTrimModel(context.bakeLayer(ShieldTrimModel.LAYER_LOCATION));
     }

@@ -106,8 +106,8 @@ public class ChainCreeperSpell extends AbstractSpell {
         for (int i = 0; i < count; i++) {
 
             Vector3d motion = new Vector3d(0, 0, .3 + count * .01f);
-            motion = motion.xRot(75 * MathHelper.DEG_TO_RAD);
-            motion = motion.yRot(degreesPerCreeper * i * MathHelper.DEG_TO_RAD);
+            motion = motion.xRot(75 * Utils.DEG_TO_RAD);
+            motion = motion.yRot(degreesPerCreeper * i * Utils.DEG_TO_RAD);
 
 
             CreeperHeadProjectile head = new CreeperHeadProjectile(owner, level, motion, damage);

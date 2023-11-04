@@ -95,7 +95,7 @@ public class RaiseDeadSpell extends AbstractSpell {
             undead.finalizeSpawn((ServerWorld) world, world.getCurrentDifficultyAt(undead.getOnPos()), SpawnReason.MOB_SUMMONED, null, null);
             undead.addEffect(new EffectInstance(MobEffectRegistry.RAISE_DEAD_TIMER.get(), summonTime, 0, false, false, false));
             equip(undead, equipment);
-            var yrot = 6.281f / level * i + entity.yRot * MathHelper.DEG_TO_RAD;
+            var yrot = 6.281f / level * i + entity.yRot * Utils.DEG_TO_RAD;
             Vector3d spawn = Utils.moveToRelativeGroundLevel(world, entity.getEyePosition(0).add(new Vector3d(radius * MathHelper.cos(yrot), 0, radius * MathHelper.sin(yrot))), 10);
             undead.setPos(spawn.x, spawn.y, spawn.z);
             undead.setYRot(entity.yRot);

@@ -14,7 +14,7 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.ResourceLocation;
 
 public class ShieldTrimModel extends EntityModel<ShieldEntity> {
-    // This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
+    // This layer location should be baked with EntityRendererManager in the entity renderer and passed into this model's constructor
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(IronsSpellbooks.MODID, "shield_trim_model"), "main");
     private final ModelRenderer bb_main;
 

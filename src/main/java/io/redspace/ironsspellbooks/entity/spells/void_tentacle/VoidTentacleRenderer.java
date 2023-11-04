@@ -3,12 +3,12 @@ package io.redspace.ironsspellbooks.entity.spells.void_tentacle;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.EntityRendererManager;
 import software.bernie.geckolib3.renderers.geo.GeoEntityRenderer;
 
 public class VoidTentacleRenderer extends GeoEntityRenderer<VoidTentacle> {
 
-    public VoidTentacleRenderer(EntityRendererProvider.Context context) {
+    public VoidTentacleRenderer(EntityRendererManager context) {
         super(context, new VoidTentacleModel());
         this.addLayer(new VoidTentacleEmissiveLayer(this));
         this.shadowRadius = 1f;

@@ -228,8 +228,8 @@ public class FrozenHumanoid extends LivingEntity {
         for (int i = 0; i < count; i++) {
 
             Vector3d motion = new Vector3d(0, 0, 0.55);
-            motion = motion.xRot(30 * MathHelper.DEG_TO_RAD);
-            motion = motion.yRot(offset * i * MathHelper.DEG_TO_RAD);
+            motion = motion.xRot(30 * Utils.DEG_TO_RAD);
+            motion = motion.yRot(offset * i * Utils.DEG_TO_RAD);
 
 
             IcicleProjectile shard = new IcicleProjectile(level, getSummoner());

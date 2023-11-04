@@ -1,6 +1,5 @@
 package io.redspace.ironsspellbooks.entity.mobs;
 
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
@@ -17,7 +16,7 @@ public class CatacombsZombie extends ZombieEntity {
     public CatacombsZombie(EntityType<? extends ZombieEntity> pEntityType, World pLevel) {
         super(EntityType.ZOMBIE, pLevel);
         if (this.random.nextFloat() < .2f) {
-            switch (this.random.nextIntBetweenInclusive(1, 4)) {
+            switch (this.random.nextInt(1, 4 + 1)) {
                 case 1:
                     addEffect(new EffectInstance(Effects.INVISIBILITY, Integer.MAX_VALUE));
                     break;
@@ -36,8 +35,8 @@ public class CatacombsZombie extends ZombieEntity {
     }
 
     @Override
-    protected void populateDefaultEquipmentSlots(RandomSource random, DifficultyInstance pDifficulty) {
-        super.populateDefaultEquipmentSlots(random, pDifficulty);
+    protected void populateDefaultEquipmentSlots(DifficultyInstance pDifficulty) {
+        super.populateDefaultEquipmentSlots(pDifficulty);
         Item[] leather = {Items.LEATHER_BOOTS, Items.LEATHER_LEGGINGS, Items.LEATHER_CHESTPLATE, Items.LEATHER_HELMET};
         Item[] chain = {Items.CHAINMAIL_BOOTS, Items.CHAINMAIL_LEGGINGS, Items.CHAINMAIL_CHESTPLATE, Items.CHAINMAIL_HELMET};
         Item[] iron = {Items.IRON_BOOTS, Items.IRON_LEGGINGS, Items.IRON_CHESTPLATE, Items.IRON_HELMET};

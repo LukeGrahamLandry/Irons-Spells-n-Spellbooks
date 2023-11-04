@@ -1,12 +1,12 @@
 package io.redspace.ironsspellbooks.entity.spells.ice_block;
 
 
-import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.EntityRendererManager;
 import software.bernie.geckolib3.renderers.geo.GeoProjectilesRenderer;
 
 public class IceBlockRenderer extends GeoProjectilesRenderer<IceBlockProjectile> {
 
-    public IceBlockRenderer(EntityRendererProvider.Context context) {
+    public IceBlockRenderer(EntityRendererManager context) {
         super(context, new IceBlockModel());
         this.shadowRadius = 1.5f;
     }

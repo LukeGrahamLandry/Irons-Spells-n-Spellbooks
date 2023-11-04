@@ -321,7 +321,7 @@ public abstract class AbstractSpellCastingMob extends CreatureEntity implements 
 
             for (int i = 0; i < 24; i++) {
                 Vector3d randomness = Utils.getRandomVec3(.15f * i).multiply(1, 0, 1);
-                teleportPos = Utils.moveToRelativeGroundLevel(level, target.position().subtract(new Vector3d(0, 0, distance / (float) (i / 7 + 1)).yRot(-(target.yRot + i * 45) * MathHelper.DEG_TO_RAD)).add(randomness), 5);
+                teleportPos = Utils.moveToRelativeGroundLevel(level, target.position().subtract(new Vector3d(0, 0, distance / (float) (i / 7 + 1)).yRot(-(target.yRot + i * 45) * Utils.DEG_TO_RAD)).add(randomness), 5);
                 teleportPos = new Vector3d(teleportPos.x, teleportPos.y + .1f, teleportPos.z);
                 AxisAlignedBB reposBB = this.getBoundingBox().move(teleportPos.subtract(this.position()));
                 IronsSpellbooks.LOGGER.debug("setTeleportLocationBehindTarget attempt to teleport to {}:", reposBB.getCenter());

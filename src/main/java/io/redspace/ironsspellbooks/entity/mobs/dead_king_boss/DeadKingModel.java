@@ -2,6 +2,7 @@ package io.redspace.ironsspellbooks.entity.mobs.dead_king_boss;
 
 
 import io.redspace.ironsspellbooks.IronsSpellbooks;
+import io.redspace.ironsspellbooks.api.util.Utils;
 import io.redspace.ironsspellbooks.entity.mobs.abstract_spell_casting_mob.AbstractSpellCastingMob;
 import io.redspace.ironsspellbooks.entity.mobs.abstract_spell_casting_mob.AbstractSpellCastingMobModel;
 import net.minecraft.util.ResourceLocation;
@@ -19,7 +20,7 @@ public class DeadKingModel extends AbstractSpellCastingMobModel {
     }
 
     @Override
-    public ResourceLocation getTextureResource(AbstractSpellCastingMob object) {
+    public ResourceLocation getTextureLocation(AbstractSpellCastingMob object) {
         if (object instanceof DeadKingBoss) {
             DeadKingBoss boss = (DeadKingBoss) object;
             if (boss.isPhase(DeadKingBoss.Phases.FinalPhase))
@@ -31,7 +32,7 @@ public class DeadKingModel extends AbstractSpellCastingMobModel {
     }
 
     @Override
-    public ResourceLocation getModelResource(AbstractSpellCastingMob object) {
+    public ResourceLocation getModelLocation(AbstractSpellCastingMob object) {
         return MODEL;
     }
 
@@ -47,9 +48,9 @@ public class DeadKingModel extends AbstractSpellCastingMobModel {
         if (jaw == null || hair1 == null || hair2 == null)
             return;
 
-        jaw.setRotationX(MathHelper.sin(f * .05f) * 5 * MathHelper.DEG_TO_RAD);
-        hair1.setRotationX((MathHelper.sin(f * .1f) * 10 - 30) * MathHelper.DEG_TO_RAD);
-        hair2.setRotationX(MathHelper.sin(f * .15f) * 15 * MathHelper.DEG_TO_RAD);
+        jaw.setRotationX(MathHelper.sin(f * .05f) * 5 * Utils.DEG_TO_RAD);
+        hair1.setRotationX((MathHelper.sin(f * .1f) * 10 - 30) * Utils.DEG_TO_RAD);
+        hair2.setRotationX(MathHelper.sin(f * .15f) * 15 * Utils.DEG_TO_RAD);
 
     }
 

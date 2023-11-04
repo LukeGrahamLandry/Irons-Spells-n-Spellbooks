@@ -88,8 +88,8 @@ public class FireboltProjectile extends AbstractMagicProjectile {
             int steps = 6;
             for (int j = 0; j < steps; j++) {
                 float offset = (1f / steps) * i;
-                double radians = ((age + offset) / 7.5f) * 360 * MathHelper.DEG_TO_RAD;
-                Vector3d swirl = new Vector3d(Math.cos(radians) * radius, Math.sin(radians) * radius, 0).yRot(yHeading * MathHelper.DEG_TO_RAD);
+                double radians = ((age + offset) / 7.5f) * 360 * Utils.DEG_TO_RAD;
+                Vector3d swirl = new Vector3d(Math.cos(radians) * radius, Math.sin(radians) * radius, 0).yRot(yHeading * Utils.DEG_TO_RAD);
                 double x = getX() + swirl.x;
                 double y = getY() + swirl.y + getBbHeight() / 2;
                 double z = getZ() + swirl.z;

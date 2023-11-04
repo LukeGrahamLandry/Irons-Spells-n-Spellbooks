@@ -108,7 +108,7 @@ public class BloodStepSpell extends AbstractSpell {
                 LivingEntity target = (LivingEntity) ((EntityRayTraceResult) hitResult).getEntity();
                 //dest = target.position().subtract(new Vec3(0, 0, 1.5).yRot(target.yRot));
                 for (int i = 0; i < 8; i++) {
-                    dest = target.position().subtract(new Vector3d(0, 0, 1.5).yRot(-(target.yRot + i * 45) * MathHelper.DEG_TO_RAD));
+                    dest = target.position().subtract(new Vector3d(0, 0, 1.5).yRot(-(target.yRot + i * 45) * Utils.DEG_TO_RAD));
                     if (level.getBlockState(new BlockPos(dest).above()).isAir())
                         break;
 

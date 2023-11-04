@@ -6,7 +6,7 @@ import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
 import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.AtlasTexture;
@@ -25,7 +25,7 @@ import net.minecraftforge.client.model.data.ModelData;
 public class VisualFallingBlockRenderer extends EntityRenderer<VisualFallingBlockEntity> {
    private final BlockRendererDispatcher dispatcher;
 
-   public VisualFallingBlockRenderer(EntityRendererProvider.Context pContext) {
+   public VisualFallingBlockRenderer(EntityRendererManager pContext) {
       super(pContext);
       this.shadowRadius = 0.5F;
       this.dispatcher = pContext.getBlockRenderDispatcher();

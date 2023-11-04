@@ -210,7 +210,7 @@ public class BloodSlashProjectile extends ProjectileEntity implements AntiMagicS
 
             float width = (float) getBoundingBox().getXsize();
             float step = .25f;
-            float radians = MathHelper.DEG_TO_RAD * getYRot();
+            float radians = Utils.DEG_TO_RAD * getYRot();
             float speed = .1f;
             for (int i = 0; i < width / step; i++) {
                 double x = getX();

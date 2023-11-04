@@ -30,7 +30,7 @@ import java.util.function.Function;
 public class AlchemistCauldronRenderer implements TileEntityRenderer<AlchemistCauldronTile> {
     ItemRenderer itemRenderer;
 
-    public AlchemistCauldronRenderer(BlockEntityRendererProvider.Context context) {
+    public AlchemistCauldronRenderer(BlockEntityRendererManager context) {
         this.itemRenderer = context.getItemRenderer();
     }
 

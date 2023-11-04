@@ -87,7 +87,7 @@ public class AcupunctureSpell extends AbstractSpell {
                 Vector3d center = targetEntity.position().add(0, targetEntity.getEyeHeight() / 2, 0);
                 float degreesPerNeedle = 360f / count;
                 for (int i = 0; i < count; i++) {
-                    Vector3d offset = new Vector3d(0, Math.random(), .55).normalize().scale(targetEntity.getBbWidth() + 2.75f).yRot(degreesPerNeedle * i * MathHelper.DEG_TO_RAD);
+                    Vector3d offset = new Vector3d(0, Math.random(), .55).normalize().scale(targetEntity.getBbWidth() + 2.75f).yRot(degreesPerNeedle * i * Utils.DEG_TO_RAD);
                     Vector3d spawn = center.add(offset);
                     Vector3d motion = center.subtract(spawn).normalize();
 

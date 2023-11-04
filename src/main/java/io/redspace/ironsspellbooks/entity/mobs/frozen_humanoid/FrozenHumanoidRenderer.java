@@ -9,7 +9,7 @@ import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.LivingRenderer;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
@@ -20,7 +20,7 @@ public class FrozenHumanoidRenderer extends LivingRenderer<FrozenHumanoid, Biped
 
     private static final ResourceLocation TEXTURE = new ResourceLocation(IronsSpellbooks.MODID, "textures/entity/frozen_humanoid.png");
 
-    public FrozenHumanoidRenderer(EntityRendererProvider.Context context) {
+    public FrozenHumanoidRenderer(EntityRendererManager context) {
         super(context, new BipedModel<>(context.bakeLayer(ModelLayers.PLAYER)), 0.36f);
 
     }

@@ -95,9 +95,9 @@ public class DeadKingCorpseEntity extends AbstractSpellCastingMob {
     private void resurrectParticles() {
         float f = (currentAnimTime / (float) animLength);
         float rot = currentAnimTime * 12 + (1 + f * 15);
-        float height = f * 4 + (.4f * MathHelper.sin(currentAnimTime * 30 * MathHelper.DEG_TO_RAD) * f * f);
+        float height = f * 4 + (.4f * MathHelper.sin(currentAnimTime * 30 * Utils.DEG_TO_RAD) * f * f);
         float distance = MathHelper.clamp(Utils.smoothstep(0, 1.15f, f * 3), 0, 1.15f);
-        Vector3d pos = new Vector3d(0, 0, distance).yRot(rot * MathHelper.DEG_TO_RAD).add(0, height, 0).add(position());
+        Vector3d pos = new Vector3d(0, 0, distance).yRot(rot * Utils.DEG_TO_RAD).add(0, height, 0).add(position());
 
         level.addParticle(ParticleTypes.SCULK_SOUL, pos.x, pos.y, pos.z, 0, 0, 0);
         float radius = 4;

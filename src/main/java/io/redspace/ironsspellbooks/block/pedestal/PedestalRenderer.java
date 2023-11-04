@@ -19,7 +19,7 @@ import net.minecraft.util.math.vector.Vector3d;
 public class PedestalRenderer implements TileEntityRenderer<PedestalTile> {
     ItemRenderer itemRenderer;
 
-    public PedestalRenderer(BlockEntityRendererProvider.Context context) {
+    public PedestalRenderer(BlockEntityRendererManager context) {
         this.itemRenderer = context.getItemRenderer();
     }
 

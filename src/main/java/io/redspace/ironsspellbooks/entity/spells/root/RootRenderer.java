@@ -5,13 +5,13 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib3.renderers.geo.GeoEntityRenderer;
 
 public class RootRenderer extends GeoEntityRenderer<RootEntity> {
-    public RootRenderer(EntityRendererProvider.Context context) {
+    public RootRenderer(EntityRendererManager context) {
         super(context, new RootModel());
     }
 
