@@ -217,7 +217,7 @@ public class MagicData {
             LazyOptional<MagicData> capContainer = serverPlayer.getCapability(PlayerMagicProvider.PLAYER_MAGIC);
             if (capContainer.isPresent()) {
                 Optional<MagicData> opt = capContainer.resolve();
-                if (opt.isEmpty()) {
+                if (!opt.isPresent()) {
                     return new MagicData(serverPlayer);
                 }
 

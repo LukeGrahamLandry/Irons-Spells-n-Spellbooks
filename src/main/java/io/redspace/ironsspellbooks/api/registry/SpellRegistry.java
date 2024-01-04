@@ -54,7 +54,7 @@ public class SpellRegistry {
                 .getValues()
                 .stream()
                 .filter(AbstractSpell::isEnabled)
-                .toList();
+                .collect(Collectors.toList());
     }
 
     public static List<AbstractSpell> getSpellsForSchool(SchoolType schoolType) {

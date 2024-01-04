@@ -5,15 +5,14 @@ import io.redspace.ironsspellbooks.api.spells.SchoolType;
 import io.redspace.ironsspellbooks.registries.SoundRegistry;
 import io.redspace.ironsspellbooks.render.AffinityRingRenderer;
 import io.redspace.ironsspellbooks.util.ModTags;
+import net.minecraft.util.text.Color;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.registry.Registry;
-import java.util.Arrays;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
@@ -26,12 +25,13 @@ import java.util.function.Supplier;
 
 public class SchoolRegistry {
     public static final RegistryKey<Registry<SchoolType>> SCHOOL_REGISTRY_KEY = RegistryKey.createRegistryKey(new ResourceLocation(IronsSpellbooks.MODID, "schools"));
-    private static final DeferredRegister<SchoolType> SCHOOLS = DeferredRegister.create(SCHOOL_REGISTRY_KEY, IronsSpellbooks.MODID);
-    public static final Supplier<IForgeRegistry<SchoolType>> REGISTRY = SCHOOLS.makeRegistry(() -> new RegistryBuilder<SchoolType>().disableSaving().disableOverrides());
+    private static final DeferredRegister<SchoolType> SCHOOLS = DeferredRegister.create(SchoolType.class, IronsSpellbooks.MODID);
+    public static final Supplier<IForgeRegistry<SchoolType>> REGISTRY = SCHOOLS.makeRegistry(SCHOOL_REGISTRY_KEY.location().toString(), () -> new RegistryBuilder<SchoolType>().disableSaving().disableOverrides());
 
     public static void register(IEventBus eventBus) {
         SCHOOLS.register(eventBus);
-        eventBus.addListener(SchoolRegistry::clientSetup);
+        // TODO: model stuff
+//        eventBus.addListener(SchoolRegistry::clientSetup);
     }
 
     private static RegistryObject<SchoolType> registerSchool(SchoolType schoolType) {
@@ -62,7 +62,7 @@ public class SchoolRegistry {
     public static final RegistryObject<SchoolType> ICE = registerSchool(new SchoolType(
             ICE_RESOURCE,
             ModTags.ICE_FOCUS,
-            new TranslationTextComponent("school.irons_spellbooks.ice").withStyle(Style.EMPTY.withColor(0xd0f9ff)),
+            new TranslationTextComponent("school.irons_spellbooks.ice").withStyle(Style.EMPTY.withColor(Color.fromRgb(0xd0f9ff))),
             LazyOptional.of(AttributeRegistry.ICE_SPELL_POWER::get),
             LazyOptional.of(AttributeRegistry.ICE_MAGIC_RESIST::get),
             LazyOptional.of(SoundRegistry.ICE_CAST::get)
@@ -80,7 +80,7 @@ public class SchoolRegistry {
     public static final RegistryObject<SchoolType> HOLY = registerSchool(new SchoolType(
             HOLY_RESOURCE,
             ModTags.HOLY_FOCUS,
-            new TranslationTextComponent("school.irons_spellbooks.holy").withStyle(Style.EMPTY.withColor(0xfff8d4)),
+            new TranslationTextComponent("school.irons_spellbooks.holy").withStyle(Style.EMPTY.withColor(Color.fromRgb(0xfff8d4))),
             LazyOptional.of(AttributeRegistry.HOLY_SPELL_POWER::get),
             LazyOptional.of(AttributeRegistry.HOLY_MAGIC_RESIST::get),
             LazyOptional.of(SoundRegistry.HOLY_CAST::get)
@@ -131,9 +131,10 @@ public class SchoolRegistry {
         return null;
     }
 
-    public static void clientSetup(ModelEvent.RegisterAdditional event) {
-        for (SchoolType schoolType : REGISTRY.get().getValues()) {
-            event.register(AffinityRingRenderer.getAffinityRingModelLocation(schoolType.getId()));
-        }
-    }
+    // TODO: model stuff
+//    public static void clientSetup(ModelEvent.RegisterAdditional event) {
+//        for (SchoolType schoolType : REGISTRY.get().getValues()) {
+//            event.register(AffinityRingRenderer.getAffinityRingModelLocation(schoolType.getId()));
+//        }
+//    }
 }

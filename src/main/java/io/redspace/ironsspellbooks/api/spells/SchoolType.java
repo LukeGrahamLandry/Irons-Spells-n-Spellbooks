@@ -1,22 +1,21 @@
 package io.redspace.ironsspellbooks.api.spells;
 
 import net.minecraft.util.math.vector.Vector3f;
-import net.minecraft.ChatFormatting;
-import java.util.Arrays;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.tags.TagKey;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.TextComponent;
+import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.registries.IForgeRegistryEntry;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.Optional;
-
-public class SchoolType {
+public class SchoolType implements IForgeRegistryEntry<SchoolType> {
 //    FIRE(0),
 //    ICE(1),
 //    LIGHTNING(2),
@@ -28,15 +27,15 @@ public class SchoolType {
 //    NATURE(8);
 
     final ResourceLocation id;
-    final TagKey<Item> focus;
-    final ITextComponent displayName;
+    final Tags.IOptionalNamedTag<Item> focus;
+    final IFormattableTextComponent displayName;
     final Style displayStyle;
 //    final PlaceholderDamageType damageType;
     final LazyOptional<Attribute> powerAttribute;
     final LazyOptional<Attribute> resistanceAttribute;
     final LazyOptional<SoundEvent> defaultCastSound;
 
-    public SchoolType(ResourceLocation id, TagKey<Item> focus, ITextComponent displayName, LazyOptional<Attribute> powerAttribute, LazyOptional<Attribute> resistanceAttribute, LazyOptional<SoundEvent> defaultCastSound) {
+    public SchoolType(ResourceLocation id, Tags.IOptionalNamedTag<Item> focus, IFormattableTextComponent displayName, LazyOptional<Attribute> powerAttribute, LazyOptional<Attribute> resistanceAttribute, LazyOptional<SoundEvent> defaultCastSound) {
         this.id = id;
         this.focus = focus;
         this.displayName = displayName;
@@ -72,12 +71,12 @@ public class SchoolType {
         return id;
     }
 
-    public ITextComponent getDisplayName() {
+    public IFormattableTextComponent getDisplayName() {
         return displayName;
     }
 
     public boolean isFocus(ItemStack itemStack) {
-        return itemStack.is(focus);
+        return focus.contains(itemStack.getItem());
     }
 
     public Vector3f getTargetingColor() {
@@ -90,5 +89,20 @@ public class SchoolType {
         );
     }
 
+    @Override
+    public SchoolType setRegistryName(ResourceLocation name) {
+        assert name.equals(this.id);
+        return this;
+    }
 
+    @Nullable
+    @Override
+    public ResourceLocation getRegistryName() {
+        return id;
+    }
+
+    @Override
+    public Class<SchoolType> getRegistryType() {
+        return SchoolType.class;
+    }
 }

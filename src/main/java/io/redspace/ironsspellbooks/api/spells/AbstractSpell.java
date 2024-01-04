@@ -12,8 +12,6 @@ import io.redspace.ironsspellbooks.api.magic.MagicHelper;
 import io.redspace.ironsspellbooks.api.registry.SpellRegistry;
 import io.redspace.ironsspellbooks.config.ServerConfigs;
 import io.redspace.ironsspellbooks.api.item.curios.RingData;
-import io.redspace.ironsspellbooks.damage.DamageSources;
-import io.redspace.ironsspellbooks.damage.ISpellDamageSource;
 import io.redspace.ironsspellbooks.damage.IndirectSpellDamageSource;
 import io.redspace.ironsspellbooks.damage.SpellDamageSource;
 import io.redspace.ironsspellbooks.network.ClientboundSyncMana;
@@ -47,16 +45,19 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.registries.IForgeRegistryEntry;
+import top.theillusivec4.curios.api.CuriosApi;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static io.redspace.ironsspellbooks.api.spells.SpellAnimations.*;
 
-public abstract class AbstractSpell {
+public abstract class AbstractSpell implements IForgeRegistryEntry<AbstractSpell> {
     private String spellID = null;
     private String deathMessageId = null;
     private String spellName = null;
@@ -135,6 +136,7 @@ public abstract class AbstractSpell {
         if (caster != null) {
             addition = CuriosApi.getCuriosHelper().findCurios(caster, this::filterCurios).size();
         }
+
         return level + addition;
     }
 
@@ -460,7 +462,7 @@ public abstract class AbstractSpell {
 
                     List<Double> subList = rarityRawConfig.subList(minRarity, maxRarity + 1);
                     double subtotal = subList.stream().reduce(0d, Double::sum);
-                    rarityRawWeights = subList.stream().map(item -> ((item / subtotal) * (1 - subtotal)) + item).toList();
+                    rarityRawWeights = subList.stream().map(item -> ((item / subtotal) * (1 - subtotal)) + item).collect(Collectors.toList());
 
                     AtomicDouble counter = new AtomicDouble();
                     rarityWeights = new ArrayList<>();
@@ -541,5 +543,21 @@ public abstract class AbstractSpell {
         }
 
         return (int) (rarityWeights.get(rarity.getValue() - (1 + minRarity)) * maxLevel) + 1;
+    }
+
+    @Override
+    public AbstractSpell setRegistryName(ResourceLocation name) {
+        assert name.equals(this.getSpellResource());
+        return this;
+    }
+
+    @Override
+    public ResourceLocation getRegistryName() {
+        return getSpellResource();
+    }
+
+    @Override
+    public Class<AbstractSpell> getRegistryType() {
+        return AbstractSpell.class;
     }
 }

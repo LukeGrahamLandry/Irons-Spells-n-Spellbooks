@@ -1,0 +1,37 @@
+There's a bunch of stuff that uses newer vanilla content. Needs various levels of rethinking.
+- frog (SummonedFrog)
+- easy cauldrons with different fluids (BloodCauldronBlock)
+- snow / freezing (need to either reimplement it or balance ice spells)
+- amethyst (brewing mana potions)
+- skulk particles (DeadKingCorpseEntity), warden sounds (HeartstopEffect)
+
+More just random code changes I should revisit.
+- places that used to use reducedTickDelay could call `Mth.positiveCeilDiv(int, 2);` directly if update frequency is important.
+- which mouse input event is right?
+- did biome/structure tags exist in 1.16?
+- need some obsessive testing to make sure no asset/data json formats changed between versions
+- scary that different places reference different versions of DefaultBipedBoneIdents. should go through and consolidate.
+
+I haven't done any worldgen stuff. They change it so much every version I can never keep track.
+
+Not touched yet but soon™
+- player animator 1.16 didn't have first person
+- overlay rendering
+- projectile rendering to old model system
+- port mixins
+- register capabilities
+- guis
+- items
+- blocks
+- commands
+- apotheosis integration
+- tetra integration
+- custom registries
+- datafixers
+    - but do they change vanilla stuff or only for fixing old mod worlds? might not need because nobody has an old 1.16 world.
+
+Added a gradle script that makes the dev environment play nice with arm64 macOS.
+It does nothing on other machines but feel free to remove.
+
+---
+~ Luke
