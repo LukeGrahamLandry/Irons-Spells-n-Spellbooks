@@ -48,13 +48,13 @@ public enum SpellRarity {
         List<Double> fromConfig = (List<Double>) ServerConfigs.RARITY_CONFIG.get();
 
         if (fromConfig.size() != 5) {
-            List<Double> configDefault = (List<Double>) ServerConfigs.RARITY_CONFIG.getDefault();
+            List<Double> configDefault = ServerConfigs.RARITY_CONFIG_DEFAULT;
             IronsSpellbooks.LOGGER.info("INVALID RARITY CONFIG FOUND (Size != 5): {} FALLING BACK TO DEFAULT: {}", fromConfig, configDefault);
             return configDefault;
         }
 
         if (fromConfig.stream().mapToDouble(a -> a).sum() != 1) {
-            List<Double> configDefault = (List<Double>) ServerConfigs.RARITY_CONFIG.getDefault();
+            List<Double> configDefault = (List<Double>) ServerConfigs.RARITY_CONFIG_DEFAULT;
             IronsSpellbooks.LOGGER.info("INVALID RARITY CONFIG FOUND (Values must add up to 1): {} FALLING BACK TO DEFAULT: {}", fromConfig, configDefault);
             return configDefault;
         }

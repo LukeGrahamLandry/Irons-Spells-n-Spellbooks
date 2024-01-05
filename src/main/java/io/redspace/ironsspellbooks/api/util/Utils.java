@@ -340,7 +340,7 @@ public class Utils {
     /**
      * School Type is no a parameter, use {@link Utils#doMeleeAttack(Mob, Entity, DamageSource)} instead
      */
-    @Deprecated(forRemoval = true)
+    @Deprecated
     public static boolean doMeleeAttack(MobEntity attacker, Entity target, DamageSource damageSource, SchoolType schoolType) {
         return doMeleeAttack(attacker, target, damageSource);
     }
@@ -374,7 +374,7 @@ public class Utils {
                 PlayerEntity player = (PlayerEntity) target;
                 ItemStack pMobItemStack = attacker.getMainHandItem();
                 ItemStack pPlayerItemStack = player.isUsingItem() ? player.getUseItem() : ItemStack.EMPTY;
-                if (!pMobItemStack.isEmpty() && !pPlayerItemStack.isEmpty() && pMobItemStack.getItem() instanceof AxeItem && pPlayerItemStack.is(Items.SHIELD)) {
+                if (!pMobItemStack.isEmpty() && !pPlayerItemStack.isEmpty() && pMobItemStack.getItem() instanceof AxeItem && pPlayerItemStack.getItem() == Items.SHIELD) {
                     float f2 = 0.25F + (float) EnchantmentHelper.getBlockEfficiency(attacker) * 0.05F;
                     if (attacker.getRandom().nextFloat() < f2) {
                         player.getCooldowns().addCooldown(Items.SHIELD, 100);
@@ -542,7 +542,8 @@ public class Utils {
 
     public static boolean checkMonsterSpawnRules(IServerWorld pLevel, SpawnReason pSpawnType, BlockPos pPos, Random pRandom) {
         //Omits monster from spawn where monsters are not allowed, as well as default monster spawning conditions
-        return !pLevel.getBiome(pPos).is(Biomes.DEEP_DARK) && !pLevel.getBiome(pPos).is(Biomes.MUSHROOM_FIELDS) && MonsterEntity.checkMonsterSpawnRules(EntityType.ZOMBIE, pLevel, pSpawnType, pPos, pRandom);
+        // !pLevel.getBiome(pPos).is(Biomes.DEEP_DARK) === true because it didn't exist
+        return !pLevel.getBiome(pPos).is(Biomes.MUSHROOM_FIELDS) && MonsterEntity.checkMonsterSpawnRules(EntityType.ZOMBIE, pLevel, pSpawnType, pPos, pRandom);
     }
 
     public static void sendTargetedNotification(ServerPlayerEntity target, LivingEntity caster, AbstractSpell spell) {

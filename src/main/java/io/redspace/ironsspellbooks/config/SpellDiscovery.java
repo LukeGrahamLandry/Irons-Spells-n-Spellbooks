@@ -17,8 +17,8 @@ public final class SpellDiscovery {
 
         allScanData.forEach(scanData -> {
             scanData.getAnnotations().forEach(annotationData -> {
-                if (Objects.equals(annotationData.annotationType(), Type.getType(AutoSpellConfig.class))) {
-                    spellClassNames.add(annotationData.memberName());
+                if (Objects.equals(annotationData.getAnnotationType(), Type.getType(AutoSpellConfig.class))) {
+                    spellClassNames.add(annotationData.getMemberName());
                 }
             });
         });

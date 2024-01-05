@@ -75,6 +75,8 @@ repositories {
 
 // TODO
 dependencies {
+    implementation 'org.jetbrains:annotations:23.0.0'
+
     // FORGE ******************************************************************************************************
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 

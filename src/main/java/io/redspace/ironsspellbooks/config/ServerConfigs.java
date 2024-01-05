@@ -9,9 +9,6 @@ import io.redspace.ironsspellbooks.api.spells.SpellRarity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.event.config.ModConfigEvent;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -44,13 +41,16 @@ public class ServerConfigs {
 
     private static final Map<String, SpellConfigParameters> SPELL_CONFIGS = new HashMap<>();
 
+    // TODO: idk how to get the valuespec back from forge
+    public static final List<Double> RARITY_CONFIG_DEFAULT = Arrays.asList(.3d, .25d, .2d, .15d, .1d);
+
     static {
         BUILDER.comment("Other Configuration");
         BUILDER.push("Misc");
 
         RARITY_CONFIG = BUILDER.worldRestart()
                 .comment(String.format("rarityConfig array values must sum to 1: [%s, %s, %s, %s, %s]. Default: [.3d, .25d, .2d, .15d, .1d]", SpellRarity.COMMON, SpellRarity.UNCOMMON, SpellRarity.RARE, SpellRarity.EPIC, SpellRarity.LEGENDARY))
-                .defineList("rarityConfig", Arrays.asList(.3d, .25d, .2d, .15d, .1d), x -> true);
+                .defineList("rarityConfig", RARITY_CONFIG_DEFAULT, x -> true);
 
         BUILDER.comment("Whether or not imbued weapons require mana to be casted. Default: true");
         SWORDS_CONSUME_MANA = BUILDER.worldRestart().define("swordsConsumeMana", true);
@@ -133,15 +133,16 @@ public class ServerConfigs {
         //IronsSpellbooks.LOGGER.debug("CFG: createSpellConfig");
         BUILDER.push(spell.getSpellId());
 
+        // you'd ConfigValue is already a supplier but the type checker likes this more
         SPELL_CONFIGS.put(spell.getSpellId(), new SpellConfigParameters(
                 config,
-                BUILDER.define("Enabled", config.enabled),
-                BUILDER.define("School", config.schoolResource.toString()),
-                BUILDER.define("MaxLevel", config.maxLevel),
-                BUILDER.defineEnum("MinRarity", config.minRarity),
-                BUILDER.define("ManaCostMultiplier", 1d),
-                BUILDER.define("SpellPowerMultiplier", 1d),
-                BUILDER.define("CooldownInSeconds", config.cooldownInSeconds)
+                () -> BUILDER.define("Enabled", config.enabled).get(),
+                () -> BUILDER.define("School", config.schoolResource.toString()).get(),
+                () -> BUILDER.define("MaxLevel", config.maxLevel).get(),
+                () -> BUILDER.defineEnum("MinRarity", config.minRarity).get(),
+                () -> BUILDER.define("ManaCostMultiplier", 1d).get(),
+                () -> BUILDER.define("SpellPowerMultiplier", 1d).get(),
+                () -> BUILDER.define("CooldownInSeconds", config.cooldownInSeconds).get()
         ));
 
         BUILDER.pop();

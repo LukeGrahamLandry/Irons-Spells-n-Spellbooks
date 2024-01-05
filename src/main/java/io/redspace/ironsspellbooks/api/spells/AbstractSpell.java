@@ -2,6 +2,7 @@ package io.redspace.ironsspellbooks.api.spells;
 
 import com.google.common.util.concurrent.AtomicDouble;
 import io.redspace.ironsspellbooks.api.magic.IMagicManager;
+import net.minecraft.network.play.server.STitlePacket;
 import net.minecraft.util.math.vector.Vector3f;
 import io.redspace.ironsspellbooks.IronsSpellbooks;
 import io.redspace.ironsspellbooks.api.events.SpellCastEvent;
@@ -48,7 +49,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import top.theillusivec4.curios.api.CuriosApi;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -256,12 +257,13 @@ public abstract class AbstractSpell implements IForgeRegistryEntry<AbstractSpell
             boolean isSpellOnCooldown = playerMagicData.getPlayerCooldowns().isOnCooldown(this);
 
             if ((castSource == CastSource.SPELLBOOK || castSource == CastSource.SWORD) && isSpellOnCooldown) {
-                serverPlayer.connection.send(new ClientboundSetActionBarTextPacket(new TranslationTextComponent("ui.irons_spellbooks.cast_error_cooldown", getDisplayName()).withStyle(TextFormatting.RED)));
+
+                serverPlayer.connection.send(new STitlePacket(STitlePacket.Type.ACTIONBAR, new TranslationTextComponent("ui.irons_spellbooks.cast_error_cooldown", getDisplayName()).withStyle(TextFormatting.RED)));
                 return false;
             }
 
             if (castSource.consumesMana() && !hasEnoughMana) {
-                serverPlayer.connection.send(new ClientboundSetActionBarTextPacket(new TranslationTextComponent("ui.irons_spellbooks.cast_error_mana", getDisplayName()).withStyle(TextFormatting.RED)));
+                serverPlayer.connection.send(new STitlePacket(STitlePacket.Type.ACTIONBAR, new TranslationTextComponent("ui.irons_spellbooks.cast_error_mana", getDisplayName()).withStyle(TextFormatting.RED)));
                 return false;
             }
 
